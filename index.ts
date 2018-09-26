@@ -4,6 +4,7 @@ export * from "./lib/testcase/sparql/IQueryEngine";
 export * from "./lib/testcase/sparql/ITestCaseSparql";
 export * from "./lib/testcase/sparql/QueryResultBindings";
 export * from "./lib/testcase/sparql/QueryResultBoolean";
+export * from "./lib/testcase/sparql/QueryResultQuads";
 export * from "./lib/testcase/ITestCase";
 export * from "./lib/testcase/ITestCaseHandler";
 export * from "./lib/testcase/TestCaseUnsupported";

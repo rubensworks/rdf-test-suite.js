@@ -1,5 +1,3 @@
-import {QueryResultBindings} from "../../../lib/testcase/sparql/QueryResultBindings";
-import {namedNode} from "@rdfjs/data-model";
 import {QueryResultBoolean} from "../../../lib/testcase/sparql/QueryResultBoolean";
 
 describe('QueryResultBoolean', () => {
@@ -27,11 +25,15 @@ describe('QueryResultBoolean', () => {
   });
 
   describe('#equals', () => {
+    it('should be false on other types', () => {
+      return expect(booleanTrue.equals(<any> {})).toBe(false);
+    });
+
     it('should be true on equal values', () => {
       return expect(booleanTrue.equals(booleanTrue)).toBe(true);
     });
 
-    it('should be true on non-equal values', () => {
+    it('should be false on non-equal values', () => {
       return expect(booleanFalse.equals(booleanTrue)).toBe(false);
     });
   });

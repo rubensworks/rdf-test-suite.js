@@ -1,5 +1,5 @@
-import {QueryResultBindings} from "../../../lib/testcase/sparql/QueryResultBindings";
 import {namedNode} from "@rdfjs/data-model";
+import {QueryResultBindings} from "../../../lib/testcase/sparql/QueryResultBindings";
 
 describe('QueryResultBindings', () => {
 

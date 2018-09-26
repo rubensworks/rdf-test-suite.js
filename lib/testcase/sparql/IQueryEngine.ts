@@ -40,6 +40,7 @@ export interface IQueryResultBindings {
   type: 'bindings';
   variables: string[];
   value: {[variable: string]: RDF.Term}[];
+  checkOrder: boolean;
   equals(that: IQueryResult, laxCardinality?: boolean): boolean;
   toString(): string;
 }

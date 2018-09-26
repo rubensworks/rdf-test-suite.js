@@ -1,22 +1,29 @@
+import {literal, namedNode, quad} from "@rdfjs/data-model";
 import {existsSync, mkdirSync, readFileSync} from "fs";
 import "isomorphic-fetch";
+import "jest-rdf";
 import {Util} from "../lib/Util";
 
 // tslint:disable:no-var-requires
 const streamifyString = require('streamify-string');
 const stringifyStream = require('stream-to-string');
+const arrayifyStream = require('arrayify-stream');
 
 // Mock fetch
 (<any> global).fetch = (url: string) => {
+  let body;
   switch (url) {
   case 'http://example.org/':
-    const body = streamifyString('ABC');
-    return Promise.resolve(new Response(body, <any> { headers: new Headers({ a: 'b' }), status: 200, url }));
+    body = streamifyString('ABC');
+    break;
+  case 'http://example.org/abc.ttl':
+    body = streamifyString('<a> <b> <c>.');
     break;
   default:
     return Promise.reject(new Error('Fetch error'));
     break;
   }
+  return Promise.resolve(new Response(body, <any> { headers: new Headers({ a: 'b' }), status: 200, url }));
 };
 
 describe('Util', () => {
@@ -99,6 +106,72 @@ describe('Util', () => {
       expect(response2.url).toEqual('http://example.org/');
 
       expect(spy).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe('#parseRdfRaw', () => {
+    it('should error on an unknown content type', async () => {
+      expect(() => Util.parseRdfRaw('unknown', 'http://example.org/', streamifyString('ABC')))
+        .toThrow();
+    });
+
+    it('should parse application/x-turtle streams', async () => {
+      expect(await arrayifyStream(Util.parseRdfRaw('application/x-turtle', 'http://example.org/',
+        streamifyString('<a> <b> <c>.'))))
+        .toEqualRdfQuadArray([
+          quad(namedNode('http://example.org/a'), namedNode('http://example.org/b'),
+            namedNode('http://example.org/c')),
+        ]);
+    });
+
+    it('should parse text/turtle streams', async () => {
+      expect(await arrayifyStream(Util.parseRdfRaw('text/turtle', 'http://example.org/',
+        streamifyString('<a> <b> <c>.'))))
+        .toEqualRdfQuadArray([
+          quad(namedNode('http://example.org/a'), namedNode('http://example.org/b'),
+            namedNode('http://example.org/c')),
+        ]);
+    });
+
+    it('should parse application/n-triples streams', async () => {
+      expect(await arrayifyStream(Util.parseRdfRaw('application/n-triples', 'http://example.org/',
+        streamifyString('<a> <b> <c>.'))))
+        .toEqualRdfQuadArray([
+          quad(namedNode('http://example.org/a'), namedNode('http://example.org/b'),
+            namedNode('http://example.org/c')),
+        ]);
+    });
+
+    it('should parse application/rdf+xml streams', async () => {
+      expect(await arrayifyStream(Util.parseRdfRaw('application/rdf+xml', 'http://example.org/',
+        streamifyString(`<?xml version="1.0"?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+            xmlns:dc="http://purl.org/dc/elements/1.1/"
+            xmlns:ex="http://example.org/stuff/1.0/">
+
+  <rdf:Description rdf:about="http://www.w3.org/TR/rdf-syntax-grammar"
+             dc:title="RDF1.1 XML Syntax" />
+
+</rdf:RDF>`))))
+        .toEqualRdfQuadArray([
+          quad(
+            namedNode('http://www.w3.org/TR/rdf-syntax-grammar'),
+            namedNode('http://purl.org/dc/elements/1.1/title'),
+            literal('RDF1.1 XML Syntax')),
+        ]);
+    });
+  });
+
+  describe('#fetchRdf', () => {
+    it('should fetch a ttl document', async () => {
+      const response = await Util.fetchRdf('http://example.org/abc.ttl');
+      expect(response[0]).toEqual('http://example.org/abc.ttl');
+      expect(await arrayifyStream(response[1])).toEqualRdfQuadArray([
+        quad(
+          namedNode('http://example.org/a'),
+          namedNode('http://example.org/b'),
+          namedNode('http://example.org/c')),
+      ]);
     });
   });
 

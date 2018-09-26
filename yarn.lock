@@ -1732,6 +1732,13 @@ jest-mock@^23.2.0:
   version "23.2.0"
   resolved "https://registry.yarnpkg.com/jest-mock/-/jest-mock-23.2.0.tgz#ad1c60f29e8719d47c26e1138098b6d18b261134"
 
+jest-rdf@^1.2.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/jest-rdf/-/jest-rdf-1.2.0.tgz#2a062a972f1ad9af6e2956da8bdf0d336387b71a"
+  dependencies:
+    rdf-isomorphic "^1.0.2"
+    rdf-string "^1.2.0"
+
 jest-regex-util@^23.3.0:
   version "23.3.0"
   resolved "https://registry.yarnpkg.com/jest-regex-util/-/jest-regex-util-23.3.0.tgz#5f86729547c2785c4002ceaa8f849fe8ca471bc5"

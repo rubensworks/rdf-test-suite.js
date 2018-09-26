@@ -1,5 +1,23 @@
+import {existsSync, mkdirSync, readFileSync} from "fs";
 import "isomorphic-fetch";
 import {Util} from "../lib/Util";
+
+// tslint:disable:no-var-requires
+const streamifyString = require('streamify-string');
+const stringifyStream = require('stream-to-string');
+
+// Mock fetch
+(<any> global).fetch = (url: string) => {
+  switch (url) {
+  case 'http://example.org/':
+    const body = streamifyString('ABC');
+    return Promise.resolve(new Response(body, <any> { headers: new Headers({ a: 'b' }), status: 200, url }));
+    break;
+  default:
+    return Promise.reject(new Error('Fetch error'));
+    break;
+  }
+};
 
 describe('Util', () => {
 
@@ -40,6 +58,47 @@ describe('Util', () => {
         b: 2,
         c: 3,
       });
+    });
+  });
+
+  describe('#fetchCached', () => {
+    const cachePath: string = __dirname + '/.rdf-test-cache/';
+
+    beforeEach(() => {
+      if (!existsSync(cachePath)) {
+        mkdirSync(cachePath);
+      }
+    });
+
+    afterEach((done) => {
+      require('rimraf')(cachePath, {}, done);
+    });
+
+    it('should not cache without cachePath', async () => {
+      const response = await Util.fetchCached('http://example.org/');
+      expect(await stringifyStream(response.body)).toEqual('ABC');
+      expect(response.headers).toEqual(new Headers({ a: 'b' }));
+      expect(response.url).toEqual('http://example.org/');
+    });
+
+    it('should cache with cachePath', async () => {
+      const spy = jest.spyOn(<any> global, 'fetch');
+
+      const response1 = await Util.fetchCached('http://example.org/', cachePath);
+      expect(await stringifyStream(response1.body)).toEqual('ABC');
+      expect(response1.headers).toEqual(new Headers({ a: 'b' }));
+      expect(response1.url).toEqual('http://example.org/');
+
+      expect(readFileSync(cachePath + 'http%3A%2F%2Fexample.org%2F', 'utf8')).toEqual('ABC');
+      expect(readFileSync(cachePath + 'http%3A%2F%2Fexample.org%2F.headers', 'utf8')).toEqual('{\"a\":\"b\"}');
+      expect(readFileSync(cachePath + 'http%3A%2F%2Fexample.org%2F.url', 'utf8')).toEqual('http://example.org/');
+
+      const response2 = await Util.fetchCached('http://example.org/', cachePath);
+      expect(await stringifyStream(response2.body)).toEqual('ABC');
+      expect(response2.headers).toEqual(new Headers({ a: 'b' }));
+      expect(response2.url).toEqual('http://example.org/');
+
+      expect(spy).toHaveBeenCalledTimes(1);
     });
   });
 

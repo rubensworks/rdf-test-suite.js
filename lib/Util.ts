@@ -1,3 +1,7 @@
+import {createReadStream, existsSync, readFileSync, ReadStream, writeFileSync} from "fs";
+// tslint:disable:no-var-requires
+const streamifyString = require('streamify-string');
+
 /**
  * Utility functions
  */
@@ -21,6 +25,43 @@ export class Util {
   }
 
   /**
+   * Fetch the given URL or retrieve it from a local file cache.
+   * @param {string} url The URL to fetch.
+   * @param {string} cachePath The base directory to cache files in. If falsy, then no cache will be used.
+   * @return {Promise<IFetchResponse>} A promise resolving to the response.
+   */
+  public static async fetchCached(url: string, cachePath?: string): Promise<IFetchResponse> {
+    const cachePathLocal: string = cachePath ? cachePath + encodeURIComponent(url) : null;
+    if (cachePathLocal && existsSync(cachePathLocal)) {
+      // Read from cache
+      return {
+        body: createReadStream(cachePathLocal),
+        headers: new Headers(JSON.parse(readFileSync(cachePathLocal + '.headers', { encoding: 'utf8' }))),
+        url: readFileSync(cachePathLocal + '.url', { encoding: 'utf8' }),
+      };
+    } else {
+      // Do actual fetch
+      const response = await fetch(url);
+      const bodyString = await response.text();
+
+      if (cachePathLocal) {
+        // Save in cache
+        writeFileSync(cachePathLocal, bodyString);
+        writeFileSync(cachePathLocal + '.url', response.url);
+        const headersRaw: any = {};
+        response.headers.forEach((value: string, key: string) => headersRaw[key] = value);
+        writeFileSync(cachePathLocal + '.headers', JSON.stringify(headersRaw));
+      }
+
+      return {
+        body: streamifyString(bodyString),
+        headers: response.headers,
+        url: response.url,
+      };
+    }
+  }
+
+  /**
    * Resolve all values in a hash.
    * @param {{[p: string]: Promise<T>}} data A hash with promise values.
    * @return {Promise<{[p: string]: T}>} A hash with resolved promise values.
@@ -33,4 +74,13 @@ export class Util {
     return newData;
   }
 
+}
+
+/**
+ * A fetch response.
+ */
+export interface IFetchResponse {
+  body: ReadStream;
+  headers: Headers;
+  url: string;
 }

@@ -1,4 +1,4 @@
-import {TestCaseUnsupported, TestCaseUnsupportedHandler} from "../lib/testcase/TestCaseUnsupported";
+import {TestCaseUnsupported, TestCaseUnsupportedHandler} from "../../lib/testcase/TestCaseUnsupported";
 
 describe('TestCaseUnsupportedHandler', () => {
 

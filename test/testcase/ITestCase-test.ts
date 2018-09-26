@@ -1,7 +1,7 @@
 import {literal, namedNode} from "@rdfjs/data-model";
 import {ContextParser} from "jsonld-context-parser";
 import {Resource} from "rdf-object";
-import {testCaseFromResource} from "../lib/testcase/ITestCase";
+import {testCaseFromResource} from "../../lib/testcase/ITestCase";
 
 const handlers: any = {
   abc: {
@@ -22,7 +22,7 @@ describe('ITestCase', () => {
   let pName;
 
   beforeEach((done) => {
-    new ContextParser().parse(require('../lib/context-manifest.json'))
+    new ContextParser().parse(require('../../lib/context-manifest.json'))
       .then((parsedContext) => {
         context = parsedContext;
 

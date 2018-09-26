@@ -1,0 +1,29 @@
+{
+  "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+  "type": "rdf:type",
+  "types": "rdf:type",
+
+  "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+  "comment": "rdfs:comment",
+  "label": "rdfs:label",
+
+  "dawg": "http://www.w3.org/2001/sw/DataAccess/tests/test-dawg#",
+  "approval": "dawg:approval",
+  "approvedBy": "dawg:approvedBy",
+
+  "mf": "http://www.w3.org/2001/sw/DataAccess/tests/test-manifest#",
+  "action": "mf:action",
+  "conformanceRequirements": "mf:conformanceRequirement",
+  "entries": "mf:entries",
+  "include": "mf:include",
+  "specifications": "mf:includedSpecifications",
+  "name": "mf:name",
+  "result": "mf:result",
+  "resultCardinality": "mf:resultCardinality",
+
+  "q": "http://www.w3.org/2001/sw/DataAccess/tests/test-query#",
+  "data": "q:data",
+  "graph": "q:graph",
+  "graphData": "q:graphData",
+  "query": "q:query"
+}

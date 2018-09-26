@@ -26,6 +26,7 @@
     "bin/**/*.js",
     "lib/**/*.d.ts",
     "lib/**/*.js",
+    "lib/**/*.json",
     "index.d.ts",
     "index.js"
   ],
@@ -86,6 +87,7 @@
     "n3": "^1.0.0-beta.1",
     "node-web-streams": "^0.2.2",
     "rdf-isomorphic": "^1.0.2",
+    "rdf-object": "^1.0.0",
     "rdf-string": "^1.2.0",
     "rdf-terms": "^1.2.0",
     "rdfxml-streaming-parser": "^1.0.0",

@@ -25,4 +25,22 @@ describe('Util', () => {
     });
   });
 
+  describe('#promiseValues', () => {
+    it('should resolve an empty hash', () => {
+      return expect(Util.promiseValues({})).resolves.toEqual({});
+    });
+
+    it('should resolve a hash with promise values', () => {
+      return expect(Util.promiseValues({
+        a: Promise.resolve(1),
+        b: Promise.resolve(2),
+        c: Promise.resolve(3),
+      })).resolves.toEqual({
+        a: 1,
+        b: 2,
+        c: 3,
+      });
+    });
+  });
+
 });

@@ -4,4 +4,5 @@ export * from "./lib/testcase/sparql/IQueryEngine";
 export * from "./lib/testcase/sparql/ITestCaseSparql";
 export * from "./lib/testcase/ITestCase";
 export * from "./lib/testcase/ITestCaseHandler";
+export * from "./lib/testcase/TestCaseUnsupported";
 export * from "./lib/Util";

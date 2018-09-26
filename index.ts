@@ -1,3 +1,4 @@
+export * from "./lib/testcase/rdfsyntax/xml/TestCaseXmlEval";
 export * from "./lib/testcase/rdfsyntax/IParser";
 export * from "./lib/testcase/rdfsyntax/ITestCaseRdfSyntax";
 export * from "./lib/testcase/sparql/IQueryEngine";

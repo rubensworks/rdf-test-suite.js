@@ -29,15 +29,29 @@ export class Util {
   }
 
   /**
+   * Convert https to http
+   * @param {string} url A URL.
+   * @return {string} An http URL.
+   */
+  public static normalizeBaseUrl(url: string) {
+    if (url.startsWith('https://')) {
+      return url.replace('https', 'http');
+    }
+    return url;
+  }
+
+  /**
    * Fetch the given RDF document and parse it.
    * @param {string} url A URL.
    * @param {string} cachePath The base directory to cache files in. If falsy, then no cache will be used.
+   * @param {boolean} normalizeUrl If the base URL should be converted from https to http.
    * @return {Promise<[string , Stream]>} A promise resolving to a pair of a URL and a parsed RDF stream.
    */
-  public static async fetchRdf(url: string, cachePath?: string): Promise<[string, RDF.Stream]> {
+  public static async fetchRdf(url: string, cachePath?: string, normalizeUrl?: boolean): Promise<[string, RDF.Stream]> {
     const response = await Util.fetchCached(url, cachePath);
     const contentType = Util.identifyContentType(response.url, response.headers);
-    return [response.url, await Util.parseRdfRaw(contentType, response.url, response.body)];
+    return [response.url, await Util.parseRdfRaw(contentType,
+      normalizeUrl ? Util.normalizeBaseUrl(response.url) : response.url, response.body)];
   }
 
   /**

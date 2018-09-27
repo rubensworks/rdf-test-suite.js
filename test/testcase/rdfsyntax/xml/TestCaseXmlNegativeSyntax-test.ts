@@ -1,12 +1,10 @@
 import {TestCaseXmlNegativeSyntax,
   TestCaseXmlNegativeSyntaxHandler} from "../../../../lib/testcase/rdfsyntax/xml/TestCaseXmlNegativeSyntax";
-const quad = require("rdf-quad");
 import {literal, namedNode} from "@rdfjs/data-model";
 import "jest-rdf";
 import {ContextParser} from "jsonld-context-parser";
 import {Resource} from "rdf-object";
 import {RdfXmlParser} from "rdfxml-streaming-parser";
-import {PassThrough} from "stream";
 
 // tslint:disable:no-var-requires
 const arrayifyStream = require('arrayify-stream');

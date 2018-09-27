@@ -50,6 +50,16 @@ describe('Util', () => {
     });
   });
 
+  describe('#normalizeBaseUrl', () => {
+    it('should normalize https to http', () => {
+      return expect(Util.normalizeBaseUrl('https://example.org/')).toEqual('http://example.org/');
+    });
+
+    it('should not normalize http', () => {
+      return expect(Util.normalizeBaseUrl('http://example.org/')).toEqual('http://example.org/');
+    });
+  });
+
   describe('#promiseValues', () => {
     it('should resolve an empty hash', () => {
       return expect(Util.promiseValues({})).resolves.toEqual({});

@@ -2,8 +2,6 @@ import {ManifestLoader} from "../lib/ManifestLoader";
 
 // tslint:disable:no-var-requires
 const streamifyString = require('streamify-string');
-const stringifyStream = require('stream-to-string');
-const arrayifyStream = require('arrayify-stream');
 
 // Mock fetch
 (<any> global).fetch = (url: string) => {

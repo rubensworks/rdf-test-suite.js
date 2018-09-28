@@ -19,6 +19,8 @@ const arrayifyStream = require('arrayify-stream');
   case 'http://example.org/abc.ttl':
     body = streamifyString('<a> <b> <c>.');
     break;
+  case '404':
+    return Promise.resolve({ ok: false });
   default:
     return Promise.reject(new Error('Fetch error'));
     break;
@@ -94,6 +96,10 @@ describe('Util', () => {
 
     afterEach((done) => {
       require('rimraf')(cachePath, {}, done);
+    });
+
+    it('should reject on 404s', () => {
+      return expect(Util.fetchCached('404')).rejects.toBeTruthy();
     });
 
     it('should not cache without cachePath', async () => {

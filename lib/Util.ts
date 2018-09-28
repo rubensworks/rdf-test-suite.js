@@ -95,6 +95,9 @@ export class Util {
     } else {
       // Do actual fetch
       const response = await fetch(url);
+      if (!response.ok) {
+        throw new Error(`Could not find ${url}`);
+      }
       const bodyString = await response.text();
 
       if (cachePathLocal) {

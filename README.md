@@ -193,18 +193,18 @@ $ rdf-test-suite myengine.js http://w3c.github.io/rdf-tests/sparql11/data-sparql
 
 ## Supported test suites
 
-| Manifest | Specification | Interface |
-| -------- | ------------- | --------- |
-| [SPARQL 1.1 tests](http://w3c.github.io/rdf-tests/sparql11/data-sparql11/) | [SPARQL 1.1 Query](http://www.w3.org/TR/sparql11-query/) | [`IQueryEngine`](https://github.com/rubensworks/rdf-test-suite.js/blob/master/lib/testcase/sparql/IQueryEngine.ts) |
-| [SPARQL 1.1 tests](http://w3c.github.io/rdf-tests/sparql11/data-sparql11/) | [SPARQL 1.1 Update](http://www.w3.org/TR/sparql11-update/) | ✖ |
-| [SPARQL 1.1 tests](http://w3c.github.io/rdf-tests/sparql11/data-sparql11/) | [SPARQL 1.1 Results CSV/TSV](http://www.w3.org/TR/sparql11-results-csv-tsv/) | ✖ |
-| [SPARQL 1.1 tests](http://w3c.github.io/rdf-tests/sparql11/data-sparql11/) | [SPARQL 1.1 Results JSON](http://www.w3.org/TR/sparql11-results-json/) | ✖ |
-| [SPARQL 1.1 tests](http://w3c.github.io/rdf-tests/sparql11/data-sparql11/) | [SPARQL 1.1 Federated Query](http://www.w3.org/TR/sparql11-federated-query/) | ✖ |
-| [SPARQL 1.1 tests](http://w3c.github.io/rdf-tests/sparql11/data-sparql11/) | [SPARQL 1.1 Entailment](http://www.w3.org/TR/sparql11-entailment/) | ✖ |
-| [SPARQL 1.1 tests](http://w3c.github.io/rdf-tests/sparql11/data-sparql11/) | [SPARQL 1.1 Service Description](http://www.w3.org/TR/sparql11-service-description/) | ✖ |
-| [SPARQL 1.1 tests](http://w3c.github.io/rdf-tests/sparql11/data-sparql11/) | [SPARQL 1.1 Protocol](http://www.w3.org/TR/sparql11-protocol/) | ✖ |
-| [SPARQL 1.1 tests](http://w3c.github.io/rdf-tests/sparql11/data-sparql11/) | [SPARQL 1.1 HTTP RDF Update](http://www.w3.org/TR/sparql11-http-rdf-update/) | ✖ |
-| [RDF/XML Syntax Tests](https://w3c.github.io/rdf-tests/rdf-xml/) | [RDF 1.1 XML Syntax](https://www.w3.org/TR/rdf-syntax-grammar/) | [`IParser`](https://github.com/rubensworks/rdf-test-suite.js/blob/master/lib/testcase/rdfsyntax/IParser.ts) |
+| Manifest | Specification | Interface | Entry manifest |
+| -------- | ------------- | --------- | -------------- |
+| [SPARQL 1.1 tests](http://w3c.github.io/rdf-tests/sparql11/data-sparql11/) | [SPARQL 1.1 Query](http://www.w3.org/TR/sparql11-query/) | [`IQueryEngine`](https://github.com/rubensworks/rdf-test-suite.js/blob/master/lib/testcase/sparql/IQueryEngine.ts) | http://w3c.github.io/rdf-tests/sparql11/data-sparql11/manifest-all.ttl |
+| [SPARQL 1.1 tests](http://w3c.github.io/rdf-tests/sparql11/data-sparql11/) | [SPARQL 1.1 Update](http://www.w3.org/TR/sparql11-update/) | ✖ | http://w3c.github.io/rdf-tests/sparql11/data-sparql11/manifest-all.ttl |
+| [SPARQL 1.1 tests](http://w3c.github.io/rdf-tests/sparql11/data-sparql11/) | [SPARQL 1.1 Results CSV/TSV](http://www.w3.org/TR/sparql11-results-csv-tsv/) | ✖ | http://w3c.github.io/rdf-tests/sparql11/data-sparql11/manifest-all.ttl |
+| [SPARQL 1.1 tests](http://w3c.github.io/rdf-tests/sparql11/data-sparql11/) | [SPARQL 1.1 Results JSON](http://www.w3.org/TR/sparql11-results-json/) | ✖ | http://w3c.github.io/rdf-tests/sparql11/data-sparql11/manifest-all.ttl |
+| [SPARQL 1.1 tests](http://w3c.github.io/rdf-tests/sparql11/data-sparql11/) | [SPARQL 1.1 Federated Query](http://www.w3.org/TR/sparql11-federated-query/) | ✖ | http://w3c.github.io/rdf-tests/sparql11/data-sparql11/manifest-all.ttl |
+| [SPARQL 1.1 tests](http://w3c.github.io/rdf-tests/sparql11/data-sparql11/) | [SPARQL 1.1 Entailment](http://www.w3.org/TR/sparql11-entailment/) | ✖ | http://w3c.github.io/rdf-tests/sparql11/data-sparql11/manifest-all.ttl |
+| [SPARQL 1.1 tests](http://w3c.github.io/rdf-tests/sparql11/data-sparql11/) | [SPARQL 1.1 Service Description](http://www.w3.org/TR/sparql11-service-description/) | ✖ | http://w3c.github.io/rdf-tests/sparql11/data-sparql11/manifest-all.ttl |
+| [SPARQL 1.1 tests](http://w3c.github.io/rdf-tests/sparql11/data-sparql11/) | [SPARQL 1.1 Protocol](http://www.w3.org/TR/sparql11-protocol/) | ✖ | http://w3c.github.io/rdf-tests/sparql11/data-sparql11/manifest-all.ttl |
+| [SPARQL 1.1 tests](http://w3c.github.io/rdf-tests/sparql11/data-sparql11/) | [SPARQL 1.1 HTTP RDF Update](http://www.w3.org/TR/sparql11-http-rdf-update/) | ✖ | http://w3c.github.io/rdf-tests/sparql11/data-sparql11/manifest-all.ttl |
+| [RDF/XML Syntax Tests](https://w3c.github.io/rdf-tests/rdf-xml/) | [RDF 1.1 XML Syntax](https://www.w3.org/TR/rdf-syntax-grammar/) | [`IParser`](https://github.com/rubensworks/rdf-test-suite.js/blob/master/lib/testcase/rdfsyntax/IParser.ts) | http://w3c.github.io/rdf-tests/rdf-xml/manifest.ttl |
 
 ## License
 This software is written by [Ruben Taelman](http://rubensworks.net/).

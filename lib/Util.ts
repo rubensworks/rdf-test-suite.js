@@ -24,8 +24,10 @@ export class Util {
    * @return {string} The content type.
    */
   public static identifyContentType(url: string, headers: Headers): string {
-    return headers.get('Content-Type') || Util.EXTENSION_TO_CONTENTTYPE[url
-      .substr(url.lastIndexOf('\.') + 1)] || 'unknown';
+    const contentType = headers.get('Content-Type');
+    return (contentType && contentType.indexOf('application/octet-stream') < 0 ? contentType : false)
+      || Util.EXTENSION_TO_CONTENTTYPE[url.substr(url.lastIndexOf('\.') + 1)]
+      || 'unknown';
   }
 
   /**

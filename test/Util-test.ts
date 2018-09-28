@@ -44,6 +44,11 @@ describe('Util', () => {
         { 'Content-Type': 'application/n-triples' }))).toEqual('application/n-triples');
     });
 
+    it('should return a content type for valid headers with application/octet-stream and an unknown prefix', () => {
+      return expect(Util.identifyContentType('http://example.org/abc.xyz', new Headers(
+        { 'Content-Type': 'application/octet-stream' }))).toEqual('unknown');
+    });
+
     it('should given priority to the header', () => {
       return expect(Util.identifyContentType('http://example.org/abc.nt', new Headers(
         { 'Content-Type': 'application/sparql-results+json' }))).toEqual('application/sparql-results+json');

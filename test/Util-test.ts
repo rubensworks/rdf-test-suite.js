@@ -185,4 +185,10 @@ describe('Util', () => {
     });
   });
 
+  describe('#licenseToUri', () => {
+    it('should convert the MIT license to its URI', () => {
+      return expect(Util.licenseToUri('MIT')).toEqual('http://opensource.org/licenses/MIT');
+    });
+  });
+
 });

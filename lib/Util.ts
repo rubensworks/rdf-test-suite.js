@@ -125,6 +125,17 @@ export class Util {
     return newData;
   }
 
+  /**
+   * Convert a license string to a URI.
+   * @param {string} license A license string.
+   * @return {string} A license URI.
+   */
+  public static licenseToUri(license: string) {
+    // TODO: make this more error-prone like here:
+    // https://github.com/LinkedSoftwareDependencies/npm-extraction-server/blob/master/lib/npm/NpmContext.js#L151
+    return 'http://opensource.org/licenses/' + license;
+  }
+
 }
 
 /**

@@ -5,6 +5,7 @@
   ],
   "rules": {
     "no-var-requires": false,
-    "no-unused-expression": false
+    "no-unused-expression": false,
+    "object-literal-sort-keys": false
   }
 }

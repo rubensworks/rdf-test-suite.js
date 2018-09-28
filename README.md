@@ -20,6 +20,14 @@ Not all [RDF test suites](https://w3c.github.io/rdf-tests/) are supported at the
 However, this package is fully _modular_,
 so that support for different test cases can be implemented easily.
 
+Planned support:
+* [SPARQL 1.1](http://w3c.github.io/rdf-tests/sparql11/data-sparql11/) (_other specifications_)
+* [N-Quads](https://w3c.github.io/rdf-tests/nquads/reports/)
+* [N-Triples](https://w3c.github.io/rdf-tests/ntriples/reports/)
+* [TriG](https://w3c.github.io/rdf-tests/trig/reports/)
+* [Turtle](https://w3c.github.io/rdf-tests/turtle/reports/)
+* [RDF Schema and Semantics](https://w3c.github.io/rdf-tests/rdf-mt/reports/)
+
 ## Installation
 
 Either install it globally:
@@ -97,6 +105,9 @@ Test results are human readable by default.
 This can be changed to output machine-readable reports in the
 [EARL](https://www.w3.org/TR/EARL10-Schema/) vocabulary
 in the [Turtle serialization](https://www.w3.org/TR/turtle/).
+These reports can be published to report the compliance of engines
+to certain specifications, like on
+[W3C’s RDF Test Curation Community Group](https://w3c.github.io/rdf-tests/).
 
 As EARL reports require some metadata on your engine,
 you will need to provide a properties file via the `-p` argument.

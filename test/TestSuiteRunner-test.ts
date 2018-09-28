@@ -1,5 +1,3 @@
-import {Util} from "../lib/Util";
-
 const mockTest1 = {
   name: 'Test1',
   test: () => Promise.resolve(1),
@@ -74,9 +72,10 @@ jest.mock('../lib/ManifestLoader', () => ({
   },
 }));
 
+import "jest-rdf";
 import * as LogSymbols from "log-symbols";
 import {PassThrough} from "stream";
-import {IAuthor, TestSuiteRunner} from "../lib/TestSuiteRunner";
+import {TestSuiteRunner} from "../lib/TestSuiteRunner";
 
 // tslint:disable:no-var-requires
 const stringifyStream = require('stream-to-string');

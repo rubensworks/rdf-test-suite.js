@@ -1,5 +1,4 @@
 import {literal, namedNode, triple} from "@rdfjs/data-model";
-import "jest-rdf";
 import * as LogSymbols from "log-symbols";
 import * as RDF from "rdf-js";
 import {IManifest} from "./IManifest";

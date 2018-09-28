@@ -14,10 +14,10 @@ if (args._.length < 2) {
   console.error(`sparql-test executes SPARQL test suites
 
 Usage:
-  rdf-test-suite path/to/myengine.js https://www.w3.org/2001/sw/DataAccess/tests/data-r2/manifest-evaluation.ttl
-  rdf-test-suite path/to/myengine.js https://www.w3.org/2001/sw/DataAccess/tests/data-r2/manifest-evaluation.ttl \
+  rdf-test-suite path/to/myengine.js http://w3c.github.io/rdf-tests/sparql11/data-sparql11/manifest-all.ttl
+  rdf-test-suite path/to/myengine.js http://w3c.github.io/rdf-tests/sparql11/data-sparql11/manifest-all.ttl \
     -s http://www.w3.org/TR/sparql11-query/
-  rdf-test-suite path/to/myengine.js https://www.w3.org/2001/sw/DataAccess/tests/data-r2/manifest-evaluation.ttl \
+  rdf-test-suite path/to/myengine.js http://w3c.github.io/rdf-tests/sparql11/data-sparql11/manifest-all.ttl \
     -o earl -p earl-meta.json > earl.ttl
 
 Options:

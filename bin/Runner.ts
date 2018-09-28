@@ -51,28 +51,6 @@ if (args.c) {
 // Import the engine
 const engine = require(process.cwd() + '/' + args._[0]);
 
-// TODO: derive via config settings (autogeneratable from package.json via separate script)
-/*const properties: IEarlProperties = {
-  reportUri: '',
-  authors: [
-    {
-      homepage: 'https://www.rubensworks.net/',
-      name: 'Ruben Taelman',
-      uri: 'https://www.rubensworks.net/#me',
-    },
-  ],
-  licenseUri: 'http://opensource.org/licenses/MIT',
-  applicationUri: 'https://www.npmjs.com/package/@comunica/actor-init-sparql',
-  applicationHomepageUrl: 'https://github.com/comunica/comunica',
-  applicationBugsUrl: 'https://github.com/comunica/comunica/issues',
-  applicationNameFull: 'Comunica SPARQL',
-  applicationNameNpm: '@comunica/actor-init-sparql',
-  applicationDescription: 'A Comunica engine for SPARQL query evaluation over heterogeneous interfaces',
-  specificationUris: [
-    'http://www.w3.org/TR/sparql11-query/',
-  ],
-};*/
-
 // Fetch the manifest, run the tests, and print them
 const testSuiteRunner = new TestSuiteRunner();
 testSuiteRunner.runManifest(args._[1], engine, cachePath, specification)

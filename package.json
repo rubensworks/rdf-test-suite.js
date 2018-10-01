@@ -48,12 +48,17 @@
     "pre-commit": "^1.2.2",
     "rimraf": "^2.6.2",
     "streamify-array": "^1.0.1",
-    "ts-jest": "^23.0.1",
+    "ts-jest": "^23.10.3",
     "tslint": "^5.8.0",
     "tslint-eslint-rules": "^5.3.1",
     "typescript": "^3.0.3"
   },
   "jest": {
+    "globals": {
+      "ts-jest": {
+        "tsConfig": "test/tsconfig.json"
+      }
+    },
     "transform": {
       "^.+\\.ts$": "ts-jest"
     },

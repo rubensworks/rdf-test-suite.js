@@ -1,6 +1,7 @@
 import {isomorphic} from "rdf-isomorphic";
 import * as RDF from "rdf-js";
 import {Resource} from "rdf-object";
+import {quadToStringQuad} from "rdf-string";
 import {Util} from "../../../Util";
 import {ITestCaseData} from "../../ITestCase";
 import {ITestCaseHandler} from "../../ITestCaseHandler";
@@ -56,9 +57,9 @@ export class TestCaseXmlEval implements ITestCaseRdfSyntax {
       throw new Error(`Invalid data parsing
   Query: ${this.data}
 
-  Expected: ${this.expected.toString()}
+  Expected: ${JSON.stringify(this.expected.map(quadToStringQuad), null, '  ')}
 
-  Got: ${quads.toString()}
+  Got: ${JSON.stringify(quads.map(quadToStringQuad), null, '  ')}
 `);
     }
   }

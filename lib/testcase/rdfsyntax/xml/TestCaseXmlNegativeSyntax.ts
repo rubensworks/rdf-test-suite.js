@@ -47,7 +47,9 @@ export class TestCaseXmlNegativeSyntax implements ITestCaseRdfSyntax {
     } catch (e) {
       return;
     }
-    throw new Error(`Expected to throw an error when parsing.`);
+    throw new Error(`Expected to throw an error when parsing.
+  Query: ${this.data}
+`);
   }
 
 }

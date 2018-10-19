@@ -93,7 +93,7 @@ describe('TestCaseQueryEvaluationHandler', () => {
   describe('#parseQueryResult', () => {
     it('should reject on an unknown content type', async () => {
       return expect(TestCaseQueryEvaluationHandler.parseQueryResult('unknown', 'a', streamifyString(`
-`))).rejects.toBeTruthy();
+`), '')).rejects.toBeTruthy();
     });
 
     it('should resolve on SPARQL/XML', async () => {
@@ -117,7 +117,7 @@ describe('TestCaseQueryEvaluationHandler', () => {
     </result>
   </results>
 </sparql>
-`))).resolves
+`), '')).resolves
         .toEqual({
           checkOrder: false,
           type: 'bindings',
@@ -149,7 +149,7 @@ describe('TestCaseQueryEvaluationHandler', () => {
     ]
   }
 }
-`))).resolves
+`), '')).resolves
         .toEqual({
           checkOrder: false,
           type: 'bindings',
@@ -169,7 +169,7 @@ describe('TestCaseQueryEvaluationHandler', () => {
       return expect(TestCaseQueryEvaluationHandler.parseQueryResult('text/turtle',
         'a', streamifyString(`
 <a> <b> <c>.
-`))).resolves
+`), '')).resolves
         .toMatchObject({
           type: 'quads',
           value: [
@@ -182,7 +182,7 @@ describe('TestCaseQueryEvaluationHandler', () => {
       return expect(TestCaseQueryEvaluationHandler.parseQueryResult('text/turtle',
         'a', streamifyString(`
 <a> a <http://www.w3.org/2001/sw/DataAccess/tests/result-set#ResultSet>.
-`))).resolves
+`), '')).resolves
         .toMatchObject({
           checkOrder: false,
           type: 'bindings',

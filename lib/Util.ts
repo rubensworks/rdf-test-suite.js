@@ -2,6 +2,8 @@ import {createReadStream, existsSync, readFileSync, ReadStream, writeFileSync} f
 import {StreamParser} from 'n3';
 import * as RDF from "rdf-js";
 import {RdfXmlParser} from "rdfxml-streaming-parser";
+import {JsonLdParser} from "streaming-jsonld-parser";
+import {CacheableDocumentLoader} from "./CacheableDocumentLoader";
 // tslint:disable:no-var-requires
 const streamifyString = require('streamify-string');
 
@@ -53,7 +55,7 @@ export class Util {
     const response = await Util.fetchCached(url, cachePath);
     const contentType = Util.identifyContentType(response.url, response.headers);
     return [response.url, await Util.parseRdfRaw(contentType,
-      normalizeUrl ? Util.normalizeBaseUrl(response.url) : response.url, response.body)];
+      normalizeUrl ? Util.normalizeBaseUrl(response.url) : response.url, response.body, cachePath)];
   }
 
   /**
@@ -61,10 +63,11 @@ export class Util {
    * @param {string} contentType The content type of the given text stream.
    * @param {string} baseIRI The base IRI of the stream.
    * @param {NodeJS.ReadableStream} data Text stream in a certain RDF serialization.
+   * @param {string} cachePath The base directory to cache files in. If falsy, then no cache will be used.
    * @return {Stream} A parsed RDF stream.
    */
   public static parseRdfRaw(contentType: string, baseIRI: string,
-                            data: NodeJS.ReadableStream): RDF.Stream {
+                            data: NodeJS.ReadableStream, cachePath: string): RDF.Stream {
     if (contentType.indexOf('application/x-turtle') >= 0
       || contentType.indexOf('text/turtle') >= 0
       || contentType.indexOf('application/n-triples') >= 0) {
@@ -72,6 +75,9 @@ export class Util {
     }
     if (contentType.indexOf('application/rdf+xml') >= 0) {
       return data.pipe(new RdfXmlParser({ baseIRI }));
+    }
+    if (contentType.indexOf('application/ld+json') >= 0) {
+      return data.pipe(new JsonLdParser({ baseIRI, documentLoader: new CacheableDocumentLoader(cachePath) }));
     }
 
     throw new Error(`Could not parse the RDF serialization ${contentType} on ${baseIRI}`);

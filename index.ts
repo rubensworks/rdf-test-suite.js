@@ -13,6 +13,7 @@ export * from "./lib/testcase/sparql/TestCaseQueryEvaluation";
 export * from "./lib/testcase/ITestCase";
 export * from "./lib/testcase/ITestCaseHandler";
 export * from "./lib/testcase/TestCaseUnsupported";
+export * from "./lib/CacheableDocumentLoader";
 export * from "./lib/IManifest";
 export * from "./lib/ManifestLoader";
 export * from "./lib/TestSuiteRunner";

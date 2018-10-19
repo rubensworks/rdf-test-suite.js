@@ -70,7 +70,8 @@ export class Util {
                             data: NodeJS.ReadableStream, cachePath: string): RDF.Stream {
     if (contentType.indexOf('application/x-turtle') >= 0
       || contentType.indexOf('text/turtle') >= 0
-      || contentType.indexOf('application/n-triples') >= 0) {
+      || contentType.indexOf('application/n-triples') >= 0
+      || contentType.indexOf('application/n-quads') >= 0) {
       return data.pipe(new StreamParser({ baseIRI }));
     }
     if (contentType.indexOf('application/rdf+xml') >= 0) {

@@ -163,6 +163,15 @@ describe('Util', () => {
         ]);
     });
 
+    it('should parse application/n-quads streams', async () => {
+      expect(await arrayifyStream(Util.parseRdfRaw('application/n-quads', 'http://example.org/',
+        streamifyString('<a> <b> <c> <d>.'), '')))
+        .toEqualRdfQuadArray([
+          quad(namedNode('http://example.org/a'), namedNode('http://example.org/b'),
+            namedNode('http://example.org/c'), namedNode('http://example.org/d')),
+        ]);
+    });
+
     it('should parse application/rdf+xml streams', async () => {
       expect(await arrayifyStream(Util.parseRdfRaw('application/rdf+xml', 'http://example.org/',
         streamifyString(`<?xml version="1.0"?>

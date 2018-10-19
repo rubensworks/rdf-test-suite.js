@@ -58,6 +58,9 @@ export class ManifestLoader {
 
     // Import all sub-manifests
     const manifest = objectLoader.resources[url];
+    if (!manifest) {
+      throw new Error(`Could not find a resource ${url} in the document at ${url}`);
+    }
     const includeJobs: Promise<void>[] = [];
     for (const includeList of manifest.properties.include) {
       for (const include of includeList.list) {

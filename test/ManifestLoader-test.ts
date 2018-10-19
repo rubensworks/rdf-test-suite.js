@@ -30,6 +30,18 @@ const streamifyString = require('streamify-string');
 	mf:include (<http://valid1>).
 `);
     break;
+  case 'http://invalidroot':
+    body = streamifyString(`
+@prefix rdf:    <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs:	<http://www.w3.org/2000/01/rdf-schema#> .
+@prefix mf:     <http://www.w3.org/2001/sw/DataAccess/tests/test-manifest#> .
+@prefix qt:     <http://www.w3.org/2001/sw/DataAccess/tests/test-query#> .
+
+<http://ex.org/abc> a mf:Manifest ;
+	rdfs:label "SPARQL 1.1 tests";
+	mf:include ("http://invalid1").
+`);
+    break;
   case 'http://invalidsub1':
     body = streamifyString(`
 @prefix rdf:    <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
@@ -79,6 +91,10 @@ describe('ManifestLoader', () => {
         testEntries: [],
         uri: 'http://valid1',
       });
+    });
+
+    it('should error on non-self describing documents', () => {
+      return expect(loader.from('http://invalidroot')).rejects.toBeTruthy();
     });
 
     it('should return on valid submanifests', () => {

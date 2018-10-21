@@ -21,10 +21,12 @@ export class TestSuiteRunner {
    * @param handler The handler to run the tests with.
    * @param {string} cachePath The base directory to cache files in. If falsy, then no cache will be used.
    * @param {string} specification An optional specification to scope the manifest tests by.
+   * @param {RegExp} testRegex An optional regex to filter test IRIs by.
    * @return {Promise<ITestResult[]>} A promise resolving to an array of test results.
    */
   public async runManifest(manifestUrl: string, handler: any,
-                           cachePath: string, specification?: string): Promise<ITestResult[]> {
+                           cachePath: string, specification?: string,
+                           testRegex?: RegExp): Promise<ITestResult[]> {
     const manifest: IManifest = await new ManifestLoader().from(manifestUrl, cachePath);
     const results: ITestResult[] = [];
 
@@ -33,11 +35,11 @@ export class TestSuiteRunner {
       if (!manifest.specifications || !manifest.specifications[specification]) {
         return [];
       }
-      await this.runManifestConcrete(manifest.specifications[specification], handler, results);
+      await this.runManifestConcrete(manifest.specifications[specification], handler, testRegex, results);
       return results;
     }
 
-    await this.runManifestConcrete(manifest, handler, results);
+    await this.runManifestConcrete(manifest, handler, testRegex, results);
     return results;
   }
 
@@ -45,27 +47,30 @@ export class TestSuiteRunner {
    * Run the given manifest.
    * @param {string} manifest A manifest.
    * @param handler The handler to run the tests with.
+   * @param {RegExp} testRegex An optional regex to filter test IRIs by.
    * @param {ITestResult[]} results An array to append the test results to
    * @return {Promise<void>} A promise resolving when the tests are finished.
    */
-  public async runManifestConcrete(manifest: IManifest, handler: any, results: ITestResult[]) {
+  public async runManifestConcrete(manifest: IManifest, handler: any, testRegex: RegExp, results: ITestResult[]) {
     // Execute all tests in this manifest
     if (manifest.testEntries) {
       for (const test of manifest.testEntries) {
-        try {
-          await test.test(handler);
-        } catch (error) {
-          results.push({ test, ok: false, error });
-          continue;
+        if (!testRegex || testRegex.test(test.uri)) {
+          try {
+            await test.test(handler);
+          } catch (error) {
+            results.push({ test, ok: false, error });
+            continue;
+          }
+          results.push({ test, ok: true });
         }
-        results.push({ test, ok: true });
       }
     }
 
     // Recursively handle all sub-manifests
     if (manifest.subManifests) {
       for (const subManifest of manifest.subManifests) {
-        await (this.runManifestConcrete(subManifest, handler, results));
+        await (this.runManifestConcrete(subManifest, handler, testRegex, results));
       }
     }
   }

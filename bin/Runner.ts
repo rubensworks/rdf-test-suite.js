@@ -26,6 +26,7 @@ Options:
   -s    a specification URI to filter by (e.g. http://www.w3.org/TR/sparql11-query/)
   -c    enable HTTP caching at the given directory (disabled by default)
   -e    always exit with status code 0 on test errors
+  -t    regex for test IRIs to run
 `);
   process.exit(1);
 }
@@ -38,6 +39,9 @@ if (args.o) {
 
 // Scope to a specification
 const specification = args.s;
+
+// Optional test IRI regex
+const testRegex = new RegExp(args.t);
 
 // Enable caching if needed
 let cachePath: string = null;
@@ -53,7 +57,7 @@ const engine = require(process.cwd() + '/' + args._[0]);
 
 // Fetch the manifest, run the tests, and print them
 const testSuiteRunner = new TestSuiteRunner();
-testSuiteRunner.runManifest(args._[1], engine, cachePath, specification)
+testSuiteRunner.runManifest(args._[1], engine, cachePath, specification, testRegex)
   .then((testResults) => {
     switch (format) {
     case 'earl':

@@ -154,6 +154,37 @@ describe('TestSuiteRunner', () => {
         },
       ]);
     });
+
+    it('should produce results for a valid manifest with a non-matching regex', () => {
+      return expect(runner.runManifest('valid', handler, null, null, /abc/)).resolves.toEqual([]);
+    });
+
+    it('should produce results for a valid manifest with a single-matching regex', () => {
+      return expect(runner.runManifest('valid', handler, null, null, /1/)).resolves.toEqual([
+        {
+          ok: true,
+          test: mockTest1,
+        },
+      ]);
+    });
+
+    it('should produce results for a valid manifest with a multiple-matching regex', () => {
+      return expect(runner.runManifest('valid', handler, null, null, /^.*test.*$/)).resolves.toEqual([
+        {
+          ok: true,
+          test: mockTest1,
+        },
+        {
+          ok: true,
+          test: mockTest2,
+        },
+        {
+          error: new Error('Fail'),
+          ok: false,
+          test: mockTest3,
+        },
+      ]);
+    });
   });
 
   describe('resultsToText', () => {

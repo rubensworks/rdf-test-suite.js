@@ -90,7 +90,7 @@
     "minimist": "^1.2.0",
     "n3": "^1.0.0-beta.1",
     "node-web-streams": "^0.2.2",
-    "rdf-isomorphic": "^1.0.2",
+    "rdf-isomorphic": "^1.0.3",
     "rdf-object": "^1.0.0",
     "rdf-quad": "^1.2.2",
     "rdf-string": "^1.2.0",

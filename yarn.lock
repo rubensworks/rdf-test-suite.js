@@ -3043,6 +3043,14 @@ rdf-isomorphic@^1.0.2:
     rdf-string "^1.2.0"
     rdf-terms "^1.2.0"
 
+rdf-isomorphic@^1.0.3:
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/rdf-isomorphic/-/rdf-isomorphic-1.0.3.tgz#cfcb63bdec22f91ef86272b5a643d23904d79fc4"
+  integrity sha512-3yu333Hlq9WHcvBALRYkynm3sVEBv7SFnRchhPAOEEwG20Loxgu2iCOE+F9DN13GwfBuj9unswz15vs7A7yahg==
+  dependencies:
+    rdf-string "^1.2.0"
+    rdf-terms "^1.2.0"
+
 rdf-object@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/rdf-object/-/rdf-object-1.0.0.tgz#507d62910444bf1441197a6ef8e7cf19ac61f952"

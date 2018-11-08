@@ -400,7 +400,7 @@ describe('TestCaseQueryEvaluationHandler', () => {
         quad('_:b3', 'http://www.w3.org/2001/sw/DataAccess/tests/result-set#variable', 'v3'),
         quad('_:b3', 'http://www.w3.org/2001/sw/DataAccess/tests/result-set#value', '"V3"'),
 
-        quad('_:s1', 'http://www.w3.org/2001/sw/DataAccess/tests/result-set#index', '"0"'),
+        quad('_:s2', 'http://www.w3.org/2001/sw/DataAccess/tests/result-set#index', '"0"'),
         quad('_:s2', 'http://www.w3.org/2001/sw/DataAccess/tests/result-set#binding', '_:b4'),
         quad('_:s2', 'http://www.w3.org/2001/sw/DataAccess/tests/result-set#binding', '_:b5'),
         quad('_:s2', 'http://www.w3.org/2001/sw/DataAccess/tests/result-set#binding', '_:b6'),

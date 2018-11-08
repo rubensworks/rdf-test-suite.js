@@ -156,7 +156,8 @@ export class TestCaseQueryEvaluationHandler implements ITestCaseHandler<TestCase
 
     // check if any binding has .index
     let checkOrder: boolean = false;
-    for (const solution of resultSet.properties.solutions) {
+    const s = resultSet.properties.solutions;
+    for (const solution of s) {
       if (solution.property.index) {
         checkOrder = true;
         break;
@@ -166,7 +167,9 @@ export class TestCaseQueryEvaluationHandler implements ITestCaseHandler<TestCase
     // Ensure that the solutions are sorted by index
     const solutions = resultSet.properties.solutions;
     if (checkOrder) {
-      solutions.sort((solution: Resource) => parseInt(solution.property.index.value, 10));
+      solutions.sort((solution1: Resource, solution2: Resource) => {
+        return parseInt(solution1.property.index.value, 10) - parseInt(solution2.property.index.value, 10);
+      });
     }
 
     // Collect the bindings as object

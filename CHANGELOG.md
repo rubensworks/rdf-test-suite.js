@@ -1,6 +1,12 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+<a name="v1.1.1"></a>
+## [v1.1.1](https://github.com/rubensworks/rdf-test-suite.js/compare/v1.1.0...v1.1.1) - 2018-11-08
+
+### Fixed
+* [Fix invalid sorting of query solutions](https://github.com/rubensworks/rdf-test-suite.js/commit/aa740ee258c05b13a0615b78b8f82f4c5f18f2cc)
+
 <a name="v1.1.0"></a>
 ## [v1.1.0](https://github.com/rubensworks/rdf-test-suite.js/compare/v1.0.0...v1.1.0) - 2018-11-08
 

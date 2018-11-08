@@ -1,9 +1,9 @@
 import {createReadStream, existsSync, readFileSync, ReadStream, writeFileSync} from "fs";
-import {StreamParser} from 'n3';
 import * as RDF from "rdf-js";
 import {RdfXmlParser} from "rdfxml-streaming-parser";
 import {JsonLdParser} from "streaming-jsonld-parser";
 import {CacheableDocumentLoader} from "./CacheableDocumentLoader";
+import {GeneralizedN3StreamParser} from "./GeneralizedN3StreamParser";
 // tslint:disable:no-var-requires
 const streamifyString = require('streamify-string');
 
@@ -72,7 +72,7 @@ export class Util {
       || contentType.indexOf('text/turtle') >= 0
       || contentType.indexOf('application/n-triples') >= 0
       || contentType.indexOf('application/n-quads') >= 0) {
-      return data.pipe(new StreamParser({ baseIRI }));
+      return data.pipe(new GeneralizedN3StreamParser({ baseIRI }));
     }
     if (contentType.indexOf('application/rdf+xml') >= 0) {
       return data.pipe(new RdfXmlParser({ baseIRI }));

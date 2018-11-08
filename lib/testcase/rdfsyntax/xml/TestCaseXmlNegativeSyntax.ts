@@ -43,7 +43,7 @@ export class TestCaseXmlNegativeSyntax implements ITestCaseRdfSyntax {
 
   public async test(parser: IParser): Promise<void> {
     try {
-      await parser.parse(this.data, this.baseIRI);
+      await parser.parse(this.data, this.baseIRI, {});
     } catch (e) {
       return;
     }

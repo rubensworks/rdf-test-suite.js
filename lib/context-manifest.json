@@ -25,5 +25,9 @@
   "data": "q:data",
   "graph": "q:graph",
   "graphData": "q:graphData",
-  "query": "q:query"
+  "query": "q:query",
+
+  "jld": "https://json-ld.org/test-suite/vocab#",
+  "jsonLdOptions": "jld:option",
+  "jsonLdProduceGeneralizedRdf": "jld:produceGeneralizedRdf"
 }

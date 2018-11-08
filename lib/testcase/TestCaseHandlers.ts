@@ -1,3 +1,4 @@
+import {TestCaseJsonLdToRdfHandler} from "./rdfsyntax/jsonld/TestCaseJsonLdToRdf";
 import {TestCaseEvalHandler} from "./rdfsyntax/TestCaseEval";
 import {TestCaseSyntaxHandler} from "./rdfsyntax/TestCaseSyntax";
 import {TestCaseNegativeSyntaxHandler} from "./sparql/TestCaseNegativeSyntax";
@@ -72,5 +73,9 @@ module.exports = {
     new TestCaseSyntaxHandler(false),
   'http://www.w3.org/ns/rdftest#TestTrigNegativeEval':
     new TestCaseSyntaxHandler(false),
+
+  // JSON-LD test suite
+  'https://json-ld.org/test-suite/vocab#ToRDFTest':
+    new TestCaseJsonLdToRdfHandler(),
 };
 // tslint:enable:object-literal-sort-keys

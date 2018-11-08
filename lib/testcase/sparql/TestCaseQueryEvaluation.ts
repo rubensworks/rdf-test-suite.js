@@ -34,14 +34,13 @@ export class TestCaseQueryEvaluationHandler implements ITestCaseHandler<TestCase
    * @param {string} contentType The content type.
    * @param {string} url The base IRI.
    * @param {NodeJS.ReadableStream} data The data stream to parse.
-   * @param {string} cachePath The base directory to cache files in. If falsy, then no cache will be used.
    * @return {Promise<IQueryResult>} A promise resolving to a SPARQL query result.
    */
   public static async parseQueryResult(contentType: string, url: string,
-                                       data: NodeJS.ReadableStream, cachePath: string): Promise<IQueryResult> {
+                                       data: NodeJS.ReadableStream): Promise<IQueryResult> {
     let queryResult: IQueryResult;
     try {
-      const rdfStream: RDF.Stream = Util.parseRdfRaw(contentType, url, data, cachePath);
+      const rdfStream: RDF.Stream = Util.parseRdfRaw(contentType, url, data);
       queryResult = new QueryResultQuads(await arrayifyStream(rdfStream));
     } catch (e) {
       // Fallthrough to the next cases
@@ -226,7 +225,7 @@ export class TestCaseQueryEvaluationHandler implements ITestCaseHandler<TestCase
       queryData,
       await TestCaseQueryEvaluationHandler.parseQueryResult(
         Util.identifyContentType(queryResponse.url, queryResponse.headers),
-        queryResponse.url, queryResponse.body, cachePath),
+        queryResponse.url, queryResponse.body),
       laxCardinality);
   }
 

@@ -132,13 +132,13 @@ describe('Util', () => {
 
   describe('#parseRdfRaw', () => {
     it('should error on an unknown content type', async () => {
-      expect(() => Util.parseRdfRaw('unknown', 'http://example.org/', streamifyString('ABC'), ''))
+      expect(() => Util.parseRdfRaw('unknown', 'http://example.org/', streamifyString('ABC')))
         .toThrow();
     });
 
     it('should parse application/x-turtle streams', async () => {
       expect(await arrayifyStream(Util.parseRdfRaw('application/x-turtle', 'http://example.org/',
-        streamifyString('<a> <b> <c>.'), '')))
+        streamifyString('<a> <b> <c>.'))))
         .toEqualRdfQuadArray([
           quad(namedNode('http://example.org/a'), namedNode('http://example.org/b'),
             namedNode('http://example.org/c')),
@@ -147,7 +147,7 @@ describe('Util', () => {
 
     it('should parse text/turtle streams', async () => {
       expect(await arrayifyStream(Util.parseRdfRaw('text/turtle', 'http://example.org/',
-        streamifyString('<a> <b> <c>.'), '')))
+        streamifyString('<a> <b> <c>.'))))
         .toEqualRdfQuadArray([
           quad(namedNode('http://example.org/a'), namedNode('http://example.org/b'),
             namedNode('http://example.org/c')),
@@ -156,7 +156,7 @@ describe('Util', () => {
 
     it('should parse application/n-triples streams', async () => {
       expect(await arrayifyStream(Util.parseRdfRaw('application/n-triples', 'http://example.org/',
-        streamifyString('<a> <b> <c>.'), '')))
+        streamifyString('<a> <b> <c>.'))))
         .toEqualRdfQuadArray([
           quad(namedNode('http://example.org/a'), namedNode('http://example.org/b'),
             namedNode('http://example.org/c')),
@@ -165,7 +165,7 @@ describe('Util', () => {
 
     it('should parse application/n-quads streams', async () => {
       expect(await arrayifyStream(Util.parseRdfRaw('application/n-quads', 'http://example.org/',
-        streamifyString('<a> <b> <c> <d>.'), '')))
+        streamifyString('<a> <b> <c> <d>.'))))
         .toEqualRdfQuadArray([
           quad(namedNode('http://example.org/a'), namedNode('http://example.org/b'),
             namedNode('http://example.org/c'), namedNode('http://example.org/d')),
@@ -182,29 +182,12 @@ describe('Util', () => {
   <rdf:Description rdf:about="http://www.w3.org/TR/rdf-syntax-grammar"
              dc:title="RDF1.1 XML Syntax" />
 
-</rdf:RDF>`), '')))
+</rdf:RDF>`))))
         .toEqualRdfQuadArray([
           quad(
             namedNode('http://www.w3.org/TR/rdf-syntax-grammar'),
             namedNode('http://purl.org/dc/elements/1.1/title'),
             literal('RDF1.1 XML Syntax')),
-        ]);
-    });
-
-    it('should parse application/ld+json streams', async () => {
-      expect(await arrayifyStream(Util.parseRdfRaw('application/ld+json', 'http://example.org/',
-        streamifyString(`{
-  "@context": {
-    "ex": "http://example.org/"
-  },
-  "@id": "http://example.org/node",
-  "@type": "ex:abc"
-}`), '')))
-        .toEqualRdfQuadArray([
-          quad(
-            namedNode('http://example.org/node'),
-            namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'),
-            namedNode('http://example.org/abc')),
         ]);
     });
   });

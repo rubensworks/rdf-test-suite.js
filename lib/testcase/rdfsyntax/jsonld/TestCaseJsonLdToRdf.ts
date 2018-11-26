@@ -37,7 +37,7 @@ export class TestCaseJsonLdToRdfHandler implements ITestCaseHandler<TestCaseJson
       return new TestCaseJsonLdToRdf(testCaseData,
         await stringifyStream((await Util.fetchCached(resource.property.action.value, cachePath)).body),
         await arrayifyStream(<any> (await Util.fetchRdf(resource.property.result.value, cachePath, true))[1]),
-        Util.normalizeBaseUrl(resource.property.action.value),
+        resource.property.action.value,
         produceGeneralizedRdf);
     } catch (e) {
       console.error(e);

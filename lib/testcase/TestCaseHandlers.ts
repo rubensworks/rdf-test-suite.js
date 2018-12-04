@@ -1,5 +1,5 @@
-import {TestCaseXmlEvalHandler} from "./rdfsyntax/xml/TestCaseXmlEval";
-import {TestCaseXmlNegativeSyntaxHandler} from "./rdfsyntax/xml/TestCaseXmlNegativeSyntax";
+import {TestCaseEvalHandler} from "./rdfsyntax/TestCaseEval";
+import {TestCaseSyntaxHandler} from "./rdfsyntax/TestCaseSyntax";
 import {TestCaseNegativeSyntaxHandler} from "./sparql/TestCaseNegativeSyntax";
 import {TestCasePositiveSyntaxHandler} from "./sparql/TestCasePositiveSyntax";
 import {TestCaseQueryEvaluationHandler} from "./sparql/TestCaseQueryEvaluation";
@@ -37,8 +37,8 @@ module.exports = {
 
   // RDF/XML test suite
   'http://www.w3.org/ns/rdftest#TestXMLEval':
-    new TestCaseXmlEvalHandler(),
+    new TestCaseEvalHandler(),
   'http://www.w3.org/ns/rdftest#TestXMLNegativeSyntax':
-    new TestCaseXmlNegativeSyntaxHandler(),
+    new TestCaseSyntaxHandler(false),
 };
 // tslint:enable:object-literal-sort-keys

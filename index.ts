@@ -1,5 +1,5 @@
-export * from "./lib/testcase/rdfsyntax/xml/TestCaseXmlEval";
-export * from "./lib/testcase/rdfsyntax/xml/TestCaseXmlNegativeSyntax";
+export * from "./lib/testcase/rdfsyntax/TestCaseEval";
+export * from "./lib/testcase/rdfsyntax/TestCaseSyntax";
 export * from "./lib/testcase/rdfsyntax/IParser";
 export * from "./lib/testcase/rdfsyntax/ITestCaseRdfSyntax";
 export * from "./lib/testcase/sparql/IQueryEngine";

@@ -3,12 +3,6 @@ import {termToString} from "rdf-string";
 import {IManifest, manifestFromResource} from "./IManifest";
 import {ITestCase} from "./testcase/ITestCase";
 import {ITestCaseHandler} from "./testcase/ITestCaseHandler";
-import {TestCaseXmlEvalHandler} from "./testcase/rdfsyntax/xml/TestCaseXmlEval";
-import {TestCaseXmlNegativeSyntaxHandler} from "./testcase/rdfsyntax/xml/TestCaseXmlNegativeSyntax";
-import {TestCaseNegativeSyntaxHandler} from "./testcase/sparql/TestCaseNegativeSyntax";
-import {TestCasePositiveSyntaxHandler} from "./testcase/sparql/TestCasePositiveSyntax";
-import {TestCaseQueryEvaluationHandler} from "./testcase/sparql/TestCaseQueryEvaluation";
-import {TestCaseUnsupportedHandler} from "./testcase/TestCaseUnsupported";
 import {Util} from "./Util";
 
 /**

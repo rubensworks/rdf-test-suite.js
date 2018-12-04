@@ -15,6 +15,10 @@ or it can output machine-readable reports in the
 Currently, the following test suites are supported:
 * [SPARQL 1.1](http://w3c.github.io/rdf-tests/sparql11/data-sparql11/) (_only [SPARQL 1.1 Query](http://www.w3.org/TR/sparql11-query/) spec_)
 * [RDF/XML](http://w3c.github.io/rdf-tests/rdf-xml/)
+* [N-Triples](https://w3c.github.io/rdf-tests/ntriples/)
+* [N-Quads](https://w3c.github.io/rdf-tests/nquads/)
+* [Turtle](https://w3c.github.io/rdf-tests/turtle/)
+* [TriG](https://w3c.github.io/rdf-tests/trig/)
 
 Not all [RDF test suites](https://w3c.github.io/rdf-tests/) are supported at the moment.
 However, this package is fully _modular_,
@@ -22,10 +26,6 @@ so that support for different test cases can be implemented easily.
 
 Planned support:
 * [SPARQL 1.1](http://w3c.github.io/rdf-tests/sparql11/data-sparql11/) (_other specifications_)
-* [N-Quads](https://w3c.github.io/rdf-tests/nquads/reports/)
-* [N-Triples](https://w3c.github.io/rdf-tests/ntriples/reports/)
-* [TriG](https://w3c.github.io/rdf-tests/trig/reports/)
-* [Turtle](https://w3c.github.io/rdf-tests/turtle/reports/)
 * [RDF Schema and Semantics](https://w3c.github.io/rdf-tests/rdf-mt/reports/)
 
 ## Installation
@@ -205,6 +205,10 @@ $ rdf-test-suite myengine.js http://w3c.github.io/rdf-tests/sparql11/data-sparql
 | [SPARQL 1.1 tests](http://w3c.github.io/rdf-tests/sparql11/data-sparql11/) | [SPARQL 1.1 Protocol](http://www.w3.org/TR/sparql11-protocol/) | ✖ | http://w3c.github.io/rdf-tests/sparql11/data-sparql11/manifest-all.ttl |
 | [SPARQL 1.1 tests](http://w3c.github.io/rdf-tests/sparql11/data-sparql11/) | [SPARQL 1.1 HTTP RDF Update](http://www.w3.org/TR/sparql11-http-rdf-update/) | ✖ | http://w3c.github.io/rdf-tests/sparql11/data-sparql11/manifest-all.ttl |
 | [RDF/XML Syntax Tests](https://w3c.github.io/rdf-tests/rdf-xml/) | [RDF 1.1 XML Syntax](https://www.w3.org/TR/rdf-syntax-grammar/) | [`IParser`](https://github.com/rubensworks/rdf-test-suite.js/blob/master/lib/testcase/rdfsyntax/IParser.ts) | http://w3c.github.io/rdf-tests/rdf-xml/manifest.ttl |
+| [N-Triples Tests](https://w3c.github.io/rdf-tests/ntriples/) | [RDF 1.1 N-Triples](https://www.w3.org/TR/n-triples/) | [`IParser`](https://github.com/rubensworks/rdf-test-suite.js/blob/master/lib/testcase/rdfsyntax/IParser.ts) | http://w3c.github.io/rdf-tests/ntriples/manifest.ttl |
+| [N-Quads Tests](https://w3c.github.io/rdf-tests/nquads/) | [RDF 1.1 N-Quads](https://www.w3.org/TR/n-quads/) | [`IParser`](https://github.com/rubensworks/rdf-test-suite.js/blob/master/lib/testcase/rdfsyntax/IParser.ts) | http://w3c.github.io/rdf-tests/nquads/manifest.ttl |
+| [Turtle Tests](https://w3c.github.io/rdf-tests/turtle/) | [RDF 1.1 Turtle](https://www.w3.org/TR/turtle/) | [`IParser`](https://github.com/rubensworks/rdf-test-suite.js/blob/master/lib/testcase/rdfsyntax/IParser.ts) | http://w3c.github.io/rdf-tests/turtle/manifest.ttl |
+| [TriG Tests](https://w3c.github.io/rdf-tests/trig/) | [RDF 1.1 TriG](https://www.w3.org/TR/trig/) | [`IParser`](https://github.com/rubensworks/rdf-test-suite.js/blob/master/lib/testcase/rdfsyntax/IParser.ts) | http://w3c.github.io/rdf-tests/trig/manifest.ttl |
 
 ## License
 This software is written by [Ruben Taelman](http://rubensworks.net/).

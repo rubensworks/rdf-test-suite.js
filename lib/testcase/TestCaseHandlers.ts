@@ -40,5 +40,37 @@ module.exports = {
     new TestCaseEvalHandler(),
   'http://www.w3.org/ns/rdftest#TestXMLNegativeSyntax':
     new TestCaseSyntaxHandler(false),
+
+  // N-Triples test suite
+  'http://www.w3.org/ns/rdftest#TestNTriplesPositiveSyntax':
+    new TestCaseSyntaxHandler(true),
+  'http://www.w3.org/ns/rdftest#TestNTriplesNegativeSyntax':
+    new TestCaseSyntaxHandler(false),
+
+  // N-Quads test suite
+  'http://www.w3.org/ns/rdftest#TestNQuadsPositiveSyntax':
+    new TestCaseSyntaxHandler(true),
+  'http://www.w3.org/ns/rdftest#TestNQuadsNegativeSyntax':
+    new TestCaseSyntaxHandler(false),
+
+  // Turtle test suite
+  'http://www.w3.org/ns/rdftest#TestTurtleEval':
+    new TestCaseEvalHandler(),
+  'http://www.w3.org/ns/rdftest#TestTurtlePositiveSyntax':
+    new TestCaseSyntaxHandler(true),
+  'http://www.w3.org/ns/rdftest#TestTurtleNegativeSyntax':
+    new TestCaseSyntaxHandler(false),
+  'http://www.w3.org/ns/rdftest#TestTurtleNegativeEval':
+    new TestCaseSyntaxHandler(false),
+
+  // TriG test suite
+  'http://www.w3.org/ns/rdftest#TestTrigEval':
+    new TestCaseEvalHandler(),
+  'http://www.w3.org/ns/rdftest#TestTrigPositiveSyntax':
+    new TestCaseSyntaxHandler(true),
+  'http://www.w3.org/ns/rdftest#TestTrigNegativeSyntax':
+    new TestCaseSyntaxHandler(false),
+  'http://www.w3.org/ns/rdftest#TestTrigNegativeEval':
+    new TestCaseSyntaxHandler(false),
 };
 // tslint:enable:object-literal-sort-keys

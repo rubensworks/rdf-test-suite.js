@@ -1,6 +1,14 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+<a name="v1.2.0"></a>
+## [v1.2.0](https://github.com/rubensworks/rdf-test-suite.js/compare/v1.1.1...v1.2.0) - 2018-12-04
+
+### Added
+* [Allow custom options to be passed from command line to engines](https://github.com/rubensworks/rdf-test-suite.js/commit/a5fa45e0a0b437aabc0546917114d263f168871b)
+* [Support N-Triples, N-Quads, Turtle and TriG](https://github.com/rubensworks/rdf-test-suite.js/commit/3994d742adea2a37e332c30e1456fbd4789e761d)
+* [Add .nq extension contentType mapping](https://github.com/rubensworks/rdf-test-suite.js/commit/edbf5aae329b3942c734d5de98d52b45af8ef847)
+
 <a name="v1.1.1"></a>
 ## [v1.1.1](https://github.com/rubensworks/rdf-test-suite.js/compare/v1.1.0...v1.1.1) - 2018-11-08
 

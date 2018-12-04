@@ -11,6 +11,7 @@ const streamifyString = require('streamify-string');
 export class Util {
 
   protected static readonly EXTENSION_TO_CONTENTTYPE: {[extension: string]: string} = {
+    nq: 'application/n-quads',
     nt: 'application/n-triples',
     srj: 'application/sparql-results+json',
     srx: 'application/sparql-results+xml',

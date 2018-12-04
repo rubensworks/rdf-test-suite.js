@@ -4,8 +4,8 @@ import * as RDF from "rdf-js";
  * A query engine handler.
  */
 export interface IQueryEngine {
-  parse(queryString: string): Promise<void>;
-  query(data: RDF.Quad[], queryString: string): Promise<IQueryResult>;
+  parse(queryString: string, options: {[key: string]: any}): Promise<void>;
+  query(data: RDF.Quad[], queryString: string, options: {[key: string]: any}): Promise<IQueryResult>;
 }
 
 /**

@@ -27,6 +27,7 @@ Options:
   -c    enable HTTP caching at the given directory (disabled by default)
   -e    always exit with status code 0 on test errors
   -t    regex for test IRIs to run
+  -i    JSON string with custom options that need to be passed to the engine
 `);
   process.exit(1);
 }
@@ -57,7 +58,7 @@ const engine = require(process.cwd() + '/' + args._[0]);
 
 // Fetch the manifest, run the tests, and print them
 const testSuiteRunner = new TestSuiteRunner();
-testSuiteRunner.runManifest(args._[1], engine, cachePath, specification, testRegex)
+testSuiteRunner.runManifest(args._[1], engine, cachePath, specification, testRegex, args.i ? JSON.parse(args.i) : {})
   .then((testResults) => {
     switch (format) {
     case 'earl':

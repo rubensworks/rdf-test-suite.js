@@ -16,7 +16,7 @@ export interface ITestCaseData {
  */
 export interface ITestCase<H> extends ITestCaseData {
   type: string;
-  test(handler: H): Promise<void>;
+  test(handler: H, injectArguments: any): Promise<void>;
 }
 
 /**

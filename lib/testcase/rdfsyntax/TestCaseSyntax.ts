@@ -50,9 +50,9 @@ export class TestCaseSyntax implements ITestCaseRdfSyntax {
     this.baseIRI = baseIRI;
   }
 
-  public async test(parser: IParser): Promise<void> {
+  public async test(parser: IParser, injectArguments: any): Promise<void> {
     try {
-      await parser.parse(this.data, this.baseIRI, {});
+      await parser.parse(this.data, this.baseIRI, injectArguments);
     } catch (e) {
       if (this.expectNoError) {
         throw new Error(`Expected not throw an error when parsing.

@@ -51,8 +51,8 @@ export class TestCaseEval implements ITestCaseRdfSyntax {
     this.baseIRI = baseIRI;
   }
 
-  public async test(parser: IParser): Promise<void> {
-    const quads: RDF.Quad[] = await parser.parse(this.data, this.baseIRI, {});
+  public async test(parser: IParser, injectArguments: any): Promise<void> {
+    const quads: RDF.Quad[] = await parser.parse(this.data, this.baseIRI, injectArguments);
     if (!isomorphic(quads, this.expected)) {
       throw new Error(`Invalid data parsing
   Query: ${this.data}

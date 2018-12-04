@@ -22,11 +22,12 @@ export class TestSuiteRunner {
    * @param {string} cachePath The base directory to cache files in. If falsy, then no cache will be used.
    * @param {string} specification An optional specification to scope the manifest tests by.
    * @param {RegExp} testRegex An optional regex to filter test IRIs by.
+   * @param {any} injectArguments An optional set of arguments to pass to the handler.
    * @return {Promise<ITestResult[]>} A promise resolving to an array of test results.
    */
   public async runManifest(manifestUrl: string, handler: any,
                            cachePath: string, specification?: string,
-                           testRegex?: RegExp): Promise<ITestResult[]> {
+                           testRegex?: RegExp, injectArguments?: any): Promise<ITestResult[]> {
     const manifest: IManifest = await new ManifestLoader().from(manifestUrl, cachePath);
     const results: ITestResult[] = [];
 
@@ -35,11 +36,12 @@ export class TestSuiteRunner {
       if (!manifest.specifications || !manifest.specifications[specification]) {
         return [];
       }
-      await this.runManifestConcrete(manifest.specifications[specification], handler, testRegex, results);
+      await this.runManifestConcrete(manifest.specifications[specification], handler, testRegex,
+        injectArguments, results);
       return results;
     }
 
-    await this.runManifestConcrete(manifest, handler, testRegex, results);
+    await this.runManifestConcrete(manifest, handler, testRegex, injectArguments, results);
     return results;
   }
 
@@ -48,16 +50,18 @@ export class TestSuiteRunner {
    * @param {string} manifest A manifest.
    * @param handler The handler to run the tests with.
    * @param {RegExp} testRegex An optional regex to filter test IRIs by.
+   * @param {any} injectArguments An optional set of arguments to pass to the handler.
    * @param {ITestResult[]} results An array to append the test results to
    * @return {Promise<void>} A promise resolving when the tests are finished.
    */
-  public async runManifestConcrete(manifest: IManifest, handler: any, testRegex: RegExp, results: ITestResult[]) {
+  public async runManifestConcrete(manifest: IManifest, handler: any, testRegex: RegExp,
+                                   injectArguments: any, results: ITestResult[]) {
     // Execute all tests in this manifest
     if (manifest.testEntries) {
       for (const test of manifest.testEntries) {
         if (!testRegex || testRegex.test(test.uri)) {
           try {
-            await test.test(handler);
+            await test.test(handler, injectArguments);
           } catch (error) {
             results.push({ test, ok: false, error });
             continue;
@@ -70,7 +74,7 @@ export class TestSuiteRunner {
     // Recursively handle all sub-manifests
     if (manifest.subManifests) {
       for (const subManifest of manifest.subManifests) {
-        await (this.runManifestConcrete(subManifest, handler, testRegex, results));
+        await (this.runManifestConcrete(subManifest, handler, testRegex, injectArguments, results));
       }
     }
   }

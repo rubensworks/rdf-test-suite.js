@@ -38,9 +38,9 @@ export class TestCaseNegativeSyntax implements ITestCaseSparql {
     this.queryString = queryString;
   }
 
-  public async test(engine: IQueryEngine): Promise<void> {
+  public async test(engine: IQueryEngine, injectArguments: any): Promise<void> {
     try {
-      await engine.parse(this.queryString);
+      await engine.parse(this.queryString, injectArguments);
     } catch (e) {
       return;
     }

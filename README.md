@@ -191,6 +191,19 @@ $ rdf-test-suite myengine.js http://w3c.github.io/rdf-tests/sparql11/data-sparql
   -e
 ```
 
+### Pass custom options to the engine
+
+With the optional `-i` option,
+a JSON string with arguments can be passed to the engine.
+These arguments will become available in
+both [`IQueryEngine`](https://github.com/rubensworks/rdf-test-suite.js/blob/master/lib/testcase/sparql/IQueryEngine.ts),
+and [`IParser`](https://github.com/rubensworks/rdf-test-suite.js/blob/master/lib/testcase/rdfsyntax/IParser.ts).
+
+```bash
+$ rdf-test-suite myengine.js http://w3c.github.io/rdf-tests/sparql11/data-sparql11/manifest-all.ttl \
+  -i '{ "myProperty": "myValue" }'
+```
+
 ## Supported test suites
 
 | Manifest | Specification | Interface | Entry manifest |

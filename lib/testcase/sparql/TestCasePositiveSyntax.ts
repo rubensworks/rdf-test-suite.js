@@ -38,8 +38,8 @@ export class TestCasePositiveSyntax implements ITestCaseSparql {
     this.queryString = queryString;
   }
 
-  public async test(engine: IQueryEngine): Promise<void> {
-    await engine.parse(this.queryString);
+  public async test(engine: IQueryEngine, injectArguments: any): Promise<void> {
+    await engine.parse(this.queryString, injectArguments);
     return;
   }
 

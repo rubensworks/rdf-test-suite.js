@@ -69,14 +69,14 @@ describe('TestCaseNegativeSyntaxHandler', () => {
       const resource = new Resource({ term: namedNode('http://ex.org/test'), context });
       resource.addProperty(pAction, new Resource({ term: literal('ACTION.invalid'), context }));
       const testCase = await handler.resourceToTestCase(resource, <any> {});
-      return expect(testCase.test(engine)).resolves.toBe(undefined);
+      return expect(testCase.test(engine, {})).resolves.toBe(undefined);
     });
 
     it('should produce TestCaseNegativeSyntax that tests false on valid data', async () => {
       const resource = new Resource({ term: namedNode('http://ex.org/test'), context });
       resource.addProperty(pAction, new Resource({ term: literal('ACTION.ok'), context }));
       const testCase = await handler.resourceToTestCase(resource, <any> {});
-      return expect(testCase.test(engine)).rejects.toBeTruthy();
+      return expect(testCase.test(engine, {})).rejects.toBeTruthy();
     });
   });
 

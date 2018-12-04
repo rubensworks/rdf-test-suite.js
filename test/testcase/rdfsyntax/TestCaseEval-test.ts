@@ -113,7 +113,7 @@ describe('TestCaseEvalHandler', () => {
       resource.addProperty(pAction, new Resource({ term: literal('ACTION'), context }));
       resource.addProperty(pResult, new Resource({ term: literal('RESULT.ttl'), context }));
       const testCase = await handler.resourceToTestCase(resource, <any> {});
-      return expect(testCase.test(parser)).resolves.toBe(undefined);
+      return expect(testCase.test(parser, {})).resolves.toBe(undefined);
     });
 
     it('should produce TestCaseEval that tests false on isomorphic data', async () => {
@@ -121,7 +121,7 @@ describe('TestCaseEvalHandler', () => {
       resource.addProperty(pAction, new Resource({ term: literal('ACTION'), context }));
       resource.addProperty(pResult, new Resource({ term: literal('RESULT_OTHER.ttl'), context }));
       const testCase = await handler.resourceToTestCase(resource, <any> {});
-      return expect(testCase.test(parser)).rejects.toBeTruthy();
+      return expect(testCase.test(parser, {})).rejects.toBeTruthy();
     });
   });
 

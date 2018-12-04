@@ -596,7 +596,7 @@ describe('TestCaseQueryEvaluationHandler', () => {
       resource.addProperty(pAction, action);
       resource.addProperty(pResult, new Resource({ term: literal('RESULT.ttl'), context }));
       const testCase = await handler.resourceToTestCase(resource, <any> {});
-      return expect(testCase.test(engine)).resolves.toBe(undefined);
+      return expect(testCase.test(engine, {})).resolves.toBe(undefined);
     });
 
     it('should produce TestCaseQueryEvaluation that tests false on non-equal results', async () => {
@@ -606,7 +606,7 @@ describe('TestCaseQueryEvaluationHandler', () => {
       resource.addProperty(pAction, action);
       resource.addProperty(pResult, new Resource({ term: literal('RESULT_OTHER.ttl'), context }));
       const testCase = await handler.resourceToTestCase(resource, <any> {});
-      return expect(testCase.test(engine)).rejects.toBeTruthy();
+      return expect(testCase.test(engine, {})).rejects.toBeTruthy();
     });
   });
 

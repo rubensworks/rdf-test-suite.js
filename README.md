@@ -189,7 +189,7 @@ $ rdf-test-suite myengine.js http://w3c.github.io/rdf-tests/sparql11/data-sparql
 _If you don't provide a caching value after the `-c`,
 then the directory will default to `.rdf-test-suite-cache/`._
 
-### Ignore exist code
+### Ignore exit code
 
 When there are failing tests,
 `rdf-test-suite` will exit with code `1` instead of `0`.

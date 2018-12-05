@@ -1,4 +1,5 @@
 import {createReadStream, existsSync, readFileSync, ReadStream, writeFileSync} from "fs";
+import {JsonLdParser} from "jsonld-streaming-parser";
 import * as RDF from "rdf-js";
 import {RdfXmlParser} from "rdfxml-streaming-parser";
 import {GeneralizedN3StreamParser} from "./GeneralizedN3StreamParser";
@@ -74,6 +75,9 @@ export class Util {
     }
     if (contentType.indexOf('application/rdf+xml') >= 0) {
       return data.pipe(new RdfXmlParser({ baseIRI }));
+    }
+    if (contentType.indexOf('application/ld+json') >= 0) {
+      return data.pipe(new JsonLdParser({ baseIRI }));
     }
 
     throw new Error(`Could not parse the RDF serialization ${contentType} on ${baseIRI}`);

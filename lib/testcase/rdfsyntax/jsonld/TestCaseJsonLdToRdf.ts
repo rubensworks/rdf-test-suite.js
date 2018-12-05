@@ -1,28 +1,16 @@
-import {isomorphic} from "rdf-isomorphic";
-import * as RDF from "rdf-js";
 import {Resource} from "rdf-object";
-import {quadToStringQuad} from "rdf-string";
-import {Util} from "../../../Util";
 import {ITestCaseData} from "../../ITestCase";
-import {ITestCaseHandler} from "../../ITestCaseHandler";
 import {IParser} from "../IParser";
-import {ITestCaseRdfSyntax} from "../ITestCaseRdfSyntax";
-// tslint:disable:no-var-requires
-const arrayifyStream = require('arrayify-stream');
-const stringifyStream = require('stream-to-string');
+import {TestCaseEval, TestCaseEvalHandler} from "../TestCaseEval";
 
 /**
  * Test case handler for https://json-ld.org/test-suite/vocab#ToRDFTest.
  */
-export class TestCaseJsonLdToRdfHandler implements ITestCaseHandler<TestCaseJsonLdToRdf> {
+export class TestCaseJsonLdToRdfHandler extends TestCaseEvalHandler {
+
   public async resourceToTestCase(resource: Resource, testCaseData: ITestCaseData,
-                                  cachePath?: string): Promise<TestCaseJsonLdToRdf> {
-    if (!resource.property.action) {
-      throw new Error(`Missing mf:action in ${resource}`);
-    }
-    if (!resource.property.result) {
-      throw new Error(`Missing mf:result in ${resource}`);
-    }
+                                  cachePath?: string): Promise<TestCaseEval> {
+    const testCaseEval = await super.resourceToTestCase(resource, testCaseData, cachePath);
 
     // Loop over the options
     let produceGeneralizedRdf: boolean = false;
@@ -33,56 +21,15 @@ export class TestCaseJsonLdToRdfHandler implements ITestCaseHandler<TestCaseJson
       }
     }
 
-    try {
-      return new TestCaseJsonLdToRdf(testCaseData,
-        await stringifyStream((await Util.fetchCached(resource.property.action.value, cachePath)).body),
-        await arrayifyStream(<any> (await Util.fetchRdf(resource.property.result.value, cachePath, true))[1]),
-        resource.property.action.value,
-        produceGeneralizedRdf);
-    } catch (e) {
-      console.error(e);
-      console.error('Error in ' + resource.value);
-      return null;
-    }
+    // Add produceGeneralizedRdf to the inject arguments
+    const testOld = testCaseEval.test;
+    testCaseEval.test = (parser: IParser, injectArguments: any) =>
+      testOld.bind(testCaseEval)(parser, { produceGeneralizedRdf, ...injectArguments });
+
+    return testCaseEval;
   }
 
-}
-
-export class TestCaseJsonLdToRdf implements ITestCaseRdfSyntax {
-  public readonly type = "rdfsyntax";
-  public readonly approval: string;
-  public readonly approvedBy: string;
-  public readonly comment: string;
-  public readonly types: string[];
-  public readonly name: string;
-  public readonly uri: string;
-
-  public readonly data: string;
-  public readonly expected: RDF.Quad[];
-  public readonly baseIRI: string;
-  public readonly produceGeneralizedRdf: boolean;
-
-  constructor(testCaseData: ITestCaseData, data: string, expected: RDF.Quad[], baseIRI: string,
-              produceGeneralizedRdf: boolean) {
-    Object.assign(this, testCaseData);
-    this.data = data;
-    this.expected = expected;
-    this.baseIRI = baseIRI;
-    this.produceGeneralizedRdf = produceGeneralizedRdf;
+  protected normalizeUrl(url: string) {
+    return url;
   }
-
-  public async test(parser: IParser): Promise<void> {
-    const quads: RDF.Quad[] = await parser.parse(this.data, this.baseIRI,
-      { produceGeneralizedRdf: this.produceGeneralizedRdf });
-    if (!isomorphic(quads, this.expected)) {
-      throw new Error(`Invalid data parsing
-  Parser input: ${this.data}
-
-  Expected: ${JSON.stringify(this.expected.map(quadToStringQuad), null, '  ')}
-
-  Got: ${JSON.stringify(quads.map(quadToStringQuad), null, '  ')}
-`);
-    }
-  }
-
 }

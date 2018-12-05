@@ -85,6 +85,18 @@ This command will output something like this:
 ✖ 105 / 268 tests succeeded!
 ```
 
+### Test filtering
+
+With the `-t` option, you can filter tests that should be executed
+based on a regex that will be matched with the test URI.
+
+For example:
+
+```bash
+$ rdf-test-suite myengine.js http://w3c.github.io/rdf-tests/sparql11/data-sparql11/manifest-all.ttl \
+  -t test_pn_bad_0
+```
+
 ### Summarized output
 
 By default, the printed test results are verbose,

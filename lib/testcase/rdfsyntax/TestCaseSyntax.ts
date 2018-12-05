@@ -56,7 +56,7 @@ export class TestCaseSyntax implements ITestCaseRdfSyntax {
     } catch (e) {
       if (this.expectNoError) {
         throw new Error(`Expected not throw an error when parsing.
-  Query: ${this.data}
+  Input: ${this.data}
   Error: ${e}
 `);
       }
@@ -64,7 +64,7 @@ export class TestCaseSyntax implements ITestCaseRdfSyntax {
     }
     if (!this.expectNoError) {
       throw new Error(`Expected to throw an error when parsing.
-  Query: ${this.data}
+  Input: ${this.data}
 `);
     }
   }

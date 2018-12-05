@@ -55,7 +55,7 @@ export class TestCaseEval implements ITestCaseRdfSyntax {
     const quads: RDF.Quad[] = await parser.parse(this.data, this.baseIRI, injectArguments);
     if (!isomorphic(quads, this.expected)) {
       throw new Error(`Invalid data parsing
-  Query: ${this.data}
+  Input: ${this.data}
 
   Expected: ${JSON.stringify(this.expected.map(quadToStringQuad), null, '  ')}
 

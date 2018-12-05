@@ -44,7 +44,9 @@ export class TestCaseNegativeSyntax implements ITestCaseSparql {
     } catch (e) {
       return;
     }
-    throw new Error(`Expected ${this.queryString} to throw an error when parsing.`);
+    throw new Error(`Expected ${this.queryString} to throw an error when parsing.
+  Input: ${this.queryString}
+`);
   }
 
 }

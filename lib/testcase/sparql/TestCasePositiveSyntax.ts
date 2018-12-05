@@ -39,7 +39,14 @@ export class TestCasePositiveSyntax implements ITestCaseSparql {
   }
 
   public async test(engine: IQueryEngine, injectArguments: any): Promise<void> {
-    await engine.parse(this.queryString, injectArguments);
+    try {
+      await engine.parse(this.queryString, injectArguments);
+    } catch (e) {
+      throw new Error(`Expected not throw an error when parsing.
+  Input: ${this.queryString}
+  Error: ${e}
+`);
+    }
     return;
   }
 

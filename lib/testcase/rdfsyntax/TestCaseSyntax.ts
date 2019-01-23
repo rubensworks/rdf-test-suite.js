@@ -25,7 +25,11 @@ export class TestCaseSyntaxHandler implements ITestCaseHandler<TestCaseSyntax> {
     }
     return new TestCaseSyntax(testCaseData, this.expectNoError,
       await stringifyStream((await Util.fetchCached(resource.property.action.value, cachePath)).body),
-      Util.normalizeBaseUrl(resource.property.action.value));
+      this.normalizeUrl(resource.property.action.value));
+  }
+
+  protected normalizeUrl(url: string) {
+    return Util.normalizeBaseUrl(url);
   }
 
 }

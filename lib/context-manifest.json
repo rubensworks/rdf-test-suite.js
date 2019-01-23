@@ -29,5 +29,7 @@
 
   "jld": "https://json-ld.org/test-suite/vocab#",
   "jsonLdOptions": "jld:option",
-  "jsonLdProduceGeneralizedRdf": "jld:produceGeneralizedRdf"
+  "jsonLdProduceGeneralizedRdf": "jld:produceGeneralizedRdf",
+  "processingMode": "jld:processingMode",
+  "specVersion": "jld:specVersion"
 }

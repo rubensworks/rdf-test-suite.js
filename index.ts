@@ -17,3 +17,4 @@ export * from "./lib/IManifest";
 export * from "./lib/ManifestLoader";
 export * from "./lib/TestSuiteRunner";
 export * from "./lib/Util";
+export * from "./lib/ErrorSkipped";

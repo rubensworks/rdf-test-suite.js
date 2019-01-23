@@ -58,6 +58,10 @@ export class TestCaseSyntax implements ITestCaseRdfSyntax {
     try {
       await parser.parse(this.data, this.baseIRI, injectArguments);
     } catch (e) {
+      if (e.skipped) {
+        throw e;
+      }
+
       if (this.expectNoError) {
         throw new Error(`Expected not throw an error when parsing.
   Input: ${this.data}

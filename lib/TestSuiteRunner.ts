@@ -63,7 +63,7 @@ export class TestSuiteRunner {
           try {
             await test.test(handler, injectArguments);
           } catch (error) {
-            results.push({ test, ok: false, error });
+            results.push({ test, ok: false, error, skipped: error.skipped });
             continue;
           }
           results.push({ test, ok: true });
@@ -88,13 +88,19 @@ export class TestSuiteRunner {
   public resultsToText(stdout: WriteStream, results: ITestResult[], compact: boolean) {
     const failedTests: ITestResult[] = [];
     let success: number = 0;
+    let skipped: number = 0;
     for (const result of results) {
       if (result.ok) {
         success++;
         stdout.write(`${LogSymbols.success} ${result.test.name} (${result.test.uri})\n`);
       } else {
-        failedTests.push(result);
-        stdout.write(`${LogSymbols.error} ${result.test.name} (${result.test.uri})\n`);
+        if (result.skipped) {
+          skipped++;
+          stdout.write(`${LogSymbols.info} ${result.test.name} (${result.test.uri})\n`);
+        } else {
+          failedTests.push(result);
+          stdout.write(`${LogSymbols.error} ${result.test.name} (${result.test.uri})\n`);
+        }
       }
     }
 
@@ -110,10 +116,12 @@ ${LogSymbols.error} ${result.test.name}
       }
     }
 
+    const skippedString = skipped ? ` (skipped ${skipped})` : '';
+    success += skipped;
     if (success === results.length) {
-      stdout.write(`${LogSymbols.success} ${success} / ${results.length} tests succeeded!\n`);
+      stdout.write(`${LogSymbols.success} ${success} / ${results.length} tests succeeded!${skippedString}\n`);
     } else {
-      stdout.write(`${LogSymbols.error} ${success} / ${results.length} tests succeeded!\n`);
+      stdout.write(`${LogSymbols.error} ${success} / ${results.length} tests succeeded!${skippedString}\n`);
     }
   }
 
@@ -203,7 +211,8 @@ ${LogSymbols.error} ${result.test.name}
       quads.push(quad('_:assertion' + id, p.earl + 'mode', p.earl + 'automatic'));
       quads.push(quad('_:assertion' + id, p.earl + 'result', '_:result' + id));
       quads.push(quad('_:result' + id, p.rdf + 'type', p.earl + 'TestResult'));
-      quads.push(quad('_:result' + id, p.earl + 'outcome', p.earl + (result.ok ? 'passed' : 'failed')));
+      quads.push(quad('_:result' + id, p.earl + 'outcome',
+        p.earl + (result.ok ? 'passed' : result.skipped ? 'inapplicable' : 'failed')));
       quads.push(quad('_:result' + id, p.dc + 'date', date));
       id++;
     }
@@ -263,4 +272,5 @@ export interface ITestResult {
   test: ITestCase<any>;
   ok: boolean;
   error?: Error;
+  skipped?: boolean;
 }

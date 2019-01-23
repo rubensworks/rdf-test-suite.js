@@ -77,5 +77,7 @@ module.exports = {
   // JSON-LD test suite
   'https://json-ld.org/test-suite/vocab#ToRDFTest':
     new TestCaseJsonLdToRdfHandler(),
+  'https://json-ld.org/test-suite/vocab#NegativeEvaluationTest':
+    new TestCaseSyntaxHandler(false),
 };
 // tslint:enable:object-literal-sort-keys

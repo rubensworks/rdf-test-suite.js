@@ -2,6 +2,7 @@ import {Resource} from "rdf-object";
 import {ITestCase, ITestCaseData} from "../../ITestCase";
 import {IParser} from "../IParser";
 import {TestCaseEval, TestCaseEvalHandler} from "../TestCaseEval";
+import {Util} from "../../../Util";
 
 /**
  * Test case handler for https://json-ld.org/test-suite/vocab#ToRDFTest.
@@ -18,6 +19,7 @@ export class TestCaseJsonLdToRdfHandler extends TestCaseEvalHandler {
     let produceGeneralizedRdf: boolean = false;
     let processingMode: string = null;
     let specVersion: string = '1.0';
+    let context: any;
     for (const option of resource.properties.jsonLdOptions) {
       // Should generalized RDF should be produced?
       if (option.property.jsonLdProduceGeneralizedRdf) {
@@ -39,10 +41,16 @@ export class TestCaseJsonLdToRdfHandler extends TestCaseEvalHandler {
       }
     }
 
+    // An optional root context.
+    if (resource.property.context) {
+      context = JSON.parse(await require('stream-to-string')((
+        await Util.fetchCached(resource.property.context.term.value, cachePath)).body));
+    }
+
     // Add produceGeneralizedRdf to the inject arguments
     const testOld = testCaseEval.test;
-    testCaseEval.test = (parser: IParser, injectArguments: any) =>
-      testOld.bind(testCaseEval)(parser, { produceGeneralizedRdf, processingMode, specVersion, ...injectArguments });
+    testCaseEval.test = (parser: IParser, injectArguments: any) => testOld.bind(testCaseEval)(parser,
+      { produceGeneralizedRdf, processingMode, specVersion, context, ...injectArguments });
 
     return testCaseEval;
   }

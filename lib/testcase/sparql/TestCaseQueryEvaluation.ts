@@ -229,7 +229,9 @@ export class TestCaseQueryEvaluationHandler implements ITestCaseHandler<TestCase
       await TestCaseQueryEvaluationHandler.parseQueryResult(
         Util.identifyContentType(queryResponse.url, queryResponse.headers),
         queryResponse.url, queryResponse.body),
-      laxCardinality);
+      laxCardinality,
+      dataUri,
+      dataGraph);
   }
 
 }
@@ -247,21 +249,29 @@ export class TestCaseQueryEvaluation implements ITestCaseSparql {
   public readonly queryData: RDF.Quad[];
   public readonly queryResult: IQueryResult;
   public readonly laxCardinality: boolean;
+  public readonly dataUri: string;
+  public readonly dataGraph: RDF.NamedNode;
 
   constructor(testCaseData: ITestCaseData, queryString: string, queryData: RDF.Quad[],
-              queryResult: IQueryResult, laxCardinality: boolean) {
+              queryResult: IQueryResult, laxCardinality: boolean, dataUri: string, dataGraph: RDF.NamedNode) {
     Object.assign(this, testCaseData);
     this.queryString = queryString;
     this.queryData = queryData;
     this.queryResult = queryResult;
     this.laxCardinality = laxCardinality;
+    this.dataUri = dataUri;
+    this.dataGraph = dataGraph;
   }
 
   public async test(engine: IQueryEngine, injectArguments: any): Promise<void> {
     const result: IQueryResult = await engine.query(this.queryData, this.queryString, injectArguments);
     if (!await this.queryResult.equals(result, this.laxCardinality)) {
+      const dataGraphInfo = this.dataGraph ? ` (named graph: ${this.dataGraph})` : '';
       throw new Error(`Invalid query evaluation
+
   Query: ${this.queryString}
+
+  Data: ${this.dataUri || 'none'}${dataGraphInfo})
 
   Expected: ${this.queryResult.toString()}
 

@@ -1,4 +1,5 @@
 import {namedNode} from "@rdfjs/data-model";
+import * as diff from "jest-diff";
 import * as RDF from "rdf-js";
 import {RdfObjectLoader, Resource} from "rdf-object";
 import {stringToTerm} from "rdf-string";
@@ -276,6 +277,8 @@ export class TestCaseQueryEvaluation implements ITestCaseSparql {
   Expected: ${this.queryResult.toString()}
 
   Got: \n ${result.toString()}
+
+  Difference: ${diff(this.queryResult.toString(), result.toString())}
 `);
     }
   }

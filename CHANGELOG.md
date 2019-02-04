@@ -1,6 +1,13 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+<a name="v1.3.0"></a>
+## [v1.3.0](https://github.com/rubensworks/rdf-test-suite.js/compare/v1.2.0...v1.3.0) - 2019-02-04
+
+### Changed
+* [Print the data uri for a sparql query evaluation in verbose mode](https://github.com/rubensworks/rdf-test-suite.js/commit/3275cee924540fad69ee1815e8e110917d132f82)
+* [Always include input when logging test errors](https://github.com/rubensworks/rdf-test-suite.js/commit/726438b72dbb25dc1aa8ca77ace2cb339acc3e23)
+
 <a name="v1.2.0"></a>
 ## [v1.2.0](https://github.com/rubensworks/rdf-test-suite.js/compare/v1.1.1...v1.2.0) - 2018-12-04
 

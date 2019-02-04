@@ -204,6 +204,27 @@ describe('TestSuiteRunner', () => {
         test: mockTest3,
       },
     ];
+    const testResultsSkips = [
+      {
+        ok: true,
+        test: mockTest1,
+      },
+      {
+        ok: false,
+        skipped: true,
+        test: mockTest2,
+      },
+      {
+        ok: false,
+        skipped: true,
+        test: mockTest3,
+      },
+      {
+        error: new Error('Fail'),
+        ok: false,
+        test: mockTest3,
+      },
+    ];
 
     it('should print an empty array of results', async () => {
       const stdout = new PassThrough();
@@ -239,6 +260,25 @@ ${LogSymbols.error} 2 / 3 tests succeeded!
 `);
     });
 
+    it('should print a non-empty array of results with skips', async () => {
+      const stdout = new PassThrough();
+      runner.resultsToText(stdout, testResultsSkips, false);
+      stdout.end();
+      // tslint:disable:no-trailing-whitespace
+      return expect(await stringifyStream(stdout)).toEqual(`${LogSymbols.success} Test1 (http://ex.org/test1)
+${LogSymbols.info} Test2 (http://ex.org/test2)
+${LogSymbols.info} Test3 (http://ex.org/test3)
+${LogSymbols.error} Test3 (http://ex.org/test3)
+
+${LogSymbols.error} Test3
+  
+  Error: Fail
+  More info: http://ex.org/test3
+
+${LogSymbols.error} 3 / 4 tests succeeded! (skipped 2)
+`);
+    });
+
     it('should print a non-empty array of results compactly', async () => {
       const stdout = new PassThrough();
       runner.resultsToText(stdout, testResults, true);
@@ -248,6 +288,19 @@ ${LogSymbols.error} 2 / 3 tests succeeded!
 ${LogSymbols.success} Test2 (http://ex.org/test2)
 ${LogSymbols.error} Test3 (http://ex.org/test3)
 ${LogSymbols.error} 2 / 3 tests succeeded!
+`);
+    });
+
+    it('should print a non-empty array of results with skips compactly', async () => {
+      const stdout = new PassThrough();
+      runner.resultsToText(stdout, testResultsSkips, true);
+      stdout.end();
+      // tslint:disable:no-trailing-whitespace
+      return expect(await stringifyStream(stdout)).toEqual(`${LogSymbols.success} Test1 (http://ex.org/test1)
+${LogSymbols.info} Test2 (http://ex.org/test2)
+${LogSymbols.info} Test3 (http://ex.org/test3)
+${LogSymbols.error} Test3 (http://ex.org/test3)
+${LogSymbols.error} 3 / 4 tests succeeded! (skipped 2)
 `);
     });
   });
@@ -260,6 +313,22 @@ ${LogSymbols.error} 2 / 3 tests succeeded!
       },
       {
         ok: true,
+        test: mockTest2,
+      },
+      {
+        error: new Error('Fail'),
+        ok: false,
+        test: mockTest3,
+      },
+    ];
+    const testResultsSkips = [
+      {
+        ok: true,
+        test: mockTest1,
+      },
+      {
+        ok: false,
+        skipped: true,
         test: mockTest2,
       },
       {
@@ -557,6 +626,76 @@ ${LogSymbols.error} 2 / 3 tests succeeded!
           quad('_:assertion1', p.earl + 'result', '_:result1'),
           quad('_:result1', p.rdf + 'type', p.earl + 'TestResult'),
           quad('_:result1', p.earl + 'outcome', p.earl + 'passed'),
+          quad('_:result1', p.dc + 'date', '"' + testDate.toISOString() + '"^^' + p.xsd + 'dateTime'),
+
+          quad('http://ex.org/test3', p.rdf  + 'type', p.earl + 'TestCriterion'),
+          quad('http://ex.org/test3', p.rdf  + 'type', p.earl + 'TestCase'),
+          quad('http://ex.org/test3', p.dc   + 'title', '"Test3"'),
+          quad('http://ex.org/test3', p.earl + 'assertions', '_:assertions2'),
+          quad('_:assertions2', p.rdf + 'first', '_:assertion2'),
+          quad('_:assertions2', p.rdf + 'rest', p.rdf + 'nil'),
+          quad('_:assertion2', p.rdf  + 'type', 'http://www.w3.org/ns/earl#Assertion'),
+          quad('_:assertion2', p.earl + 'test', 'http://ex.org/test3'),
+          quad('_:assertion2', p.earl + 'subject', 'http://ex.org/myApp'),
+          quad('_:assertion2', p.earl + 'mode', p.earl + 'automatic'),
+          quad('_:assertion2', p.earl + 'result', '_:result2'),
+          quad('_:result2', p.rdf + 'type', p.earl + 'TestResult'),
+          quad('_:result2', p.earl + 'outcome', p.earl + 'failed'),
+          quad('_:result2', p.dc + 'date', '"' + testDate.toISOString() + '"^^' + p.xsd + 'dateTime'),
+        ]);
+    });
+
+    it('with tests should produce triples without requires properties, with skipped tests', async () => {
+      const p = require('../lib/prefixes.json');
+      return expect(await arrayifyStream(runner.resultsToEarl(testResultsSkips, propertiesMinimal, testDate)))
+        .toBeRdfIsomorphic([
+          quad('', p.foaf + 'primaryTopic', 'http://ex.org/myApp'),
+          quad('', p.dc + 'issued', '"' + testDate.toISOString() + '"^^' + p.xsd + 'dateTime'),
+
+          quad('http://ex.org/myApp', p.rdf  + 'type', p.earl + 'Software'),
+          quad('http://ex.org/myApp', p.rdf  + 'type', p.earl + 'TestSubject'),
+          quad('http://ex.org/myApp', p.rdf  + 'type', p.doap + 'Project'),
+          quad('http://ex.org/myApp', p.doap + 'name', '"My Name"'),
+          quad('http://ex.org/myApp', p.dc   + 'title', '"My Name"'),
+          quad('http://ex.org/myApp', p.doap + 'homepage', 'http://ex.org/myHomePage'),
+          quad('http://ex.org/myApp', p.doap + 'license', 'http://ex.org/myLicense'),
+          quad('http://ex.org/myApp', p.doap + 'programming-language', '"JavaScript"'),
+          quad('http://ex.org/myApp', p.doap + 'implements', 'http://ex.org/TheSpec'),
+          quad('http://ex.org/myApp', p.doap + 'category',
+            'http://dbpedia.org/resource/Resource_Description_Framework'),
+          quad('http://ex.org/myApp', p.doap + 'download-page', 'https://npmjs.org/package/MyName'),
+          quad('http://ex.org/myApp', p.dc   + 'description', '"My Description"@en'),
+          quad('http://ex.org/myApp', p.doap + 'description', '"My Description"@en'),
+
+          quad('http://ex.org/test1', p.rdf  + 'type', p.earl + 'TestCriterion'),
+          quad('http://ex.org/test1', p.rdf  + 'type', p.earl + 'TestCase'),
+          quad('http://ex.org/test1', p.dc   + 'title', '"Test1"'),
+          quad('http://ex.org/test1', p.earl + 'assertions', '_:assertions0'),
+          quad('_:assertions0', p.rdf + 'first', '_:assertion0'),
+          quad('_:assertions0', p.rdf + 'rest', p.rdf + 'nil'),
+          quad('_:assertion0', p.rdf  + 'type', 'http://www.w3.org/ns/earl#Assertion'),
+          quad('_:assertion0', p.earl + 'test', 'http://ex.org/test1'),
+          quad('_:assertion0', p.earl + 'subject', 'http://ex.org/myApp'),
+          quad('_:assertion0', p.earl + 'mode', p.earl + 'automatic'),
+          quad('_:assertion0', p.earl + 'result', '_:result0'),
+          quad('_:result0', p.rdf + 'type', p.earl + 'TestResult'),
+          quad('_:result0', p.earl + 'outcome', p.earl + 'passed'),
+          quad('_:result0', p.dc + 'date', '"' + testDate.toISOString() + '"^^' + p.xsd + 'dateTime'),
+
+          quad('http://ex.org/test2', p.rdf  + 'type', p.earl + 'TestCriterion'),
+          quad('http://ex.org/test2', p.rdf  + 'type', p.earl + 'TestCase'),
+          quad('http://ex.org/test2', p.dc   + 'title', '"Test2"'),
+          quad('http://ex.org/test2', p.dc   + 'description', '"Test2 comment"'),
+          quad('http://ex.org/test2', p.earl + 'assertions', '_:assertions1'),
+          quad('_:assertions1', p.rdf + 'first', '_:assertion1'),
+          quad('_:assertions1', p.rdf + 'rest', p.rdf + 'nil'),
+          quad('_:assertion1', p.rdf  + 'type', 'http://www.w3.org/ns/earl#Assertion'),
+          quad('_:assertion1', p.earl + 'test', 'http://ex.org/test2'),
+          quad('_:assertion1', p.earl + 'subject', 'http://ex.org/myApp'),
+          quad('_:assertion1', p.earl + 'mode', p.earl + 'automatic'),
+          quad('_:assertion1', p.earl + 'result', '_:result1'),
+          quad('_:result1', p.rdf + 'type', p.earl + 'TestResult'),
+          quad('_:result1', p.earl + 'outcome', p.earl + 'inapplicable'),
           quad('_:result1', p.dc + 'date', '"' + testDate.toISOString() + '"^^' + p.xsd + 'dateTime'),
 
           quad('http://ex.org/test3', p.rdf  + 'type', p.earl + 'TestCriterion'),

@@ -265,13 +265,13 @@ export class TestCaseQueryEvaluation implements ITestCaseSparql {
 
   public async test(engine: IQueryEngine, injectArguments: any): Promise<void> {
     const result: IQueryResult = await engine.query(this.queryData, this.queryString, injectArguments);
+    const dataGraphInfo = this.dataGraph ? ` (named graph: ${this.dataGraph})` : '';
     if (!await this.queryResult.equals(result, this.laxCardinality)) {
-      const dataGraphInfo = this.dataGraph ? ` (named graph: ${this.dataGraph})` : '';
       throw new Error(`Invalid query evaluation
 
   Query: ${this.queryString}
 
-  Data: ${this.dataUri || 'none'}${dataGraphInfo})
+  Data: ${this.dataUri || 'none'}${dataGraphInfo}
 
   Expected: ${this.queryResult.toString()}
 

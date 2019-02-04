@@ -567,6 +567,7 @@ describe('TestCaseQueryEvaluationHandler', () => {
         ],
       });
       expect(testCase.laxCardinality).toEqual(false);
+      expect(testCase.test(engine, {})).resolves.toBe(undefined);
     });
 
     it('should error on a resource without action', () => {

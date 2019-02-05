@@ -1,8 +1,8 @@
 import {Resource} from "rdf-object";
+import {Util} from "../../../Util";
 import {ITestCase, ITestCaseData} from "../../ITestCase";
 import {IParser} from "../IParser";
 import {TestCaseEval, TestCaseEvalHandler} from "../TestCaseEval";
-import {Util} from "../../../Util";
 
 /**
  * Test case handler for https://json-ld.org/test-suite/vocab#ToRDFTest.

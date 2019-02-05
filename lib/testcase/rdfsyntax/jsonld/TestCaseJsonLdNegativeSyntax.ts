@@ -6,7 +6,7 @@ import {TestCaseJsonLdToRdfHandler} from "./TestCaseJsonLdToRdf";
 /**
  * Test case handler for https://json-ld.org/test-suite/vocab#NegativeEvaluationTest.
  */
-export class TestCaseJsonLdSyntax extends TestCaseSyntaxHandler {
+export class TestCaseJsonLdNegativeSyntaxHandler extends TestCaseSyntaxHandler {
 
   constructor() {
     super(false);

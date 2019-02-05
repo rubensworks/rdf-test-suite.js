@@ -1,4 +1,4 @@
-import {TestCaseJsonLdSyntax} from "./rdfsyntax/jsonld/TestCaseJsonLdSyntax";
+import {TestCaseJsonLdNegativeSyntaxHandler} from "./rdfsyntax/jsonld/TestCaseJsonLdNegativeSyntax";
 import {TestCaseJsonLdToRdfHandler} from "./rdfsyntax/jsonld/TestCaseJsonLdToRdf";
 import {TestCaseEvalHandler} from "./rdfsyntax/TestCaseEval";
 import {TestCaseSyntaxHandler} from "./rdfsyntax/TestCaseSyntax";
@@ -79,6 +79,6 @@ module.exports = {
   'https://json-ld.org/test-suite/vocab#ToRDFTest':
     new TestCaseJsonLdToRdfHandler(),
   'https://json-ld.org/test-suite/vocab#NegativeEvaluationTest':
-    new TestCaseJsonLdSyntax(),
+    new TestCaseJsonLdNegativeSyntaxHandler(),
 };
 // tslint:enable:object-literal-sort-keys

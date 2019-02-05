@@ -190,6 +190,20 @@ describe('Util', () => {
             literal('RDF1.1 XML Syntax')),
         ]);
     });
+
+    it('should parse application/ld+json streams', async () => {
+      expect(await arrayifyStream(Util.parseRdfRaw('application/ld+json', 'http://example.org/',
+        streamifyString(`{
+  "@id": "abc",
+  "http://ex.org/p": "value"
+}`))))
+        .toEqualRdfQuadArray([
+          quad(
+            namedNode('http://example.org/abc'),
+            namedNode('http://ex.org/p'),
+            literal('value')),
+        ]);
+    });
   });
 
   describe('#fetchRdf', () => {

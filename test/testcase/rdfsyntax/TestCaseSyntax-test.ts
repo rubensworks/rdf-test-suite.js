@@ -3,6 +3,7 @@ import "jest-rdf";
 import {ContextParser} from "jsonld-context-parser";
 import {Resource} from "rdf-object";
 import {RdfXmlParser} from "rdfxml-streaming-parser";
+import {ErrorSkipped} from "../../../lib/ErrorSkipped";
 import {TestCaseSyntax, TestCaseSyntaxHandler} from "../../../lib/testcase/rdfsyntax/TestCaseSyntax";
 
 // tslint:disable:no-var-requires
@@ -102,6 +103,16 @@ describe('TestCaseSyntaxHandler positive', () => {
       resource.addProperty(pAction, new Resource({ term: literal('ACTION.ok'), context }));
       const testCase = await handler.resourceToTestCase(resource, <any> {});
       return expect(testCase.test(parser, {})).resolves.toBe(undefined);
+    });
+
+    it('should produce TestCaseSyntax that rejects with a skipped error when skipped', async () => {
+      const resource = new Resource({ term: namedNode('http://ex.org/test'), context });
+      resource.addProperty(pAction, new Resource({ term: literal('ACTION.ok'), context }));
+      const testCase = await handler.resourceToTestCase(resource, <any> {});
+      const myParser = {
+        parse: () => Promise.reject(new ErrorSkipped('Skipped')),
+      };
+      return expect(testCase.test(myParser, {})).rejects.toEqual(new ErrorSkipped('Skipped'));
     });
   });
 

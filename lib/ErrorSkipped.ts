@@ -3,10 +3,11 @@
  */
 export class ErrorSkipped extends Error {
 
-  public readonly skipped: boolean = true;
+  public readonly skipped: boolean;
 
-  constructor(message: string) {
+  constructor(message?: string) {
     super(message);
+    this.skipped = true;
   }
 
 }

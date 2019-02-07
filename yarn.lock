@@ -2317,7 +2317,25 @@ jsonld-context-parser@^1.0.0:
   dependencies:
     isomorphic-fetch "^2.2.1"
 
-jsonparse@^1.2.0:
+jsonld-context-parser@^1.1.1:
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/jsonld-context-parser/-/jsonld-context-parser-1.1.1.tgz#c30aa8b9e07beac01720e29ff993b4e7a608cfda"
+  integrity sha512-weYIHCl0XQaFszMhwz6kmOnAIb7+Fcw46AbmizfBH9XhCuOcDBZu5YgXox9Xk8TGf/TM6iDgzGLYfTJ3z9y0JQ==
+  dependencies:
+    isomorphic-fetch "^2.2.1"
+    relative-to-absolute-iri "^1.0.2"
+
+jsonld-streaming-parser@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/jsonld-streaming-parser/-/jsonld-streaming-parser-1.0.0.tgz#ff92f7c948548f3be35e86bec6e3337ce0161eaf"
+  integrity sha512-IYCJzIk0zgKyDHEQ8juYOY0yDqAbIdtgd4AISSjPT21jxOJwvfqS8U6nC5cNPLEhhJRiErdzFPT00R/NthxPIA==
+  dependencies:
+    "@rdfjs/data-model" "^1.1.1"
+    "@types/rdf-js" "^2.0.1"
+    jsonld-context-parser "^1.1.1"
+    jsonparse "^1.3.1"
+
+jsonparse@^1.2.0, jsonparse@^1.3.1:
   version "1.3.1"
   resolved "https://registry.yarnpkg.com/jsonparse/-/jsonparse-1.3.1.tgz#3f4dae4a91fac315f71062f8521cc239f1366280"
   integrity sha1-P02uSpH6wxX3EGL4UhzCOfE2YoA=
@@ -3370,6 +3388,11 @@ relative-to-absolute-iri@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/relative-to-absolute-iri/-/relative-to-absolute-iri-1.0.0.tgz#927b91d45ed6bd32b9aafb207520659828025a6b"
   integrity sha512-Yt4tG3eoy0R8111kS2G/jH3QE48U7RIAqGQLqek4LbA4MYKy5OXKVKJgAxu5tmZVengPHiaiP4R8tg1zZhXE+A==
+
+relative-to-absolute-iri@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/relative-to-absolute-iri/-/relative-to-absolute-iri-1.0.2.tgz#5ad2fa26569f46523ab8428cb7d5247005c51544"
+  integrity sha512-2tAsyCpb/ozT6w8BSaz//u7iRIW621FsMbC8el4VqzvtuntevEFfWNM/Wr9ubodzGa9OwBNwOHERRKqw9toKOA==
 
 remove-trailing-separator@^1.0.1:
   version "1.1.0"

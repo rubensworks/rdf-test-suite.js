@@ -87,6 +87,7 @@
     "@rdfjs/data-model": "^1.1.1",
     "arrayify-stream": "^1.0.0",
     "isomorphic-fetch": "^2.2.1",
+    "jsonld-streaming-parser": "^1.0.0",
     "log-symbols": "^2.2.0",
     "minimist": "^1.2.0",
     "n3": "^1.0.0",

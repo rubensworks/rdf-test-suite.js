@@ -1,6 +1,14 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+<a name="v1.4.0"></a>
+## [v1.4.0](https://github.com/rubensworks/rdf-test-suite.js/compare/v1.3.0...v1.4.0) - 2019-02-07
+
+### Added
+* [Allow tests to be skipped](https://github.com/rubensworks/rdf-test-suite.js/commit/9ae22af5aa9eab1058ddce832fbf34d06f2610ff)
+* [Add JSON-LD NegativeEvaluationTest](https://github.com/rubensworks/rdf-test-suite.js/commit/0ad9a62f6733f9654efc95d620f0b0500804f042)
+* [Add JSON-LD test case handler](https://github.com/rubensworks/rdf-test-suite.js/commit/23037fd6307bc2514538f3fd5613b9514b175739)
+
 <a name="v1.3.0"></a>
 ## [v1.3.0](https://github.com/rubensworks/rdf-test-suite.js/compare/v1.2.0...v1.3.0) - 2019-02-04
 

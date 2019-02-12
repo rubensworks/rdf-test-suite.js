@@ -19,7 +19,7 @@ Currently, the following test suites are supported:
 * [N-Quads](https://w3c.github.io/rdf-tests/nquads/)
 * [Turtle](https://w3c.github.io/rdf-tests/turtle/)
 * [TriG](https://w3c.github.io/rdf-tests/trig/)
-* [JSON-LD](https://json-ld.org/test-suite/)
+* [JSON-LD](https://w3c.github.io/json-ld-api/tests/)
 
 Not all [RDF test suites](https://w3c.github.io/rdf-tests/) are supported at the moment.
 However, this package is fully _modular_,
@@ -28,7 +28,7 @@ so that support for different test cases can be implemented easily.
 Planned support:
 * [SPARQL 1.1](http://w3c.github.io/rdf-tests/sparql11/data-sparql11/) (_other specifications_)
 * [RDF Schema and Semantics](https://w3c.github.io/rdf-tests/rdf-mt/reports/)
-* [JSON-LD](https://json-ld.org/test-suite/) (_other test suites_)
+* [JSON-LD](https://w3c.github.io/json-ld-api/tests/) (_other test suites_)
 
 ## Installation
 
@@ -236,7 +236,8 @@ $ rdf-test-suite myengine.js http://w3c.github.io/rdf-tests/sparql11/data-sparql
 | [N-Quads Tests](https://w3c.github.io/rdf-tests/nquads/) | [RDF 1.1 N-Quads](https://www.w3.org/TR/n-quads/) | [`IParser`](https://github.com/rubensworks/rdf-test-suite.js/blob/master/lib/testcase/rdfsyntax/IParser.ts) | http://w3c.github.io/rdf-tests/nquads/manifest.ttl |
 | [Turtle Tests](https://w3c.github.io/rdf-tests/turtle/) | [RDF 1.1 Turtle](https://www.w3.org/TR/turtle/) | [`IParser`](https://github.com/rubensworks/rdf-test-suite.js/blob/master/lib/testcase/rdfsyntax/IParser.ts) | http://w3c.github.io/rdf-tests/turtle/manifest.ttl |
 | [TriG Tests](https://w3c.github.io/rdf-tests/trig/) | [RDF 1.1 TriG](https://www.w3.org/TR/trig/) | [`IParser`](https://github.com/rubensworks/rdf-test-suite.js/blob/master/lib/testcase/rdfsyntax/IParser.ts) | http://w3c.github.io/rdf-tests/trig/manifest.ttl |
-| [JSON-LD Test Suite](https://json-ld.org/test-suite/) | [JSON-LD 1.0](https://www.w3.org/TR/json-ld/) | [`IParser`](https://github.com/rubensworks/rdf-test-suite.js/blob/master/lib/testcase/rdfsyntax/IParser.ts) | https://json-ld.org/test-suite/tests/toRdf-manifest.jsonld, https://json-ld.org/test-suite/tests/error-manifest.jsonld |
+| [JSON-LD Test Suite](https://w3c.github.io/json-ld-api/tests/) | [JSON-LD 1.0](https://www.w3.org/TR/json-ld/) | [`IParser`](https://github.com/rubensworks/rdf-test-suite.js/blob/master/lib/testcase/rdfsyntax/IParser.ts) | https://w3c.github.io/json-ld-api/tests/toRdf-manifest.jsonld |
+| [JSON-LD Test Suite (old)](https://json-ld.org/test-suite/) | [JSON-LD 1.0](https://www.w3.org/TR/json-ld/) | [`IParser`](https://github.com/rubensworks/rdf-test-suite.js/blob/master/lib/testcase/rdfsyntax/IParser.ts) | https://json-ld.org/test-suite/tests/toRdf-manifest.jsonld, https://json-ld.org/test-suite/tests/error-manifest.jsonld |
 
 ## License
 This software is written by [Ruben Taelman](http://rubensworks.net/).

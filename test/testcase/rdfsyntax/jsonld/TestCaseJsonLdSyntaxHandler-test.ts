@@ -5,8 +5,8 @@ import {JsonLdParser} from "jsonld-streaming-parser";
 import {Resource} from "rdf-object";
 import {ErrorSkipped} from "../../../../lib/ErrorSkipped";
 import {
-  TestCaseJsonLdNegativeSyntaxHandler,
-} from "../../../../lib/testcase/rdfsyntax/jsonld/TestCaseJsonLdNegativeSyntax";
+  TestCaseJsonLdSyntaxHandler,
+} from "../../../../lib/testcase/rdfsyntax/jsonld/TestCaseJsonLdSyntax";
 import {TestCaseSyntax} from "../../../../lib/testcase/rdfsyntax/TestCaseSyntax";
 
 // tslint:disable:no-var-requires
@@ -36,9 +36,9 @@ const streamifyString = require('streamify-string');
   return Promise.resolve(new Response(body, <any> { headers: new Headers({ a: 'b' }), status: 200, url }));
 };
 
-describe('TestCaseJsonLdNegativeSyntaxHandler', () => {
+describe('TestCaseJsonLdSyntaxHandler', () => {
 
-  const handler = new TestCaseJsonLdNegativeSyntaxHandler();
+  const handler = new TestCaseJsonLdSyntaxHandler(false);
   const parser = {
     parse: (data: string, baseIRI: string) => Promise.resolve(arrayifyStream(streamifyString(data)
       .pipe(new JsonLdParser({ baseIRI })))),

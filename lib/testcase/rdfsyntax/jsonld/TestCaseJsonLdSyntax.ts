@@ -4,12 +4,14 @@ import {TestCaseSyntax, TestCaseSyntaxHandler} from "../TestCaseSyntax";
 import {TestCaseJsonLdToRdfHandler} from "./TestCaseJsonLdToRdf";
 
 /**
- * Test case handler for https://json-ld.org/test-suite/vocab#NegativeEvaluationTest.
+ * Test case handler for:
+ * * https://json-ld.org/test-suite/vocab#NegativeEvaluationTest
+ * * https://w3c.github.io/json-ld-api/tests/vocab#PositiveSyntaxTest
  */
-export class TestCaseJsonLdNegativeSyntaxHandler extends TestCaseSyntaxHandler {
+export class TestCaseJsonLdSyntaxHandler extends TestCaseSyntaxHandler {
 
-  constructor() {
-    super(false);
+  constructor(expectNoError: boolean) {
+    super(expectNoError);
   }
 
   public resourceToTestCase(resource: Resource, testCaseData: ITestCaseData,

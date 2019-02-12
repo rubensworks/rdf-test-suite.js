@@ -1,6 +1,12 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+<a name="v1.5.0"></a>
+## [v1.5.0](https://github.com/rubensworks/rdf-test-suite.js/compare/v1.4.0...v1.5.0) - 2019-02-12
+
+### Added
+* [Add support for new JSON-LD test suite](https://github.com/rubensworks/rdf-test-suite.js/commit/e362d0e811e95bd21bb3ba2fa421636d37f97eee)
+
 <a name="v1.4.0"></a>
 ## [v1.4.0](https://github.com/rubensworks/rdf-test-suite.js/compare/v1.3.0...v1.4.0) - 2019-02-07
 

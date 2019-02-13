@@ -91,7 +91,7 @@ function onEnd(testResults: ITestResult[]) {
   // Exit with status code 1 if there was at least one failing test
   if (!args.e) {
     for (const testResult of testResults) {
-      if (!testResult.ok) {
+      if (!testResult.skipped && !testResult.ok) {
         process.exit(1);
       }
     }

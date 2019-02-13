@@ -1,6 +1,12 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+<a name="v1.5.3"></a>
+## [v1.5.3](https://github.com/rubensworks/rdf-test-suite.js/compare/v1.5.2...v1.5.3) - 2019-02-13
+
+### Fixed
+* [Bump JSON-LD streamer with fix for failure to parse new JSON-LD tests](https://github.com/rubensworks/rdf-test-suite.js/commit/176c91caa6b98d5aed0cd5107e27e686258eb6eb)
+
 <a name="v1.5.2"></a>
 ## [v1.5.2](https://github.com/rubensworks/rdf-test-suite.js/compare/v1.5.1...v1.5.2) - 2019-02-13
 

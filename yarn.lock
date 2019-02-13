@@ -3701,10 +3701,10 @@ sparqljson-parse@^1.5.0:
     "@rdfjs/data-model" "^1.1.1"
     JSONStream "^1.3.3"
 
-sparqlxml-parse@^1.2.0:
-  version "1.2.0"
-  resolved "https://registry.yarnpkg.com/sparqlxml-parse/-/sparqlxml-parse-1.2.0.tgz#5965bd83561e7da7571a78aa28ff0dffe363c16b"
-  integrity sha512-yRDYaRH5Fv6fHywWu8lG+WK2NLeg+p15DTjD5qkNq7njxJseKh2Eq1E1L9XvUEcwhR6aK5L8h07AO4lYA0BFFQ==
+sparqlxml-parse@^1.2.1:
+  version "1.2.1"
+  resolved "https://registry.yarnpkg.com/sparqlxml-parse/-/sparqlxml-parse-1.2.1.tgz#6426a829a431e2dd5b5a9bffbd0ea2b96219a150"
+  integrity sha512-GepnauJojSSxrbpU9b44m/TF5B2VU2KUu4ZE+PGaJw25gXuEGSZt8mrnIXnMiQRL7KFaUybba+IdpXUmci2IrA==
   dependencies:
     "@rdfjs/data-model" "^1.1.1"
     sax-stream "^1.2.3"

@@ -5,7 +5,7 @@ import {stringToTerm} from "rdf-string";
 import {mapTerms, QuadTermName} from "rdf-terms";
 import {SparqlJsonParser} from "sparqljson-parse";
 import {SparqlXmlParser} from "sparqlxml-parse";
-import {Util, IFetchResponse} from "../../Util";
+import {IFetchResponse, Util} from "../../Util";
 import {ITestCaseData} from "../ITestCase";
 import {ITestCaseHandler} from "../ITestCaseHandler";
 import {IQueryEngine, IQueryResult, IQueryResultBindings} from "./IQueryEngine";

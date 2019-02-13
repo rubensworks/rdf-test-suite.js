@@ -69,15 +69,15 @@ describe('TestCaseJsonLdToRdfHandler', () => {
         pResult = new Resource(
           { term: namedNode('http://www.w3.org/2001/sw/DataAccess/tests/test-manifest#result'), context });
         pContext = new Resource(
-          { term: namedNode('https://json-ld.org/test-suite/vocab#context'), context });
+          { term: namedNode('https://w3c.github.io/json-ld-api/tests/vocab#context'), context });
         pOption = new Resource(
-          { term: namedNode('https://json-ld.org/test-suite/vocab#option'), context });
+          { term: namedNode('https://w3c.github.io/json-ld-api/tests/vocab#option'), context });
         pJsonLdProduceGeneralizedRdf = new Resource(
-          { term: namedNode('https://json-ld.org/test-suite/vocab#produceGeneralizedRdf'), context });
+          { term: namedNode('https://w3c.github.io/json-ld-api/tests/vocab#produceGeneralizedRdf'), context });
         pProcessingMode = new Resource(
-          { term: namedNode('https://json-ld.org/test-suite/vocab#processingMode'), context });
+          { term: namedNode('https://w3c.github.io/json-ld-api/tests/vocab#processingMode'), context });
         pSpecVersion = new Resource(
-          { term: namedNode('https://json-ld.org/test-suite/vocab#specVersion'), context });
+          { term: namedNode('https://w3c.github.io/json-ld-api/tests/vocab#specVersion'), context });
 
         done();
       });

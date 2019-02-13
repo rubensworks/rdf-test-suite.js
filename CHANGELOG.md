@@ -1,6 +1,16 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+<a name="v1.5.2"></a>
+## [v1.5.2](https://github.com/rubensworks/rdf-test-suite.js/compare/v1.5.1...v1.5.2) - 2019-02-13
+
+### Fixed
+* [Fix skipped test producing a non-zero exit code](https://github.com/rubensworks/rdf-test-suite.js/commit/b5701bfbe7fb145d52696511006500127c963c96)
+
+### Changed
+* [Update JSON-LD test suite vocab URL in context](https://github.com/rubensworks/rdf-test-suite.js/commit/755d288188595b49c6bef619c520c69692f21933)
+* [Deprecate old JSON-LD test suite](https://github.com/rubensworks/rdf-test-suite.js/commit/7fa65d22fc2f17670d5a695aec0e7bddac3ff573)
+
 <a name="v1.5.1"></a>
 ## [v1.5.1](https://github.com/rubensworks/rdf-test-suite.js/compare/v1.5.0...v1.5.1) - 2019-02-13
 

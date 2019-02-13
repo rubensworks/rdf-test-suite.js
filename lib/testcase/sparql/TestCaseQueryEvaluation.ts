@@ -5,7 +5,7 @@ import {stringToTerm} from "rdf-string";
 import {mapTerms, QuadTermName} from "rdf-terms";
 import {SparqlJsonParser} from "sparqljson-parse";
 import {SparqlXmlParser} from "sparqlxml-parse";
-import {Util} from "../../Util";
+import {Util, IFetchResponse} from "../../Util";
 import {ITestCaseData} from "../ITestCase";
 import {ITestCaseHandler} from "../ITestCaseHandler";
 import {IQueryEngine, IQueryResult, IQueryResultBindings} from "./IQueryEngine";
@@ -223,17 +223,31 @@ export class TestCaseQueryEvaluationHandler implements ITestCaseHandler<TestCase
         (value: RDF.Term, key: QuadTermName) => key === 'graph' ? dataGraph : value));
     }
     const queryResponse = await Util.fetchCached(resource.property.result.value, cachePath);
-    return new TestCaseQueryEvaluation(testCaseData,
-      await stringifyStream((await Util.fetchCached(action.property.query.value, cachePath)).body),
-      queryData,
-      await TestCaseQueryEvaluationHandler.parseQueryResult(
-        Util.identifyContentType(queryResponse.url, queryResponse.headers),
-        queryResponse.url, queryResponse.body),
-      laxCardinality,
-      dataUri,
-      dataGraph);
+    return new TestCaseQueryEvaluation(
+      testCaseData,
+      {
+        dataGraph,
+        dataUri,
+        laxCardinality,
+        queryData,
+        queryResult: await TestCaseQueryEvaluationHandler.parseQueryResult(
+          Util.identifyContentType(queryResponse.url, queryResponse.headers),
+          queryResponse.url, queryResponse.body),
+        queryString: await stringifyStream((await Util.fetchCached(action.property.query.value, cachePath)).body),
+        resultSource: queryResponse,
+      });
   }
 
+}
+
+export interface ITestCaseQueryEvaluationProps {
+  queryString: string;
+  queryData: RDF.Quad[];
+  queryResult: IQueryResult;
+  laxCardinality: boolean;
+  resultSource: IFetchResponse;
+  dataGraph?: RDF.NamedNode;
+  dataUri?: string;
 }
 
 export class TestCaseQueryEvaluation implements ITestCaseSparql {
@@ -249,18 +263,13 @@ export class TestCaseQueryEvaluation implements ITestCaseSparql {
   public readonly queryData: RDF.Quad[];
   public readonly queryResult: IQueryResult;
   public readonly laxCardinality: boolean;
-  public readonly dataUri: string;
-  public readonly dataGraph: RDF.NamedNode;
+  public readonly dataUri?: string;
+  public readonly dataGraph?: RDF.NamedNode;
+  public readonly resultSource: IFetchResponse;
 
-  constructor(testCaseData: ITestCaseData, queryString: string, queryData: RDF.Quad[],
-              queryResult: IQueryResult, laxCardinality: boolean, dataUri: string, dataGraph: RDF.NamedNode) {
+  constructor(testCaseData: ITestCaseData, props: ITestCaseQueryEvaluationProps) {
     Object.assign(this, testCaseData);
-    this.queryString = queryString;
-    this.queryData = queryData;
-    this.queryResult = queryResult;
-    this.laxCardinality = laxCardinality;
-    this.dataUri = dataUri;
-    this.dataGraph = dataGraph;
+    Object.assign(this, props);
   }
 
   public async test(engine: IQueryEngine, injectArguments: any): Promise<void> {
@@ -269,9 +278,11 @@ export class TestCaseQueryEvaluation implements ITestCaseSparql {
     if (!await this.queryResult.equals(result, this.laxCardinality)) {
       throw new Error(`Invalid query evaluation
 
-  Query: ${this.queryString}
+  Query:\n\n${this.queryString}
 
   Data: ${this.dataUri || 'none'}${dataGraphInfo}
+
+  Result Source: ${this.resultSource.url}
 
   Expected: ${this.queryResult.toString()}
 

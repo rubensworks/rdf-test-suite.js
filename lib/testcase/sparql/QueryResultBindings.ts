@@ -67,7 +67,7 @@ export class QueryResultBindings implements IQueryResultBindings {
       // At this point, the keys are equal, so we check if the actual count is not more than the expected count
       for (const key in countedBindingsActual) {
         if (countedBindingsActual[key] > countedBindingsExpected[key]) {
-          // The actual value contains *more* occurences for this binding than allowed
+          // The actual value contains *more* occurrences for this binding than allowed
           return false;
         }
       }

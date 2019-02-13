@@ -1,6 +1,15 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+<a name="v1.5.1"></a>
+## [v1.5.1](https://github.com/rubensworks/rdf-test-suite.js/compare/v1.5.0...v1.5.1) - 2019-02-13
+
+### Added
+* [Print query result source URL](https://github.com/rubensworks/rdf-test-suite.js/commit/a3fc0c4146ac73034ea0cdd2028b02e2606a1333)
+
+### Fixed
+* [Bump sparqlxml-parse to 1.2.1](https://github.com/rubensworks/rdf-test-suite.js/commit/d81b06309272cb93291dbc802ca48db45c358784)
+
 <a name="v1.5.0"></a>
 ## [v1.5.0](https://github.com/rubensworks/rdf-test-suite.js/compare/v1.4.0...v1.5.0) - 2019-02-12
 

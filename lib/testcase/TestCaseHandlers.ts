@@ -76,10 +76,6 @@ module.exports = {
     new TestCaseSyntaxHandler(false),
 
   // JSON-LD test suite
-  'https://json-ld.org/test-suite/vocab#ToRDFTest':
-    new TestCaseJsonLdToRdfHandler(),
-  'https://json-ld.org/test-suite/vocab#NegativeEvaluationTest':
-    new TestCaseJsonLdSyntaxHandler(false),
   'https://w3c.github.io/json-ld-api/tests/vocab#PositiveEvaluationTest':
     new TestCaseJsonLdToRdfHandler(),
   'https://w3c.github.io/json-ld-api/tests/vocab#PositiveSyntaxTest':

@@ -3,7 +3,7 @@ import {existsSync, mkdirSync, writeFileSync} from "fs";
 import minimist = require("minimist");
 import {StreamWriter} from "n3";
 import * as Path from "path";
-import {ITestResult, TestSuiteRunner} from "../lib/TestSuiteRunner";
+import {ITestResult, ITestSuiteConfig, TestSuiteRunner} from "../lib/TestSuiteRunner";
 
 // tslint:disable:no-console
 // tslint:disable:no-var-requires
@@ -28,39 +28,45 @@ Options:
   -e    always exit with status code 0 on test errors
   -t    regex for test IRIs to run
   -i    JSON string with custom options that need to be passed to the engine
+  -d    Time out duration for test cases (in milliseconds, default 3000)
 `);
   process.exit(1);
 }
 
-// Set format
-let format = 'detailed';
-if (args.o) {
-  format = args.o;
-}
-
-// Scope to a specification
-const specification = args.s;
-
-// Optional test IRI regex
-const testRegex = new RegExp(args.t);
-
 // Enable caching if needed
-let cachePath: string = null;
+// tslint:disable-next-line: variable-name
+let _cachePath: string = null;
 if (args.c) {
-  cachePath = Path.join(process.cwd(), (args.c === true ? '.rdf-test-suite-cache/' : args.c));
-  if (!existsSync(cachePath)) {
-    mkdirSync(cachePath);
+  _cachePath = Path.join(process.cwd(), (args.c === true ? '.rdf-test-suite-cache/' : args.c));
+  if (!existsSync(_cachePath)) {
+    mkdirSync(_cachePath);
   }
 }
 
 // Import the engine
 const engine = require(process.cwd() + '/' + args._[0]);
 
+const defaultConfig = {
+  exitWithStatusCode0: false,
+  outputFormat: 'detailed',
+  timeOutDuration: 3000,
+};
+
+const config: ITestSuiteConfig = {
+  cachePath: _cachePath,
+  customEngingeOptions: args.i ? JSON.parse(args.i) : {},
+  exitWithStatusCode0: !!args.e || defaultConfig.exitWithStatusCode0,
+  outputFormat: args.o || defaultConfig.outputFormat,
+  specification: args.s,
+  testRegex: new RegExp(args.t),
+  timeOutDuration: args.d || defaultConfig.timeOutDuration,
+};
+
 // Fetch the manifest, run the tests, and print them
 const testSuiteRunner = new TestSuiteRunner();
-testSuiteRunner.runManifest(args._[1], engine, cachePath, specification, testRegex, args.i ? JSON.parse(args.i) : {})
+testSuiteRunner.runManifest(args._[1], engine, config)
   .then((testResults) => {
-    switch (format) {
+    switch (config.outputFormat) {
     case 'earl':
       if (!args.p) {
         throw new Error(`EARL reporting requires the -p argument to point to an earl-meta.json file.`);
@@ -89,7 +95,7 @@ testSuiteRunner.runManifest(args._[1], engine, cachePath, specification, testReg
 
 function onEnd(testResults: ITestResult[]) {
   // Exit with status code 1 if there was at least one failing test
-  if (!args.e) {
+  if (!config.exitWithStatusCode0) {
     for (const testResult of testResults) {
       if (!testResult.skipped && !testResult.ok) {
         process.exit(1);

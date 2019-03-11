@@ -166,16 +166,12 @@ describe('TestCaseQueryEvaluationHandler', () => {
     });
 
     it('should resolve on turtle', async () => {
-      return expect(TestCaseQueryEvaluationHandler.parseQueryResult('text/turtle',
+      return expect((await TestCaseQueryEvaluationHandler.parseQueryResult('text/turtle',
         'a', streamifyString(`
 <a> <b> <c>.
-`))).resolves
-        .toMatchObject({
-          type: 'quads',
-          value: [
-            quad('aa', 'ab', 'ac'),
-          ],
-        });
+`))).value).toBeRdfIsomorphic([
+  quad('aa', 'ab', 'ac'),
+]);
     });
 
     it('should resolve on DAWG result sets', async () => {
@@ -442,15 +438,13 @@ describe('TestCaseQueryEvaluationHandler', () => {
       expect(testCase.type).toEqual('sparql');
       expect(testCase.queryString).toEqual(`OK`);
       expect(testCase.queryData).toEqualRdfQuadArray([]);
-      expect(testCase.queryResult).toMatchObject({
-        type: 'quads',
-        value: [
-          quad('http://www.w3.org/TR/rdf-syntax-grammar', 'http://purl.org/dc/elements/1.1/title',
-            '"RDF1.1 XML Syntax 1"'),
-          quad('http://www.w3.org/TR/rdf-syntax-grammar', 'http://purl.org/dc/elements/1.1/title',
-            '"RDF1.1 XML Syntax 2"'),
-        ],
-      });
+      expect(testCase.queryResult.type).toEqual('quads');
+      expect(testCase.queryResult.value).toBeRdfIsomorphic([
+        quad('http://www.w3.org/TR/rdf-syntax-grammar', 'http://purl.org/dc/elements/1.1/title',
+          '"RDF1.1 XML Syntax 1"'),
+        quad('http://www.w3.org/TR/rdf-syntax-grammar', 'http://purl.org/dc/elements/1.1/title',
+          '"RDF1.1 XML Syntax 2"'),
+      ]);
       expect(testCase.laxCardinality).toEqual(false);
     });
 
@@ -467,15 +461,13 @@ describe('TestCaseQueryEvaluationHandler', () => {
       expect(testCase.type).toEqual('sparql');
       expect(testCase.queryString).toEqual(`OK`);
       expect(testCase.queryData).toEqualRdfQuadArray([]);
-      expect(testCase.queryResult).toMatchObject({
-        type: 'quads',
-        value: [
-          quad('http://www.w3.org/TR/rdf-syntax-grammar', 'http://purl.org/dc/elements/1.1/title',
-            '"RDF1.1 XML Syntax 1"'),
-          quad('http://www.w3.org/TR/rdf-syntax-grammar', 'http://purl.org/dc/elements/1.1/title',
-            '"RDF1.1 XML Syntax 2"'),
-        ],
-      });
+      expect(testCase.queryResult.type).toEqual('quads');
+      expect(testCase.queryResult.value).toBeRdfIsomorphic([
+        quad('http://www.w3.org/TR/rdf-syntax-grammar', 'http://purl.org/dc/elements/1.1/title',
+          '"RDF1.1 XML Syntax 1"'),
+        quad('http://www.w3.org/TR/rdf-syntax-grammar', 'http://purl.org/dc/elements/1.1/title',
+          '"RDF1.1 XML Syntax 2"'),
+      ]);
       expect(testCase.laxCardinality).toEqual(true);
     });
 
@@ -496,15 +488,13 @@ describe('TestCaseQueryEvaluationHandler', () => {
         quad('http://www.w3.org/TR/rdf-syntax-grammar', 'http://purl.org/dc/elements/1.1/title',
           '"RDF1.1 XML Syntax 2"'),
       ]);
-      expect(testCase.queryResult).toMatchObject({
-        type: 'quads',
-        value: [
-          quad('http://www.w3.org/TR/rdf-syntax-grammar', 'http://purl.org/dc/elements/1.1/title',
-            '"RDF1.1 XML Syntax 1"'),
-          quad('http://www.w3.org/TR/rdf-syntax-grammar', 'http://purl.org/dc/elements/1.1/title',
-            '"RDF1.1 XML Syntax 2"'),
-        ],
-      });
+      expect(testCase.queryResult.type).toEqual('quads');
+      expect(testCase.queryResult.value).toBeRdfIsomorphic([
+        quad('http://www.w3.org/TR/rdf-syntax-grammar', 'http://purl.org/dc/elements/1.1/title',
+          '"RDF1.1 XML Syntax 1"'),
+        quad('http://www.w3.org/TR/rdf-syntax-grammar', 'http://purl.org/dc/elements/1.1/title',
+          '"RDF1.1 XML Syntax 2"'),
+      ]);
       expect(testCase.laxCardinality).toEqual(false);
     });
 
@@ -525,15 +515,13 @@ describe('TestCaseQueryEvaluationHandler', () => {
         quad('http://www.w3.org/TR/rdf-syntax-grammar', 'http://purl.org/dc/elements/1.1/title',
           '"RDF1.1 XML Syntax 2"'),
       ]);
-      expect(testCase.queryResult).toMatchObject({
-        type: 'quads',
-        value: [
-          quad('http://www.w3.org/TR/rdf-syntax-grammar', 'http://purl.org/dc/elements/1.1/title',
-            '"RDF1.1 XML Syntax 1"'),
-          quad('http://www.w3.org/TR/rdf-syntax-grammar', 'http://purl.org/dc/elements/1.1/title',
-            '"RDF1.1 XML Syntax 2"'),
-        ],
-      });
+      expect(testCase.queryResult.type).toEqual('quads');
+      expect(testCase.queryResult.value).toBeRdfIsomorphic([
+        quad('http://www.w3.org/TR/rdf-syntax-grammar', 'http://purl.org/dc/elements/1.1/title',
+          '"RDF1.1 XML Syntax 1"'),
+        quad('http://www.w3.org/TR/rdf-syntax-grammar', 'http://purl.org/dc/elements/1.1/title',
+          '"RDF1.1 XML Syntax 2"'),
+      ]);
       expect(testCase.laxCardinality).toEqual(false);
     });
 
@@ -557,15 +545,13 @@ describe('TestCaseQueryEvaluationHandler', () => {
         quad('http://www.w3.org/TR/rdf-syntax-grammar', 'http://purl.org/dc/elements/1.1/title',
           '"RDF1.1 XML Syntax 2"', 'http://ex.org/graph'),
       ]);
-      expect(testCase.queryResult).toMatchObject({
-        type: 'quads',
-        value: [
-          quad('http://www.w3.org/TR/rdf-syntax-grammar', 'http://purl.org/dc/elements/1.1/title',
-            '"RDF1.1 XML Syntax 1"'),
-          quad('http://www.w3.org/TR/rdf-syntax-grammar', 'http://purl.org/dc/elements/1.1/title',
-            '"RDF1.1 XML Syntax 2"'),
-        ],
-      });
+      expect(testCase.queryResult.type).toEqual('quads');
+      expect(testCase.queryResult.value).toBeRdfIsomorphic([
+        quad('http://www.w3.org/TR/rdf-syntax-grammar', 'http://purl.org/dc/elements/1.1/title',
+          '"RDF1.1 XML Syntax 1"'),
+        quad('http://www.w3.org/TR/rdf-syntax-grammar', 'http://purl.org/dc/elements/1.1/title',
+          '"RDF1.1 XML Syntax 2"'),
+      ]);
       expect(testCase.laxCardinality).toEqual(false);
       expect(testCase.test(engine, {})).resolves.toBe(undefined);
     });

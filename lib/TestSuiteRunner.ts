@@ -10,6 +10,17 @@ import {Util} from "./Util";
 const quad = require('rdf-quad');
 const streamifyArray = require('streamify-array');
 
+// tslint:disable-next-line: interface-over-type-literal
+export type ITestSuiteConfig = {
+  exitWithStatusCode0: boolean;
+  outputFormat: string;
+  timeOutDuration: number;
+  customEngingeOptions: object;
+  specification?: string;
+  cachePath?: string;
+  testRegex?: RegExp;
+};
+
 /**
  * TestSuiteRunner runs a certain test suite manifest.
  */
@@ -25,9 +36,8 @@ export class TestSuiteRunner {
    * @param {any} injectArguments An optional set of arguments to pass to the handler.
    * @return {Promise<ITestResult[]>} A promise resolving to an array of test results.
    */
-  public async runManifest(manifestUrl: string, handler: any,
-                           cachePath: string, specification?: string,
-                           testRegex?: RegExp, injectArguments?: any): Promise<ITestResult[]> {
+  public async runManifest(manifestUrl: string, handler: any, config: ITestSuiteConfig): Promise<ITestResult[]> {
+    const {cachePath, specification, testRegex, customEngingeOptions } = config;
     const manifest: IManifest = await new ManifestLoader().from(manifestUrl, cachePath);
     const results: ITestResult[] = [];
 
@@ -36,12 +46,11 @@ export class TestSuiteRunner {
       if (!manifest.specifications || !manifest.specifications[specification]) {
         return [];
       }
-      await this.runManifestConcrete(manifest.specifications[specification], handler, testRegex,
-        injectArguments, results);
+      await this.runManifestConcrete(manifest.specifications[specification], handler, config, results);
       return results;
     }
 
-    await this.runManifestConcrete(manifest, handler, testRegex, injectArguments, results);
+    await this.runManifestConcrete(manifest, handler, config, results);
     return results;
   }
 
@@ -54,14 +63,18 @@ export class TestSuiteRunner {
    * @param {ITestResult[]} results An array to append the test results to
    * @return {Promise<void>} A promise resolving when the tests are finished.
    */
-  public async runManifestConcrete(manifest: IManifest, handler: any, testRegex: RegExp,
-                                   injectArguments: any, results: ITestResult[]) {
+  public async runManifestConcrete(
+    manifest: IManifest,
+    handler: any,
+    config: ITestSuiteConfig,
+    results: ITestResult[],
+  ) {
     // Execute all tests in this manifest
     if (manifest.testEntries) {
       for (const test of manifest.testEntries) {
-        if (!testRegex || testRegex.test(test.uri)) {
+        if (!config.testRegex || config.testRegex.test(test.uri)) {
           try {
-            await test.test(handler, injectArguments);
+            await test.test(handler, config.customEngingeOptions);
           } catch (error) {
             results.push({ test, ok: false, error, skipped: error.skipped });
             continue;
@@ -74,7 +87,7 @@ export class TestSuiteRunner {
     // Recursively handle all sub-manifests
     if (manifest.subManifests) {
       for (const subManifest of manifest.subManifests) {
-        await (this.runManifestConcrete(subManifest, handler, testRegex, injectArguments, results));
+        await (this.runManifestConcrete(subManifest, handler, config, results));
       }
     }
   }

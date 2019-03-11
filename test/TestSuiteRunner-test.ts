@@ -15,6 +15,13 @@ const mockTest3 = {
   uri: 'http://ex.org/test3',
 };
 
+const defaultConfig: ITestSuiteConfig = {
+  customEngingeOptions:  {},
+  exitWithStatusCode0: false,
+  outputFormat: 'detailed',
+  timeOutDuration: 3000,
+};
+
 // Mock ManifestLoader
 jest.mock('../lib/ManifestLoader', () => ({
   ManifestLoader: function ManifestLoader() {
@@ -75,7 +82,7 @@ jest.mock('../lib/ManifestLoader', () => ({
 import "jest-rdf";
 import * as LogSymbols from "log-symbols";
 import {PassThrough} from "stream";
-import {TestSuiteRunner} from "../lib/TestSuiteRunner";
+import {ITestSuiteConfig, TestSuiteRunner} from "../lib/TestSuiteRunner";
 
 // tslint:disable:no-var-requires
 const stringifyStream = require('stream-to-string');
@@ -94,11 +101,11 @@ describe('TestSuiteRunner', () => {
 
   describe('runManifest', () => {
     it('should produce an empty array for an empty manifest', () => {
-      return expect(runner.runManifest('empty', handler, null, null)).resolves.toEqual([]);
+      return expect(runner.runManifest('empty', handler, defaultConfig)).resolves.toEqual([]);
     });
 
     it('should produce results for a valid manifest', () => {
-      return expect(runner.runManifest('valid', handler, null, null)).resolves.toEqual([
+      return expect(runner.runManifest('valid', handler, defaultConfig)).resolves.toEqual([
         {
           ok: true,
           test: mockTest1,
@@ -116,7 +123,7 @@ describe('TestSuiteRunner', () => {
     });
 
     it('should produce results for a valid manifest with submanifests', () => {
-      return expect(runner.runManifest('validsub', handler, null, null)).resolves.toEqual([
+      return expect(runner.runManifest('validsub', handler, defaultConfig)).resolves.toEqual([
         {
           ok: true,
           test: mockTest1,
@@ -134,11 +141,13 @@ describe('TestSuiteRunner', () => {
     });
 
     it('should produce empty results for a valid manifest without the requested specifications', () => {
-      return expect(runner.runManifest('valid', handler, null, 'spec1')).resolves.toEqual([]);
+      const config: ITestSuiteConfig = { specification: 'spec1', ...defaultConfig};
+      return expect(runner.runManifest('valid', handler, config)).resolves.toEqual([]);
     });
 
     it('should produce results for a valid manifest with the requested specifications', () => {
-      return expect(runner.runManifest('validspec', handler, null, 'spec1')).resolves.toEqual([
+      const config: ITestSuiteConfig = { specification: 'spec1', ...defaultConfig};
+      return expect(runner.runManifest('validspec', handler, config)).resolves.toEqual([
         {
           ok: true,
           test: mockTest1,
@@ -156,11 +165,13 @@ describe('TestSuiteRunner', () => {
     });
 
     it('should produce results for a valid manifest with a non-matching regex', () => {
-      return expect(runner.runManifest('valid', handler, null, null, /abc/)).resolves.toEqual([]);
+      const config: ITestSuiteConfig = { testRegex: /abc/, ...defaultConfig};
+      return expect(runner.runManifest('valid', handler, config)).resolves.toEqual([]);
     });
 
     it('should produce results for a valid manifest with a single-matching regex', () => {
-      return expect(runner.runManifest('valid', handler, null, null, /1/)).resolves.toEqual([
+      const config: ITestSuiteConfig = { testRegex: /1/, ...defaultConfig};
+      return expect(runner.runManifest('valid', handler, config)).resolves.toEqual([
         {
           ok: true,
           test: mockTest1,
@@ -169,7 +180,8 @@ describe('TestSuiteRunner', () => {
     });
 
     it('should produce results for a valid manifest with a multiple-matching regex', () => {
-      return expect(runner.runManifest('valid', handler, null, null, /^.*test.*$/)).resolves.toEqual([
+      const config: ITestSuiteConfig = { testRegex: /^.*test.*$/, ...defaultConfig};
+      return expect(runner.runManifest('valid', handler, config)).resolves.toEqual([
         {
           ok: true,
           test: mockTest1,

@@ -34,12 +34,11 @@ Options:
 }
 
 // Enable caching if needed
-// tslint:disable-next-line: variable-name
-let _cachePath: string = null;
+let cachePath: string = null;
 if (args.c) {
-  _cachePath = Path.join(process.cwd(), (args.c === true ? '.rdf-test-suite-cache/' : args.c));
-  if (!existsSync(_cachePath)) {
-    mkdirSync(_cachePath);
+  cachePath = Path.join(process.cwd(), (args.c === true ? '.rdf-test-suite-cache/' : args.c));
+  if (!existsSync(cachePath)) {
+    mkdirSync(cachePath);
   }
 }
 
@@ -53,7 +52,7 @@ const defaultConfig = {
 };
 
 const config: ITestSuiteConfig = {
-  cachePath: _cachePath,
+  cachePath,
   customEngingeOptions: args.i ? JSON.parse(args.i) : {},
   exitWithStatusCode0: !!args.e || defaultConfig.exitWithStatusCode0,
   outputFormat: args.o || defaultConfig.outputFormat,

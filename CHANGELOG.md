@@ -1,6 +1,12 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+<a name="v1.6.0"></a>
+## [v1.6.0](https://github.com/rubensworks/rdf-test-suite.js/compare/v1.5.3...v1.6.0) - 2019-03-18
+
+### Added
+* [Handle test cases that time out gracefully](https://github.com/rubensworks/rdf-test-suite.js/commit/294be937f5340025284138fc3de9fb70d512081e)
+
 <a name="v1.5.3"></a>
 ## [v1.5.3](https://github.com/rubensworks/rdf-test-suite.js/compare/v1.5.2...v1.5.3) - 2019-02-13
 

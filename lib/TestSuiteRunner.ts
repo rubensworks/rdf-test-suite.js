@@ -10,8 +10,7 @@ import {Util} from "./Util";
 const quad = require('rdf-quad');
 const streamifyArray = require('streamify-array');
 
-// tslint:disable-next-line: interface-over-type-literal
-export type ITestSuiteConfig = {
+export interface ITestSuiteConfig {
   exitWithStatusCode0: boolean;
   outputFormat: string;
   timeOutDuration: number;
@@ -19,7 +18,7 @@ export type ITestSuiteConfig = {
   specification?: string;
   cachePath?: string;
   testRegex?: RegExp;
-};
+}
 
 /**
  * TestSuiteRunner runs a certain test suite manifest.
@@ -37,7 +36,7 @@ export class TestSuiteRunner {
    * @return {Promise<ITestResult[]>} A promise resolving to an array of test results.
    */
   public async runManifest(manifestUrl: string, handler: any, config: ITestSuiteConfig): Promise<ITestResult[]> {
-    const {cachePath, specification, testRegex, customEngingeOptions } = config;
+    const { cachePath, specification } = config;
     const manifest: IManifest = await new ManifestLoader().from(manifestUrl, cachePath);
     const results: ITestResult[] = [];
 
@@ -74,7 +73,13 @@ export class TestSuiteRunner {
       for (const test of manifest.testEntries) {
         if (!config.testRegex || config.testRegex.test(test.uri)) {
           try {
-            await test.test(handler, config.customEngingeOptions);
+            await Promise.race([
+              test.test(handler, config.customEngingeOptions),
+              new Promise((res, rej) => setTimeout(
+                () => rej(`Test case '${test.uri}' timed out`),
+                config.timeOutDuration),
+              ),
+            ]);
           } catch (error) {
             results.push({ test, ok: false, error, skipped: error.skipped });
             continue;
@@ -213,9 +218,9 @@ ${LogSymbols.error} ${result.test.name}
         quads.push(quad(testUri, p.dc + 'description', '"' + result.test.comment + '"'));
       }
       quads.push(quad(testUri, p.earl + 'assertions', '_:assertions' + id));
-      quads.push(quad('_:assertions' + id, p.rdf + 'first', '_:assertion' + id));
-      quads.push(quad('_:assertions' + id, p.rdf + 'rest', p.rdf + 'nil'));
-      quads.push(quad('_:assertion' + id, p.rdf + 'type', p.earl + 'Assertion'));
+      quads.push(quad('_:assertions'  + id, p.rdf + 'first', '_:assertion' + id));
+      quads.push(quad('_:assertions'  + id, p.rdf + 'rest', p.rdf + 'nil'));
+      quads.push(quad('_:assertion'   + id, p.rdf + 'type', p.earl + 'Assertion'));
       for (const author of properties.authors) {
         quads.push(quad('_:assertion' + id, p.earl + 'assertedBy', author.uri));
       }

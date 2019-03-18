@@ -15,6 +15,14 @@ const mockTest3 = {
   uri: 'http://ex.org/test3',
 };
 
+const timeOutMockTest1 = {
+  name: 'Timeout1',
+  test: () => {
+    return new Promise((resolve, reject) => setTimeout(() => resolve(), 500));
+  },
+  uri: 'http://ex.org/timeout1',
+};
+
 const defaultConfig: ITestSuiteConfig = {
   customEngingeOptions:  {},
   exitWithStatusCode0: false,
@@ -67,6 +75,11 @@ jest.mock('../lib/ManifestLoader', () => ({
                 uri: manifestUrl,
               },
             },
+            uri: manifestUrl,
+          });
+        } else if (manifestUrl === 'timeout') {
+          return Promise.resolve({
+            testEntries: [timeOutMockTest1],
             uri: manifestUrl,
           });
         } else {
@@ -141,12 +154,12 @@ describe('TestSuiteRunner', () => {
     });
 
     it('should produce empty results for a valid manifest without the requested specifications', () => {
-      const config: ITestSuiteConfig = { specification: 'spec1', ...defaultConfig};
+      const config: ITestSuiteConfig = { ...defaultConfig, specification: 'spec1' };
       return expect(runner.runManifest('valid', handler, config)).resolves.toEqual([]);
     });
 
     it('should produce results for a valid manifest with the requested specifications', () => {
-      const config: ITestSuiteConfig = { specification: 'spec1', ...defaultConfig};
+      const config: ITestSuiteConfig = { ...defaultConfig, specification: 'spec1' };
       return expect(runner.runManifest('validspec', handler, config)).resolves.toEqual([
         {
           ok: true,
@@ -164,13 +177,31 @@ describe('TestSuiteRunner', () => {
       ]);
     });
 
+    it('should handle testcases that time out', (next) => {
+      const config: ITestSuiteConfig = { ...defaultConfig, timeOutDuration: 200 };
+      runner.runManifest('timeout', handler, config)
+        .then((results) => {
+          expect(results).toEqual([{
+            error: "Test case 'http://ex.org/timeout1' timed out",
+            ok: false,
+            skipped: undefined,
+            test: timeOutMockTest1,
+          }]);
+          next();
+        })
+        .catch((err) => {
+          next.fail(err);
+          next();
+        });
+    });
+
     it('should produce results for a valid manifest with a non-matching regex', () => {
-      const config: ITestSuiteConfig = { testRegex: /abc/, ...defaultConfig};
+      const config: ITestSuiteConfig = { ...defaultConfig, testRegex: /abc/ };
       return expect(runner.runManifest('valid', handler, config)).resolves.toEqual([]);
     });
 
     it('should produce results for a valid manifest with a single-matching regex', () => {
-      const config: ITestSuiteConfig = { testRegex: /1/, ...defaultConfig};
+      const config: ITestSuiteConfig = { ...defaultConfig, testRegex: /1/ };
       return expect(runner.runManifest('valid', handler, config)).resolves.toEqual([
         {
           ok: true,
@@ -180,7 +211,7 @@ describe('TestSuiteRunner', () => {
     });
 
     it('should produce results for a valid manifest with a multiple-matching regex', () => {
-      const config: ITestSuiteConfig = { testRegex: /^.*test.*$/, ...defaultConfig};
+      const config: ITestSuiteConfig = { ...defaultConfig, testRegex: /^.*test.*$/ };
       return expect(runner.runManifest('valid', handler, config)).resolves.toEqual([
         {
           ok: true,

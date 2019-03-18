@@ -218,6 +218,16 @@ $ rdf-test-suite myengine.js http://w3c.github.io/rdf-tests/sparql11/data-sparql
   -i '{ "myProperty": "myValue" }'
 ```
 
+### Test timeouts
+
+By default, all tests are allowed to run 3000 ms.
+Using the `-d` option, you can change this value.
+
+```bash
+$ rdf-test-suite myengine.js http://w3c.github.io/rdf-tests/sparql11/data-sparql11/manifest-all.ttl \
+  -d 5000
+```
+
 ## Supported test suites
 
 | Manifest | Specification | Interface | Entry manifest |

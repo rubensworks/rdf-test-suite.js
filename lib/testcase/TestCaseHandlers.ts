@@ -7,6 +7,7 @@ import {TestCasePositiveSyntaxHandler} from "./sparql/TestCasePositiveSyntax";
 import {TestCaseQueryEvaluationHandler} from "./sparql/TestCaseQueryEvaluation";
 import {TestCaseUnsupportedHandler} from "./TestCaseUnsupported";
 
+// tslint:disable:max-line-length
 // tslint:disable:object-literal-sort-keys
 module.exports = {
   // SPARQL 1.0, SPARQL 1.1 test suite
@@ -76,9 +77,10 @@ module.exports = {
     new TestCaseSyntaxHandler(false),
 
   // JSON-LD test suite
-  'https://w3c.github.io/json-ld-api/tests/vocab#PositiveEvaluationTest':
+  'https://w3c.github.io/json-ld-api/tests/vocab#ToRDFTest https://w3c.github.io/json-ld-api/tests/vocab#PositiveEvaluationTest':
     new TestCaseJsonLdToRdfHandler(),
-  'https://w3c.github.io/json-ld-api/tests/vocab#PositiveSyntaxTest':
+  'https://w3c.github.io/json-ld-api/tests/vocab#ToRDFTest https://w3c.github.io/json-ld-api/tests/vocab#PositiveSyntaxTest':
     new TestCaseJsonLdSyntaxHandler(true),
 };
 // tslint:enable:object-literal-sort-keys
+// tslint:enable:max-line-length

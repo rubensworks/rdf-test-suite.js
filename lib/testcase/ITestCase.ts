@@ -43,13 +43,24 @@ export async function testCaseFromResource(testCaseHandlers: {[uri: string]: ITe
     return null;
   }
 
+  // Find the first handler that has all its required types in the given test case
   let handler: ITestCaseHandler<ITestCase<any>>;
-  for (const type of resource.properties.types) {
-    handler = testCaseHandlers[type.term.value];
-    if (handler) {
+  for (const testCaseHandlerKey in testCaseHandlers) {
+    const testCaseHandlerTypes: string[] = testCaseHandlerKey.split(' ');
+    const availableTypes = resource.properties.types.map((term) => term.value);
+    let valid: boolean = true;
+    for (const testCaseHandlerType of testCaseHandlerTypes) {
+      if (availableTypes.indexOf(testCaseHandlerType) < 0) {
+        valid = false;
+        break;
+      }
+    }
+    if (valid) {
+      handler = testCaseHandlers[testCaseHandlerKey];
       break;
     }
   }
+
   if (!handler) {
     // tslint:disable-next-line:no-console
     console.error(new Error(

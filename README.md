@@ -247,6 +247,7 @@ $ rdf-test-suite myengine.js http://w3c.github.io/rdf-tests/sparql11/data-sparql
 | [Turtle Tests](https://w3c.github.io/rdf-tests/turtle/) | [RDF 1.1 Turtle](https://www.w3.org/TR/turtle/) | [`IParser`](https://github.com/rubensworks/rdf-test-suite.js/blob/master/lib/testcase/rdfsyntax/IParser.ts) | http://w3c.github.io/rdf-tests/turtle/manifest.ttl |
 | [TriG Tests](https://w3c.github.io/rdf-tests/trig/) | [RDF 1.1 TriG](https://www.w3.org/TR/trig/) | [`IParser`](https://github.com/rubensworks/rdf-test-suite.js/blob/master/lib/testcase/rdfsyntax/IParser.ts) | http://w3c.github.io/rdf-tests/trig/manifest.ttl |
 | [JSON-LD Test Suite](https://w3c.github.io/json-ld-api/tests/) | [JSON-LD 1.0](https://www.w3.org/TR/json-ld/) | [`IParser`](https://github.com/rubensworks/rdf-test-suite.js/blob/master/lib/testcase/rdfsyntax/IParser.ts) | https://w3c.github.io/json-ld-api/tests/toRdf-manifest.jsonld |
+| [JSON-LD Test Suite](https://w3c.github.io/json-ld-api/tests/) | [JSON-LD 1.0](https://www.w3.org/TR/json-ld/) | [`ISerializer`](https://github.com/rubensworks/rdf-test-suite.js/blob/master/lib/testcase/rdfsyntax/ISerializer.ts) | https://w3c.github.io/json-ld-api/tests/fromRdf-manifest.jsonld |
 
 ## License
 This software is written by [Ruben Taelman](http://rubensworks.net/).

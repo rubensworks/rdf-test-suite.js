@@ -176,7 +176,7 @@ describe('TestCaseJsonLdToRdfHandler', () => {
       return expect(testCase.test(parser, {})).resolves.toBe(undefined);
     });
 
-    it('should produce TestCaseEval that tests false on isomorphic data', async () => {
+    it('should produce TestCaseEval that tests false on non-isomorphic data', async () => {
       const resource = new Resource({ term: namedNode('http://ex.org/test'), context });
       resource.addProperty(pAction, new Resource({ term: literal('ACTION'), context }));
       resource.addProperty(pResult, new Resource({ term: literal('RESULT_OTHER.ttl'), context }));

@@ -32,5 +32,7 @@
   "jsonLdProduceGeneralizedRdf": "jld:produceGeneralizedRdf",
   "processingMode": "jld:processingMode",
   "specVersion": "jld:specVersion",
-  "context": "jld:context"
+  "context": "jld:context",
+  "useNativeTypes": "jld:useNativeTypes",
+  "useRdfType": "jld:useRdfType"
 }

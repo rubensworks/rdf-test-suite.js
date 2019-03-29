@@ -6,7 +6,7 @@ import {TestCaseEval, TestCaseEvalHandler} from "../TestCaseEval";
 
 /**
  * Test case handler for:
- * * https://json-ld.org/test-suite/vocab#ToRDFTest
+ * * https://w3c.github.io/json-ld-api/tests/vocab#ToRDFTest
  * * https://w3c.github.io/json-ld-api/tests/vocab#PositiveEvaluationTest
  */
 export class TestCaseJsonLdToRdfHandler extends TestCaseEvalHandler {

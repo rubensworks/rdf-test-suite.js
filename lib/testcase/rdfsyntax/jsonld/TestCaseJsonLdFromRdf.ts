@@ -115,7 +115,7 @@ export function objectsIsomorphic(obj1: any, obj2: any) {
 
     switch (typeof (obj1[p])) {
     case 'object':
-      if (!objectsIsomorphic(obj1[p], obj2[p])) {
+      if (typeof obj2[p] !== 'object' || !objectsIsomorphic(obj1[p], obj2[p])) {
         return false;
       }
       break;

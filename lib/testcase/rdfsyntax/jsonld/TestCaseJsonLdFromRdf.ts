@@ -105,7 +105,16 @@ export class TestCaseJsonLdFromRdf implements ITestCaseFromRdfSyntax {
 
 }
 
-export function objectsIsomorphic(obj1: any, obj2: any) {
+// tslint:disable:align
+export function objectsIsomorphic(obj1: any, obj2: any, options: IObjectsIsomorphicOptions = {
+  ordered: false,
+  strictBlankNodes: false,
+}, parentKey?: string) {
+  if (parentKey !== '@list' && !options.ordered && Array.isArray(obj1) && Array.isArray(obj2)) {
+    obj1 = obj1.sort(arraySorter);
+    obj2 = obj2.sort(arraySorter);
+  }
+
   // Loop through properties in object 1
   for (const p in obj1) {
     // Check property exists on obj2
@@ -115,10 +124,16 @@ export function objectsIsomorphic(obj1: any, obj2: any) {
 
     switch (typeof (obj1[p])) {
     case 'object':
-      if (typeof obj2[p] !== 'object' || !objectsIsomorphic(obj1[p], obj2[p])) {
+      if (typeof obj2[p] !== 'object' || !objectsIsomorphic(obj1[p], obj2[p], options, p)) {
         return false;
       }
       break;
+    case 'string':
+      // Don't match blank nodes strictly
+      if (!options.strictBlankNodes && obj1[p].startsWith('_:')
+        && typeof obj2[p] === 'string' && obj2[p].startsWith('_:')) {
+        return true;
+      }
     // Compare values
     default:
       if (obj1[p] !== obj2[p]) {
@@ -134,4 +149,13 @@ export function objectsIsomorphic(obj1: any, obj2: any) {
     }
   }
   return true;
+}
+
+export function arraySorter(obj1: any, obj2: any): number {
+  return JSON.stringify(obj1).localeCompare(JSON.stringify(obj2));
+}
+
+export interface IObjectsIsomorphicOptions {
+  ordered?: boolean;
+  strictBlankNodes?: boolean;
 }

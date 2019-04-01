@@ -255,4 +255,28 @@ describe('objectsIsomorphic', () => {
   it('should be false when obj1 and obj2 are non-equal nested', () => {
     expect(objectsIsomorphic({ a: { x: 'b', y: 2 } }, { a: { x: 'b', y: 1 } })).toBeFalsy();
   });
+
+  it('should be true for identical blank nodes', () => {
+    expect(objectsIsomorphic({ a: '_:b' }, { a: '_:b' })).toBeTruthy();
+  });
+
+  it('should be true for non-identical blank nodes', () => {
+    expect(objectsIsomorphic({ a: '_:b1' }, { a: '_:b2' })).toBeTruthy();
+  });
+
+  it('should be true for identical blank nodes for strict bnodes', () => {
+    expect(objectsIsomorphic({ a: '_:b' }, { a: '_:b' }, { strictBlankNodes: true })).toBeTruthy();
+  });
+
+  it('should be false for non-identical blank nodes for strict bnodes', () => {
+    expect(objectsIsomorphic({ a: '_:b1' }, { a: '_:b2' }, { strictBlankNodes: true })).toBeFalsy();
+  });
+
+  it('should be true for unsorted arrays', () => {
+    expect(objectsIsomorphic([{ a: '0' }, { b: '1' }], [{ b: '1' }, { a: '0' }])).toBeTruthy();
+  });
+
+  it('should be true for unequal arrays', () => {
+    expect(objectsIsomorphic([{ a: '0' }, { b: '1' }], [{ b: '2' }, { a: '0' }])).toBeFalsy();
+  });
 });

@@ -6,6 +6,7 @@ import {ManifestLoader} from "./ManifestLoader";
 import {ITestCase} from "./testcase/ITestCase";
 import WriteStream = NodeJS.WriteStream;
 import {Util} from "./Util";
+import Timeout = NodeJS.Timeout;
 // tslint:disable:no-var-requires
 const quad = require('rdf-quad');
 const streamifyArray = require('streamify-array');
@@ -72,18 +73,23 @@ export class TestSuiteRunner {
     if (manifest.testEntries) {
       for (const test of manifest.testEntries) {
         if (!config.testRegex || config.testRegex.test(test.uri)) {
+          let timeout: Timeout = null;
           try {
             await Promise.race([
               test.test(handler, config.customEngingeOptions),
-              new Promise((res, rej) => setTimeout(
-                () => rej(`Test case '${test.uri}' timed out`),
-                config.timeOutDuration),
+              new Promise((res, rej) => {
+                timeout = setTimeout(
+                  () => rej(`Test case '${test.uri}' timed out`),
+                  config.timeOutDuration);
+              },
               ),
             ]);
           } catch (error) {
+            clearTimeout(timeout);
             results.push({ test, ok: false, error, skipped: error.skipped });
             continue;
           }
+          clearTimeout(timeout);
           results.push({ test, ok: true });
         }
       }

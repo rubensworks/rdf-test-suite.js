@@ -1,5 +1,5 @@
 import {Resource} from "rdf-object";
-import {Util} from "../../Util";
+import {IFetchOptions, Util} from "../../Util";
 import {ITestCaseData} from "../ITestCase";
 import {ITestCaseHandler} from "../ITestCaseHandler";
 import {IParser} from "./IParser";
@@ -19,12 +19,12 @@ export class TestCaseSyntaxHandler implements ITestCaseHandler<TestCaseSyntax> {
   }
 
   public async resourceToTestCase(resource: Resource, testCaseData: ITestCaseData,
-                                  cachePath?: string): Promise<TestCaseSyntax> {
+                                  options?: IFetchOptions): Promise<TestCaseSyntax> {
     if (!resource.property.action) {
       throw new Error(`Missing mf:action in ${resource}`);
     }
     return new TestCaseSyntax(testCaseData, this.expectNoError,
-      await stringifyStream((await Util.fetchCached(resource.property.action.value, cachePath)).body),
+      await stringifyStream((await Util.fetchCached(resource.property.action.value, options)).body),
       this.normalizeUrl(resource.property.action.value));
   }
 

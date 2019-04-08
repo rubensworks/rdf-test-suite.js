@@ -1,5 +1,6 @@
 import {Resource} from "rdf-object";
 import {termToString} from "rdf-string";
+import {IFetchOptions} from "../Util";
 import {ITestCaseHandler} from "./ITestCaseHandler";
 
 export interface ITestCaseData {
@@ -27,7 +28,7 @@ export interface ITestCase<H> extends ITestCaseData {
  * @return {Promise<ITestCase<any>>} A promise resolving to a test case object.
  */
 export async function testCaseFromResource(testCaseHandlers: {[uri: string]: ITestCaseHandler<ITestCase<any>>},
-                                           cachePath: string, resource: Resource): Promise<ITestCase<any>> {
+                                           options: IFetchOptions, resource: Resource): Promise<ITestCase<any>> {
   const baseTestCase: ITestCaseData = {
     approval: resource.property.approval ? resource.property.approval.value : null,
     approvedBy: resource.property.approvedBy ? resource.property.approvedBy.value : null,
@@ -69,7 +70,7 @@ export async function testCaseFromResource(testCaseHandlers: {[uri: string]: ITe
   }
 
   try {
-    return await handler.resourceToTestCase(resource, baseTestCase, cachePath);
+    return await handler.resourceToTestCase(resource, baseTestCase, options);
   } catch (e) {
     // tslint:disable-next-line:no-console
     console.error(e.toString());

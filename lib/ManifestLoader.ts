@@ -3,7 +3,7 @@ import {termToString} from "rdf-string";
 import {IManifest, manifestFromResource} from "./IManifest";
 import {ITestCase} from "./testcase/ITestCase";
 import {ITestCaseHandler} from "./testcase/ITestCaseHandler";
-import {Util} from "./Util";
+import {IFetchOptions, Util} from "./Util";
 
 /**
  * A ManifestLoader loads test suites from URLs.
@@ -26,21 +26,21 @@ export class ManifestLoader {
   /**
    * Load the manifest from the given URL.
    * @param {string} url The URL of a manifest.
-   * @param {string} cachePath The base directory to cache files in. If falsy, then no cache will be used.
+   * @param {IFetchOptions} options The fetch options.
    * @return {Promise<IManifest>} A promise that resolves to a manifest object.
    */
-  public async from(url: string, cachePath?: string): Promise<IManifest> {
+  public async from(url: string, options?: IFetchOptions): Promise<IManifest> {
     const objectLoader = new RdfObjectLoader({ context: ManifestLoader.LOADER_CONTEXT });
-    await this.import(objectLoader, url, cachePath);
+    await this.import(objectLoader, url, options);
     const manifestResource: Resource = objectLoader.resources[url];
     if (!manifestResource) {
       throw new Error(`Could not find a resource ${url} in the document at ${url}`);
     }
-    return manifestFromResource(this.testCaseHandlers, cachePath, manifestResource);
+    return manifestFromResource(this.testCaseHandlers, options, manifestResource);
   }
 
-  protected async import(objectLoader: RdfObjectLoader, urlInitial: string, cachePath?: string): Promise<void> {
-    const [url, parsed] = await Util.fetchRdf(urlInitial, cachePath);
+  protected async import(objectLoader: RdfObjectLoader, urlInitial: string, options?: IFetchOptions): Promise<void> {
+    const [url, parsed] = await Util.fetchRdf(urlInitial, options);
 
     // Dereference the URL and load it
     try {
@@ -61,7 +61,7 @@ export class ManifestLoader {
         if (include.term.termType !== 'NamedNode') {
           throw new Error(`Found invalid manifest term ${termToString(include.term)} when parsing ${url}`);
         }
-        includeJobs.push(this.import(objectLoader, include.value, cachePath));
+        includeJobs.push(this.import(objectLoader, include.value, options));
       }
     }
     await Promise.all(includeJobs);

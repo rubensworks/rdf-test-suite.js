@@ -1,5 +1,5 @@
 import {Resource} from "rdf-object";
-import {Util} from "../../../Util";
+import {IFetchOptions, Util} from "../../../Util";
 import {ITestCase, ITestCaseData} from "../../ITestCase";
 import {IParser} from "../IParser";
 import {TestCaseEval, TestCaseEvalHandler} from "../TestCaseEval";
@@ -12,10 +12,10 @@ import {TestCaseEval, TestCaseEvalHandler} from "../TestCaseEval";
 export class TestCaseJsonLdToRdfHandler extends TestCaseEvalHandler {
 
   public static async wrap<T extends ITestCase<IParser>>(superHandler: (resource: Resource, testCaseData: ITestCaseData,
-                                                                        cachePath?: string) => Promise<T>,
+                                                                        options?: IFetchOptions) => Promise<T>,
                                                          resource: Resource, testCaseData: ITestCaseData,
-                                                         cachePath?: string): Promise<T> {
-    const testCaseEval = await superHandler(resource, testCaseData, cachePath);
+                                                         options?: IFetchOptions): Promise<T> {
+    const testCaseEval = await superHandler(resource, testCaseData, options);
 
     // Loop over the options
     let produceGeneralizedRdf: boolean = false;
@@ -46,7 +46,7 @@ export class TestCaseJsonLdToRdfHandler extends TestCaseEvalHandler {
     // An optional root context.
     if (resource.property.context) {
       context = JSON.parse(await require('stream-to-string')((
-        await Util.fetchCached(resource.property.context.term.value, cachePath)).body));
+        await Util.fetchCached(resource.property.context.term.value, options)).body));
     }
 
     // Add produceGeneralizedRdf to the inject arguments
@@ -58,8 +58,8 @@ export class TestCaseJsonLdToRdfHandler extends TestCaseEvalHandler {
   }
 
   public resourceToTestCase(resource: Resource, testCaseData: ITestCaseData,
-                            cachePath?: string): Promise<TestCaseEval> {
-    return TestCaseJsonLdToRdfHandler.wrap(super.resourceToTestCase.bind(this), resource, testCaseData, cachePath);
+                            options?: IFetchOptions): Promise<TestCaseEval> {
+    return TestCaseJsonLdToRdfHandler.wrap(super.resourceToTestCase.bind(this), resource, testCaseData, options);
   }
 
   protected normalizeUrl(url: string) {

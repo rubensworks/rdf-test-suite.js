@@ -1,5 +1,5 @@
 import {Resource} from "rdf-object";
-import {Util} from "../../Util";
+import {IFetchOptions, Util} from "../../Util";
 import {ITestCaseData} from "../ITestCase";
 import {ITestCaseHandler} from "../ITestCaseHandler";
 import {IQueryEngine} from "./IQueryEngine";
@@ -12,12 +12,12 @@ const stringifyStream = require('stream-to-string');
  */
 export class TestCaseNegativeSyntaxHandler implements ITestCaseHandler<TestCaseNegativeSyntax> {
   public async resourceToTestCase(resource: Resource, testCaseData: ITestCaseData,
-                                  cachePath?: string): Promise<TestCaseNegativeSyntax> {
+                                  options?: IFetchOptions): Promise<TestCaseNegativeSyntax> {
     if (!resource.property.action) {
       throw new Error(`Missing mf:action in ${resource}`);
     }
     return new TestCaseNegativeSyntax(testCaseData,
-      await stringifyStream((await Util.fetchCached(resource.property.action.value, cachePath)).body));
+      await stringifyStream((await Util.fetchCached(resource.property.action.value, options)).body));
   }
 
 }

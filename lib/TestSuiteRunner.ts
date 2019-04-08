@@ -37,7 +37,7 @@ export class TestSuiteRunner {
    */
   public async runManifest(manifestUrl: string, handler: any, config: ITestSuiteConfig): Promise<ITestResult[]> {
     const { cachePath, specification } = config;
-    const manifest: IManifest = await new ManifestLoader().from(manifestUrl, cachePath);
+    const manifest: IManifest = await new ManifestLoader().from(manifestUrl, { cachePath });
     const results: ITestResult[] = [];
 
     // Only run the tests for the given specification if one was defined.

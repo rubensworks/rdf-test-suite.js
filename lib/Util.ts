@@ -47,15 +47,14 @@ export class Util {
   /**
    * Fetch the given RDF document and parse it.
    * @param {string} url A URL.
-   * @param {string} cachePath The base directory to cache files in. If falsy, then no cache will be used.
-   * @param {boolean} normalizeUrl If the base URL should be converted from https to http.
+   * @param {IFetchOptions} options Options for fetching.
    * @return {Promise<[string , Stream]>} A promise resolving to a pair of a URL and a parsed RDF stream.
    */
-  public static async fetchRdf(url: string, cachePath?: string, normalizeUrl?: boolean): Promise<[string, RDF.Stream]> {
-    const response = await Util.fetchCached(url, cachePath);
+  public static async fetchRdf(url: string, options: IFetchOptions = {}): Promise<[string, RDF.Stream]> {
+    const response = await Util.fetchCached(url, options);
     const contentType = Util.identifyContentType(response.url, response.headers);
     return [response.url, await Util.parseRdfRaw(contentType,
-      normalizeUrl ? Util.normalizeBaseUrl(response.url) : response.url, response.body)];
+      options.normalizeUrl ? Util.normalizeBaseUrl(response.url) : response.url, response.body)];
   }
 
   /**
@@ -86,11 +85,11 @@ export class Util {
   /**
    * Fetch the given URL or retrieve it from a local file cache.
    * @param {string} url The URL to fetch.
-   * @param {string} cachePath The base directory to cache files in. If falsy, then no cache will be used.
+   * @param {IFetchOptions} options Options for fetching.
    * @return {Promise<IFetchResponse>} A promise resolving to the response.
    */
-  public static async fetchCached(url: string, cachePath?: string): Promise<IFetchResponse> {
-    const cachePathLocal: string = cachePath ? cachePath + encodeURIComponent(url) : null;
+  public static async fetchCached(url: string, options: IFetchOptions = {}): Promise<IFetchResponse> {
+    const cachePathLocal: string = options.cachePath ? options.cachePath + encodeURIComponent(url) : null;
     if (cachePathLocal && existsSync(cachePathLocal)) {
       // Read from cache
       return {
@@ -156,4 +155,15 @@ export interface IFetchResponse {
   body: ReadStream;
   headers: Headers;
   url: string;
+}
+
+export interface IFetchOptions {
+  /**
+   * The base directory to cache files in. If falsy, then no cache will be used.
+   */
+  cachePath?: string;
+  /**
+   * If the base URL should be converted from https to http.
+   */
+  normalizeUrl?: boolean;
 }

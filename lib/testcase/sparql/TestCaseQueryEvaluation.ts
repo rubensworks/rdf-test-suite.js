@@ -5,7 +5,7 @@ import {stringToTerm} from "rdf-string";
 import {mapTerms, QuadTermName} from "rdf-terms";
 import {SparqlJsonParser} from "sparqljson-parse";
 import {SparqlXmlParser} from "sparqlxml-parse";
-import {IFetchResponse, Util} from "../../Util";
+import {IFetchOptions, IFetchResponse, Util} from "../../Util";
 import {ITestCaseData} from "../ITestCase";
 import {ITestCaseHandler} from "../ITestCaseHandler";
 import {IQueryEngine, IQueryResult, IQueryResultBindings} from "./IQueryEngine";
@@ -184,7 +184,7 @@ export class TestCaseQueryEvaluationHandler implements ITestCaseHandler<TestCase
   }
 
   public async resourceToTestCase(resource: Resource, testCaseData: ITestCaseData,
-                                  cachePath?: string): Promise<TestCaseQueryEvaluation> {
+                                  options?: IFetchOptions): Promise<TestCaseQueryEvaluation> {
     if (!resource.property.action) {
       throw new Error(`Missing mf:action in ${resource}`);
     }
@@ -217,12 +217,12 @@ export class TestCaseQueryEvaluationHandler implements ITestCaseHandler<TestCase
       laxCardinality = true;
     }
 
-    let queryData: RDF.Quad[] = dataUri ? await arrayifyStream((await Util.fetchRdf(dataUri, cachePath))[1]) : [];
+    let queryData: RDF.Quad[] = dataUri ? await arrayifyStream((await Util.fetchRdf(dataUri, options))[1]) : [];
     if (dataGraph) {
       queryData = queryData.map((quad) => mapTerms(quad,
         (value: RDF.Term, key: QuadTermName) => key === 'graph' ? dataGraph : value));
     }
-    const queryResponse = await Util.fetchCached(resource.property.result.value, cachePath);
+    const queryResponse = await Util.fetchCached(resource.property.result.value, options);
     return new TestCaseQueryEvaluation(
       testCaseData,
       {
@@ -233,7 +233,7 @@ export class TestCaseQueryEvaluationHandler implements ITestCaseHandler<TestCase
         queryResult: await TestCaseQueryEvaluationHandler.parseQueryResult(
           Util.identifyContentType(queryResponse.url, queryResponse.headers),
           queryResponse.url, queryResponse.body),
-        queryString: await stringifyStream((await Util.fetchCached(action.property.query.value, cachePath)).body),
+        queryString: await stringifyStream((await Util.fetchCached(action.property.query.value, options)).body),
         resultSource: queryResponse,
       });
   }

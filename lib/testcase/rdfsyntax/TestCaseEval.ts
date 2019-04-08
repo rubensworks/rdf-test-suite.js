@@ -2,7 +2,7 @@ import {isomorphic} from "rdf-isomorphic";
 import * as RDF from "rdf-js";
 import {Resource} from "rdf-object";
 import {quadToStringQuad} from "rdf-string";
-import {Util} from "../../Util";
+import {IFetchOptions, Util} from "../../Util";
 import {ITestCaseData} from "../ITestCase";
 import {ITestCaseHandler} from "../ITestCaseHandler";
 import {IParser} from "./IParser";
@@ -16,7 +16,7 @@ const stringifyStream = require('stream-to-string');
  */
 export class TestCaseEvalHandler implements ITestCaseHandler<TestCaseEval> {
   public async resourceToTestCase(resource: Resource, testCaseData: ITestCaseData,
-                                  cachePath?: string): Promise<TestCaseEval> {
+                                  options?: IFetchOptions): Promise<TestCaseEval> {
     if (!resource.property.action) {
       throw new Error(`Missing mf:action in ${resource}`);
     }
@@ -24,8 +24,9 @@ export class TestCaseEvalHandler implements ITestCaseHandler<TestCaseEval> {
       throw new Error(`Missing mf:result in ${resource}`);
     }
     return new TestCaseEval(testCaseData,
-      await stringifyStream((await Util.fetchCached(resource.property.action.value, cachePath)).body),
-      await arrayifyStream(<any> (await Util.fetchRdf(resource.property.result.value, cachePath, true))[1]),
+      await stringifyStream((await Util.fetchCached(resource.property.action.value, options)).body),
+      await arrayifyStream(<any> (await Util.fetchRdf(resource.property.result.value,
+        {...options, normalizeUrl: true}))[1]),
       this.normalizeUrl(resource.property.action.value));
   }
 

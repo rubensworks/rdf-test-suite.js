@@ -112,7 +112,7 @@ describe('Util', () => {
     it('should cache with cachePath', async () => {
       const spy = jest.spyOn(<any> global, 'fetch');
 
-      const response1 = await Util.fetchCached('http://example.org/', cachePath);
+      const response1 = await Util.fetchCached('http://example.org/', { cachePath });
       expect(await stringifyStream(response1.body)).toEqual('ABC');
       expect(response1.headers).toEqual(new Headers({ a: 'b' }));
       expect(response1.url).toEqual('http://example.org/');
@@ -121,7 +121,7 @@ describe('Util', () => {
       expect(readFileSync(cachePath + 'http%3A%2F%2Fexample.org%2F.headers', 'utf8')).toEqual('{\"a\":\"b\"}');
       expect(readFileSync(cachePath + 'http%3A%2F%2Fexample.org%2F.url', 'utf8')).toEqual('http://example.org/');
 
-      const response2 = await Util.fetchCached('http://example.org/', cachePath);
+      const response2 = await Util.fetchCached('http://example.org/', { cachePath });
       expect(await stringifyStream(response2.body)).toEqual('ABC');
       expect(response2.headers).toEqual(new Headers({ a: 'b' }));
       expect(response2.url).toEqual('http://example.org/');

@@ -112,6 +112,19 @@ describe('TestSuiteRunner', () => {
     handler = () => true;
   });
 
+  describe('fromUrlToMappingString', () => {
+    it('should be empty for a falsy string', () => {
+      return expect(runner.fromUrlToMappingString(null)).toEqual([]);
+    });
+
+    it('should parse a valid string', () => {
+      return expect(runner.fromUrlToMappingString(
+        'https://w3c.github.io/json-ld-api/~/my/path/to/file/')).toEqual([
+          { url: 'https://w3c.github.io/json-ld-api/', path: '/my/path/to/file/' },
+        ]);
+    });
+  });
+
   describe('runManifest', () => {
     it('should produce an empty array for an empty manifest', () => {
       return expect(runner.runManifest('empty', handler, defaultConfig)).resolves.toEqual([]);

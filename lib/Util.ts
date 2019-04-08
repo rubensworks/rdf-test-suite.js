@@ -12,6 +12,7 @@ const streamifyString = require('streamify-string');
 export class Util {
 
   protected static readonly EXTENSION_TO_CONTENTTYPE: {[extension: string]: string} = {
+    jsonld: 'application/ld+json',
     nq: 'application/n-quads',
     nt: 'application/n-triples',
     srj: 'application/sparql-results+json',
@@ -89,6 +90,28 @@ export class Util {
    * @return {Promise<IFetchResponse>} A promise resolving to the response.
    */
   public static async fetchCached(url: string, options: IFetchOptions = {}): Promise<IFetchResponse> {
+    // First check local file mappings
+    if (options.urlToFileMappings) {
+      for (const urlToFileMapping of options.urlToFileMappings) {
+        if (url.startsWith(urlToFileMapping.url)) {
+          let pathSuffix = url.substr(urlToFileMapping.url.length);
+
+          // Remove hashes from path
+          const hashPos = pathSuffix.indexOf('#');
+          if (hashPos >= 0) {
+            pathSuffix = pathSuffix.substr(0, hashPos);
+          }
+
+          // Resolve file path
+          return {
+            body: createReadStream(urlToFileMapping.path + pathSuffix),
+            headers: new Headers({}),
+            url: urlToFileMapping.url + pathSuffix,
+          };
+        }
+      }
+    }
+
     const cachePathLocal: string = options.cachePath ? options.cachePath + encodeURIComponent(url) : null;
     if (cachePathLocal && existsSync(cachePathLocal)) {
       // Read from cache
@@ -166,4 +189,8 @@ export interface IFetchOptions {
    * If the base URL should be converted from https to http.
    */
   normalizeUrl?: boolean;
+  /**
+   * URL to local path mapping.
+   */
+  urlToFileMappings?: { url: string, path: string }[];
 }

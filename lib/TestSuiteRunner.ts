@@ -19,12 +19,27 @@ export interface ITestSuiteConfig {
   specification?: string;
   cachePath?: string;
   testRegex?: RegExp;
+  urlToFileMapping?: string;
 }
 
 /**
  * TestSuiteRunner runs a certain test suite manifest.
  */
 export class TestSuiteRunner {
+
+  /**
+   * Parse an URL to file mapping string.
+   * @param {string} urlToFileMapping An URL to file mapping string
+   * @return {{url: string; path: string}[]} A parsed URL to file mapping array.
+   */
+  public fromUrlToMappingString(urlToFileMapping?: string): { url: string, path: string }[] {
+    const urlToFileMappings: { url: string, path: string }[] = [];
+    if (urlToFileMapping) {
+      const [ url, path ]: string[] = urlToFileMapping.split('~');
+      urlToFileMappings.push({ url, path });
+    }
+    return urlToFileMappings;
+  }
 
   /**
    * Run the manifest with the given URL.
@@ -37,8 +52,9 @@ export class TestSuiteRunner {
    * @return {Promise<ITestResult[]>} A promise resolving to an array of test results.
    */
   public async runManifest(manifestUrl: string, handler: any, config: ITestSuiteConfig): Promise<ITestResult[]> {
-    const { cachePath, specification } = config;
-    const manifest: IManifest = await new ManifestLoader().from(manifestUrl, { cachePath });
+    const { cachePath, specification, urlToFileMapping } = config;
+    const urlToFileMappings = this.fromUrlToMappingString(urlToFileMapping);
+    const manifest: IManifest = await new ManifestLoader().from(manifestUrl, { cachePath, urlToFileMappings });
     const results: ITestResult[] = [];
 
     // Only run the tests for the given specification if one was defined.

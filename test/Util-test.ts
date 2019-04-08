@@ -102,6 +102,26 @@ describe('Util', () => {
       return expect(Util.fetchCached('404')).rejects.toBeTruthy();
     });
 
+    it('should handle urlToFileMappings', async () => {
+      const urlToFileMappings = [
+        { url: 'http://example.org/abc/', path: __dirname + '/assets/mappings/' },
+      ];
+      const response = await Util.fetchCached('http://example.org/abc/def.txt', { urlToFileMappings });
+      expect(await stringifyStream(response.body)).toEqual('XYZ\n');
+      expect(response.headers).toEqual(new Headers({}));
+      expect(response.url).toEqual('http://example.org/abc/def.txt');
+    });
+
+    it('should handle urlToFileMappings with hash', async () => {
+      const urlToFileMappings = [
+        { url: 'http://example.org/abc/', path: __dirname + '/assets/mappings/' },
+      ];
+      const response = await Util.fetchCached('http://example.org/abc/def.txt#hash', { urlToFileMappings });
+      expect(await stringifyStream(response.body)).toEqual('XYZ\n');
+      expect(response.headers).toEqual(new Headers({}));
+      expect(response.url).toEqual('http://example.org/abc/def.txt');
+    });
+
     it('should not cache without cachePath', async () => {
       const response = await Util.fetchCached('http://example.org/');
       expect(await stringifyStream(response.body)).toEqual('ABC');

@@ -228,6 +228,20 @@ $ rdf-test-suite myengine.js http://w3c.github.io/rdf-tests/sparql11/data-sparql
   -d 5000
 ```
 
+### Map URLs to local files
+
+In cases where you are developing your own test manifests,
+it may be useful to intercept certain URL lookups
+and return local files instead.
+
+In order to achieve this, the `-m` option can be used,
+with a mapping defined with the following pattern: `URL~PATH`.
+
+```
+$ rdf-test-suite myengine.js http://w3c.github.io/rdf-tests/sparql11/data-sparql11/manifest-all.ttl \
+  -m http://w3c.github.io/rdf-tests/sparql11/data-sparql11/~/path/to/my/files/
+```
+
 ## Supported test suites
 
 | Manifest | Specification | Interface | Entry manifest |

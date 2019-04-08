@@ -1,3 +1,4 @@
+import * as stringify from "json-stable-stringify";
 import * as RDF from "rdf-js";
 import {termToString} from "rdf-string";
 import {IQueryResult, IQueryResultBindings} from "./IQueryEngine";
@@ -24,7 +25,7 @@ export class QueryResultBindings implements IQueryResultBindings {
       for (const variable in b) {
         bHash[variable] = termToString(b[variable]);
       }
-      hash.push(JSON.stringify(bHash));
+      hash.push(stringify(bHash));
     }
     return (checkOrder ? hash : hash.sort()).join('');
   }

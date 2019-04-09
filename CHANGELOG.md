@@ -1,6 +1,19 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+<a name="v1.8.0"></a>
+## [v1.8.0](https://github.com/rubensworks/rdf-test-suite.js/compare/v1.7.0...v1.8.0) - 2019-04-09
+
+### Added
+* [Allow mapping URLs to local files](https://github.com/rubensworks/rdf-test-suite.js/commit/27684611077be885cde739592fbcd9d97cbc7873)
+
+### Fixed
+* [Fix non-deterministic equality test for objects](https://github.com/rubensworks/rdf-test-suite.js/commit/750bb4fa7e0f55df43ddd0749e37864af2ec473f)
+* [Fix test suite hanging for a while after complete](https://github.com/rubensworks/rdf-test-suite.js/commit/1d36ab0b93fd86cb28ab70ab7458116c4169513c)
+
+### Changed
+* [Abstract fetching options into hash object](https://github.com/rubensworks/rdf-test-suite.js/commit/426f5840637e12385abf6e2ac4bd47d1c980bf2f)
+
 <a name="v1.7.0"></a>
 ## [v1.7.0](https://github.com/rubensworks/rdf-test-suite.js/compare/v1.6.0...v1.7.0) - 2019-04-02
 

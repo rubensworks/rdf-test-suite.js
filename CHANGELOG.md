@@ -1,6 +1,12 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+<a name="v1.8.2"></a>
+## [v1.8.2](https://github.com/rubensworks/rdf-test-suite.js/compare/v1.8.1...v1.8.2) - 2019-04-10
+
+### Fixed
+* [Fix SPARQL qt:graphData not loading into named graph](https://github.com/rubensworks/rdf-test-suite.js/commit/75ee246a47e21fbc6b764cbabd427f7075d19b6b)
+
 <a name="v1.8.1"></a>
 ## [v1.8.1](https://github.com/rubensworks/rdf-test-suite.js/compare/v1.8.0...v1.8.1) - 2019-04-10
 

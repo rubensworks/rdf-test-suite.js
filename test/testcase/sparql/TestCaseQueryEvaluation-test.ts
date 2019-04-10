@@ -511,9 +511,9 @@ describe('TestCaseQueryEvaluationHandler', () => {
       expect(testCase.queryString).toEqual(`OK`);
       expect(testCase.queryData).toEqualRdfQuadArray([
         quad('http://www.w3.org/TR/rdf-syntax-grammar', 'http://purl.org/dc/elements/1.1/title',
-          '"RDF1.1 XML Syntax 1"'),
+          '"RDF1.1 XML Syntax 1"', 'RESULT.ttl'),
         quad('http://www.w3.org/TR/rdf-syntax-grammar', 'http://purl.org/dc/elements/1.1/title',
-          '"RDF1.1 XML Syntax 2"'),
+          '"RDF1.1 XML Syntax 2"', 'RESULT.ttl'),
       ]);
       expect(testCase.queryResult.type).toEqual('quads');
       expect(testCase.queryResult.value).toBeRdfIsomorphic([

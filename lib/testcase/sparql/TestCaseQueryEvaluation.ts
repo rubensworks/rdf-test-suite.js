@@ -209,6 +209,7 @@ export class TestCaseQueryEvaluationHandler implements ITestCaseHandler<TestCase
         dataGraph = namedNode(graphData.property.label.value);
       } else {
         dataUri = action.property.graphData.value;
+        dataGraph = namedNode(action.property.graphData.value);
       }
     }
 

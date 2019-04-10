@@ -226,6 +226,7 @@ export class TestCaseQueryEvaluationHandler implements ITestCaseHandler<TestCase
     return new TestCaseQueryEvaluation(
       testCaseData,
       {
+        baseIRI: Util.normalizeBaseUrl(action.property.query.value),
         dataGraph,
         dataUri,
         laxCardinality,
@@ -241,6 +242,7 @@ export class TestCaseQueryEvaluationHandler implements ITestCaseHandler<TestCase
 }
 
 export interface ITestCaseQueryEvaluationProps {
+  baseIRI: string;
   queryString: string;
   queryData: RDF.Quad[];
   queryResult: IQueryResult;
@@ -259,6 +261,7 @@ export class TestCaseQueryEvaluation implements ITestCaseSparql {
   public readonly name: string;
   public readonly uri: string;
 
+  public readonly baseIRI: string;
   public readonly queryString: string;
   public readonly queryData: RDF.Quad[];
   public readonly queryResult: IQueryResult;
@@ -273,7 +276,8 @@ export class TestCaseQueryEvaluation implements ITestCaseSparql {
   }
 
   public async test(engine: IQueryEngine, injectArguments: any): Promise<void> {
-    const result: IQueryResult = await engine.query(this.queryData, this.queryString, injectArguments);
+    const result: IQueryResult = await engine.query(this.queryData, this.queryString,
+      { baseIRI: this.baseIRI, ...injectArguments });
     const dataGraphInfo = this.dataGraph ? ` (named graph: ${this.dataGraph})` : '';
     if (!await this.queryResult.equals(result, this.laxCardinality)) {
       throw new Error(`Invalid query evaluation

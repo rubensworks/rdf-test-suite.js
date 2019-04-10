@@ -17,7 +17,8 @@ export class TestCaseNegativeSyntaxHandler implements ITestCaseHandler<TestCaseN
       throw new Error(`Missing mf:action in ${resource}`);
     }
     return new TestCaseNegativeSyntax(testCaseData,
-      await stringifyStream((await Util.fetchCached(resource.property.action.value, options)).body));
+      await stringifyStream((await Util.fetchCached(resource.property.action.value, options)).body),
+      Util.normalizeBaseUrl(resource.property.action.value));
   }
 
 }
@@ -32,15 +33,17 @@ export class TestCaseNegativeSyntax implements ITestCaseSparql {
   public readonly uri: string;
 
   public readonly queryString: string;
+  public readonly baseIRI: string;
 
-  constructor(testCaseData: ITestCaseData, queryString: string) {
+  constructor(testCaseData: ITestCaseData, queryString: string, baseIRI: string) {
     Object.assign(this, testCaseData);
     this.queryString = queryString;
+    this.baseIRI = baseIRI;
   }
 
   public async test(engine: IQueryEngine, injectArguments: any): Promise<void> {
     try {
-      await engine.parse(this.queryString, injectArguments);
+      await engine.parse(this.queryString, { baseIRI: this.baseIRI, ...injectArguments });
     } catch (e) {
       return;
     }

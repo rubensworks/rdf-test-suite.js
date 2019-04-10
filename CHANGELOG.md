@@ -1,6 +1,12 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+<a name="v1.8.1"></a>
+## [v1.8.1](https://github.com/rubensworks/rdf-test-suite.js/compare/v1.8.0...v1.8.1) - 2019-04-10
+
+### Fixed
+* [Pass baseIRI to SPARQL engines and parsers](https://github.com/rubensworks/rdf-test-suite.js/commit/741cdf92b788229824f2d4a46799f8c679bd6199)
+
 <a name="v1.8.0"></a>
 ## [v1.8.0](https://github.com/rubensworks/rdf-test-suite.js/compare/v1.7.0...v1.8.0) - 2019-04-09
 

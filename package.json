@@ -90,7 +90,7 @@
     "isomorphic-fetch": "^2.2.1",
     "json-stable-stringify": "^1.0.1",
     "jsonld-streaming-parser": "^1.0.1",
-    "log-symbols": "^2.2.0",
+    "log-symbols": "^3.0.0",
     "minimist": "^1.2.0",
     "n3": "^1.0.0",
     "node-web-streams": "^0.2.2",

@@ -31,15 +31,12 @@ export class ManifestLoader {
    */
   public async from(url: string, options?: IFetchOptions): Promise<IManifest> {
     const objectLoader = new RdfObjectLoader({ context: ManifestLoader.LOADER_CONTEXT });
-    await this.import(objectLoader, url, options);
-    const manifestResource: Resource = objectLoader.resources[url];
-    if (!manifestResource) {
-      throw new Error(`Could not find a resource ${url} in the document at ${url}`);
-    }
-    return manifestFromResource(this.testCaseHandlers, options, manifestResource);
+    const manifest: Resource = await this.import(objectLoader, url, options);
+    return manifestFromResource(this.testCaseHandlers, options, manifest);
   }
 
-  protected async import(objectLoader: RdfObjectLoader, urlInitial: string, options?: IFetchOptions): Promise<void> {
+  protected async import(objectLoader: RdfObjectLoader, urlInitial: string, options?: IFetchOptions)
+    : Promise<Resource> {
     const [url, parsed] = await Util.fetchRdf(urlInitial, options);
 
     // Dereference the URL and load it
@@ -51,11 +48,15 @@ export class ManifestLoader {
     }
 
     // Import all sub-manifests
-    const manifest = objectLoader.resources[url];
+    let manifest: Resource = objectLoader.resources[url];
     if (!manifest) {
-      throw new Error(`Could not find a resource ${url} in the document at ${url}`);
+      // Also try extension-less manifest URL (needed for RDFa test suite)
+      manifest = objectLoader.resources[url.substr(0, url.lastIndexOf('.'))];
+      if (!manifest) {
+        throw new Error(`Could not find a resource ${url} in the document at ${url}`);
+      }
     }
-    const includeJobs: Promise<void>[] = [];
+    const includeJobs: Promise<any>[] = [];
     for (const includeList of manifest.properties.include) {
       for (const include of includeList.list) {
         if (include.term.termType !== 'NamedNode') {
@@ -65,6 +66,8 @@ export class ManifestLoader {
       }
     }
     await Promise.all(includeJobs);
+
+    return manifest;
   }
 
 }

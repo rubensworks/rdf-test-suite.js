@@ -84,6 +84,12 @@ module.exports = {
     new TestCaseJsonLdSyntaxHandler(true),
   'https://w3c.github.io/json-ld-api/tests/vocab#FromRDFTest https://w3c.github.io/json-ld-api/tests/vocab#PositiveEvaluationTest':
     new TestCaseJsonLdFromRdfHandler(),
+
+  // RDFa test suite
+  'http://rdfa.info/vocabs/rdfa-test#PositiveEvaluationTest':
+    new TestCaseEvalHandler(),
+  'http://rdfa.info/vocabs/rdfa-test#NegativeEvaluationTest':
+    new TestCaseSyntaxHandler(false),
 };
 // tslint:enable:object-literal-sort-keys
 // tslint:enable:max-line-length

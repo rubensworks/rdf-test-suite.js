@@ -1,6 +1,13 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+<a name="v1.9.0"></a>
+## [v1.9.0](https://github.com/rubensworks/rdf-test-suite.js/compare/v1.8.2...v1.9.0) - 2019-06-04
+
+### Added
+* [Add RDFa test case handlers](https://github.com/rubensworks/rdf-test-suite.js/commit/d469795a8cf14bb3a242aef5a6e86015f3b75537)
+* [Allow extension-less manifests to be loaded](https://github.com/rubensworks/rdf-test-suite.js/commit/8aa652f3c3de14b1e6b9b08c75aa96b8e172731f)
+
 <a name="v1.8.2"></a>
 ## [v1.8.2](https://github.com/rubensworks/rdf-test-suite.js/compare/v1.8.1...v1.8.2) - 2019-04-10
 

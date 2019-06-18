@@ -89,7 +89,7 @@ module.exports = {
   'http://rdfa.info/vocabs/rdfa-test#PositiveEvaluationTest':
     new TestCaseEvalHandler(),
   'http://rdfa.info/vocabs/rdfa-test#NegativeEvaluationTest':
-    new TestCaseSyntaxHandler(false),
+    new TestCaseSyntaxHandler(true), // RDFa test suite never expect errors, just empty documents
 };
 // tslint:enable:object-literal-sort-keys
 // tslint:enable:max-line-length

@@ -1,6 +1,12 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+<a name="v1.9.1"></a>
+## [v1.9.1](https://github.com/rubensworks/rdf-test-suite.js/compare/v1.9.0...v1.9.1) - 2019-06-20
+
+### Fixed
+* [Don't expect errors in rdfa:NegativeEvaluationTest](https://github.com/rubensworks/rdf-test-suite.js/commit/5d8cec94e7d0022d0aa9001f773b68e19ff54bd5)
+
 <a name="v1.9.0"></a>
 ## [v1.9.0](https://github.com/rubensworks/rdf-test-suite.js/compare/v1.8.2...v1.9.0) - 2019-06-04
 

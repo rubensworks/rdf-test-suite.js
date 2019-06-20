@@ -1,4 +1,4 @@
-import {literal, namedNode, quad} from "@rdfjs/data-model";
+import {blankNode, literal, namedNode, quad} from "@rdfjs/data-model";
 import {existsSync, mkdirSync, readFileSync} from "fs";
 import "isomorphic-fetch";
 import "jest-rdf";
@@ -174,21 +174,30 @@ describe('Util', () => {
         ]);
     });
 
+    it('should parse text/turtle streams with blank node predicates', async () => {
+      expect(await arrayifyStream(Util.parseRdfRaw('text/turtle', 'http://example.org/',
+        streamifyString('<a> _:b <c>.'))))
+        .toEqualRdfQuadArray([
+          quad(namedNode('http://example.org/a'), blankNode('b'),
+            namedNode('http://example.org/c')),
+        ]);
+    });
+
     it('should parse application/n-triples streams', async () => {
       expect(await arrayifyStream(Util.parseRdfRaw('application/n-triples', 'http://example.org/',
-        streamifyString('<a> <b> <c>.'))))
+        streamifyString('<http://ex.org/a> <http://ex.org/b> <http://ex.org/c>.'))))
         .toEqualRdfQuadArray([
-          quad(namedNode('http://example.org/a'), namedNode('http://example.org/b'),
-            namedNode('http://example.org/c')),
+          quad(namedNode('http://ex.org/a'), namedNode('http://ex.org/b'),
+            namedNode('http://ex.org/c')),
         ]);
     });
 
     it('should parse application/n-quads streams', async () => {
       expect(await arrayifyStream(Util.parseRdfRaw('application/n-quads', 'http://example.org/',
-        streamifyString('<a> <b> <c> <d>.'))))
+        streamifyString('<http://ex.org/a> <http://ex.org/b> <http://ex.org/c> <http://ex.org/d>.'))))
         .toEqualRdfQuadArray([
-          quad(namedNode('http://example.org/a'), namedNode('http://example.org/b'),
-            namedNode('http://example.org/c'), namedNode('http://example.org/d')),
+          quad(namedNode('http://ex.org/a'), namedNode('http://ex.org/b'),
+            namedNode('http://ex.org/c'), namedNode('http://ex.org/d')),
         ]);
     });
 

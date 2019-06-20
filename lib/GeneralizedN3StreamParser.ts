@@ -1,6 +1,20 @@
 import {Parser} from "n3";
 import {Transform} from "stream";
 
+// Temporarily set format to text/n3 to allow blank node predicates (needed by JSON-LD tests)
+const readPredicateOld = Parser.prototype._readPredicate;
+// tslint:disable-next-line:only-arrow-functions
+Parser.prototype._readPredicate = function(token: any) {
+  if (this.allowBlankNodePredicates) {
+    this._n3Mode = true;
+  }
+  const ret = readPredicateOld.call(this, token);
+  if (this.allowBlankNodePredicates) {
+    this._n3Mode = false;
+  }
+  return ret;
+};
+
 export class GeneralizedN3StreamParser extends Transform {
 
   constructor(options: any) {
@@ -10,9 +24,7 @@ export class GeneralizedN3StreamParser extends Transform {
 
     // Set up parser
     const parser: any = new Parser(options);
-
-    // Set to format to text/n3 to allow blank node predicates (needed by JSON-LD tests)
-    parser._n3Mode = true;
+    parser.allowBlankNodePredicates = true;
 
     let onData: any;
     let onEnd: any;

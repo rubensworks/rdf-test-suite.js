@@ -71,7 +71,7 @@ export class Util {
       || contentType.indexOf('text/turtle') >= 0
       || contentType.indexOf('application/n-triples') >= 0
       || contentType.indexOf('application/n-quads') >= 0) {
-      return data.pipe(new GeneralizedN3StreamParser({ baseIRI }));
+      return data.pipe(new GeneralizedN3StreamParser({ baseIRI, format: contentType }));
     }
     if (contentType.indexOf('application/rdf+xml') >= 0) {
       return data.pipe(new RdfXmlParser({ baseIRI }));

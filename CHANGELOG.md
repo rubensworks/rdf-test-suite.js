@@ -1,6 +1,13 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+<a name="v1.9.2"></a>
+## [v1.9.2](https://github.com/rubensworks/rdf-test-suite.js/compare/v1.9.1...v1.9.2) - 2019-06-23
+
+### Changed
+* [Properly pass format to N3 parsers](https://github.com/rubensworks/rdf-test-suite.js/commit/1d226164275fecf6d42e98a22ea5b7ee0aa88151)
+* [Improve hack to allow blank node predicates in Turtle](https://github.com/rubensworks/rdf-test-suite.js/commit/34b3ef4949520ceb5de3e669620615a1279ff740)
+
 <a name="v1.9.1"></a>
 ## [v1.9.1](https://github.com/rubensworks/rdf-test-suite.js/compare/v1.9.0...v1.9.1) - 2019-06-20
 

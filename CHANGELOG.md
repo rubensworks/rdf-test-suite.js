@@ -1,6 +1,12 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+<a name="v1.9.3"></a>
+## [v1.9.3](https://github.com/rubensworks/rdf-test-suite.js/compare/v1.9.0...v1.9.3) - 2019-07-15
+
+### Fixed
+* [Fix parsing error in N3 1.1.1](https://github.com/rubensworks/rdf-test-suite.js/commit/14ec6f2baef14859909d4f4479dbc7eac8fe2ea1)
+
 <a name="v1.9.2"></a>
 ## [v1.9.2](https://github.com/rubensworks/rdf-test-suite.js/compare/v1.9.1...v1.9.2) - 2019-06-23
 

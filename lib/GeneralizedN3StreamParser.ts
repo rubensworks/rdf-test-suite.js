@@ -7,10 +7,12 @@ const readPredicateOld = Parser.prototype._readPredicate;
 Parser.prototype._readPredicate = function(token: any) {
   if (this.allowBlankNodePredicates) {
     this._n3Mode = true;
+    this._quantified = {};
   }
   const ret = readPredicateOld.call(this, token);
   if (this.allowBlankNodePredicates) {
     this._n3Mode = false;
+    delete this._quantified;
   }
   return ret;
 };

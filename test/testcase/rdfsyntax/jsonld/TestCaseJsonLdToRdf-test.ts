@@ -57,6 +57,7 @@ describe('TestCaseJsonLdToRdfHandler', () => {
   let pOption;
   let pJsonLdProduceGeneralizedRdf;
   let pJsonLdBase;
+  let pJsonLdExpandContext;
   let pProcessingMode;
   let pSpecVersion;
 
@@ -77,6 +78,8 @@ describe('TestCaseJsonLdToRdfHandler', () => {
           { term: namedNode('https://w3c.github.io/json-ld-api/tests/vocab#produceGeneralizedRdf'), context });
         pJsonLdBase = new Resource(
           { term: namedNode('https://w3c.github.io/json-ld-api/tests/vocab#base'), context });
+        pJsonLdExpandContext = new Resource(
+          { term: namedNode('https://w3c.github.io/json-ld-api/tests/vocab#expandContext'), context });
         pProcessingMode = new Resource(
           { term: namedNode('https://w3c.github.io/json-ld-api/tests/vocab#processingMode'), context });
         pSpecVersion = new Resource(
@@ -158,6 +161,34 @@ describe('TestCaseJsonLdToRdfHandler', () => {
           processingMode: "1.1",
           produceGeneralizedRdf: true,
           specVersion: "1.1",
+        });
+    });
+
+    it('should produce a TestCaseEval with an expand context', async () => {
+      const resource = new Resource({ term: namedNode('http://ex.org/test'), context });
+      resource.addProperty(pAction, new Resource({ term: literal('ACTION'), context }));
+      resource.addProperty(pResult, new Resource({ term: literal('RESULT.ttl'), context }));
+      resource.addProperty(pContext, new Resource({ term: literal('CONTEXT'), context }));
+
+      const optionExpandContext = new Resource({ term: namedNode('http://ex.org/o1'), context });
+      optionExpandContext.addProperty(pJsonLdExpandContext,
+        new Resource({ term: namedNode('CONTEXT'), context }));
+
+      resource.addProperty(pOption, optionExpandContext);
+      const testCase = await handler.resourceToTestCase(resource, <any> {});
+      const spy = jest.spyOn(parser, 'parse');
+      testCase.test(parser, {});
+      return expect(spy).toHaveBeenCalledWith(`{
+  "@id": "http://www.w3.org/TR/rdf-syntax-grammar",
+  "http://purl.org/dc/elements/1.1/title": [
+    "RDF1.1 XML Syntax 1",
+    "RDF1.1 XML Syntax 2"
+  ]
+}`, "ACTION",
+        {
+          context: { "@context": {"@base": "http://www.w3.org/TR/"} },
+          produceGeneralizedRdf: false,
+          specVersion: "1.0",
         });
     });
 

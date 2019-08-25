@@ -31,6 +31,7 @@
   "jsonLdOptions": "jld:option",
   "jsonLdProduceGeneralizedRdf": "jld:produceGeneralizedRdf",
   "jsonLdBase": "jld:base",
+  "jsonLdExpandContext": "jld:expandContext",
   "processingMode": "jld:processingMode",
   "specVersion": "jld:specVersion",
   "context": "jld:context",

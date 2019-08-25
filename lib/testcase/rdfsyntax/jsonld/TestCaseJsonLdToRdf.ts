@@ -33,6 +33,12 @@ export class TestCaseJsonLdToRdfHandler extends TestCaseEvalHandler {
         additionalOptions.baseIRI = option.property.jsonLdBase.term.value;
       }
 
+      // Override the default base IRI
+      if (option.property.jsonLdExpandContext) {
+        additionalOptions.context = JSON.parse(await require('stream-to-string')((
+          await Util.fetchCached(option.property.jsonLdExpandContext.term.value, options)).body));
+      }
+
       // The processing mode
       // If undefined, all processors should be able to handle the test,
       // otherwise, only processors explicitly supporting that mode should run the test.

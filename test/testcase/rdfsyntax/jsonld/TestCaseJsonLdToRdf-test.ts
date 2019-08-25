@@ -56,6 +56,7 @@ describe('TestCaseJsonLdToRdfHandler', () => {
   let pContext;
   let pOption;
   let pJsonLdProduceGeneralizedRdf;
+  let pJsonLdBase;
   let pProcessingMode;
   let pSpecVersion;
 
@@ -74,6 +75,8 @@ describe('TestCaseJsonLdToRdfHandler', () => {
           { term: namedNode('https://w3c.github.io/json-ld-api/tests/vocab#option'), context });
         pJsonLdProduceGeneralizedRdf = new Resource(
           { term: namedNode('https://w3c.github.io/json-ld-api/tests/vocab#produceGeneralizedRdf'), context });
+        pJsonLdBase = new Resource(
+          { term: namedNode('https://w3c.github.io/json-ld-api/tests/vocab#base'), context });
         pProcessingMode = new Resource(
           { term: namedNode('https://w3c.github.io/json-ld-api/tests/vocab#processingMode'), context });
         pSpecVersion = new Resource(
@@ -115,8 +118,6 @@ describe('TestCaseJsonLdToRdfHandler', () => {
   ]
 }`, "ACTION",
         {
-          context: undefined,
-          processingMode: null,
           produceGeneralizedRdf: false,
           specVersion: "1.0",
         });
@@ -130,12 +131,15 @@ describe('TestCaseJsonLdToRdfHandler', () => {
 
       const optionGeneralized = new Resource({ term: namedNode('http://ex.org/o1'), context });
       optionGeneralized.addProperty(pJsonLdProduceGeneralizedRdf, new Resource({ term: literal('true'), context }));
+      const optionBase = new Resource({ term: namedNode('http://ex.org/o1'), context });
+      optionBase.addProperty(pJsonLdBase, new Resource({ term: namedNode('http://base.org/'), context }));
       const optionProcessingMode = new Resource({ term: namedNode('http://ex.org/o1'), context });
       optionProcessingMode.addProperty(pProcessingMode, new Resource({ term: literal('json-ld-1.1'), context }));
       const optionSpecVersion = new Resource({ term: namedNode('http://ex.org/o1'), context });
       optionSpecVersion.addProperty(pSpecVersion, new Resource({ term: literal('json-ld-1.1'), context }));
 
       resource.addProperty(pOption, optionGeneralized);
+      resource.addProperty(pOption, optionBase);
       resource.addProperty(pOption, optionProcessingMode);
       resource.addProperty(pOption, optionSpecVersion);
       const testCase = await handler.resourceToTestCase(resource, <any> {});
@@ -149,6 +153,7 @@ describe('TestCaseJsonLdToRdfHandler', () => {
   ]
 }`, "ACTION",
         {
+          baseIRI: "http://base.org/",
           context: { "@context": {"@base": "http://www.w3.org/TR/"} },
           processingMode: "1.1",
           produceGeneralizedRdf: true,

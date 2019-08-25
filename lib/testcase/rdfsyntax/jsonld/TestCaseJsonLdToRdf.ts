@@ -18,14 +18,19 @@ export class TestCaseJsonLdToRdfHandler extends TestCaseEvalHandler {
     const testCaseEval = await superHandler(resource, testCaseData, options);
 
     // Loop over the options
-    let produceGeneralizedRdf: boolean = false;
-    let processingMode: string = null;
-    let specVersion: string = '1.0';
-    let context: any;
+    const additionalOptions: any = {
+      produceGeneralizedRdf: false,
+      specVersion: '1.0',
+    };
     for (const option of resource.properties.jsonLdOptions) {
       // Should generalized RDF should be produced?
       if (option.property.jsonLdProduceGeneralizedRdf) {
-        produceGeneralizedRdf = option.property.jsonLdProduceGeneralizedRdf.term.value === 'true';
+        additionalOptions.produceGeneralizedRdf = option.property.jsonLdProduceGeneralizedRdf.term.value === 'true';
+      }
+
+      // Override the default base IRI
+      if (option.property.jsonLdBase) {
+        additionalOptions.baseIRI = option.property.jsonLdBase.term.value;
       }
 
       // The processing mode
@@ -33,26 +38,26 @@ export class TestCaseJsonLdToRdfHandler extends TestCaseEvalHandler {
       // otherwise, only processors explicitly supporting that mode should run the test.
       if (option.property.processingMode) {
         // Remove the 'json-ld-' prefix from the string
-        processingMode = option.property.processingMode.term.value.substr(8);
+        additionalOptions.processingMode = option.property.processingMode.term.value.substr(8);
       }
 
       // The spec for which this test was defined.
       if (option.property.specVersion) {
         // Remove the 'json-ld-' prefix from the string
-        specVersion = option.property.specVersion.term.value.substr(8);
+        additionalOptions.specVersion = option.property.specVersion.term.value.substr(8);
       }
     }
 
     // An optional root context.
     if (resource.property.context) {
-      context = JSON.parse(await require('stream-to-string')((
+      additionalOptions.context = JSON.parse(await require('stream-to-string')((
         await Util.fetchCached(resource.property.context.term.value, options)).body));
     }
 
     // Add produceGeneralizedRdf to the inject arguments
     const testOld = testCaseEval.test;
     testCaseEval.test = (parser: IParser, injectArguments: any) => testOld.bind(testCaseEval)(parser,
-      { produceGeneralizedRdf, processingMode, specVersion, context, ...injectArguments });
+      { ...additionalOptions, ...injectArguments });
 
     return testCaseEval;
   }

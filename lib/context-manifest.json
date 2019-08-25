@@ -30,6 +30,7 @@
   "jld": "https://w3c.github.io/json-ld-api/tests/vocab#",
   "jsonLdOptions": "jld:option",
   "jsonLdProduceGeneralizedRdf": "jld:produceGeneralizedRdf",
+  "jsonLdBase": "jld:base",
   "processingMode": "jld:processingMode",
   "specVersion": "jld:specVersion",
   "context": "jld:context",

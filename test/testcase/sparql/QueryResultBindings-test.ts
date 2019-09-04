@@ -1,4 +1,4 @@
-import {namedNode} from "@rdfjs/data-model";
+import {literal, namedNode} from "@rdfjs/data-model";
 import {QueryResultBindings} from "../../../lib/testcase/sparql/QueryResultBindings";
 
 describe('QueryResultBindings', () => {
@@ -12,6 +12,8 @@ describe('QueryResultBindings', () => {
   let bindingsBA1Empty;
   let bindingsCD1;
   let bindingsCD1Empty;
+  let bindingDecimalShort;
+  let bindingDecimalLong;
 
   let bindingsAB1Order;
   let bindingsAB1ooOrder;
@@ -20,6 +22,8 @@ describe('QueryResultBindings', () => {
   let bindingsBA1EmptyOrder;
   let bindingsCD1Order;
   let bindingsCD1EmptyOrder;
+  let bindingDecimalShortOrder;
+  let bindingDecimalLongOrder;
 
   beforeEach(() => {
     bindingsAB1 = new QueryResultBindings([ '?a', '?b' ], [
@@ -117,6 +121,26 @@ describe('QueryResultBindings', () => {
       },
     ], false);
     bindingsCD1Empty = new QueryResultBindings([ '?c', '?d' ], [], false);
+    bindingDecimalShort = new QueryResultBindings([ '?c', '?d' ], [
+      {
+        '?c': literal('2', namedNode('http://www.w3.org/2001/XMLSchema#decimal')),
+        '?d': literal('3', namedNode('http://www.w3.org/2001/XMLSchema#decimal')),
+      },
+      {
+        '?c': literal('4.4', namedNode('http://www.w3.org/2001/XMLSchema#decimal')),
+        '?d': literal('5.5', namedNode('http://www.w3.org/2001/XMLSchema#decimal')),
+      },
+    ], false);
+    bindingDecimalLong = new QueryResultBindings([ '?c', '?d' ], [
+      {
+        '?c': literal('2.000', namedNode('http://www.w3.org/2001/XMLSchema#decimal')),
+        '?d': literal('3.00', namedNode('http://www.w3.org/2001/XMLSchema#decimal')),
+      },
+      {
+        '?c': literal('4.40000', namedNode('http://www.w3.org/2001/XMLSchema#decimal')),
+        '?d': literal('5.50000000', namedNode('http://www.w3.org/2001/XMLSchema#decimal')),
+      },
+    ], false);
 
     bindingsAB1Order = new QueryResultBindings([ '?a', '?b' ], [
       {
@@ -161,6 +185,26 @@ describe('QueryResultBindings', () => {
       },
     ], true);
     bindingsCD1EmptyOrder = new QueryResultBindings([ '?c', '?d' ], [], true);
+    bindingDecimalShortOrder = new QueryResultBindings([ '?c', '?d' ], [
+      {
+        '?c': literal('2', namedNode('http://www.w3.org/2001/XMLSchema#decimal')),
+        '?d': literal('3', namedNode('http://www.w3.org/2001/XMLSchema#decimal')),
+      },
+      {
+        '?c': literal('4.4', namedNode('http://www.w3.org/2001/XMLSchema#decimal')),
+        '?d': literal('5.5', namedNode('http://www.w3.org/2001/XMLSchema#decimal')),
+      },
+    ], true);
+    bindingDecimalLongOrder = new QueryResultBindings([ '?c', '?d' ], [
+      {
+        '?c': literal('2.000', namedNode('http://www.w3.org/2001/XMLSchema#decimal')),
+        '?d': literal('3.00', namedNode('http://www.w3.org/2001/XMLSchema#decimal')),
+      },
+      {
+        '?c': literal('4.40000', namedNode('http://www.w3.org/2001/XMLSchema#decimal')),
+        '?d': literal('5.50000000', namedNode('http://www.w3.org/2001/XMLSchema#decimal')),
+      },
+    ], true);
   });
 
   describe('when instantiated', () => {
@@ -224,6 +268,10 @@ describe('QueryResultBindings', () => {
         it('should be false for for out-of-order results', () => {
           return expect(bindingsAB1Order.equals(bindingsAB1ooOrder)).toBeFalsy();
         });
+
+        it('should be true for literals with different lexical forms', () => {
+          return expect(bindingDecimalShortOrder.equals(bindingDecimalLongOrder)).toBeTruthy();
+        });
       });
 
       describe('with non-strict order', () => {
@@ -253,6 +301,10 @@ describe('QueryResultBindings', () => {
 
         it('should be true for for out-of-order results', () => {
           return expect(bindingsAB1.equals(bindingsAB1oo)).toBeTruthy();
+        });
+
+        it('should be true for literals with different lexical forms', () => {
+          return expect(bindingDecimalShort.equals(bindingDecimalLong)).toBeTruthy();
         });
       });
     });
@@ -301,6 +353,10 @@ describe('QueryResultBindings', () => {
 
         it('should be false for more results', () => {
           return expect(bindingsAB1Reduced.equals(bindingsAB1Duplicates, true)).toBeFalsy();
+        });
+
+        it('should be true for literals with different lexical forms', () => {
+          return expect(bindingDecimalShort.equals(bindingDecimalLong, true)).toBeTruthy();
         });
       });
     });

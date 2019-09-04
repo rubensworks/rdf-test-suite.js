@@ -1,5 +1,6 @@
 import * as stringify from "json-stable-stringify";
 import * as RDF from "rdf-js";
+import {fromRdf} from "rdf-literal";
 import {termToString} from "rdf-string";
 import {IQueryResult, IQueryResultBindings} from "./IQueryEngine";
 
@@ -18,12 +19,16 @@ export class QueryResultBindings implements IQueryResultBindings {
     this.checkOrder = checkOrder;
   }
 
+  public static serializeTerm(term: RDF.Term): any {
+    return term.termType === 'Literal' ? fromRdf(term) : termToString(term);
+  }
+
   public static hashBindings(bindings: {[variable: string]: RDF.Term}[], checkOrder: boolean): string {
     const hash = [];
     for (const b of bindings) {
       const bHash: {[id: string]: string} = {};
       for (const variable in b) {
-        bHash[variable] = termToString(b[variable]);
+        bHash[variable] = QueryResultBindings.serializeTerm(b[variable]);
       }
       hash.push(stringify(bHash));
     }
@@ -35,7 +40,7 @@ export class QueryResultBindings implements IQueryResultBindings {
     for (const b of bindings) {
       const bHash: {[id: string]: string} = {};
       for (const variable in b) {
-        bHash[variable] = termToString(b[variable]);
+        bHash[variable] = QueryResultBindings.serializeTerm(b[variable]);
       }
       const bString: string = JSON.stringify(bHash);
       if (!hash[bString]) {

@@ -1,6 +1,17 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+<a name="v1.10.0"></a>
+## [v1.10.0](https://github.com/rubensworks/rdf-test-suite.js/compare/v1.9.3...v1.10.0) - 2019-09-04
+
+### Added
+* [Handle expandContext option in JSON-LD test suite](https://github.com/rubensworks/rdf-test-suite.js/commit/6ce6c228e0664b5d9faa8b75d4f672cf3f2bb399)
+* [Handle baseIRI option in JSON-LD test suite](https://github.com/rubensworks/rdf-test-suite.js/commit/47ad4dd021b0c1fe7bdbcf66ca667abe94368373)
+
+### Changed
+* [Apply blank node normalization in SPARQL results](https://github.com/rubensworks/rdf-test-suite.js/commit/2151f282a65779c741db26717ae1bf5d485369f1)
+* [Compare literals in SPARQL by value, not stricly, Closes #37](https://github.com/rubensworks/rdf-test-suite.js/commit/4e0bc1d7a2fad86a5b44a3a7734da8a65c5169a3)
+
 <a name="v1.9.3"></a>
 ## [v1.9.3](https://github.com/rubensworks/rdf-test-suite.js/compare/v1.9.0...v1.9.3) - 2019-07-15
 

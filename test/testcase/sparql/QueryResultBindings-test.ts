@@ -1,4 +1,4 @@
-import {literal, namedNode} from "@rdfjs/data-model";
+import {blankNode, literal, namedNode} from "@rdfjs/data-model";
 import {QueryResultBindings} from "../../../lib/testcase/sparql/QueryResultBindings";
 
 describe('QueryResultBindings', () => {
@@ -14,6 +14,9 @@ describe('QueryResultBindings', () => {
   let bindingsCD1Empty;
   let bindingDecimalShort;
   let bindingDecimalLong;
+  let bindingBlankNode1Lower;
+  let bindingBlankNode1Upper;
+  let bindingBlankNode2;
 
   let bindingsAB1Order;
   let bindingsAB1ooOrder;
@@ -24,6 +27,9 @@ describe('QueryResultBindings', () => {
   let bindingsCD1EmptyOrder;
   let bindingDecimalShortOrder;
   let bindingDecimalLongOrder;
+  let bindingBlankNode1LowerOrder;
+  let bindingBlankNode1UpperOrder;
+  let bindingBlankNode2Order;
 
   beforeEach(() => {
     bindingsAB1 = new QueryResultBindings([ '?a', '?b' ], [
@@ -141,6 +147,36 @@ describe('QueryResultBindings', () => {
         '?d': literal('5.50000000', namedNode('http://www.w3.org/2001/XMLSchema#decimal')),
       },
     ], false);
+    bindingBlankNode1Lower = new QueryResultBindings([ '?c', '?d' ], [
+      {
+        '?c': blankNode('a'),
+        '?d': blankNode('b'),
+      },
+      {
+        '?c': blankNode('c'),
+        '?d': blankNode('d'),
+      },
+    ], false);
+    bindingBlankNode1Upper = new QueryResultBindings([ '?c', '?d' ], [
+      {
+        '?c': blankNode('A'),
+        '?d': blankNode('B'),
+      },
+      {
+        '?c': blankNode('C'),
+        '?d': blankNode('D'),
+      },
+    ], false);
+    bindingBlankNode2 = new QueryResultBindings([ '?c', '?d' ], [
+      {
+        '?c': blankNode('a'),
+        '?d': blankNode('a'),
+      },
+      {
+        '?c': blankNode('c'),
+        '?d': blankNode('d'),
+      },
+    ], false);
 
     bindingsAB1Order = new QueryResultBindings([ '?a', '?b' ], [
       {
@@ -203,6 +239,36 @@ describe('QueryResultBindings', () => {
       {
         '?c': literal('4.40000', namedNode('http://www.w3.org/2001/XMLSchema#decimal')),
         '?d': literal('5.50000000', namedNode('http://www.w3.org/2001/XMLSchema#decimal')),
+      },
+    ], true);
+    bindingBlankNode1LowerOrder = new QueryResultBindings([ '?c', '?d' ], [
+      {
+        '?c': blankNode('a'),
+        '?d': blankNode('b'),
+      },
+      {
+        '?c': blankNode('c'),
+        '?d': blankNode('d'),
+      },
+    ], true);
+    bindingBlankNode1UpperOrder = new QueryResultBindings([ '?c', '?d' ], [
+      {
+        '?c': blankNode('A'),
+        '?d': blankNode('B'),
+      },
+      {
+        '?c': blankNode('C'),
+        '?d': blankNode('D'),
+      },
+    ], true);
+    bindingBlankNode2Order = new QueryResultBindings([ '?c', '?d' ], [
+      {
+        '?c': blankNode('a'),
+        '?d': blankNode('a'),
+      },
+      {
+        '?c': blankNode('c'),
+        '?d': blankNode('d'),
       },
     ], true);
   });
@@ -272,6 +338,14 @@ describe('QueryResultBindings', () => {
         it('should be true for literals with different lexical forms', () => {
           return expect(bindingDecimalShortOrder.equals(bindingDecimalLongOrder)).toBeTruthy();
         });
+
+        it('should be true for bindings with isomorphic blank node structures', () => {
+          return expect(bindingBlankNode1LowerOrder.equals(bindingBlankNode1UpperOrder)).toBeTruthy();
+        });
+
+        it('should be false for bindings with non-isomorphic blank node structures', () => {
+          return expect(bindingBlankNode1LowerOrder.equals(bindingBlankNode2Order)).toBeFalsy();
+        });
       });
 
       describe('with non-strict order', () => {
@@ -305,6 +379,14 @@ describe('QueryResultBindings', () => {
 
         it('should be true for literals with different lexical forms', () => {
           return expect(bindingDecimalShort.equals(bindingDecimalLong)).toBeTruthy();
+        });
+
+        it('should be true for bindings with isomorphic blank node structures', () => {
+          return expect(bindingBlankNode1Lower.equals(bindingBlankNode1Upper)).toBeTruthy();
+        });
+
+        it('should be false for bindings with non-isomorphic blank node structures', () => {
+          return expect(bindingBlankNode1Lower.equals(bindingBlankNode2)).toBeFalsy();
         });
       });
     });
@@ -357,6 +439,14 @@ describe('QueryResultBindings', () => {
 
         it('should be true for literals with different lexical forms', () => {
           return expect(bindingDecimalShort.equals(bindingDecimalLong, true)).toBeTruthy();
+        });
+
+        it('should be true for bindings with isomorphic blank node structures', () => {
+          return expect(bindingBlankNode1Lower.equals(bindingBlankNode1Upper, true)).toBeTruthy();
+        });
+
+        it('should be false for bindings with non-isomorphic blank node structures', () => {
+          return expect(bindingBlankNode1Lower.equals(bindingBlankNode2, true)).toBeFalsy();
         });
       });
     });

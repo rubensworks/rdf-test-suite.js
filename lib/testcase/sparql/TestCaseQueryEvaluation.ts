@@ -5,6 +5,7 @@ import {stringToTerm} from "rdf-string";
 import {mapTerms, QuadTermName} from "rdf-terms";
 import {SparqlJsonParser} from "sparqljson-parse";
 import {SparqlXmlParser} from "sparqlxml-parse";
+import {ErrorTest} from "../../ErrorTest";
 import {IFetchOptions, IFetchResponse, Util} from "../../Util";
 import {ITestCaseData} from "../ITestCase";
 import {ITestCaseHandler} from "../ITestCaseHandler";
@@ -281,7 +282,7 @@ export class TestCaseQueryEvaluation implements ITestCaseSparql {
       { baseIRI: this.baseIRI, ...injectArguments });
     const dataGraphInfo = this.dataGraph ? ` (named graph: ${this.dataGraph.value})` : '';
     if (!await this.queryResult.equals(result, this.laxCardinality)) {
-      throw new Error(`Invalid query evaluation
+      throw new ErrorTest(`Invalid query evaluation
 
   Query:\n\n${this.queryString}
 

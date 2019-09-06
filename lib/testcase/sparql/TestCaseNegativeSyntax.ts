@@ -1,4 +1,5 @@
 import {Resource} from "rdf-object";
+import {ErrorTest} from "../../ErrorTest";
 import {IFetchOptions, Util} from "../../Util";
 import {ITestCaseData} from "../ITestCase";
 import {ITestCaseHandler} from "../ITestCaseHandler";
@@ -47,7 +48,7 @@ export class TestCaseNegativeSyntax implements ITestCaseSparql {
     } catch (e) {
       return;
     }
-    throw new Error(`Expected ${this.queryString} to throw an error when parsing.
+    throw new ErrorTest(`Expected ${this.queryString} to throw an error when parsing.
   Input: ${this.queryString}
 `);
   }

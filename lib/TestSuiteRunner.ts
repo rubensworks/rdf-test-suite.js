@@ -149,7 +149,7 @@ export class TestSuiteRunner {
         stdout.write(`
 ${LogSymbols.error} ${result.test.name}
   ${result.test.comment || ''}
-  ${result.error}
+  ${'test' in result.error ? result.error : result.error.stack}
   More info: ${result.test.uri}
 
 `);

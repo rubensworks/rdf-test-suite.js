@@ -23,3 +23,4 @@ export * from "./lib/ManifestLoader";
 export * from "./lib/TestSuiteRunner";
 export * from "./lib/Util";
 export * from "./lib/ErrorSkipped";
+export * from "./lib/ErrorTest";

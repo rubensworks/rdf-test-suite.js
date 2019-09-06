@@ -1,4 +1,5 @@
 import {Resource} from "rdf-object";
+import {ErrorTest} from "../../ErrorTest";
 import {IFetchOptions, Util} from "../../Util";
 import {ITestCaseData} from "../ITestCase";
 import {ITestCaseHandler} from "../ITestCaseHandler";
@@ -45,7 +46,7 @@ export class TestCasePositiveSyntax implements ITestCaseSparql {
     try {
       await engine.parse(this.queryString, { baseIRI: this.baseIRI, ...injectArguments });
     } catch (e) {
-      throw new Error(`Expected not throw an error when parsing.
+      throw new ErrorTest(`Expected not throw an error when parsing.
   Input: ${this.queryString}
   Error: ${e}
 `);

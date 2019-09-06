@@ -1,3 +1,5 @@
+import {ErrorTest} from "../lib/ErrorTest";
+
 const mockTest1 = {
   name: 'Test1',
   test: () => Promise.resolve(1),
@@ -11,7 +13,7 @@ const mockTest2 = {
 };
 const mockTest3 = {
   name: 'Test3',
-  test: () => Promise.reject(new Error('Fail')),
+  test: () => Promise.reject(new ErrorTest('Fail')),
   uri: 'http://ex.org/test3',
 };
 
@@ -255,7 +257,7 @@ describe('TestSuiteRunner', () => {
         test: mockTest2,
       },
       {
-        error: new Error('Fail'),
+        error: new ErrorTest('Fail'),
         ok: false,
         test: mockTest3,
       },
@@ -276,11 +278,34 @@ describe('TestSuiteRunner', () => {
         test: mockTest3,
       },
       {
+        error: new ErrorTest('Fail'),
+        ok: false,
+        test: mockTest3,
+      },
+    ];
+
+    const testResultsExternal = [
+      {
+        ok: true,
+        test: mockTest1,
+      },
+      {
+        ok: false,
+        skipped: true,
+        test: mockTest2,
+      },
+      {
+        ok: false,
+        skipped: true,
+        test: mockTest3,
+      },
+      {
         error: new Error('Fail'),
         ok: false,
         test: mockTest3,
       },
     ];
+    testResultsExternal[3].error.stack = "MYSTACK";
 
     it('should print an empty array of results', async () => {
       const stdout = new PassThrough();
@@ -329,6 +354,25 @@ ${LogSymbols.error} Test3 (http://ex.org/test3)
 ${LogSymbols.error} Test3
   
   Error: Fail
+  More info: http://ex.org/test3
+
+${LogSymbols.error} 3 / 4 tests succeeded! (skipped 2)
+`);
+    });
+
+    it('should print a non-empty array of results with external errors', async () => {
+      const stdout = new PassThrough();
+      runner.resultsToText(stdout, testResultsExternal, false);
+      stdout.end();
+      // tslint:disable:no-trailing-whitespace
+      return expect(await stringifyStream(stdout)).toEqual(`${LogSymbols.success} Test1 (http://ex.org/test1)
+${LogSymbols.info} Test2 (http://ex.org/test2)
+${LogSymbols.info} Test3 (http://ex.org/test3)
+${LogSymbols.error} Test3 (http://ex.org/test3)
+
+${LogSymbols.error} Test3
+  
+  MYSTACK
   More info: http://ex.org/test3
 
 ${LogSymbols.error} 3 / 4 tests succeeded! (skipped 2)

@@ -1,4 +1,5 @@
 import {Resource} from "rdf-object";
+import {ErrorTest} from "../../ErrorTest";
 import {IFetchOptions, Util} from "../../Util";
 import {ITestCaseData} from "../ITestCase";
 import {ITestCaseHandler} from "../ITestCaseHandler";
@@ -63,7 +64,7 @@ export class TestCaseSyntax implements ITestCaseRdfSyntax {
       }
 
       if (this.expectNoError) {
-        throw new Error(`Expected not throw an error when parsing.
+        throw new ErrorTest(`Expected not throw an error when parsing.
   Input: ${this.data}
   Error: ${e}
 `);
@@ -71,7 +72,7 @@ export class TestCaseSyntax implements ITestCaseRdfSyntax {
       return;
     }
     if (!this.expectNoError) {
-      throw new Error(`Expected to throw an error when parsing.
+      throw new ErrorTest(`Expected to throw an error when parsing.
   Input: ${this.data}
 `);
     }

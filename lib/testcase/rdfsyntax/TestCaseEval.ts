@@ -2,6 +2,7 @@ import {isomorphic} from "rdf-isomorphic";
 import * as RDF from "rdf-js";
 import {Resource} from "rdf-object";
 import {quadToStringQuad} from "rdf-string";
+import {ErrorTest} from "../../ErrorTest";
 import {IFetchOptions, Util} from "../../Util";
 import {ITestCaseData} from "../ITestCase";
 import {ITestCaseHandler} from "../ITestCaseHandler";
@@ -59,7 +60,7 @@ export class TestCaseEval implements ITestCaseRdfSyntax {
   public async test(parser: IParser, injectArguments: any): Promise<void> {
     const quads: RDF.Quad[] = await parser.parse(this.data, this.baseIRI, injectArguments);
     if (!isomorphic(quads, this.expected)) {
-      throw new Error(`Invalid data parsing
+      throw new ErrorTest(`Invalid data parsing
   Input: ${this.data}
 
   Expected: ${JSON.stringify(this.expected.map(quadToStringQuad), null, '  ')}

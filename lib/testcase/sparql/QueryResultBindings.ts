@@ -25,26 +25,37 @@ export class QueryResultBindings implements IQueryResultBindings {
       return fromRdf(term);
     case 'BlankNode':
       if (!(term.value in blankNodeCounters)) {
-        blankNodeCounters[term.value] = 0;
+        blankNodeCounters[term.value] = Object.keys(blankNodeCounters).length;
       }
-      const blankNodeCounter = blankNodeCounters[term.value]++;
+      const blankNodeCounter = blankNodeCounters[term.value];
       return '_:' + blankNodeCounter;
     default:
       return termToString(term);
     }
   }
 
+  public static hashBinding(binding: {[variable: string]: RDF.Term},
+                            blankNodeCounters: {[label: string]: number}) {
+    const bHash: {[id: string]: string} = {};
+    for (const variable of Object.keys(binding).sort()) {
+      bHash[variable] = QueryResultBindings.serializeTerm(binding[variable], blankNodeCounters);
+    }
+    return stringify(bHash);
+  }
+
   public static hashBindings(bindings: {[variable: string]: RDF.Term}[],
                              blankNodeCounters: {[label: string]: number}, checkOrder: boolean): string {
     const hash = [];
-    for (const b of bindings) {
-      const bHash: {[id: string]: string} = {};
-      for (const variable in b) {
-        bHash[variable] = QueryResultBindings.serializeTerm(b[variable], blankNodeCounters);
-      }
-      hash.push(stringify(bHash));
+    if (!checkOrder) {
+      // Sort *before* we normalize blank nodes, otherwise isomorphic bindings may end up being sorted differently.
+      // We do this sorting using fresh blank node counters for each binding.
+      bindings = bindings.sort((binding1, binding2) => QueryResultBindings.hashBinding(binding1, {})
+          .localeCompare(QueryResultBindings.hashBinding(binding2, {})));
     }
-    return (checkOrder ? hash : hash.sort()).join('');
+    for (const b of bindings) {
+      hash.push(QueryResultBindings.hashBinding(b, blankNodeCounters));
+    }
+    return hash.join('');
   }
 
   public static hashBindingsCount(bindings: {[variable: string]: RDF.Term}[],

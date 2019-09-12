@@ -273,6 +273,80 @@ describe('QueryResultBindings', () => {
     ], true);
   });
 
+  describe('#hashBinding', () => {
+    it('should a binding with named nodes', () => {
+      const binding = {
+        '?a': namedNode('a1'),
+        '?b': namedNode('b1'),
+      };
+      return expect(QueryResultBindings.hashBinding(binding, {}))
+        .toEqual('{\"?a\":\"a1\",\"?b\":\"b1\"}');
+    });
+
+    it('should a binding with named nodes populated in a different order', () => {
+      const binding = {
+        '?b': namedNode('b1'),
+      };
+      binding['?a'] = namedNode('a1');
+      return expect(QueryResultBindings.hashBinding(binding, {}))
+        .toEqual('{\"?a\":\"a1\",\"?b\":\"b1\"}');
+    });
+  });
+
+  describe('#hashBindings', () => {
+    describe('ignoring order', () => {
+      it('should hash bindings with named nodes', () => {
+        return expect(QueryResultBindings.hashBindings(bindingsAB1.value, {}, false))
+          .toEqual('{\"?a\":\"a1\",\"?b\":\"b1\"}{\"?a\":\"a2\",\"?b\":\"b2\"}');
+      });
+
+      it('should unordered hash bindings with named nodes', () => {
+        return expect(QueryResultBindings.hashBindings([
+          {
+            '?a': namedNode('a2'),
+            '?b': namedNode('b2'),
+          },
+          {
+            '?a': namedNode('a1'),
+            '?b': namedNode('b1'),
+          },
+        ], {}, false))
+          .toEqual('{\"?a\":\"a1\",\"?b\":\"b1\"}{\"?a\":\"a2\",\"?b\":\"b2\"}');
+      });
+
+      it('should hash bindings with blank nodes', () => {
+        return expect(QueryResultBindings.hashBindings(bindingBlankNode1Lower.value, {}, false))
+          .toEqual('{\"?c\":\"_:0\",\"?d\":\"_:1\"}{\"?c\":\"_:2\",\"?d\":\"_:3\"}');
+      });
+    });
+
+    describe('checking order', () => {
+      it('should hash bindings with named nodes', () => {
+        return expect(QueryResultBindings.hashBindings(bindingsAB1.value, {}, true))
+          .toEqual('{\"?a\":\"a1\",\"?b\":\"b1\"}{\"?a\":\"a2\",\"?b\":\"b2\"}');
+      });
+
+      it('should unordered hash bindings with named nodes', () => {
+        return expect(QueryResultBindings.hashBindings([
+          {
+            '?a': namedNode('a2'),
+            '?b': namedNode('b2'),
+          },
+          {
+            '?a': namedNode('a1'),
+            '?b': namedNode('b1'),
+          },
+        ], {}, true))
+          .toEqual('{\"?a\":\"a2\",\"?b\":\"b2\"}{\"?a\":\"a1\",\"?b\":\"b1\"}');
+      });
+
+      it('should hash bindings with blank nodes', () => {
+        return expect(QueryResultBindings.hashBindings(bindingBlankNode1Lower.value, {}, true))
+          .toEqual('{\"?c\":\"_:0\",\"?d\":\"_:1\"}{\"?c\":\"_:2\",\"?d\":\"_:3\"}');
+      });
+    });
+  });
+
   describe('when instantiated', () => {
     it('should be instance of QueryResultBindings', () => {
       return expect(bindingsAB1).toBeInstanceOf(QueryResultBindings);

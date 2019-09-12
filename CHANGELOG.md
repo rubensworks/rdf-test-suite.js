@@ -1,6 +1,16 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+<a name="v1.10.1"></a>
+## [v1.10.1](https://github.com/rubensworks/rdf-test-suite.js/compare/v1.10.0...v1.10.1) - 2019-09-12
+
+### Changed
+* [Show stacktrace on external errors](https://github.com/rubensworks/rdf-test-suite.js/commit/39298fcf73f4593cdcb94f204272f3b7fafd3e05)
+
+### Fixed
+* [Fix incorrect blank node canonicalization during bindings comparison](https://github.com/rubensworks/rdf-test-suite.js/commit/f395a651938f262ba890878f2c6ed7674280e50b)
+* [Fix incorrect named graph printing in query eval errors](https://github.com/rubensworks/rdf-test-suite.js/commit/9264c5f401638142be0b05ae1813783090ac7214)
+
 <a name="v1.10.0"></a>
 ## [v1.10.0](https://github.com/rubensworks/rdf-test-suite.js/compare/v1.9.3...v1.10.0) - 2019-09-04
 

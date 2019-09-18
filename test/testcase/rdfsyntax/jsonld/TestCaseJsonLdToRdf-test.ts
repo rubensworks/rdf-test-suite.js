@@ -15,6 +15,7 @@ const streamifyString = require('streamify-string');
 (<any> global).fetch = (url: string) => {
   let body;
   switch (url) {
+  case 'http://ex.org/action.ttl':
   case 'ACTION':
     body = streamifyString(`{
   "@id": "http://www.w3.org/TR/rdf-syntax-grammar",
@@ -34,6 +35,9 @@ const streamifyString = require('streamify-string');
     break;
   case 'CONTEXT':
     body = streamifyString(`{ "@context": { "@base": "http://www.w3.org/TR/" } }`);
+    break;
+  case 'http://ex.org/CONTEXT':
+    body = streamifyString(`{ "@context": { "@base": "http://www.w3.org/TR/BASED/" } }`);
     break;
   default:
     return Promise.reject(new Error('Fetch error'));
@@ -87,6 +91,7 @@ describe('TestCaseJsonLdToRdfHandler', () => {
 
         done();
       });
+    jest.clearAllMocks();
   });
 
   describe('#resourceToTestCase', () => {
@@ -166,13 +171,12 @@ describe('TestCaseJsonLdToRdfHandler', () => {
 
     it('should produce a TestCaseEval with an expand context', async () => {
       const resource = new Resource({ term: namedNode('http://ex.org/test'), context });
-      resource.addProperty(pAction, new Resource({ term: literal('ACTION'), context }));
+      resource.addProperty(pAction, new Resource({ term: literal('http://ex.org/action.ttl'), context }));
       resource.addProperty(pResult, new Resource({ term: literal('RESULT.ttl'), context }));
-      resource.addProperty(pContext, new Resource({ term: literal('CONTEXT'), context }));
 
       const optionExpandContext = new Resource({ term: namedNode('http://ex.org/o1'), context });
       optionExpandContext.addProperty(pJsonLdExpandContext,
-        new Resource({ term: namedNode('CONTEXT'), context }));
+        new Resource({ term: literal('CONTEXT'), context }));
 
       resource.addProperty(pOption, optionExpandContext);
       const testCase = await handler.resourceToTestCase(resource, <any> {});
@@ -184,9 +188,9 @@ describe('TestCaseJsonLdToRdfHandler', () => {
     "RDF1.1 XML Syntax 1",
     "RDF1.1 XML Syntax 2"
   ]
-}`, "ACTION",
+}`, "http://ex.org/action.ttl",
         {
-          context: { "@context": {"@base": "http://www.w3.org/TR/"} },
+          context: { "@context": {"@base": "http://www.w3.org/TR/BASED/"} },
           produceGeneralizedRdf: false,
           specVersion: "1.0",
         });

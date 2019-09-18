@@ -1,4 +1,5 @@
 import {Resource} from "rdf-object";
+import {resolve} from "relative-to-absolute-iri";
 import {IFetchOptions, Util} from "../../../Util";
 import {ITestCase, ITestCaseData} from "../../ITestCase";
 import {IParser} from "../IParser";
@@ -35,8 +36,10 @@ export class TestCaseJsonLdToRdfHandler extends TestCaseEvalHandler {
 
       // Override the default base IRI
       if (option.property.jsonLdExpandContext) {
+        const expandContextUrl = resolve(option.property.jsonLdExpandContext.term.value,
+          resource.property.action.value);
         additionalOptions.context = JSON.parse(await require('stream-to-string')((
-          await Util.fetchCached(option.property.jsonLdExpandContext.term.value, options)).body));
+          await Util.fetchCached(expandContextUrl, options)).body));
       }
 
       // The processing mode

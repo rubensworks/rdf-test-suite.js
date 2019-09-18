@@ -1,6 +1,12 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+<a name="v1.10.3"></a>
+## [v1.10.3](https://github.com/rubensworks/rdf-test-suite.js/compare/v1.10.2...v1.10.3) - 2019-09-18
+
+### Fixed
+* [Bump JSON-LD parser to fix failure to parse JSON-LD manifests](https://github.com/rubensworks/rdf-test-suite.js/commit/3a2ad2180fb99534b6c7490c2333660ce0648849)
+
 <a name="v1.10.2"></a>
 ## [v1.10.2](https://github.com/rubensworks/rdf-test-suite.js/compare/v1.10.1...v1.10.2) - 2019-09-18
 

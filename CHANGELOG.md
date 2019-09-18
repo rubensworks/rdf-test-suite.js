@@ -1,6 +1,12 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+<a name="v1.10.2"></a>
+## [v1.10.2](https://github.com/rubensworks/rdf-test-suite.js/compare/v1.10.1...v1.10.2) - 2019-09-18
+
+### Fixed
+* [Accept JSON-LD manifest expandContext properties as literals](https://github.com/rubensworks/rdf-test-suite.js/commit/2f2fe33ac19e4110c52e9aa5ba9eb6ac26949a34)
+
 <a name="v1.10.1"></a>
 ## [v1.10.1](https://github.com/rubensworks/rdf-test-suite.js/compare/v1.10.0...v1.10.1) - 2019-09-12
 

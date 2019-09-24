@@ -2,6 +2,7 @@ import {createReadStream, existsSync, readFileSync, ReadStream, writeFileSync} f
 import {JsonLdParser} from "jsonld-streaming-parser";
 import * as RDF from "rdf-js";
 import {RdfXmlParser} from "rdfxml-streaming-parser";
+import {DocumentLoaderCached} from "./DocumentLoaderCached";
 import {GeneralizedN3StreamParser} from "./GeneralizedN3StreamParser";
 // tslint:disable:no-var-requires
 const streamifyString = require('streamify-string');
@@ -55,7 +56,7 @@ export class Util {
     const response = await Util.fetchCached(url, options);
     const contentType = Util.identifyContentType(response.url, response.headers);
     return [response.url, await Util.parseRdfRaw(contentType,
-      options.normalizeUrl ? Util.normalizeBaseUrl(response.url) : response.url, response.body)];
+      options.normalizeUrl ? Util.normalizeBaseUrl(response.url) : response.url, response.body, options)];
   }
 
   /**
@@ -63,10 +64,11 @@ export class Util {
    * @param {string} contentType The content type of the given text stream.
    * @param {string} baseIRI The base IRI of the stream.
    * @param {NodeJS.ReadableStream} data Text stream in a certain RDF serialization.
+   * @param {IFetchOptions} options Options for fetching.
    * @return {Stream} A parsed RDF stream.
    */
   public static parseRdfRaw(contentType: string, baseIRI: string,
-                            data: NodeJS.ReadableStream): RDF.Stream {
+                            data: NodeJS.ReadableStream, options: IFetchOptions = {}): RDF.Stream {
     if (contentType.indexOf('application/x-turtle') >= 0
       || contentType.indexOf('text/turtle') >= 0
       || contentType.indexOf('application/n-triples') >= 0
@@ -77,7 +79,8 @@ export class Util {
       return data.pipe(new RdfXmlParser({ baseIRI }));
     }
     if (contentType.indexOf('application/ld+json') >= 0) {
-      return data.pipe(new JsonLdParser({ baseIRI }));
+      const documentLoader = new DocumentLoaderCached(options);
+      return data.pipe(new JsonLdParser({ baseIRI, documentLoader }));
     }
 
     throw new Error(`Could not parse the RDF serialization ${contentType} on ${baseIRI}`);
@@ -87,9 +90,11 @@ export class Util {
    * Fetch the given URL or retrieve it from a local file cache.
    * @param {string} url The URL to fetch.
    * @param {IFetchOptions} options Options for fetching.
+   * @param {RequestInit} init Fetch init options.
    * @return {Promise<IFetchResponse>} A promise resolving to the response.
    */
-  public static async fetchCached(url: string, options: IFetchOptions = {}): Promise<IFetchResponse> {
+  public static async fetchCached(url: string, options: IFetchOptions = {},
+                                  init?: RequestInit): Promise<IFetchResponse> {
     // First check local file mappings
     if (options.urlToFileMappings) {
       for (const urlToFileMapping of options.urlToFileMappings) {
@@ -122,7 +127,7 @@ export class Util {
       };
     } else {
       // Do actual fetch
-      const response = await fetch(url);
+      const response = await fetch(url, init);
       if (!response.ok) {
         throw new Error(`Could not find ${url}`);
       }

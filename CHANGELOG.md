@@ -1,6 +1,15 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+<a name="v1.10.4"></a>
+## [v1.10.4](https://github.com/rubensworks/rdf-test-suite.js/compare/v1.10.3...v1.10.4) - 2019-09-26
+
+### Changed
+* [Throw error when a cached file could not be found](https://github.com/rubensworks/rdf-test-suite.js/commit/81fe9e3fbe4f648ca814bb5a707f2444c6be1403)
+
+### Fixed
+* [Fix remote JSON-LD contexts not being cached](https://github.com/rubensworks/rdf-test-suite.js/commit/6e8f1b9f9c4ca3d3898a827492b386f5e4d9e6c9)
+
 <a name="v1.10.3"></a>
 ## [v1.10.3](https://github.com/rubensworks/rdf-test-suite.js/compare/v1.10.2...v1.10.3) - 2019-09-18
 

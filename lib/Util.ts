@@ -108,8 +108,12 @@ export class Util {
           }
 
           // Resolve file path
+          const filePath = urlToFileMapping.path + pathSuffix;
+          if (!existsSync(filePath)) {
+            throw new Error(`Could not find file ` + filePath);
+          }
           return {
-            body: createReadStream(urlToFileMapping.path + pathSuffix),
+            body: createReadStream(filePath),
             headers: new Headers({}),
             url: urlToFileMapping.url + pathSuffix,
           };

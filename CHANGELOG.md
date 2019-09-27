@@ -1,6 +1,12 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+<a name="v1.10.5"></a>
+## [v1.10.5](https://github.com/rubensworks/rdf-test-suite.js/compare/v1.10.4...v1.10.5) - 2019-09-27
+
+### Fixed
+* [Fix caching failing with binary files](https://github.com/rubensworks/rdf-test-suite.js/commit/1dfee4365254550ece190abb0075b1f5f80b167d)
+
 <a name="v1.10.4"></a>
 ## [v1.10.4](https://github.com/rubensworks/rdf-test-suite.js/compare/v1.10.3...v1.10.4) - 2019-09-26
 

@@ -136,6 +136,7 @@ describe('Util', () => {
       expect(await stringifyStream(response1.body)).toEqual('ABC');
       expect(response1.headers).toEqual(new Headers({ a: 'b' }));
       expect(response1.url).toEqual('http://example.org/');
+      await new Promise((resolve) => setTimeout(resolve, 100)); // Hack to wait until file has been written
 
       expect(readFileSync(cachePath + 'http%3A%2F%2Fexample.org%2F', 'utf8')).toEqual('ABC');
       expect(readFileSync(cachePath + 'http%3A%2F%2Fexample.org%2F.headers', 'utf8')).toEqual('{\"a\":\"b\"}');

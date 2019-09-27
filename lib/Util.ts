@@ -147,10 +147,11 @@ export class Util {
         // Save in cache
         const writeStream = createWriteStream(cachePathLocal);
         body1.pipe(writeStream);
-        await new Promise((resolve, reject) => {
+        // Due to an unknown reason, large streams don't seem to emit a close event, which causes program hanging.
+        /*await new Promise((resolve, reject) => {
           writeStream.on('close', resolve);
           writeStream.on('error', reject);
-        });
+        });*/
         writeFileSync(cachePathLocal + '.url', response.url);
         const headersRaw: any = {};
         response.headers.forEach((value: string, key: string) => headersRaw[key] = value);

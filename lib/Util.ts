@@ -1,7 +1,8 @@
-import {createReadStream, existsSync, readFileSync, ReadStream, writeFileSync} from "fs";
+import {createReadStream, createWriteStream, existsSync, readFileSync, ReadStream, writeFileSync} from "fs";
 import {JsonLdParser} from "jsonld-streaming-parser";
 import * as RDF from "rdf-js";
 import {RdfXmlParser} from "rdfxml-streaming-parser";
+import {PassThrough} from "stream";
 import {DocumentLoaderCached} from "./DocumentLoaderCached";
 import {GeneralizedN3StreamParser} from "./GeneralizedN3StreamParser";
 // tslint:disable:no-var-requires
@@ -135,11 +136,21 @@ export class Util {
       if (!response.ok) {
         throw new Error(`Could not find ${url}`);
       }
-      const bodyString = await response.text();
+      const body1 = (<any> response.body).pipe(new PassThrough());
+      const body2 = (<any> response.body).pipe(new PassThrough());
+
+      // Remove unneeded headers
+      response.headers.delete('content-length');
+      response.headers.delete('content-encoding');
 
       if (cachePathLocal) {
         // Save in cache
-        writeFileSync(cachePathLocal, bodyString);
+        const writeStream = createWriteStream(cachePathLocal);
+        body1.pipe(writeStream);
+        await new Promise((resolve, reject) => {
+          writeStream.on('close', resolve);
+          writeStream.on('error', reject);
+        });
         writeFileSync(cachePathLocal + '.url', response.url);
         const headersRaw: any = {};
         response.headers.forEach((value: string, key: string) => headersRaw[key] = value);
@@ -147,7 +158,7 @@ export class Util {
       }
 
       return {
-        body: streamifyString(bodyString),
+        body: body2,
         headers: response.headers,
         url: response.url,
       };

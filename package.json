@@ -1,6 +1,6 @@
 {
   "name": "rdf-test-suite",
-  "version": "1.10.5",
+  "version": "1.10.6",
   "description": "Executes the RDF and SPARQL test suites.",
   "keywords": [
     "sparql",

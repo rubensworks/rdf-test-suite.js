@@ -1,6 +1,12 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+<a name="v1.10.6"></a>
+## [v1.10.6](https://github.com/rubensworks/rdf-test-suite.js/compare/v1.10.5...v1.10.6) - 2019-09-27
+
+### Fixed
+* [Fix cached file fetching causing program to hang](https://github.com/rubensworks/rdf-test-suite.js/commit/5c13cdc4f9d01455a04339bef5564102270ddd7a)
+
 <a name="v1.10.5"></a>
 ## [v1.10.5](https://github.com/rubensworks/rdf-test-suite.js/compare/v1.10.4...v1.10.5) - 2019-09-27
 

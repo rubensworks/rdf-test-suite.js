@@ -25,9 +25,9 @@ module.exports = {
   'http://www.w3.org/2001/sw/DataAccess/tests/test-manifest#PositiveSyntaxTest11':
     new TestCasePositiveSyntaxHandler(),
   'http://www.w3.org/2001/sw/DataAccess/tests/test-manifest#NegativeUpdateSyntaxTest11':
-    new TestCaseUnsupportedHandler('sparql:NegativeUpdateSyntaxTest11'), // TODO: implement
+    new TestCaseNegativeSyntaxHandler(),
   'http://www.w3.org/2001/sw/DataAccess/tests/test-manifest#PositiveUpdateSyntaxTest11':
-    new TestCaseUnsupportedHandler('sparql:PositiveUpdateSyntaxTest11'), // TODO: implement
+    new TestCasePositiveSyntaxHandler(),
   'http://www.w3.org/2001/sw/DataAccess/tests/test-manifest#UpdateEvaluationTest':
     new TestCaseUnsupportedHandler('sparql:UpdateEvaluationTest'), // TODO: implement
   'http://www.w3.org/2001/sw/DataAccess/tests/test-manifest#CSVResultFormatTest':

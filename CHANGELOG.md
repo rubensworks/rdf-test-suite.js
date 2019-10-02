@@ -1,6 +1,15 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+<a name="v1.11.0"></a>
+## [v1.11.0](https://github.com/rubensworks/rdf-test-suite.js/compare/v1.10.6...v1.11.0) - 2019-10-02
+
+### Added
+* [Enable syntax tests for SPARQL update queries](https://github.com/rubensworks/rdf-test-suite.js/commit/9ad19cacb62c65b88a749fcac4ad240601a60133)
+
+### Changed
+* [Mark unsupported tests as skipped tests](https://github.com/rubensworks/rdf-test-suite.js/commit/244a930ab9e6c0788738014b9b39309fb91fe888)
+
 <a name="v1.10.6"></a>
 ## [v1.10.6](https://github.com/rubensworks/rdf-test-suite.js/compare/v1.10.5...v1.10.6) - 2019-09-27
 

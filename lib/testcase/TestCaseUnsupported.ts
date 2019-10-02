@@ -1,4 +1,5 @@
 import {Resource} from "rdf-object";
+import {ErrorSkipped} from "../ErrorSkipped";
 import {ITestCase, ITestCaseData} from "./ITestCase";
 import {ITestCaseHandler} from "./ITestCaseHandler";
 
@@ -35,7 +36,7 @@ export class TestCaseUnsupported implements ITestCase<any> {
   }
 
   public async test(engine: any): Promise<void> {
-    throw new Error(`Unsupported test case ${this.testCaseName}`);
+    throw new ErrorSkipped(`Unsupported test case ${this.testCaseName}`);
   }
 
 }

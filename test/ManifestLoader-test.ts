@@ -18,6 +18,17 @@ const streamifyString = require('streamify-string');
 	rdfs:label "SPARQL 1.1 tests".
 `);
     break;
+  case 'http://valid1.txt':
+    body = streamifyString(`
+@prefix rdf:    <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs:	<http://www.w3.org/2000/01/rdf-schema#> .
+@prefix mf:     <http://www.w3.org/2001/sw/DataAccess/tests/test-manifest#> .
+@prefix qt:     <http://www.w3.org/2001/sw/DataAccess/tests/test-query#> .
+
+<http://valid1> a mf:Manifest ;
+	rdfs:label "SPARQL 1.1 tests".
+`);
+    break;
   case 'http://validsub1':
     body = streamifyString(`
 @prefix rdf:    <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
@@ -84,6 +95,17 @@ describe('ManifestLoader', () => {
 
     it('should return a valid manifests', () => {
       return expect(loader.from('http://valid1')).resolves.toEqual({
+        comment: null,
+        label: 'SPARQL 1.1 tests',
+        specifications: null,
+        subManifests: [],
+        testEntries: [],
+        uri: 'http://valid1',
+      });
+    });
+
+    it('should return a valid manifests that falls back to the extension-less URL', () => {
+      return expect(loader.from('http://valid1.txt')).resolves.toEqual({
         comment: null,
         label: 'SPARQL 1.1 tests',
         specifications: null,

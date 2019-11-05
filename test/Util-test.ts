@@ -122,6 +122,21 @@ describe('Util', () => {
       expect(response.url).toEqual('http://example.org/abc/def.txt');
     });
 
+    it('should handle urlToFileMappings and error on non-existing file', async () => {
+      const urlToFileMappings = [
+        { url: 'http://example.org/abc/', path: __dirname + '/assets/mappings/' },
+      ];
+      expect(Util.fetchCached('http://example.org/abc/notfound.txt', { urlToFileMappings }))
+        .rejects.toThrow();
+    });
+
+    it('should handle urlToFileMappings and skip non-mapped URLs', () => {
+      const urlToFileMappings = [
+        { url: 'http://example.org/abc/', path: __dirname + '/assets/mappings/' },
+      ];
+      return expect(Util.fetchCached('http://example.org/def/', { urlToFileMappings })).rejects.toBeTruthy();
+    });
+
     it('should not cache without cachePath', async () => {
       const response = await Util.fetchCached('http://example.org/');
       expect(await stringifyStream(response.body)).toEqual('ABC');

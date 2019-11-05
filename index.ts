@@ -1,6 +1,7 @@
 export * from "./lib/testcase/rdfsyntax/jsonld/TestCaseJsonLdFromRdf";
 export * from "./lib/testcase/rdfsyntax/jsonld/TestCaseJsonLdSyntax";
 export * from "./lib/testcase/rdfsyntax/jsonld/TestCaseJsonLdToRdf";
+export * from "./lib/testcase/rdfsyntax/jsonld/TestCaseJsonLdToRdfNegative";
 export * from "./lib/testcase/rdfsyntax/TestCaseEval";
 export * from "./lib/testcase/rdfsyntax/TestCaseSyntax";
 export * from "./lib/testcase/rdfsyntax/IParser";

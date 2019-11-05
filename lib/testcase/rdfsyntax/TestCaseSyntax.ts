@@ -24,9 +24,13 @@ export class TestCaseSyntaxHandler implements ITestCaseHandler<TestCaseSyntax> {
     if (!resource.property.action) {
       throw new Error(`Missing mf:action in ${resource}`);
     }
-    return new TestCaseSyntax(testCaseData, this.expectNoError,
+    return new (this.getTestCaseClass())(testCaseData, this.expectNoError,
       await stringifyStream((await Util.fetchCached(resource.property.action.value, options)).body),
       this.normalizeUrl(resource.property.action.value));
+  }
+
+  protected getTestCaseClass(): any {
+    return TestCaseSyntax;
   }
 
   protected normalizeUrl(url: string) {
@@ -69,6 +73,9 @@ export class TestCaseSyntax implements ITestCaseRdfSyntax {
   Error: ${e}
 `);
       }
+
+      this.validateError(e, injectArguments);
+
       return;
     }
     if (!this.expectNoError) {
@@ -76,6 +83,10 @@ export class TestCaseSyntax implements ITestCaseRdfSyntax {
   Input: ${this.data}
 `);
     }
+  }
+
+  public validateError(error: Error, injectArguments: any) {
+    // Overridable
   }
 
 }

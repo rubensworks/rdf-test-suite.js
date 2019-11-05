@@ -1,6 +1,7 @@
 import {TestCaseJsonLdFromRdfHandler} from "./rdfsyntax/jsonld/TestCaseJsonLdFromRdf";
 import {TestCaseJsonLdSyntaxHandler} from "./rdfsyntax/jsonld/TestCaseJsonLdSyntax";
 import {TestCaseJsonLdToRdfHandler} from "./rdfsyntax/jsonld/TestCaseJsonLdToRdf";
+import {TestCaseJsonLdToRdfNegativeHandler} from "./rdfsyntax/jsonld/TestCaseJsonLdToRdfNegative";
 import {TestCaseEvalHandler} from "./rdfsyntax/TestCaseEval";
 import {TestCaseSyntaxHandler} from "./rdfsyntax/TestCaseSyntax";
 import {TestCaseNegativeSyntaxHandler} from "./sparql/TestCaseNegativeSyntax";
@@ -82,6 +83,8 @@ module.exports = {
     new TestCaseJsonLdToRdfHandler(),
   'https://w3c.github.io/json-ld-api/tests/vocab#ToRDFTest https://w3c.github.io/json-ld-api/tests/vocab#PositiveSyntaxTest':
     new TestCaseJsonLdSyntaxHandler(true),
+  'https://w3c.github.io/json-ld-api/tests/vocab#ToRDFTest https://w3c.github.io/json-ld-api/tests/vocab#NegativeEvaluationTest':
+    new TestCaseJsonLdToRdfNegativeHandler(),
   'https://w3c.github.io/json-ld-api/tests/vocab#FromRDFTest https://w3c.github.io/json-ld-api/tests/vocab#PositiveEvaluationTest':
     new TestCaseJsonLdFromRdfHandler(),
 

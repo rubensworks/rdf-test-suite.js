@@ -12,33 +12,31 @@ import {TestCaseEval, TestCaseEvalHandler} from "../TestCaseEval";
  */
 export class TestCaseJsonLdToRdfHandler extends TestCaseEvalHandler {
 
-  public static async wrap<T extends ITestCase<IParser>>(superHandler: (resource: Resource, testCaseData: ITestCaseData,
-                                                                        options?: IFetchOptions) => Promise<T>,
-                                                         resource: Resource, testCaseData: ITestCaseData,
-                                                         options?: IFetchOptions): Promise<T> {
-    const testCaseEval = await superHandler(resource, testCaseData, options);
-
-    // Loop over the options
-    const additionalOptions: any = {
+  public static async getOptions(resource: Resource, options?: IFetchOptions)
+    : Promise<{ injectArguments: any, testProperties: any }> {
+    const injectArguments: any = {
       produceGeneralizedRdf: false,
       specVersion: '1.0',
     };
+    const testProperties: any = {};
+
+    // Loop over the options
     for (const option of resource.properties.jsonLdOptions) {
       // Should generalized RDF should be produced?
       if (option.property.jsonLdProduceGeneralizedRdf) {
-        additionalOptions.produceGeneralizedRdf = option.property.jsonLdProduceGeneralizedRdf.term.value === 'true';
+        injectArguments.produceGeneralizedRdf = option.property.jsonLdProduceGeneralizedRdf.term.value === 'true';
       }
 
       // Override the default base IRI
       if (option.property.jsonLdBase) {
-        additionalOptions.baseIRI = option.property.jsonLdBase.term.value;
+        injectArguments.baseIRI = option.property.jsonLdBase.term.value;
       }
 
       // Override the default base IRI
       if (option.property.jsonLdExpandContext) {
         const expandContextUrl = resolve(option.property.jsonLdExpandContext.term.value,
           resource.property.action.value);
-        additionalOptions.context = JSON.parse(await require('stream-to-string')((
+        injectArguments.context = JSON.parse(await require('stream-to-string')((
           await Util.fetchCached(expandContextUrl, options)).body));
       }
 
@@ -47,26 +45,47 @@ export class TestCaseJsonLdToRdfHandler extends TestCaseEvalHandler {
       // otherwise, only processors explicitly supporting that mode should run the test.
       if (option.property.processingMode) {
         // Remove the 'json-ld-' prefix from the string
-        additionalOptions.processingMode = option.property.processingMode.term.value.substr(8);
+        injectArguments.processingMode = option.property.processingMode.term.value.substr(8);
       }
 
       // The spec for which this test was defined.
       if (option.property.specVersion) {
         // Remove the 'json-ld-' prefix from the string
-        additionalOptions.specVersion = option.property.specVersion.term.value.substr(8);
+        injectArguments.specVersion = option.property.specVersion.term.value.substr(8);
       }
     }
 
     // An optional root context.
     if (resource.property.context) {
-      additionalOptions.context = JSON.parse(await require('stream-to-string')((
+      injectArguments.context = JSON.parse(await require('stream-to-string')((
         await Util.fetchCached(resource.property.context.term.value, options)).body));
     }
 
-    // Add produceGeneralizedRdf to the inject arguments
+    // An optional expected error code
+    if (resource.property.expectJsonLdErrorCode) {
+      testProperties.expectErrorCode = resource.property.expectJsonLdErrorCode.term.value;
+    }
+
+    return { injectArguments, testProperties };
+  }
+
+  public static async wrap<T extends ITestCase<IParser>>(superHandler: (resource: Resource, testCaseData: ITestCaseData,
+                                                                        options?: IFetchOptions) => Promise<T>,
+                                                         resource: Resource, testCaseData: ITestCaseData,
+                                                         options?: IFetchOptions): Promise<T> {
+    const { injectArguments: injectArgumentsAdditional, testProperties } = await TestCaseJsonLdToRdfHandler
+      .getOptions(resource, options);
+
+    // Assign additional test properties
+    Object.assign(testCaseData, testProperties);
+
+    // Construct test case
+    const testCaseEval = await superHandler(resource, testCaseData, options);
+
+    // Add additional inject arguments
     const testOld = testCaseEval.test;
     testCaseEval.test = (parser: IParser, injectArguments: any) => testOld.bind(testCaseEval)(parser,
-      { ...additionalOptions, ...injectArguments });
+      { ...injectArgumentsAdditional, ...injectArguments });
 
     return testCaseEval;
   }

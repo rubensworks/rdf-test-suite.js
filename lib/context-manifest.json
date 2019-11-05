@@ -36,5 +36,6 @@
   "specVersion": "jld:specVersion",
   "context": "jld:context",
   "useNativeTypes": "jld:useNativeTypes",
-  "useRdfType": "jld:useRdfType"
+  "useRdfType": "jld:useRdfType",
+  "expectJsonLdErrorCode": "mf:result"
 }

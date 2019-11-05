@@ -135,7 +135,7 @@ describe('TestCaseJsonLdToRdfNegativeHandler', () => {
       resource.addProperty(pResult, new Resource({ term: literal('CODE'), context }));
       const testCase = await handler.resourceToTestCase(resource, <any> {});
       return expect(testCase.test(parser, {})).rejects
-        .toThrow(new Error(`Expected to throw an error when parsing.
+        .toThrow(new Error(`Expected to throw an error with code 'CODE' when parsing.
   Input: {
   "@id": "http://www.w3.org/TR/rdf-syntax-grammar",
   "http://purl.org/dc/elements/1.1/title": [

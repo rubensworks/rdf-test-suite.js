@@ -48,4 +48,8 @@ export class TestCaseJsonLdToRdfHandlerNegative extends TestCaseSyntax {
     }
   }
 
+  public getErrorMessage() {
+    return `Expected to throw an error with code '${this.expectErrorCode}' when parsing.`;
+  }
+
 }

@@ -79,7 +79,7 @@ export class TestCaseSyntax implements ITestCaseRdfSyntax {
       return;
     }
     if (!this.expectNoError) {
-      throw new ErrorTest(`Expected to throw an error when parsing.
+      throw new ErrorTest(`${this.getErrorMessage()}
   Input: ${this.data}
 `);
     }
@@ -89,4 +89,7 @@ export class TestCaseSyntax implements ITestCaseRdfSyntax {
     // Overridable
   }
 
+  public getErrorMessage() {
+    return 'Expected to throw an error when parsing.';
+  }
 }

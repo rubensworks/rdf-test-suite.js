@@ -64,6 +64,7 @@ describe('TestCaseJsonLdToRdfHandler', () => {
   let pJsonLdExpandContext;
   let pProcessingMode;
   let pSpecVersion;
+  let pRdfDirection;
 
   beforeEach((done) => {
     new ContextParser().parse(require('../../../../lib/context-manifest.json'))
@@ -88,6 +89,8 @@ describe('TestCaseJsonLdToRdfHandler', () => {
           { term: namedNode('https://w3c.github.io/json-ld-api/tests/vocab#processingMode'), context });
         pSpecVersion = new Resource(
           { term: namedNode('https://w3c.github.io/json-ld-api/tests/vocab#specVersion'), context });
+        pRdfDirection = new Resource(
+          { term: namedNode('https://w3c.github.io/json-ld-api/tests/vocab#rdfDirection'), context });
 
         done();
       });
@@ -145,11 +148,14 @@ describe('TestCaseJsonLdToRdfHandler', () => {
       optionProcessingMode.addProperty(pProcessingMode, new Resource({ term: literal('json-ld-1.1'), context }));
       const optionSpecVersion = new Resource({ term: namedNode('http://ex.org/o1'), context });
       optionSpecVersion.addProperty(pSpecVersion, new Resource({ term: literal('json-ld-1.1'), context }));
+      const optionRdfDirection = new Resource({ term: namedNode('http://ex.org/o1'), context });
+      optionRdfDirection.addProperty(pRdfDirection, new Resource({ term: literal('compound-literal'), context }));
 
       resource.addProperty(pOption, optionGeneralized);
       resource.addProperty(pOption, optionBase);
       resource.addProperty(pOption, optionProcessingMode);
       resource.addProperty(pOption, optionSpecVersion);
+      resource.addProperty(pOption, optionRdfDirection);
       const testCase = await handler.resourceToTestCase(resource, <any> {});
       const spy = jest.spyOn(parser, 'parse');
       testCase.test(parser, {});
@@ -166,6 +172,7 @@ describe('TestCaseJsonLdToRdfHandler', () => {
           processingMode: "1.1",
           produceGeneralizedRdf: true,
           specVersion: "1.1",
+          rdfDirection: "compound-literal",
         });
     });
 

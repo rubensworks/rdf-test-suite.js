@@ -53,6 +53,11 @@ export class TestCaseJsonLdToRdfHandler extends TestCaseEvalHandler {
         // Remove the 'json-ld-' prefix from the string
         injectArguments.specVersion = option.property.specVersion.term.value.substr(8);
       }
+
+      // The rdfDirection mode for @direction handling
+      if (option.property.rdfDirection) {
+        injectArguments.rdfDirection = option.property.rdfDirection.term.value;
+      }
     }
 
     // An optional root context.

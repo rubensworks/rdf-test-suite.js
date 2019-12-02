@@ -94,7 +94,6 @@
     "log-symbols": "^3.0.0",
     "minimist": "^1.2.0",
     "n3": "^1.1.1",
-    "node-web-streams": "^0.2.2",
     "rdf-isomorphic": "^1.1.0",
     "rdf-literal": "^1.0.0",
     "rdf-object": "^1.1.0",

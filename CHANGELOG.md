@@ -1,6 +1,17 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+<a name="v1.12.0"></a>
+## [v1.12.0](https://github.com/rubensworks/rdf-test-suite.js/compare/v1.10.6...v1.12.0) - 2019-12-06
+
+### Added
+* [Add JSON-LD toRdf negative test case handler](https://github.com/rubensworks/rdf-test-suite.js/commit/7a83141d42a27777dd7df171c3aa9373bd339417)
+* [Handle rdfDirection option in JSON-LD 1.1 test suite](https://github.com/rubensworks/rdf-test-suite.js/commit/0609a249a0a55304afd52d903b5efcacd14f8272)
+
+### Changed
+* [Remove unused node-web-streams dependency](https://github.com/rubensworks/rdf-test-suite.js/commit/c0d40b7dfc76a267c94d5f026f489102611ca606)
+* [Improve error message on failing negative JSON-LD toRdf tests](https://github.com/rubensworks/rdf-test-suite.js/commit/3e37d2d61b3e15eb6300eb499858fc20355ad7aa)
+
 <a name="v1.11.0"></a>
 ## [v1.11.0](https://github.com/rubensworks/rdf-test-suite.js/compare/v1.10.6...v1.11.0) - 2019-10-02
 

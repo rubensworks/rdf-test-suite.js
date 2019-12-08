@@ -16,7 +16,6 @@ export class TestCaseJsonLdToRdfHandler extends TestCaseEvalHandler {
     : Promise<{ injectArguments: any, testProperties: any }> {
     const injectArguments: any = {
       produceGeneralizedRdf: false,
-      specVersion: '1.0',
     };
     const testProperties: any = {};
 

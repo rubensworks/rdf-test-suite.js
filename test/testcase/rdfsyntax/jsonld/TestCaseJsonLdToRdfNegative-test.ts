@@ -105,7 +105,6 @@ describe('TestCaseJsonLdToRdfNegativeHandler', () => {
 }`, "ACTION",
         {
           produceGeneralizedRdf: false,
-          specVersion: "1.0",
         });
     });
 

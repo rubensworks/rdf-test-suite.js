@@ -130,7 +130,6 @@ describe('TestCaseJsonLdToRdfHandler', () => {
 }`, "ACTION",
         {
           produceGeneralizedRdf: false,
-          specVersion: "1.0",
         });
     });
 
@@ -199,7 +198,6 @@ describe('TestCaseJsonLdToRdfHandler', () => {
         {
           context: { "@context": {"@base": "http://www.w3.org/TR/BASED/"} },
           produceGeneralizedRdf: false,
-          specVersion: "1.0",
         });
     });
 

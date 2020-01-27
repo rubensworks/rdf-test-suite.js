@@ -222,8 +222,12 @@ ${LogSymbols.error} ${result.test.name}
     for (const author of properties.authors) {
       quads.push(quad(author.uri, p.rdf  + 'type', p.foaf + 'Person'));
       quads.push(quad(author.uri, p.rdf  + 'type', p.earl + 'Assertor'));
-      quads.push(quad(author.uri, p.foaf + 'name', '"' + author.name + '"'));
-      quads.push(quad(author.uri, p.foaf + 'homepage', author.homepage));
+      if (author.name) {
+        quads.push(quad(author.uri, p.foaf + 'name', '"' + author.name + '"'));
+      }
+      if (author.homepage) {
+        quads.push(quad(author.uri, p.foaf + 'homepage', author.homepage));
+      }
       if (author.primaryTopic) {
         quads.push(quad(author.uri, p.foaf + 'primaryTopicOf', author.primaryTopic));
       }
@@ -277,7 +281,7 @@ ${LogSymbols.error} ${result.test.name}
         {
           homepage: null,
           name: packageJson.author,
-          uri: null,
+          uri: 'https://www.npmjs.com/package/' + packageJson.name + '/#author',
         },
       ],
       licenseUri: packageJson.license ? Util.licenseToUri(packageJson.license) : null,
@@ -303,8 +307,8 @@ export interface IEarlProperties {
 
 export interface IAuthor {
   uri: string;
-  name: string;
-  homepage: string;
+  name?: string;
+  homepage?: string;
   primaryTopic?: string;
 }
 

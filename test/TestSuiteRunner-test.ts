@@ -493,6 +493,23 @@ ${LogSymbols.error} 3 / 4 tests succeeded! (skipped 2)
         'http://ex.org/TheSpec',
       ],
     };
+    const propertiesMinimalAuthor = {
+      reportUri: '',
+      authors: [
+        {
+          uri: 'http://ex.org/myFoaf',
+        },
+      ],
+      licenseUri: 'http://ex.org/myLicense',
+      applicationUri: 'http://ex.org/myApp',
+      applicationHomepageUrl: 'http://ex.org/myHomePage',
+      applicationNameFull: 'My Name',
+      applicationNameNpm: 'MyName',
+      applicationDescription: 'My Description',
+      specificationUris: [
+        'http://ex.org/TheSpec',
+      ],
+    };
     const testDate = new Date();
 
     it('without tests should produce triples for all requires properties', async () => {
@@ -586,6 +603,39 @@ ${LogSymbols.error} 3 / 4 tests succeeded! (skipped 2)
         quad('http://ex.org/myApp', p.dc   + 'description', '"My Description"@en'),
         quad('http://ex.org/myApp', p.doap + 'description', '"My Description"@en'),
       ]);
+    });
+
+    it('without tests should produce triples without requires author properties', async () => {
+      const p = require('../lib/prefixes.json');
+      return expect(await arrayifyStream(runner.resultsToEarl([], propertiesMinimalAuthor, testDate)))
+        .toBeRdfIsomorphic([
+          quad('', p.foaf + 'primaryTopic', 'http://ex.org/myApp'),
+          quad('', p.dc + 'issued', '"' + testDate.toISOString() + '"^^' + p.xsd + 'dateTime'),
+          quad('', p.foaf + 'maker', 'http://ex.org/myFoaf'),
+
+          quad('http://ex.org/myApp', p.rdf  + 'type', p.earl + 'Software'),
+          quad('http://ex.org/myApp', p.rdf  + 'type', p.earl + 'TestSubject'),
+          quad('http://ex.org/myApp', p.rdf  + 'type', p.doap + 'Project'),
+          quad('http://ex.org/myApp', p.doap + 'name', '"My Name"'),
+          quad('http://ex.org/myApp', p.dc   + 'title', '"My Name"'),
+          quad('http://ex.org/myApp', p.doap + 'homepage', 'http://ex.org/myHomePage'),
+          quad('http://ex.org/myApp', p.doap + 'license', 'http://ex.org/myLicense'),
+          quad('http://ex.org/myApp', p.doap + 'programming-language', '"JavaScript"'),
+          quad('http://ex.org/myApp', p.doap + 'implements', 'http://ex.org/TheSpec'),
+          quad('http://ex.org/myApp', p.doap + 'category',
+            'http://dbpedia.org/resource/Resource_Description_Framework'),
+          quad('http://ex.org/myApp', p.doap + 'download-page', 'https://npmjs.org/package/MyName'),
+          quad('http://ex.org/myApp', p.doap + 'developer', 'http://ex.org/myFoaf'),
+          quad('http://ex.org/myApp', p.doap + 'maintainer', 'http://ex.org/myFoaf'),
+          quad('http://ex.org/myApp', p.doap + 'documenter', 'http://ex.org/myFoaf'),
+          quad('http://ex.org/myApp', p.doap + 'maker', 'http://ex.org/myFoaf'),
+          quad('http://ex.org/myApp', p.dc   + 'creator', 'http://ex.org/myFoaf'),
+          quad('http://ex.org/myApp', p.dc   + 'description', '"My Description"@en'),
+          quad('http://ex.org/myApp', p.doap + 'description', '"My Description"@en'),
+
+          quad('http://ex.org/myFoaf', p.rdf  + 'type', 'http://xmlns.com/foaf/0.1/Person'),
+          quad('http://ex.org/myFoaf', p.rdf  + 'type', 'http://www.w3.org/ns/earl#Assertor'),
+        ]);
     });
 
     it('with tests should produce triples for all requires properties', async () => {
@@ -829,7 +879,7 @@ ${LogSymbols.error} 3 / 4 tests succeeded! (skipped 2)
           {
             homepage: null,
             name: undefined,
-            uri: null,
+            uri: 'https://www.npmjs.com/package/undefined/#author',
           },
         ],
         licenseUri: null,
@@ -857,7 +907,7 @@ ${LogSymbols.error} 3 / 4 tests succeeded! (skipped 2)
           {
             homepage: null,
             name: 'AUTHOR',
-            uri: null,
+            uri: 'https://www.npmjs.com/package/NAME/#author',
           },
         ],
         licenseUri: 'http://opensource.org/licenses/LICENSE',
@@ -885,7 +935,7 @@ ${LogSymbols.error} 3 / 4 tests succeeded! (skipped 2)
           {
             homepage: null,
             name: 'AUTHOR',
-            uri: null,
+            uri: 'https://www.npmjs.com/package/NAME/#author',
           },
         ],
         licenseUri: 'http://opensource.org/licenses/LICENSE',

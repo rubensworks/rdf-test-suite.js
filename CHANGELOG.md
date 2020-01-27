@@ -1,6 +1,13 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+<a name="v1.12.1"></a>
+## [v1.12.1](https://github.com/rubensworks/rdf-test-suite.js/compare/v1.12.0...v1.12.1) - 2020-01-27
+
+### Fixed
+* [Allow EARL author homepage and name to be undefined](https://github.com/rubensworks/rdf-test-suite.js/commit/5ba5bbfc17d2edf3e2cc7a09c13601384013121b)
+* [Don't set default JSON-LD specVersion to 1.0](https://github.com/rubensworks/rdf-test-suite.js/commit/c257defc411e26b2fe5edc381555b3af4b216c6b)
+
 <a name="v1.12.0"></a>
 ## [v1.12.0](https://github.com/rubensworks/rdf-test-suite.js/compare/v1.10.6...v1.12.0) - 2019-12-06
 

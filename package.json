@@ -36,7 +36,7 @@
     "test"
   ],
   "devDependencies": {
-    "@types/jest": "^24.0.0",
+    "@types/jest": "^25.1.0",
     "@types/json-stable-stringify": "^1.0.32",
     "@types/log-symbols": "^3.0.0",
     "@types/minimist": "^1.2.0",

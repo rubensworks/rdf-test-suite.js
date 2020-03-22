@@ -33,6 +33,7 @@ export class TestCaseJsonLdFromRdfHandler implements ITestCaseHandler<TestCaseJs
     let useRdfType: boolean = false;
     let processingMode: string = null;
     let specVersion: string;
+    let rdfDirection: string;
     for (const option of resource.properties.jsonLdOptions) {
       // Should native types be used?
       if (option.property.useNativeTypes) {
@@ -57,8 +58,13 @@ export class TestCaseJsonLdFromRdfHandler implements ITestCaseHandler<TestCaseJs
         // Remove the 'json-ld-' prefix from the string
         specVersion = option.property.specVersion.term.value.substr(8);
       }
+
+      // The rdfDirection mode for @direction handling
+      if (option.property.rdfDirection) {
+        rdfDirection = option.property.rdfDirection.term.value;
+      }
     }
-    const jsonldOptions = { useNativeTypes, useRdfType, processingMode, specVersion };
+    const jsonldOptions = { useNativeTypes, useRdfType, processingMode, specVersion, rdfDirection };
 
     return new TestCaseJsonLdFromRdf(testCaseData,
       await arrayifyStream(<any> (await Util.fetchRdf(resource.property.action.value,

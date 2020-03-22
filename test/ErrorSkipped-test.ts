@@ -10,10 +10,6 @@ describe('ErrorSkipped', () => {
     return expect(new ErrorSkipped()).toBeInstanceOf(Error);
   });
 
-  it('should be constructable without new', () => {
-    return expect((<any> ErrorSkipped)()).toBeInstanceOf(Error);
-  });
-
   it('should expose the skipped field', () => {
     return expect(new ErrorSkipped().skipped).toBe(true);
   });

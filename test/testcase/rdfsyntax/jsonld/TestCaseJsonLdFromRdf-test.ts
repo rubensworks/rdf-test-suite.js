@@ -151,7 +151,7 @@ describe('TestCaseJsonLdFromRdfHandler', () => {
         processingMode: null,
         useNativeTypes: false,
         useRdfType: false,
-        specVersion: "1.0",
+        specVersion: undefined,
       });
     });
 

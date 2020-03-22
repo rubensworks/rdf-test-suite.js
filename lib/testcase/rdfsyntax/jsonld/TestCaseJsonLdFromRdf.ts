@@ -31,7 +31,7 @@ export class TestCaseJsonLdFromRdfHandler implements ITestCaseHandler<TestCaseJs
     let useNativeTypes: boolean = false;
     let useRdfType: boolean = false;
     let processingMode: string = null;
-    let specVersion: string = '1.0';
+    let specVersion: string;
     for (const option of resource.properties.jsonLdOptions) {
       // Should native types be used?
       if (option.property.useNativeTypes) {

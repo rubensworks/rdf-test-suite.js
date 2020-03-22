@@ -1,5 +1,6 @@
 import * as RDF from "rdf-js";
 import {Resource} from "rdf-object";
+import {quadToStringQuad} from "rdf-string";
 import {IFetchOptions, Util} from "../../../Util";
 import {ITestCaseData} from "../../ITestCase";
 import {ITestCaseHandler} from "../../ITestCaseHandler";
@@ -95,7 +96,8 @@ export class TestCaseJsonLdFromRdf implements ITestCaseFromRdfSyntax {
       { ...this.options, ...injectArguments });
     if (!objectsIsomorphic(JSON.parse(serialized), JSON.parse(this.expected))) {
       throw new Error(`Invalid data serialization
-  Input: ${this.data}
+  Input:
+    ${this.data.map((quad) => JSON.stringify(quadToStringQuad(quad))).join(',\n    ')}
 
   Expected: ${this.expected}
 

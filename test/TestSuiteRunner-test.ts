@@ -458,6 +458,7 @@ ${LogSymbols.error} 3 / 4 tests succeeded! (skipped 2)
       specificationUris: [
         'http://ex.org/TheSpec',
       ],
+      version: '1.2.3',
     };
     const propertiesAllNoPTopic = {
       reportUri: 'http://ex.org/report',
@@ -479,6 +480,7 @@ ${LogSymbols.error} 3 / 4 tests succeeded! (skipped 2)
       specificationUris: [
         'http://ex.org/TheSpec',
       ],
+      version: '1.2.3',
     };
     const propertiesMinimal = {
       reportUri: '',
@@ -524,6 +526,7 @@ ${LogSymbols.error} 3 / 4 tests succeeded! (skipped 2)
         quad('http://ex.org/myApp', p.rdf  + 'type', p.doap + 'Project'),
         quad('http://ex.org/myApp', p.doap + 'name', '"My Name"'),
         quad('http://ex.org/myApp', p.dc   + 'title', '"My Name"'),
+        quad('http://ex.org/myApp', p.doap + 'revision', '"1.2.3"'),
         quad('http://ex.org/myApp', p.doap + 'homepage', 'http://ex.org/myHomePage'),
         quad('http://ex.org/myApp', p.doap + 'license', 'http://ex.org/myLicense'),
         quad('http://ex.org/myApp', p.doap + 'programming-language', '"JavaScript"'),
@@ -560,6 +563,7 @@ ${LogSymbols.error} 3 / 4 tests succeeded! (skipped 2)
         quad('http://ex.org/myApp', p.rdf  + 'type', p.doap + 'Project'),
         quad('http://ex.org/myApp', p.doap + 'name', '"My Name"'),
         quad('http://ex.org/myApp', p.dc   + 'title', '"My Name"'),
+        quad('http://ex.org/myApp', p.doap + 'revision', '"1.2.3"'),
         quad('http://ex.org/myApp', p.doap + 'homepage', 'http://ex.org/myHomePage'),
         quad('http://ex.org/myApp', p.doap + 'license', 'http://ex.org/myLicense'),
         quad('http://ex.org/myApp', p.doap + 'programming-language', '"JavaScript"'),
@@ -651,6 +655,7 @@ ${LogSymbols.error} 3 / 4 tests succeeded! (skipped 2)
           quad('http://ex.org/myApp', p.rdf  + 'type', p.doap + 'Project'),
           quad('http://ex.org/myApp', p.doap + 'name', '"My Name"'),
           quad('http://ex.org/myApp', p.dc   + 'title', '"My Name"'),
+          quad('http://ex.org/myApp', p.doap + 'revision', '"1.2.3"'),
           quad('http://ex.org/myApp', p.doap + 'homepage', 'http://ex.org/myHomePage'),
           quad('http://ex.org/myApp', p.doap + 'license', 'http://ex.org/myLicense'),
           quad('http://ex.org/myApp', p.doap + 'programming-language', '"JavaScript"'),
@@ -896,6 +901,7 @@ ${LogSymbols.error} 3 / 4 tests succeeded! (skipped 2)
         name: 'NAME',
         author: 'AUTHOR',
         license: 'LICENSE',
+        version: '1.2.3',
       })).toEqual({
         applicationBugsUrl: 'BUGS',
         applicationDescription: 'DESC',
@@ -913,6 +919,7 @@ ${LogSymbols.error} 3 / 4 tests succeeded! (skipped 2)
         licenseUri: 'http://opensource.org/licenses/LICENSE',
         reportUri: null,
         specificationUris: [],
+        version: '1.2.3',
       });
     });
 

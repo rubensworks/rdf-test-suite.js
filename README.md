@@ -147,7 +147,8 @@ This properties file can look something like this:
   "reportUri": null,
   "specificationUris": [
       "http://www.w3.org/TR/sparql11-query/"
-  ]
+  ],
+  "version": "1.2.3"
 }
 ```
 

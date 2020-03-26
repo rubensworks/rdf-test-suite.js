@@ -194,6 +194,9 @@ ${LogSymbols.error} ${result.test.name}
     quads.push(quad(app, p.rdf  + 'type', p.doap + 'Project'));
     quads.push(quad(app, p.doap + 'name', '"' + properties.applicationNameFull + '"'));
     quads.push(quad(app, p.dc   + 'title', '"' + properties.applicationNameFull + '"'));
+    if (properties.version) {
+      quads.push(quad(app, p.doap + 'revision', '"' + properties.version + '"'));
+    }
     quads.push(quad(app, p.doap + 'homepage', properties.applicationHomepageUrl));
     quads.push(quad(app, p.doap + 'license', properties.licenseUri));
     quads.push(quad(app, p.doap + 'programming-language', '"JavaScript"'));
@@ -287,6 +290,7 @@ ${LogSymbols.error} ${result.test.name}
       licenseUri: packageJson.license ? Util.licenseToUri(packageJson.license) : null,
       reportUri: null,
       specificationUris: [],
+      version: packageJson.version,
     };
   }
 }
@@ -303,6 +307,7 @@ export interface IEarlProperties {
   applicationNameNpm: string;
   applicationDescription: string;
   specificationUris: string[];
+  version?: string;
 }
 
 export interface IAuthor {

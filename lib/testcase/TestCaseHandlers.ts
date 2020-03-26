@@ -1,4 +1,5 @@
 import {TestCaseJsonLdFromRdfHandler} from "./rdfsyntax/jsonld/TestCaseJsonLdFromRdf";
+import {TestCaseJsonLdFromRdfNegativeHandler} from "./rdfsyntax/jsonld/TestCaseJsonLdFromRdfNegative";
 import {TestCaseJsonLdSyntaxHandler} from "./rdfsyntax/jsonld/TestCaseJsonLdSyntax";
 import {TestCaseJsonLdToRdfHandler} from "./rdfsyntax/jsonld/TestCaseJsonLdToRdf";
 import {TestCaseJsonLdToRdfNegativeHandler} from "./rdfsyntax/jsonld/TestCaseJsonLdToRdfNegative";
@@ -87,6 +88,8 @@ module.exports = {
     new TestCaseJsonLdToRdfNegativeHandler(),
   'https://w3c.github.io/json-ld-api/tests/vocab#FromRDFTest https://w3c.github.io/json-ld-api/tests/vocab#PositiveEvaluationTest':
     new TestCaseJsonLdFromRdfHandler(),
+  'https://w3c.github.io/json-ld-api/tests/vocab#FromRDFTest https://w3c.github.io/json-ld-api/tests/vocab#NegativeEvaluationTest':
+    new TestCaseJsonLdFromRdfNegativeHandler(),
 
   // RDFa test suite
   'http://rdfa.info/vocabs/rdfa-test#PositiveEvaluationTest':

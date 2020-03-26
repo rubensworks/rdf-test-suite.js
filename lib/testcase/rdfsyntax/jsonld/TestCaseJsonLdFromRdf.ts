@@ -6,6 +6,7 @@ import {ITestCaseData} from "../../ITestCase";
 import {ITestCaseHandler} from "../../ITestCaseHandler";
 import {ISerializer} from "../ISerializer";
 import {ITestCaseFromRdfSyntax} from "../ITestCaseFromRdfSyntax";
+import {TestCaseJsonLdToRdfHandler} from "./TestCaseJsonLdToRdf";
 // tslint:disable:no-var-requires
 const arrayifyStream = require('arrayify-stream');
 const stringifyStream = require('stream-to-string');
@@ -19,58 +20,24 @@ const stringifyStream = require('stream-to-string');
  */
 export class TestCaseJsonLdFromRdfHandler implements ITestCaseHandler<TestCaseJsonLdFromRdf> {
 
-  public async resourceToTestCase(resource: Resource, testCaseData: ITestCaseData,
-                                  options?: IFetchOptions): Promise<TestCaseJsonLdFromRdf> {
+  public async resourceToTestCaseInner(resource: Resource, testCaseData: ITestCaseData,
+                                       options?: IFetchOptions): Promise<TestCaseJsonLdFromRdf> {
     if (!resource.property.action) {
       throw new Error(`Missing mf:action in ${resource}`);
     }
     if (!resource.property.result) {
       throw new Error(`Missing mf:result in ${resource}`);
     }
-
-    // Loop over the options
-    let useNativeTypes: boolean = false;
-    let useRdfType: boolean = false;
-    let processingMode: string = null;
-    let specVersion: string;
-    let rdfDirection: string;
-    for (const option of resource.properties.jsonLdOptions) {
-      // Should native types be used?
-      if (option.property.useNativeTypes) {
-        useNativeTypes = option.property.useNativeTypes.term.value === 'true';
-      }
-
-      // Should RDF type be used?
-      if (option.property.useRdfType) {
-        useRdfType = option.property.useRdfType.term.value === 'true';
-      }
-
-      // The processing mode
-      // If undefined, all processors should be able to handle the test,
-      // otherwise, only processors explicitly supporting that mode should run the test.
-      if (option.property.processingMode) {
-        // Remove the 'json-ld-' prefix from the string
-        processingMode = option.property.processingMode.term.value.substr(8);
-      }
-
-      // The spec for which this test was defined.
-      if (option.property.specVersion) {
-        // Remove the 'json-ld-' prefix from the string
-        specVersion = option.property.specVersion.term.value.substr(8);
-      }
-
-      // The rdfDirection mode for @direction handling
-      if (option.property.rdfDirection) {
-        rdfDirection = option.property.rdfDirection.term.value;
-      }
-    }
-    const jsonldOptions = { useNativeTypes, useRdfType, processingMode, specVersion, rdfDirection };
-
     return new TestCaseJsonLdFromRdf(testCaseData,
       await arrayifyStream(<any> (await Util.fetchRdf(resource.property.action.value,
         {...options, normalizeUrl: true}))[1]),
       await stringifyStream((await Util.fetchCached(resource.property.result.value, options)).body),
-      resource.property.action.value, jsonldOptions);
+      resource.property.action.value, {...options, normalizeUrl: true});
+  }
+
+  public async resourceToTestCase(resource: Resource, testCaseData: ITestCaseData,
+                                  options?: IFetchOptions): Promise<TestCaseJsonLdFromRdf> {
+    return TestCaseJsonLdToRdfHandler.wrap(this.resourceToTestCaseInner.bind(this), resource, testCaseData, options);
   }
 
 }

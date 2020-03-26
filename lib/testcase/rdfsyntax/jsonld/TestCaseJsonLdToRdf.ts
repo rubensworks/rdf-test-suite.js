@@ -57,6 +57,16 @@ export class TestCaseJsonLdToRdfHandler extends TestCaseEvalHandler {
       if (option.property.rdfDirection) {
         injectArguments.rdfDirection = option.property.rdfDirection.term.value;
       }
+
+      // Should native types be used?
+      if (option.property.useNativeTypes) {
+        injectArguments.useNativeTypes = option.property.useNativeTypes.term.value === 'true';
+      }
+
+      // Should RDF type be used?
+      if (option.property.useRdfType) {
+        injectArguments.useRdfType = option.property.useRdfType.term.value === 'true';
+      }
     }
 
     // An optional root context.
@@ -73,10 +83,10 @@ export class TestCaseJsonLdToRdfHandler extends TestCaseEvalHandler {
     return { injectArguments, testProperties };
   }
 
-  public static async wrap<T extends ITestCase<IParser>>(superHandler: (resource: Resource, testCaseData: ITestCaseData,
-                                                                        options?: IFetchOptions) => Promise<T>,
-                                                         resource: Resource, testCaseData: ITestCaseData,
-                                                         options?: IFetchOptions): Promise<T> {
+  public static async wrap<H, T extends ITestCase<H>>(superHandler: (resource: Resource, testCaseData: ITestCaseData,
+                                                                     options?: IFetchOptions) => Promise<T>,
+                                                      resource: Resource, testCaseData: ITestCaseData,
+                                                      options?: IFetchOptions): Promise<T> {
     const { injectArguments: injectArgumentsAdditional, testProperties } = await TestCaseJsonLdToRdfHandler
       .getOptions(resource, options);
 
@@ -88,7 +98,7 @@ export class TestCaseJsonLdToRdfHandler extends TestCaseEvalHandler {
 
     // Add additional inject arguments
     const testOld = testCaseEval.test;
-    testCaseEval.test = (parser: IParser, injectArguments: any) => testOld.bind(testCaseEval)(parser,
+    testCaseEval.test = (handler: H, injectArguments: any) => testOld.bind(testCaseEval)(handler,
       { ...injectArgumentsAdditional, ...injectArguments });
 
     return testCaseEval;

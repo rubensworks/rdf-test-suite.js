@@ -1,6 +1,6 @@
 import {
   objectsIsomorphic,
-  TestCaseJsonLdFromRdfHandler
+  TestCaseJsonLdFromRdfHandler,
 } from "../../../../lib/testcase/rdfsyntax/jsonld/TestCaseJsonLdFromRdf";
 const quad = require("rdf-quad");
 import {literal, namedNode} from "@rdfjs/data-model";
@@ -151,10 +151,8 @@ describe('TestCaseJsonLdFromRdfHandler', () => {
       ]);
       expect(calls[0][1]).toEqual("ACTION.ttl");
       expect(calls[0][2]).toEqual({
-        processingMode: null,
-        useNativeTypes: false,
-        useRdfType: false,
-        specVersion: undefined,
+        normalizeUrl: true,
+        produceGeneralizedRdf: false,
       });
     });
 
@@ -191,6 +189,8 @@ describe('TestCaseJsonLdFromRdfHandler', () => {
       ]);
       expect(calls[0][1]).toEqual("ACTION.ttl");
       expect(calls[0][2]).toEqual({
+        normalizeUrl: true,
+        produceGeneralizedRdf: false,
         processingMode: "1.1",
         useNativeTypes: true,
         useRdfType: true,

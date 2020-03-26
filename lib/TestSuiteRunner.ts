@@ -195,7 +195,8 @@ ${LogSymbols.error} ${result.test.name}
     quads.push(quad(app, p.doap + 'name', '"' + properties.applicationNameFull + '"'));
     quads.push(quad(app, p.dc   + 'title', '"' + properties.applicationNameFull + '"'));
     if (properties.version) {
-      quads.push(quad(app, p.doap + 'revision', '"' + properties.version + '"'));
+      quads.push(quad(app, p.doap + 'release', '_:b_release'));
+      quads.push(quad('_:b_release', p.doap + 'revision', '"' + properties.version + '"'));
     }
     quads.push(quad(app, p.doap + 'homepage', properties.applicationHomepageUrl));
     quads.push(quad(app, p.doap + 'license', properties.licenseUri));

@@ -65,6 +65,8 @@ describe('TestCaseJsonLdToRdfHandler', () => {
   let pProcessingMode;
   let pSpecVersion;
   let pRdfDirection;
+  let pExtractAllScripts;
+  let pContentType;
 
   beforeEach((done) => {
     new ContextParser().parse(require('../../../../lib/context-manifest.json'))
@@ -91,6 +93,10 @@ describe('TestCaseJsonLdToRdfHandler', () => {
           { term: namedNode('https://w3c.github.io/json-ld-api/tests/vocab#specVersion'), context });
         pRdfDirection = new Resource(
           { term: namedNode('https://w3c.github.io/json-ld-api/tests/vocab#rdfDirection'), context });
+        pExtractAllScripts = new Resource(
+          { term: namedNode('https://w3c.github.io/json-ld-api/tests/vocab#extractAllScripts'), context });
+        pContentType = new Resource(
+          { term: namedNode('https://w3c.github.io/json-ld-api/tests/vocab#contentType'), context });
 
         done();
       });
@@ -227,6 +233,98 @@ describe('TestCaseJsonLdToRdfHandler', () => {
       resource.addProperty(pResult, new Resource({ term: literal('RESULT_OTHER.ttl'), context }));
       const testCase = await handler.resourceToTestCase(resource, <any> {});
       return expect(testCase.test(parser, {})).rejects.toBeTruthy();
+    });
+
+    it('should produce a TestCaseEval when HTML', async () => {
+      const resource = new Resource({ term: namedNode('http://ex.org/test'), context });
+      resource.addProperty(
+        new Resource({ term: namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'), context }),
+        new Resource({ term: namedNode('https://w3c.github.io/json-ld-api/tests/vocab#HtmlTest'), context }));
+      resource.addProperty(pAction, new Resource({ term: literal('ACTION'), context }));
+      resource.addProperty(pResult, new Resource({ term: literal('RESULT.ttl'), context }));
+      const testCase = await handler.resourceToTestCase(resource, <any> {});
+      expect(testCase).toBeInstanceOf(TestCaseEval);
+      expect(testCase.type).toEqual('rdfsyntax');
+      expect(testCase.data).toEqual(`{
+  "@id": "http://www.w3.org/TR/rdf-syntax-grammar",
+  "http://purl.org/dc/elements/1.1/title": [
+    "RDF1.1 XML Syntax 1",
+    "RDF1.1 XML Syntax 2"
+  ]
+}`);
+      expect(testCase.expected).toEqualRdfQuadArray([
+        quad('http://www.w3.org/TR/rdf-syntax-grammar', 'http://purl.org/dc/elements/1.1/title',
+          '"RDF1.1 XML Syntax 1"'),
+        quad('http://www.w3.org/TR/rdf-syntax-grammar', 'http://purl.org/dc/elements/1.1/title',
+          '"RDF1.1 XML Syntax 2"'),
+      ]);
+      expect(testCase.baseIRI).toEqual('ACTION');
+      const spy = jest.spyOn(parser, 'parse');
+      testCase.test(parser, {});
+      return expect(spy).toHaveBeenCalledWith(`{
+  "@id": "http://www.w3.org/TR/rdf-syntax-grammar",
+  "http://purl.org/dc/elements/1.1/title": [
+    "RDF1.1 XML Syntax 1",
+    "RDF1.1 XML Syntax 2"
+  ]
+}`, "ACTION",
+        {
+          produceGeneralizedRdf: false,
+          contentType: 'text/html',
+        });
+    });
+
+    it('should produce a TestCaseEval with all optional data when HTML', async () => {
+      const resource = new Resource({ term: namedNode('http://ex.org/test'), context });
+      resource.addProperty(
+        new Resource({ term: namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'), context }),
+        new Resource({ term: namedNode('https://w3c.github.io/json-ld-api/tests/vocab#HtmlTest'), context }));
+      resource.addProperty(pAction, new Resource({ term: literal('ACTION'), context }));
+      resource.addProperty(pResult, new Resource({ term: literal('RESULT.ttl'), context }));
+      resource.addProperty(pContext, new Resource({ term: literal('CONTEXT'), context }));
+
+      const optionGeneralized = new Resource({ term: namedNode('http://ex.org/o1'), context });
+      optionGeneralized.addProperty(pJsonLdProduceGeneralizedRdf, new Resource({ term: literal('true'), context }));
+      const optionBase = new Resource({ term: namedNode('http://ex.org/o1'), context });
+      optionBase.addProperty(pJsonLdBase, new Resource({ term: namedNode('http://base.org/'), context }));
+      const optionProcessingMode = new Resource({ term: namedNode('http://ex.org/o1'), context });
+      optionProcessingMode.addProperty(pProcessingMode, new Resource({ term: literal('json-ld-1.1'), context }));
+      const optionSpecVersion = new Resource({ term: namedNode('http://ex.org/o1'), context });
+      optionSpecVersion.addProperty(pSpecVersion, new Resource({ term: literal('json-ld-1.1'), context }));
+      const optionRdfDirection = new Resource({ term: namedNode('http://ex.org/o1'), context });
+      optionRdfDirection.addProperty(pRdfDirection, new Resource({ term: literal('compound-literal'), context }));
+      const optionExtractAllScripts = new Resource({ term: namedNode('http://ex.org/o1'), context });
+      optionExtractAllScripts.addProperty(pExtractAllScripts, new Resource({ term: literal('false'), context }));
+      const optionContentType = new Resource({ term: namedNode('http://ex.org/o1'), context });
+      optionContentType.addProperty(pContentType, new Resource({ term: literal('CT'), context }));
+
+      resource.addProperty(pOption, optionGeneralized);
+      resource.addProperty(pOption, optionBase);
+      resource.addProperty(pOption, optionProcessingMode);
+      resource.addProperty(pOption, optionSpecVersion);
+      resource.addProperty(pOption, optionRdfDirection);
+      resource.addProperty(pOption, optionExtractAllScripts);
+      resource.addProperty(pOption, optionContentType);
+      const testCase = await handler.resourceToTestCase(resource, <any> {});
+      const spy = jest.spyOn(parser, 'parse');
+      testCase.test(parser, {});
+      return expect(spy).toHaveBeenCalledWith(`{
+  "@id": "http://www.w3.org/TR/rdf-syntax-grammar",
+  "http://purl.org/dc/elements/1.1/title": [
+    "RDF1.1 XML Syntax 1",
+    "RDF1.1 XML Syntax 2"
+  ]
+}`, "ACTION",
+        {
+          baseIRI: "http://base.org/",
+          context: { "@context": {"@base": "http://www.w3.org/TR/"} },
+          processingMode: "1.1",
+          produceGeneralizedRdf: true,
+          specVersion: "1.1",
+          rdfDirection: "compound-literal",
+          extractAllScripts: false,
+          contentType: 'CT',
+        });
     });
   });
 

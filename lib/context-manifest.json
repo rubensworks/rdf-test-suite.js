@@ -38,5 +38,7 @@
   "useNativeTypes": "jld:useNativeTypes",
   "useRdfType": "jld:useRdfType",
   "rdfDirection": "jld:rdfDirection",
+  "extractAllScripts": "jld:extractAllScripts",
+  "contentType": "jld:contentType",
   "expectJsonLdErrorCode": "mf:result"
 }

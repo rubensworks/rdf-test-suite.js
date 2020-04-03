@@ -19,7 +19,7 @@ Currently, the following test suites are supported:
 * [N-Quads](https://w3c.github.io/rdf-tests/nquads/)
 * [Turtle](https://w3c.github.io/rdf-tests/turtle/)
 * [TriG](https://w3c.github.io/rdf-tests/trig/)
-* [JSON-LD](https://w3c.github.io/json-ld-api/tests/)
+* [JSON-LD (1.0 and 1.1)](https://w3c.github.io/json-ld-api/tests/)
 * [RDFa](http://rdfa.info/test-suite/)
 
 Not all [RDF test suites](https://w3c.github.io/rdf-tests/) are supported at the moment.
@@ -262,9 +262,10 @@ $ rdf-test-suite myengine.js http://w3c.github.io/rdf-tests/sparql11/data-sparql
 | [N-Quads Tests](https://w3c.github.io/rdf-tests/nquads/) | [RDF 1.1 N-Quads](https://www.w3.org/TR/n-quads/) | [`IParser`](https://github.com/rubensworks/rdf-test-suite.js/blob/master/lib/testcase/rdfsyntax/IParser.ts) | http://w3c.github.io/rdf-tests/nquads/manifest.ttl |
 | [Turtle Tests](https://w3c.github.io/rdf-tests/turtle/) | [RDF 1.1 Turtle](https://www.w3.org/TR/turtle/) | [`IParser`](https://github.com/rubensworks/rdf-test-suite.js/blob/master/lib/testcase/rdfsyntax/IParser.ts) | http://w3c.github.io/rdf-tests/turtle/manifest.ttl |
 | [TriG Tests](https://w3c.github.io/rdf-tests/trig/) | [RDF 1.1 TriG](https://www.w3.org/TR/trig/) | [`IParser`](https://github.com/rubensworks/rdf-test-suite.js/blob/master/lib/testcase/rdfsyntax/IParser.ts) | http://w3c.github.io/rdf-tests/trig/manifest.ttl |
-| [JSON-LD Test Suite](https://w3c.github.io/json-ld-api/tests/) | [JSON-LD 1.0](https://www.w3.org/TR/json-ld/) | [`IParser`](https://github.com/rubensworks/rdf-test-suite.js/blob/master/lib/testcase/rdfsyntax/IParser.ts) | https://w3c.github.io/json-ld-api/tests/toRdf-manifest.jsonld |
-| [JSON-LD Test Suite](https://w3c.github.io/json-ld-api/tests/) | [JSON-LD 1.0](https://www.w3.org/TR/json-ld/) | [`ISerializer`](https://github.com/rubensworks/rdf-test-suite.js/blob/master/lib/testcase/rdfsyntax/ISerializer.ts) | https://w3c.github.io/json-ld-api/tests/fromRdf-manifest.jsonld |
-| [RDFa Test Suite](http://rdfa.info/test-suite/) | [RDFa 1.1](https://www.w3.org/TR/html-rdfa/) | [`ISerializer`](https://github.com/rubensworks/rdf-test-suite.js/blob/master/lib/testcase/rdfsyntax/ISerializer.ts) | http://rdfa.info/test-suite/test-cases/rdfa1.1/html5/manifest.ttl |
+| [JSON-LD Test Suite](https://w3c.github.io/json-ld-api/tests/) | [JSON-LD (1.0 and 1.1)](https://www.w3.org/TR/json-ld/) | [`IParser`](https://github.com/rubensworks/rdf-test-suite.js/blob/master/lib/testcase/rdfsyntax/IParser.ts) | https://w3c.github.io/json-ld-api/tests/toRdf-manifest.jsonld |
+| [JSON-LD Test Suite](https://w3c.github.io/json-ld-api/tests/) | [JSON-LD (1.0 and 1.1)](https://www.w3.org/TR/json-ld/) | [`IParser`](https://github.com/rubensworks/rdf-test-suite.js/blob/master/lib/testcase/rdfsyntax/IParser.ts) | https://w3c.github.io/json-ld-api/tests/html-manifest.jsonld |
+| [JSON-LD Test Suite](https://w3c.github.io/json-ld-api/tests/) | [JSON-LD (1.0 and 1.1)](https://www.w3.org/TR/json-ld/) | [`ISerializer`](https://github.com/rubensworks/rdf-test-suite.js/blob/master/lib/testcase/rdfsyntax/ISerializer.ts) | https://w3c.github.io/json-ld-api/tests/fromRdf-manifest.jsonld |
+| [RDFa Test Suite](http://rdfa.info/test-suite/) | [RDFa 1.1](https://www.w3.org/TR/html-rdfa/) | [`IParser`](https://github.com/rubensworks/rdf-test-suite.js/blob/master/lib/testcase/rdfsyntax/IParser.ts) | http://rdfa.info/test-suite/test-cases/rdfa1.1/html5/manifest.ttl |
 
 ## License
 This software is written by [Ruben Taelman](http://rubensworks.net/).

@@ -1,6 +1,19 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+<a name="v1.13.0"></a>
+## [v1.13.0](https://github.com/rubensworks/rdf-test-suite.js/compare/v1.12.1...v1.13.0) - 2020-04-03
+
+### Added
+* [Support JSON-LD's HTML tests](https://github.com/rubensworks/rdf-test-suite.js/commit/9e4110c5ec373729190651c95b0cfc8284448feb)
+* [Emit doap:version in EARL files](https://github.com/rubensworks/rdf-test-suite.js/commit/7d4fc16b89e987206f75e4692e004f74c09775f2)
+* [Add negative JSON-LD fromRdf test handler](https://github.com/rubensworks/rdf-test-suite.js/commit/e0cd1cb5ff30e2f306d8aa858b924b6b05bd504e)
+* [Pass rdfDirection property to JSON-LD fromRdf](https://github.com/rubensworks/rdf-test-suite.js/commit/1e1ecf27007d6d7852ced09431661e77a2ead9ea)
+
+### Changed
+* [Include input data in error message for JSON-LD fromRdf](https://github.com/rubensworks/rdf-test-suite.js/commit/93a6b611b7d02cedf3acd77a2352bb2f14444304)
+* [Default JSON-LD fromRdf specVersion to undefined](https://github.com/rubensworks/rdf-test-suite.js/commit/feff65981729c783f60a503cde688c84639faa8c)
+
 <a name="v1.12.1"></a>
 ## [v1.12.1](https://github.com/rubensworks/rdf-test-suite.js/compare/v1.12.0...v1.12.1) - 2020-01-27
 

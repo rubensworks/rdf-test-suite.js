@@ -8,7 +8,11 @@ const arrayifyStream = require('arrayify-stream');
 
 describe('GeneralizedN3StreamParser', () => {
 
-  const parser = new GeneralizedN3StreamParser({ format: 'text/turtle' });
+  let parser;
+
+  beforeEach(() => {
+    parser = new GeneralizedN3StreamParser({ format: 'text/turtle' });
+  });
 
   it('should parse blank nodes as predicates', async () => {
     return expect(await arrayifyStream(streamifyString(`

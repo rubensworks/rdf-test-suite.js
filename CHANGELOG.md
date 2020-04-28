@@ -1,6 +1,13 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+<a name="v1.13.1"></a>
+## [v1.13.1](https://github.com/rubensworks/rdf-test-suite.js/compare/v1.13.0...v1.13.1) - 2020-04-28
+
+### Changed
+* [Bump log-symbols and @types/rdf-js](https://github.com/rubensworks/rdf-test-suite.js/commit/1ecb4c88de5280a9cdedeae08311f51e53dbc168)
+* [Update dependency jsonld-streaming-parser to v2](https://github.com/rubensworks/rdf-test-suite.js/commit/eff2e5dc651570a057b090f75381016882ebd51e)
+
 <a name="v1.13.0"></a>
 ## [v1.13.0](https://github.com/rubensworks/rdf-test-suite.js/compare/v1.12.1...v1.13.0) - 2020-04-03
 

@@ -163,7 +163,7 @@ describe('TestCaseJsonLdToRdfHandler', () => {
       resource.addProperty(pOption, optionRdfDirection);
       const testCase = await handler.resourceToTestCase(resource, <any> {});
       const spy = jest.spyOn(parser, 'parse');
-      testCase.test(parser, {});
+      await testCase.test(parser, {});
       return expect(spy).toHaveBeenCalledWith(`{
   "@id": "http://www.w3.org/TR/rdf-syntax-grammar",
   "http://purl.org/dc/elements/1.1/title": [
@@ -193,7 +193,7 @@ describe('TestCaseJsonLdToRdfHandler', () => {
       resource.addProperty(pOption, optionExpandContext);
       const testCase = await handler.resourceToTestCase(resource, <any> {});
       const spy = jest.spyOn(parser, 'parse');
-      testCase.test(parser, {});
+      await testCase.test(parser, {});
       return expect(spy).toHaveBeenCalledWith(`{
   "@id": "http://www.w3.org/TR/rdf-syntax-grammar",
   "http://purl.org/dc/elements/1.1/title": [
@@ -260,7 +260,7 @@ describe('TestCaseJsonLdToRdfHandler', () => {
       ]);
       expect(testCase.baseIRI).toEqual('ACTION');
       const spy = jest.spyOn(parser, 'parse');
-      testCase.test(parser, {});
+      await testCase.test(parser, {});
       return expect(spy).toHaveBeenCalledWith(`{
   "@id": "http://www.w3.org/TR/rdf-syntax-grammar",
   "http://purl.org/dc/elements/1.1/title": [
@@ -307,7 +307,7 @@ describe('TestCaseJsonLdToRdfHandler', () => {
       resource.addProperty(pOption, optionContentType);
       const testCase = await handler.resourceToTestCase(resource, <any> {});
       const spy = jest.spyOn(parser, 'parse');
-      testCase.test(parser, {});
+      await testCase.test(parser, {});
       return expect(spy).toHaveBeenCalledWith(`{
   "@id": "http://www.w3.org/TR/rdf-syntax-grammar",
   "http://purl.org/dc/elements/1.1/title": [

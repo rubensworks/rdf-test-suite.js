@@ -40,12 +40,7 @@ export class ManifestLoader {
     const [url, parsed] = await Util.fetchRdf(urlInitial, options);
 
     // Dereference the URL and load it
-    try {
-      await objectLoader.import(parsed);
-    } catch (e) {
-      console.error(new Error(`Failed to parse manifest at ${url}`).toString());
-      return;
-    }
+    await objectLoader.import(parsed);
 
     // Import all sub-manifests
     let manifest: Resource = objectLoader.resources[url];

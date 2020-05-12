@@ -89,8 +89,8 @@ describe('ManifestLoader', () => {
       loader = new ManifestLoader();
     });
 
-    it('should error on invalid manifests', () => {
-      return expect(loader.from('error')).rejects.toBeTruthy();
+    it('should error on invalid manifests', async () => {
+      return await expect(loader.from('error')).rejects.toThrow(new Error('Unexpected "ABC" on line 1.'));
     });
 
     it('should return a valid manifests', () => {

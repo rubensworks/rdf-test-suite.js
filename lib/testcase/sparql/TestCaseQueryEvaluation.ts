@@ -197,20 +197,24 @@ export class TestCaseQueryEvaluationHandler implements ITestCaseHandler<TestCase
       throw new Error(`Missing qt:query in mf:action of ${resource}`);
     }
 
-    let dataUri: string = null;
-    let dataGraph: RDF.NamedNode = null;
+    const queryDataLinks: IQueryDataLink[] = [];
     let laxCardinality: boolean = false;
     if (action.property.data) {
-      dataUri = action.property.data.value;
+      queryDataLinks.push({
+        dataUri: action.property.data.value,
+      })
     }
-    if (action.property.graphData) {
-      const graphData: Resource = action.property.graphData;
+    for (const graphData of action.properties.graphData) {
       if (graphData.property.graph) {
-        dataUri = graphData.property.graph.value;
-        dataGraph = namedNode(graphData.property.label.value);
+        queryDataLinks.push({
+          dataUri: graphData.property.graph.value,
+          dataGraph: namedNode(graphData.property.label.value),
+        });
       } else {
-        dataUri = action.property.graphData.value;
-        dataGraph = namedNode(action.property.graphData.value);
+        queryDataLinks.push({
+          dataUri: graphData.value,
+          dataGraph: namedNode(graphData.value),
+        });
       }
     }
 
@@ -219,18 +223,23 @@ export class TestCaseQueryEvaluationHandler implements ITestCaseHandler<TestCase
       laxCardinality = true;
     }
 
-    let queryData: RDF.Quad[] = dataUri ? await arrayifyStream((await Util.fetchRdf(dataUri, options))[1]) : [];
-    if (dataGraph) {
-      queryData = queryData.map((quad) => mapTerms(quad,
-        (value: RDF.Term, key: QuadTermName) => key === 'graph' ? dataGraph : value));
+    // Collect all query data
+    let queryData: RDF.Quad[] = [];
+    for (const queryDataLink of queryDataLinks) {
+      let queryDataThis: RDF.Quad[] = await arrayifyStream((await Util.fetchRdf(queryDataLink.dataUri, options))[1]);
+      if (queryDataLink.dataGraph) {
+        queryDataThis = queryDataThis.map((quad) => mapTerms(quad,
+          (value: RDF.Term, key: QuadTermName) => key === 'graph' ? queryDataLink.dataGraph : value));
+      }
+      queryData = [ ...queryData, ...queryDataThis ];
     }
+
     const queryResponse = await Util.fetchCached(resource.property.result.value, options);
     return new TestCaseQueryEvaluation(
       testCaseData,
       {
         baseIRI: Util.normalizeBaseUrl(action.property.query.value),
-        dataGraph,
-        dataUri,
+        queryDataLinks,
         laxCardinality,
         queryData,
         queryResult: await TestCaseQueryEvaluationHandler.parseQueryResult(
@@ -250,8 +259,12 @@ export interface ITestCaseQueryEvaluationProps {
   queryResult: IQueryResult;
   laxCardinality: boolean;
   resultSource: IFetchResponse;
+  queryDataLinks: IQueryDataLink[];
+}
+
+export interface IQueryDataLink {
+  dataUri: string;
   dataGraph?: RDF.NamedNode;
-  dataUri?: string;
 }
 
 export class TestCaseQueryEvaluation implements ITestCaseSparql {
@@ -268,8 +281,7 @@ export class TestCaseQueryEvaluation implements ITestCaseSparql {
   public readonly queryData: RDF.Quad[];
   public readonly queryResult: IQueryResult;
   public readonly laxCardinality: boolean;
-  public readonly dataUri?: string;
-  public readonly dataGraph?: RDF.NamedNode;
+  public readonly queryDataLinks: IQueryDataLink[];
   public readonly resultSource: IFetchResponse;
 
   constructor(testCaseData: ITestCaseData, props: ITestCaseQueryEvaluationProps) {
@@ -280,13 +292,13 @@ export class TestCaseQueryEvaluation implements ITestCaseSparql {
   public async test(engine: IQueryEngine, injectArguments: any): Promise<void> {
     const result: IQueryResult = await engine.query(this.queryData, this.queryString,
       { baseIRI: this.baseIRI, ...injectArguments });
-    const dataGraphInfo = this.dataGraph ? ` (named graph: ${this.dataGraph.value})` : '';
+    const dataGraphInfo = this.queryDataLinks.map((queryDataLink) => queryDataLink.dataUri + (queryDataLink.dataGraph ? ` (named graph: ${queryDataLink.dataGraph.value})` : '')).join(',\n    ');
     if (!await this.queryResult.equals(result, this.laxCardinality)) {
       throw new ErrorTest(`Invalid query evaluation
 
   Query:\n\n${this.queryString}
 
-  Data: ${this.dataUri || 'none'}${dataGraphInfo}
+  Data links: ${dataGraphInfo}
 
   Result Source: ${this.resultSource.url}
 

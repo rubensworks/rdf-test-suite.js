@@ -28,13 +28,25 @@ const streamifyString = require('streamify-string');
     "RDF1.1 XML Syntax 1", "RDF1.1 XML Syntax 2".`);
     headers = new Headers({ 'Content-Type': 'text/turtle' });
     break;
+  case 'RESULT1.ttl':
+    body = streamifyString(`<http://www.w3.org/TR/rdf-syntax-grammar> <http://purl.org/dc/elements/1.1/title> "A".`);
+    headers = new Headers({ 'Content-Type': 'text/turtle' });
+    break;
+  case 'RESULT2.ttl':
+    body = streamifyString(`<http://www.w3.org/TR/rdf-syntax-grammar> <http://purl.org/dc/elements/1.1/title> "B".`);
+    headers = new Headers({ 'Content-Type': 'text/turtle' });
+    break;
+  case 'RESULT3.ttl':
+    body = streamifyString(`<http://www.w3.org/TR/rdf-syntax-grammar> <http://purl.org/dc/elements/1.1/title> "C".`);
+    headers = new Headers({ 'Content-Type': 'text/turtle' });
+    break;
   case 'RESULT_OTHER.ttl':
     body = streamifyString(`<http://www.w3.org/TR/rdf-syntax-grammar_ABC> <http://purl.org/dc/elements/1.1/title>
     "RDF1.1 XML Syntax 1", "RDF1.1 XML Syntax 2".`);
     headers = new Headers({ 'Content-Type': 'text/turtle' });
     break;
   default:
-    return Promise.reject(new Error('Fetch error'));
+    return Promise.reject(new Error('Fetch error for ' + url));
     break;
   }
   return Promise.resolve(new Response(body, <any> { headers, status: 200, url }));
@@ -496,6 +508,7 @@ describe('TestCaseQueryEvaluationHandler', () => {
           '"RDF1.1 XML Syntax 2"'),
       ]);
       expect(testCase.laxCardinality).toEqual(false);
+      expect(testCase.test(engine, {})).resolves.toBe(undefined);
     });
 
     it('should produce a TestCaseQueryEvaluation with raw graph data in action', async () => {
@@ -523,6 +536,7 @@ describe('TestCaseQueryEvaluationHandler', () => {
           '"RDF1.1 XML Syntax 2"'),
       ]);
       expect(testCase.laxCardinality).toEqual(false);
+      expect(testCase.test(engine, {})).resolves.toBe(undefined);
     });
 
     it('should produce a TestCaseQueryEvaluation with labelled graph data in action', async () => {
@@ -544,6 +558,73 @@ describe('TestCaseQueryEvaluationHandler', () => {
           '"RDF1.1 XML Syntax 1"', 'http://ex.org/graph'),
         quad('http://www.w3.org/TR/rdf-syntax-grammar', 'http://purl.org/dc/elements/1.1/title',
           '"RDF1.1 XML Syntax 2"', 'http://ex.org/graph'),
+      ]);
+      expect(testCase.queryResult.type).toEqual('quads');
+      expect(testCase.queryResult.value).toBeRdfIsomorphic([
+        quad('http://www.w3.org/TR/rdf-syntax-grammar', 'http://purl.org/dc/elements/1.1/title',
+          '"RDF1.1 XML Syntax 1"'),
+        quad('http://www.w3.org/TR/rdf-syntax-grammar', 'http://purl.org/dc/elements/1.1/title',
+          '"RDF1.1 XML Syntax 2"'),
+      ]);
+      expect(testCase.laxCardinality).toEqual(false);
+      expect(testCase.test(engine, {})).resolves.toBe(undefined);
+    });
+
+    it('should produce a TestCaseQueryEvaluation with multiple raw graph data in action', async () => {
+      const resource = new Resource({ term: namedNode('http://ex.org/test'), context });
+      const action = new Resource({ term: namedNode('blabla'), context });
+      action.addProperty(pQuery, new Resource({ term: literal('ACTION.ok'), context }));
+      action.addProperty(pGraphData, new Resource({ term: namedNode('RESULT1.ttl'), context }));
+      action.addProperty(pGraphData, new Resource({ term: namedNode('RESULT2.ttl'), context }));
+      action.addProperty(pGraphData, new Resource({ term: namedNode('RESULT3.ttl'), context }));
+      resource.addProperty(pAction, action);
+      resource.addProperty(pResult, new Resource({ term: literal('RESULT.ttl'), context }));
+      const testCase = await handler.resourceToTestCase(resource, <any> {});
+      expect(testCase).toBeInstanceOf(TestCaseQueryEvaluation);
+      expect(testCase.type).toEqual('sparql');
+      expect(testCase.queryString).toEqual(`OK`);
+      expect(testCase.queryData).toEqualRdfQuadArray([
+        quad('http://www.w3.org/TR/rdf-syntax-grammar', 'http://purl.org/dc/elements/1.1/title', '"A"', 'RESULT1.ttl'),
+        quad('http://www.w3.org/TR/rdf-syntax-grammar', 'http://purl.org/dc/elements/1.1/title', '"B"', 'RESULT2.ttl'),
+        quad('http://www.w3.org/TR/rdf-syntax-grammar', 'http://purl.org/dc/elements/1.1/title', '"C"', 'RESULT3.ttl'),
+      ]);
+      expect(testCase.queryResult.type).toEqual('quads');
+      expect(testCase.queryResult.value).toBeRdfIsomorphic([
+        quad('http://www.w3.org/TR/rdf-syntax-grammar', 'http://purl.org/dc/elements/1.1/title',
+          '"RDF1.1 XML Syntax 1"'),
+        quad('http://www.w3.org/TR/rdf-syntax-grammar', 'http://purl.org/dc/elements/1.1/title',
+          '"RDF1.1 XML Syntax 2"'),
+      ]);
+      expect(testCase.laxCardinality).toEqual(false);
+      expect(testCase.test(engine, {})).resolves.toBe(undefined);
+    });
+
+    it('should produce a TestCaseQueryEvaluation with multiple labelled graph data in action', async () => {
+      const resource = new Resource({ term: namedNode('http://ex.org/test'), context });
+      const action = new Resource({ term: namedNode('action'), context });
+      action.addProperty(pQuery, new Resource({ term: literal('ACTION.ok'), context }));
+
+      const graphData1 = new Resource({ term: namedNode('graphData'), context });
+      graphData1.addProperty(pLabel, new Resource({ term: namedNode('http://ex.org/graph1'), context }));
+      graphData1.addProperty(pGraph, new Resource({ term: namedNode('RESULT1.ttl'), context }));
+      action.addProperty(pGraphData, graphData1);
+
+      const graphData2 = new Resource({ term: namedNode('graphData'), context });
+      graphData2.addProperty(pLabel, new Resource({ term: namedNode('http://ex.org/graph2'), context }));
+      graphData2.addProperty(pGraph, new Resource({ term: namedNode('RESULT2.ttl'), context }));
+      action.addProperty(pGraphData, graphData2);
+
+      resource.addProperty(pAction, action);
+      resource.addProperty(pResult, new Resource({ term: literal('RESULT.ttl'), context }));
+      const testCase = await handler.resourceToTestCase(resource, <any> {});
+      expect(testCase).toBeInstanceOf(TestCaseQueryEvaluation);
+      expect(testCase.type).toEqual('sparql');
+      expect(testCase.queryString).toEqual(`OK`);
+      expect(testCase.queryData).toEqualRdfQuadArray([
+        quad('http://www.w3.org/TR/rdf-syntax-grammar', 'http://purl.org/dc/elements/1.1/title', '"A"',
+          'http://ex.org/graph1'),
+        quad('http://www.w3.org/TR/rdf-syntax-grammar', 'http://purl.org/dc/elements/1.1/title', '"B"',
+          'http://ex.org/graph2'),
       ]);
       expect(testCase.queryResult.type).toEqual('quads');
       expect(testCase.queryResult.value).toBeRdfIsomorphic([

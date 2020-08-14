@@ -96,7 +96,7 @@ export class TestSuiteRunner {
               new Promise((res, rej) => {
                 // global. is needed because TSC may otherwise pick the browser version of setTimeout, which returns int
                 timeout = global.setTimeout(
-                  () => rej(`Test case '${test.uri}' timed out`),
+                  () => rej(new Error(`Test case '${test.uri}' timed out`)),
                   config.timeOutDuration);
               },
               ),

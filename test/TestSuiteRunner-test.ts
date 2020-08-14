@@ -197,7 +197,7 @@ describe('TestSuiteRunner', () => {
       runner.runManifest('timeout', handler, config)
         .then((results) => {
           expect(results).toEqual([{
-            error: "Test case 'http://ex.org/timeout1' timed out",
+            error: new Error("Test case 'http://ex.org/timeout1' timed out"),
             ok: false,
             skipped: undefined,
             test: timeOutMockTest1,

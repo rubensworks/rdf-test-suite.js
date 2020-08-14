@@ -1,6 +1,13 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+<a name="v1.13.2"></a>
+## [v1.13.2](https://github.com/rubensworks/rdf-test-suite.js/compare/v1.13.1...v1.13.2) - 2020-08-14
+
+### Fixed
+* [Fix query tests not accepting more than one qt:graphData](https://github.com/rubensworks/rdf-test-suite.js/commit/e6022488bf944d15e73df69556ca0e2ecde213ce)
+* [Fix crash when printing timed out test results, Closes #58](https://github.com/rubensworks/rdf-test-suite.js/commit/4e2571cb261736bf3cfa53d77ab300201d6d26eb)
+
 <a name="v1.13.1"></a>
 ## [v1.13.1](https://github.com/rubensworks/rdf-test-suite.js/compare/v1.13.0...v1.13.1) - 2020-04-28
 

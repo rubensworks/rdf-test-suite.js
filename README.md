@@ -13,6 +13,7 @@ or it can output machine-readable reports in the
 [EARL](https://www.w3.org/TR/EARL10-Schema/) vocabulary.
 
 Currently, the following test suites are supported:
+* [SPARQL 1.0](https://w3c.github.io/rdf-tests/sparql11/data-r2/)
 * [SPARQL 1.1](http://w3c.github.io/rdf-tests/sparql11/data-sparql11/) (_only [SPARQL 1.1 Query](http://www.w3.org/TR/sparql11-query/) spec_)
 * [RDF/XML](http://w3c.github.io/rdf-tests/rdf-xml/)
 * [N-Triples](https://w3c.github.io/rdf-tests/ntriples/)
@@ -248,6 +249,7 @@ $ rdf-test-suite myengine.js http://w3c.github.io/rdf-tests/sparql11/data-sparql
 
 | Manifest | Specification | Interface | Entry manifest |
 | -------- | ------------- | --------- | -------------- |
+| [SPARQL 1.0 tests](https://w3c.github.io/rdf-tests/sparql11/data-r2/) | [SPARQL 1.0](https://www.w3.org/TR/rdf-sparql-query/) | [`IQueryEngine`](https://github.com/rubensworks/rdf-test-suite.js/blob/master/lib/testcase/sparql/IQueryEngine.ts) | https://w3c.github.io/rdf-tests/sparql11/data-r2/manifest.ttl |
 | [SPARQL 1.1 tests](http://w3c.github.io/rdf-tests/sparql11/data-sparql11/) | [SPARQL 1.1 Query](http://www.w3.org/TR/sparql11-query/) | [`IQueryEngine`](https://github.com/rubensworks/rdf-test-suite.js/blob/master/lib/testcase/sparql/IQueryEngine.ts) | http://w3c.github.io/rdf-tests/sparql11/data-sparql11/manifest-all.ttl |
 | [SPARQL 1.1 tests](http://w3c.github.io/rdf-tests/sparql11/data-sparql11/) | [SPARQL 1.1 Update](http://www.w3.org/TR/sparql11-update/) | ✖ | http://w3c.github.io/rdf-tests/sparql11/data-sparql11/manifest-all.ttl |
 | [SPARQL 1.1 tests](http://w3c.github.io/rdf-tests/sparql11/data-sparql11/) | [SPARQL 1.1 Results CSV/TSV](http://www.w3.org/TR/sparql11-results-csv-tsv/) | ✖ | http://w3c.github.io/rdf-tests/sparql11/data-sparql11/manifest-all.ttl |

@@ -208,12 +208,12 @@ export class TestCaseQueryEvaluationHandler implements ITestCaseHandler<TestCase
       if (graphData.property.graph) {
         queryDataLinks.push({
           dataUri: graphData.property.graph.value,
-          dataGraph: namedNode(graphData.property.label.value),
+          dataGraph: namedNode(Util.normalizeBaseUrl(graphData.property.label.value)),
         });
       } else {
         queryDataLinks.push({
           dataUri: graphData.value,
-          dataGraph: namedNode(graphData.value),
+          dataGraph: namedNode(Util.normalizeBaseUrl(graphData.value)),
         });
       }
     }

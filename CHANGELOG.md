@@ -1,6 +1,12 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+<a name="v1.13.3"></a>
+## [v1.13.3](https://github.com/rubensworks/rdf-test-suite.js/compare/v1.13.2...v1.13.3) - 2020-08-19
+
+### Changed
+* [Fix dataGraph URLs not being normalized](https://github.com/rubensworks/rdf-test-suite.js/commit/6c11764bb89bc04d52a2bccaae6aa10082f2c709)
+
 <a name="v1.13.2"></a>
 ## [v1.13.2](https://github.com/rubensworks/rdf-test-suite.js/compare/v1.13.1...v1.13.2) - 2020-08-14
 

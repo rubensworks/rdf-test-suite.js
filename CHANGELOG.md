@@ -1,6 +1,12 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+<a name="v1.13.4"></a>
+## [v1.13.4](https://github.com/rubensworks/rdf-test-suite.js/compare/v1.13.3...v1.13.4) - 2020-08-21
+
+### Fixed
+* [Fix SPARQL test data files not being normalized](https://github.com/rubensworks/rdf-test-suite.js/commit/82ba10765bbe9225d4e371cb70e603486fd1c38b)
+
 <a name="v1.13.3"></a>
 ## [v1.13.3](https://github.com/rubensworks/rdf-test-suite.js/compare/v1.13.2...v1.13.3) - 2020-08-19
 

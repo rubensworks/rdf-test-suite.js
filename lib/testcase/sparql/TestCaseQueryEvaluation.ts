@@ -226,7 +226,8 @@ export class TestCaseQueryEvaluationHandler implements ITestCaseHandler<TestCase
     // Collect all query data
     let queryData: RDF.Quad[] = [];
     for (const queryDataLink of queryDataLinks) {
-      let queryDataThis: RDF.Quad[] = await arrayifyStream((await Util.fetchRdf(queryDataLink.dataUri, options))[1]);
+      let queryDataThis: RDF.Quad[] = await arrayifyStream((await Util.fetchRdf(queryDataLink.dataUri,
+        {...options, normalizeUrl: true}))[1]);
       if (queryDataLink.dataGraph) {
         queryDataThis = queryDataThis.map((quad) => mapTerms(quad,
           (value: RDF.Term, key: QuadTermName) => key === 'graph' ? queryDataLink.dataGraph : value));

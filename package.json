@@ -85,7 +85,7 @@
     "@types/log-symbols": "^3.0.0",
     "@types/minimist": "^1.2.0",
     "@types/n3": "^1.1.6",
-    "@types/rdf-js": "^3.0.0",
+    "@types/rdf-js": "^4.0.0",
     "@types/sax": "^1.0.1",
     "@rdfjs/data-model": "^1.1.2",
     "arrayify-stream": "^1.0.0",

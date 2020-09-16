@@ -1,4 +1,4 @@
-import "isomorphic-fetch";
+import "cross-fetch/polyfill";
 import "jest-rdf";
 import {DocumentLoaderCached} from "../lib/DocumentLoaderCached";
 

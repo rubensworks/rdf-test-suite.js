@@ -1,6 +1,6 @@
 import {DataFactory} from "rdf-data-factory";
 import {existsSync, mkdirSync, readFileSync} from "fs";
-import "isomorphic-fetch";
+import "cross-fetch/polyfill";
 import "jest-rdf";
 import {Util} from "../lib/Util";
 import type * as RDF from "rdf-js";

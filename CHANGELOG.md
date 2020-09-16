@@ -1,6 +1,13 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+<a name="v1.14.0"></a>
+## [v1.14.0](https://github.com/rubensworks/rdf-test-suite.js/compare/v1.13.4...v1.14.0) - 2020-09-16
+
+### Changed
+* [Migrate to cross-fetch](https://github.com/rubensworks/rdf-test-suite.js/commit/a2e1b636f7d7f9608a0c185cfe320d991b0cad23)
+* [Migrate to rdf-data-factory and @types/rdf-js 4.x](https://github.com/rubensworks/rdf-test-suite.js/commit/2acc5d2723c8d26cf453ce9ef5ebf7b699fe1935)
+
 <a name="v1.13.4"></a>
 ## [v1.13.4](https://github.com/rubensworks/rdf-test-suite.js/compare/v1.13.3...v1.13.4) - 2020-08-21
 

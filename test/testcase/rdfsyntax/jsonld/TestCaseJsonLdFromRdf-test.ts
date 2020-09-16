@@ -3,7 +3,7 @@ import {
   TestCaseJsonLdFromRdfHandler,
 } from "../../../../lib/testcase/rdfsyntax/jsonld/TestCaseJsonLdFromRdf";
 const quad = require("rdf-quad");
-import {literal, namedNode} from "@rdfjs/data-model";
+import {DataFactory} from "rdf-data-factory";
 import "jest-rdf";
 import {ContextParser} from "jsonld-context-parser";
 import * as RDF from "rdf-js";
@@ -13,6 +13,7 @@ import {TestCaseJsonLdFromRdf} from "../../../../lib/testcase/rdfsyntax/jsonld/T
 
 // tslint:disable:no-var-requires
 const streamifyString = require('streamify-string');
+const DF = new DataFactory();
 
 // Mock fetch
 (<any> global).fetch = (url: string) => {
@@ -87,21 +88,21 @@ describe('TestCaseJsonLdFromRdfHandler', () => {
         context = parsedContext;
 
         pAction = new Resource(
-          { term: namedNode('http://www.w3.org/2001/sw/DataAccess/tests/test-manifest#action'), context });
+          { term: DF.namedNode('http://www.w3.org/2001/sw/DataAccess/tests/test-manifest#action'), context });
         pResult = new Resource(
-          { term: namedNode('http://www.w3.org/2001/sw/DataAccess/tests/test-manifest#result'), context });
+          { term: DF.namedNode('http://www.w3.org/2001/sw/DataAccess/tests/test-manifest#result'), context });
         pOption = new Resource(
-          { term: namedNode('https://w3c.github.io/json-ld-api/tests/vocab#option'), context });
+          { term: DF.namedNode('https://w3c.github.io/json-ld-api/tests/vocab#option'), context });
         pUseNativeTypes = new Resource(
-          { term: namedNode('https://w3c.github.io/json-ld-api/tests/vocab#useNativeTypes'), context });
+          { term: DF.namedNode('https://w3c.github.io/json-ld-api/tests/vocab#useNativeTypes'), context });
         pUseRdfType = new Resource(
-          { term: namedNode('https://w3c.github.io/json-ld-api/tests/vocab#useRdfType'), context });
+          { term: DF.namedNode('https://w3c.github.io/json-ld-api/tests/vocab#useRdfType'), context });
         pProcessingMode = new Resource(
-          { term: namedNode('https://w3c.github.io/json-ld-api/tests/vocab#processingMode'), context });
+          { term: DF.namedNode('https://w3c.github.io/json-ld-api/tests/vocab#processingMode'), context });
         pSpecVersion = new Resource(
-          { term: namedNode('https://w3c.github.io/json-ld-api/tests/vocab#specVersion'), context });
+          { term: DF.namedNode('https://w3c.github.io/json-ld-api/tests/vocab#specVersion'), context });
         pRdfDirection = new Resource(
-          { term: namedNode('https://w3c.github.io/json-ld-api/tests/vocab#rdfDirection'), context });
+          { term: DF.namedNode('https://w3c.github.io/json-ld-api/tests/vocab#rdfDirection'), context });
 
         done();
       });
@@ -113,9 +114,9 @@ describe('TestCaseJsonLdFromRdfHandler', () => {
 
   describe('#resourceToTestCase', () => {
     it('should produce a TestCaseJsonLdFromRdf', async () => {
-      const resource = new Resource({ term: namedNode('http://ex.org/test'), context });
-      resource.addProperty(pAction, new Resource({ term: literal('ACTION.ttl'), context }));
-      resource.addProperty(pResult, new Resource({ term: literal('RESULT'), context }));
+      const resource = new Resource({ term: DF.namedNode('http://ex.org/test'), context });
+      resource.addProperty(pAction, new Resource({ term: DF.literal('ACTION.ttl'), context }));
+      resource.addProperty(pResult, new Resource({ term: DF.literal('RESULT'), context }));
       const testCase = await handler.resourceToTestCase(resource, <any> {});
       expect(testCase).toBeInstanceOf(TestCaseJsonLdFromRdf);
       expect(testCase.type).toEqual('fromrdfsyntax');
@@ -157,20 +158,20 @@ describe('TestCaseJsonLdFromRdfHandler', () => {
     });
 
     it('should produce a TestCaseJsonLdFromRdf with all optional data', async () => {
-      const resource = new Resource({ term: namedNode('http://ex.org/test'), context });
-      resource.addProperty(pAction, new Resource({ term: literal('ACTION.ttl'), context }));
-      resource.addProperty(pResult, new Resource({ term: literal('RESULT'), context }));
+      const resource = new Resource({ term: DF.namedNode('http://ex.org/test'), context });
+      resource.addProperty(pAction, new Resource({ term: DF.literal('ACTION.ttl'), context }));
+      resource.addProperty(pResult, new Resource({ term: DF.literal('RESULT'), context }));
 
-      const optionUseNativeTypes = new Resource({ term: namedNode('http://ex.org/o1'), context });
-      optionUseNativeTypes.addProperty(pUseNativeTypes, new Resource({ term: literal('true'), context }));
-      const optionUseRdfType = new Resource({ term: namedNode('http://ex.org/o1'), context });
-      optionUseRdfType.addProperty(pUseRdfType, new Resource({ term: literal('true'), context }));
-      const optionProcessingMode = new Resource({ term: namedNode('http://ex.org/o1'), context });
-      optionProcessingMode.addProperty(pProcessingMode, new Resource({ term: literal('json-ld-1.1'), context }));
-      const optionSpecVersion = new Resource({ term: namedNode('http://ex.org/o1'), context });
-      optionSpecVersion.addProperty(pSpecVersion, new Resource({ term: literal('json-ld-1.1'), context }));
-      const optionRdfDirection = new Resource({ term: namedNode('http://ex.org/o1'), context });
-      optionRdfDirection.addProperty(pRdfDirection, new Resource({ term: literal('compound-literal'), context }));
+      const optionUseNativeTypes = new Resource({ term: DF.namedNode('http://ex.org/o1'), context });
+      optionUseNativeTypes.addProperty(pUseNativeTypes, new Resource({ term: DF.literal('true'), context }));
+      const optionUseRdfType = new Resource({ term: DF.namedNode('http://ex.org/o1'), context });
+      optionUseRdfType.addProperty(pUseRdfType, new Resource({ term: DF.literal('true'), context }));
+      const optionProcessingMode = new Resource({ term: DF.namedNode('http://ex.org/o1'), context });
+      optionProcessingMode.addProperty(pProcessingMode, new Resource({ term: DF.literal('json-ld-1.1'), context }));
+      const optionSpecVersion = new Resource({ term: DF.namedNode('http://ex.org/o1'), context });
+      optionSpecVersion.addProperty(pSpecVersion, new Resource({ term: DF.literal('json-ld-1.1'), context }));
+      const optionRdfDirection = new Resource({ term: DF.namedNode('http://ex.org/o1'), context });
+      optionRdfDirection.addProperty(pRdfDirection, new Resource({ term: DF.literal('compound-DF.literal('), context }));
 
       resource.addProperty(pOption, optionUseNativeTypes);
       resource.addProperty(pOption, optionUseRdfType);
@@ -195,34 +196,34 @@ describe('TestCaseJsonLdFromRdfHandler', () => {
         useNativeTypes: true,
         useRdfType: true,
         specVersion: "1.1",
-        rdfDirection: "compound-literal",
+        rdfDirection: "compound-DF.literal(",
       });
     });
 
     it('should error on a resource without action', () => {
-      const resource = new Resource({ term: namedNode('http://ex.org/test'), context });
-      resource.addProperty(pResult, new Resource({ term: literal('RESULT'), context }));
+      const resource = new Resource({ term: DF.namedNode('http://ex.org/test'), context });
+      resource.addProperty(pResult, new Resource({ term: DF.literal('RESULT'), context }));
       return expect(handler.resourceToTestCase(resource, <any> {})).rejects.toBeTruthy();
     });
 
     it('should error on a resource without result', () => {
-      const resource = new Resource({ term: namedNode('http://ex.org/test'), context });
-      resource.addProperty(pAction, new Resource({ term: literal('ACTION.ttl'), context }));
+      const resource = new Resource({ term: DF.namedNode('http://ex.org/test'), context });
+      resource.addProperty(pAction, new Resource({ term: DF.literal('ACTION.ttl'), context }));
       return expect(handler.resourceToTestCase(resource, <any> {})).rejects.toBeTruthy();
     });
 
     it('should produce TestCaseJsonLdFromRdf that tests true on isomorphic data', async () => {
-      const resource = new Resource({ term: namedNode('http://ex.org/test'), context });
-      resource.addProperty(pAction, new Resource({ term: literal('ACTION.ttl'), context }));
-      resource.addProperty(pResult, new Resource({ term: literal('RESULT'), context }));
+      const resource = new Resource({ term: DF.namedNode('http://ex.org/test'), context });
+      resource.addProperty(pAction, new Resource({ term: DF.literal('ACTION.ttl'), context }));
+      resource.addProperty(pResult, new Resource({ term: DF.literal('RESULT'), context }));
       const testCase = await handler.resourceToTestCase(resource, <any> {});
       return expect(testCase.test(serializer, {})).resolves.toBe(undefined);
     });
 
     it('should produce TestCaseJsonLdFromRdf that tests false on non-isomorphic data', async () => {
-      const resource = new Resource({ term: namedNode('http://ex.org/test'), context });
-      resource.addProperty(pAction, new Resource({ term: literal('ACTION.ttl'), context }));
-      resource.addProperty(pResult, new Resource({ term: literal('RESULT_OTHER'), context }));
+      const resource = new Resource({ term: DF.namedNode('http://ex.org/test'), context });
+      resource.addProperty(pAction, new Resource({ term: DF.literal('ACTION.ttl'), context }));
+      resource.addProperty(pResult, new Resource({ term: DF.literal('RESULT_OTHER'), context }));
       const testCase = await handler.resourceToTestCase(resource, <any> {});
       return expect(testCase.test(serializer, {})).rejects.toBeTruthy();
     });

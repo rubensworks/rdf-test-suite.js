@@ -2,9 +2,9 @@ import {Parser} from "n3";
 import {Transform} from "stream";
 
 // Temporarily set format to text/n3 to allow blank node predicates (needed by JSON-LD tests)
-const readPredicateOld = Parser.prototype._readPredicate;
+const readPredicateOld = (<any> Parser.prototype)._readPredicate;
 // tslint:disable-next-line:only-arrow-functions
-Parser.prototype._readPredicate = function(token: any) {
+(<any> Parser.prototype)._readPredicate = function(token: any) {
   if (this.allowBlankNodePredicates) {
     this._n3Mode = true;
     this._quantified = {};

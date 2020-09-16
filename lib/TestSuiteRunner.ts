@@ -1,4 +1,4 @@
-import {literal, namedNode, triple} from "@rdfjs/data-model";
+import {DataFactory} from "rdf-data-factory";
 import * as LogSymbols from "log-symbols";
 import * as RDF from "rdf-js";
 import {IManifest} from "./IManifest";
@@ -10,6 +10,7 @@ import Timeout = NodeJS.Timeout;
 // tslint:disable:no-var-requires
 const quad = require('rdf-quad');
 const streamifyArray = require('streamify-array');
+const DF = new DataFactory();
 
 export interface ITestSuiteConfig {
   exitWithStatusCode0: boolean;
@@ -181,11 +182,11 @@ ${LogSymbols.error} ${result.test.name}
 
     // Describe report
     const report = properties.reportUri || '';
-    quads.push(triple(namedNode(report), namedNode(p.foaf + 'primaryTopic'), namedNode(properties.applicationUri)));
-    quads.push(triple(namedNode(report), namedNode(p.dc + 'issued'), literal(testDate.toISOString(),
-      namedNode(p.xsd + 'dateTime'))));
+    quads.push(DF.quad(DF.namedNode(report), DF.namedNode(p.foaf + 'primaryTopic'), DF.namedNode(properties.applicationUri)));
+    quads.push(DF.quad(DF.namedNode(report), DF.namedNode(p.dc + 'issued'), DF.literal(testDate.toISOString(),
+      DF.namedNode(p.xsd + 'dateTime'))));
     for (const author of properties.authors) {
-      quads.push(triple(namedNode(report), namedNode(p.foaf + 'maker'), namedNode(author.uri)));
+      quads.push(DF.quad(DF.namedNode(report), DF.namedNode(p.foaf + 'maker'), DF.namedNode(author.uri)));
     }
 
     // Describe application

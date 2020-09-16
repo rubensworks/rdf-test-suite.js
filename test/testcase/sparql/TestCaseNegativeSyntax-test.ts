@@ -1,4 +1,4 @@
-import {literal, namedNode} from "@rdfjs/data-model";
+import {DataFactory} from "rdf-data-factory";
 import "jest-rdf";
 import {ContextParser} from "jsonld-context-parser";
 import {Resource} from "rdf-object";
@@ -8,6 +8,7 @@ import {TestCaseNegativeSyntax,
 // tslint:disable:no-var-requires
 const arrayifyStream = require('arrayify-stream');
 const streamifyString = require('streamify-string');
+const DF = new DataFactory();
 
 // Mock fetch
 (<any> global).fetch = (url: string) => {
@@ -44,7 +45,7 @@ describe('TestCaseNegativeSyntaxHandler', () => {
         context = parsedContext;
 
         pAction = new Resource(
-          { term: namedNode('http://www.w3.org/2001/sw/DataAccess/tests/test-manifest#action'), context });
+          { term: DF.namedNode('http://www.w3.org/2001/sw/DataAccess/tests/test-manifest#action'), context });
 
         done();
       });
@@ -52,8 +53,8 @@ describe('TestCaseNegativeSyntaxHandler', () => {
 
   describe('#resourceToTestCase', () => {
     it('should produce a TestCaseNegativeSyntax', async () => {
-      const resource = new Resource({ term: namedNode('http://ex.org/test'), context });
-      resource.addProperty(pAction, new Resource({ term: literal('ACTION.ok'), context }));
+      const resource = new Resource({ term: DF.namedNode('http://ex.org/test'), context });
+      resource.addProperty(pAction, new Resource({ term: DF.literal('ACTION.ok'), context }));
       const testCase = await handler.resourceToTestCase(resource, <any> {});
       expect(testCase).toBeInstanceOf(TestCaseNegativeSyntax);
       expect(testCase.type).toEqual('sparql');
@@ -61,20 +62,20 @@ describe('TestCaseNegativeSyntaxHandler', () => {
     });
 
     it('should error on a resource without action', () => {
-      const resource = new Resource({ term: namedNode('http://ex.org/test'), context });
+      const resource = new Resource({ term: DF.namedNode('http://ex.org/test'), context });
       return expect(handler.resourceToTestCase(resource, <any> {})).rejects.toBeTruthy();
     });
 
     it('should produce TestCaseNegativeSyntax that tests true on invalid data', async () => {
-      const resource = new Resource({ term: namedNode('http://ex.org/test'), context });
-      resource.addProperty(pAction, new Resource({ term: literal('ACTION.invalid'), context }));
+      const resource = new Resource({ term: DF.namedNode('http://ex.org/test'), context });
+      resource.addProperty(pAction, new Resource({ term: DF.literal('ACTION.invalid'), context }));
       const testCase = await handler.resourceToTestCase(resource, <any> {});
       return expect(testCase.test(engine, {})).resolves.toBe(undefined);
     });
 
     it('should produce TestCaseNegativeSyntax that tests false on valid data', async () => {
-      const resource = new Resource({ term: namedNode('http://ex.org/test'), context });
-      resource.addProperty(pAction, new Resource({ term: literal('ACTION.ok'), context }));
+      const resource = new Resource({ term: DF.namedNode('http://ex.org/test'), context });
+      resource.addProperty(pAction, new Resource({ term: DF.literal('ACTION.ok'), context }));
       const testCase = await handler.resourceToTestCase(resource, <any> {});
       return expect(testCase.test(engine, {})).rejects.toBeTruthy();
     });

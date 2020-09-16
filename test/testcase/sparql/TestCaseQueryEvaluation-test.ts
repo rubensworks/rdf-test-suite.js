@@ -1,7 +1,7 @@
 import {TestCaseQueryEvaluation,
   TestCaseQueryEvaluationHandler} from "../../../lib/testcase/sparql/TestCaseQueryEvaluation";
 const quad = require("rdf-quad");
-import {literal, namedNode} from "@rdfjs/data-model";
+import {DataFactory} from "rdf-data-factory";
 import "jest-rdf";
 import {ContextParser} from "jsonld-context-parser";
 import * as RDF from "rdf-js";
@@ -11,6 +11,7 @@ import {QueryResultQuads} from "../../../lib/testcase/sparql/QueryResultQuads";
 // tslint:disable:no-var-requires
 const arrayifyStream = require('arrayify-stream');
 const streamifyString = require('streamify-string');
+const DF = new DataFactory();
 
 // Mock fetch
 (<any> global).fetch = (url: string) => {
@@ -82,21 +83,21 @@ describe('TestCaseQueryEvaluationHandler', () => {
         context = parsedContext;
 
         pAction = new Resource(
-          { term: namedNode('http://www.w3.org/2001/sw/DataAccess/tests/test-manifest#action'), context });
+          { term: DF.namedNode('http://www.w3.org/2001/sw/DataAccess/tests/test-manifest#action'), context });
         pResult = new Resource(
-          { term: namedNode('http://www.w3.org/2001/sw/DataAccess/tests/test-manifest#result'), context });
+          { term: DF.namedNode('http://www.w3.org/2001/sw/DataAccess/tests/test-manifest#result'), context });
         pQuery = new Resource(
-          { term: namedNode('http://www.w3.org/2001/sw/DataAccess/tests/test-query#query'), context });
+          { term: DF.namedNode('http://www.w3.org/2001/sw/DataAccess/tests/test-query#query'), context });
         pCardinality = new Resource(
-          { term: namedNode('http://www.w3.org/2001/sw/DataAccess/tests/test-manifest#resultCardinality'), context });
+          { term: DF.namedNode('http://www.w3.org/2001/sw/DataAccess/tests/test-manifest#resultCardinality'), context });
         pData = new Resource(
-          { term: namedNode('http://www.w3.org/2001/sw/DataAccess/tests/test-query#data'), context });
+          { term: DF.namedNode('http://www.w3.org/2001/sw/DataAccess/tests/test-query#data'), context });
         pGraphData = new Resource(
-          { term: namedNode('http://www.w3.org/2001/sw/DataAccess/tests/test-query#graphData'), context });
+          { term: DF.namedNode('http://www.w3.org/2001/sw/DataAccess/tests/test-query#graphData'), context });
         pGraph = new Resource(
-          { term: namedNode('http://www.w3.org/2001/sw/DataAccess/tests/test-query#graph'), context });
+          { term: DF.namedNode('http://www.w3.org/2001/sw/DataAccess/tests/test-query#graph'), context });
         pLabel = new Resource(
-          { term: namedNode('http://www.w3.org/2000/01/rdf-schema#label'), context });
+          { term: DF.namedNode('http://www.w3.org/2000/01/rdf-schema#label'), context });
 
         done();
       });
@@ -135,10 +136,10 @@ describe('TestCaseQueryEvaluationHandler', () => {
           type: 'bindings',
           value: [
             {
-              '?book': namedNode('http://example.org/book/book1'),
+              '?book': DF.namedNode('http://example.org/book/book1'),
             },
             {
-              '?book': namedNode('http://example.org/book/book2'),
+              '?book': DF.namedNode('http://example.org/book/book2'),
             },
           ],
           variables: [ '?book' ],
@@ -167,10 +168,10 @@ describe('TestCaseQueryEvaluationHandler', () => {
           type: 'bindings',
           value: [
             {
-              '?book': namedNode('http://example.org/book/book1'),
+              '?book': DF.namedNode('http://example.org/book/book1'),
             },
             {
-              '?book': namedNode('http://example.org/book/book2'),
+              '?book': DF.namedNode('http://example.org/book/book2'),
             },
           ],
           variables: [ '?book' ],
@@ -235,10 +236,10 @@ describe('TestCaseQueryEvaluationHandler', () => {
           type: 'bindings',
           value: [
             {
-              '?book': namedNode('http://example.org/book/book1'),
+              '?book': DF.namedNode('http://example.org/book/book1'),
             },
             {
-              '?book': namedNode('http://example.org/book/book2'),
+              '?book': DF.namedNode('http://example.org/book/book2'),
             },
           ],
           variables: [ '?book' ],
@@ -284,10 +285,10 @@ describe('TestCaseQueryEvaluationHandler', () => {
           type: 'bindings',
           value: [
             {
-              '?book': namedNode('http://example.org/book/book1'),
+              '?book': DF.namedNode('http://example.org/book/book1'),
             },
             {
-              '?book': namedNode('http://example.org/book/book2'),
+              '?book': DF.namedNode('http://example.org/book/book2'),
             },
           ],
           variables: [ '?book' ],
@@ -373,14 +374,14 @@ describe('TestCaseQueryEvaluationHandler', () => {
         type: 'bindings',
         value: [
           {
-            '?v1': literal('V1'),
-            '?v2': literal('V2'),
-            '?v3': literal('V3'),
+            '?v1': DF.literal('V1'),
+            '?v2': DF.literal('V2'),
+            '?v3': DF.literal('V3'),
           },
           {
-            '?v1': literal('V1a'),
-            '?v2': literal('V2a'),
-            '?v3': literal('V3a'),
+            '?v1': DF.literal('V1a'),
+            '?v2': DF.literal('V2a'),
+            '?v3': DF.literal('V3a'),
           },
         ],
         variables: [ '?v1', '?v2', '?v3' ],
@@ -423,14 +424,14 @@ describe('TestCaseQueryEvaluationHandler', () => {
         type: 'bindings',
         value: [
           {
-            '?v1': literal('V1a'),
-            '?v2': literal('V2a'),
-            '?v3': literal('V3a'),
+            '?v1': DF.literal('V1a'),
+            '?v2': DF.literal('V2a'),
+            '?v3': DF.literal('V3a'),
           },
           {
-            '?v1': literal('V1'),
-            '?v2': literal('V2'),
-            '?v3': literal('V3'),
+            '?v1': DF.literal('V1'),
+            '?v2': DF.literal('V2'),
+            '?v3': DF.literal('V3'),
           },
         ],
         variables: [ '?v1', '?v2', '?v3' ],
@@ -440,11 +441,11 @@ describe('TestCaseQueryEvaluationHandler', () => {
 
   describe('#resourceToTestCase', () => {
     it('should produce a TestCaseQueryEvaluation', async () => {
-      const resource = new Resource({ term: namedNode('http://ex.org/test'), context });
-      const action = new Resource({ term: namedNode('blabla'), context });
-      action.addProperty(pQuery, new Resource({ term: literal('ACTION.ok'), context }));
+      const resource = new Resource({ term: DF.namedNode('http://ex.org/test'), context });
+      const action = new Resource({ term: DF.namedNode('blabla'), context });
+      action.addProperty(pQuery, new Resource({ term: DF.literal('ACTION.ok'), context }));
       resource.addProperty(pAction, action);
-      resource.addProperty(pResult, new Resource({ term: literal('RESULT.ttl'), context }));
+      resource.addProperty(pResult, new Resource({ term: DF.literal('RESULT.ttl'), context }));
       const testCase = await handler.resourceToTestCase(resource, <any> {});
       expect(testCase).toBeInstanceOf(TestCaseQueryEvaluation);
       expect(testCase.type).toEqual('sparql');
@@ -461,12 +462,12 @@ describe('TestCaseQueryEvaluationHandler', () => {
     });
 
     it('should produce a TestCaseQueryEvaluation with lax cardinality', async () => {
-      const resource = new Resource({ term: namedNode('http://ex.org/test'), context });
-      const action = new Resource({ term: namedNode('blabla'), context });
-      action.addProperty(pQuery, new Resource({ term: literal('ACTION.ok'), context }));
+      const resource = new Resource({ term: DF.namedNode('http://ex.org/test'), context });
+      const action = new Resource({ term: DF.namedNode('blabla'), context });
+      action.addProperty(pQuery, new Resource({ term: DF.literal('ACTION.ok'), context }));
       resource.addProperty(pAction, action);
-      resource.addProperty(pResult, new Resource({ term: literal('RESULT.ttl'), context }));
-      resource.addProperty(pCardinality, new Resource({ context, term: namedNode(
+      resource.addProperty(pResult, new Resource({ term: DF.literal('RESULT.ttl'), context }));
+      resource.addProperty(pCardinality, new Resource({ context, term: DF.namedNode(
         'http://www.w3.org/2001/sw/DataAccess/tests/test-manifest#LaxCardinality') }));
       const testCase = await handler.resourceToTestCase(resource, <any> {});
       expect(testCase).toBeInstanceOf(TestCaseQueryEvaluation);
@@ -484,12 +485,12 @@ describe('TestCaseQueryEvaluationHandler', () => {
     });
 
     it('should produce a TestCaseQueryEvaluation with data in action', async () => {
-      const resource = new Resource({ term: namedNode('http://ex.org/test'), context });
-      const action = new Resource({ term: namedNode('blabla'), context });
-      action.addProperty(pQuery, new Resource({ term: literal('ACTION.ok'), context }));
-      action.addProperty(pData, new Resource({ term: namedNode('RESULT.ttl'), context }));
+      const resource = new Resource({ term: DF.namedNode('http://ex.org/test'), context });
+      const action = new Resource({ term: DF.namedNode('blabla'), context });
+      action.addProperty(pQuery, new Resource({ term: DF.literal('ACTION.ok'), context }));
+      action.addProperty(pData, new Resource({ term: DF.namedNode('RESULT.ttl'), context }));
       resource.addProperty(pAction, action);
-      resource.addProperty(pResult, new Resource({ term: literal('RESULT.ttl'), context }));
+      resource.addProperty(pResult, new Resource({ term: DF.literal('RESULT.ttl'), context }));
       const testCase = await handler.resourceToTestCase(resource, <any> {});
       expect(testCase).toBeInstanceOf(TestCaseQueryEvaluation);
       expect(testCase.type).toEqual('sparql');
@@ -512,12 +513,12 @@ describe('TestCaseQueryEvaluationHandler', () => {
     });
 
     it('should produce a TestCaseQueryEvaluation with raw graph data in action', async () => {
-      const resource = new Resource({ term: namedNode('http://ex.org/test'), context });
-      const action = new Resource({ term: namedNode('blabla'), context });
-      action.addProperty(pQuery, new Resource({ term: literal('ACTION.ok'), context }));
-      action.addProperty(pGraphData, new Resource({ term: namedNode('RESULT.ttl'), context }));
+      const resource = new Resource({ term: DF.namedNode('http://ex.org/test'), context });
+      const action = new Resource({ term: DF.namedNode('blabla'), context });
+      action.addProperty(pQuery, new Resource({ term: DF.literal('ACTION.ok'), context }));
+      action.addProperty(pGraphData, new Resource({ term: DF.namedNode('RESULT.ttl'), context }));
       resource.addProperty(pAction, action);
-      resource.addProperty(pResult, new Resource({ term: literal('RESULT.ttl'), context }));
+      resource.addProperty(pResult, new Resource({ term: DF.literal('RESULT.ttl'), context }));
       const testCase = await handler.resourceToTestCase(resource, <any> {});
       expect(testCase).toBeInstanceOf(TestCaseQueryEvaluation);
       expect(testCase.type).toEqual('sparql');
@@ -540,15 +541,15 @@ describe('TestCaseQueryEvaluationHandler', () => {
     });
 
     it('should produce a TestCaseQueryEvaluation with labelled graph data in action', async () => {
-      const resource = new Resource({ term: namedNode('http://ex.org/test'), context });
-      const action = new Resource({ term: namedNode('action'), context });
-      action.addProperty(pQuery, new Resource({ term: literal('ACTION.ok'), context }));
-      const graphData = new Resource({ term: namedNode('graphData'), context });
-      graphData.addProperty(pLabel, new Resource({ term: namedNode('http://ex.org/graph'), context }));
-      graphData.addProperty(pGraph, new Resource({ term: namedNode('RESULT.ttl'), context }));
+      const resource = new Resource({ term: DF.namedNode('http://ex.org/test'), context });
+      const action = new Resource({ term: DF.namedNode('action'), context });
+      action.addProperty(pQuery, new Resource({ term: DF.literal('ACTION.ok'), context }));
+      const graphData = new Resource({ term: DF.namedNode('graphData'), context });
+      graphData.addProperty(pLabel, new Resource({ term: DF.namedNode('http://ex.org/graph'), context }));
+      graphData.addProperty(pGraph, new Resource({ term: DF.namedNode('RESULT.ttl'), context }));
       action.addProperty(pGraphData, graphData);
       resource.addProperty(pAction, action);
-      resource.addProperty(pResult, new Resource({ term: literal('RESULT.ttl'), context }));
+      resource.addProperty(pResult, new Resource({ term: DF.literal('RESULT.ttl'), context }));
       const testCase = await handler.resourceToTestCase(resource, <any> {});
       expect(testCase).toBeInstanceOf(TestCaseQueryEvaluation);
       expect(testCase.type).toEqual('sparql');
@@ -571,14 +572,14 @@ describe('TestCaseQueryEvaluationHandler', () => {
     });
 
     it('should produce a TestCaseQueryEvaluation with multiple raw graph data in action', async () => {
-      const resource = new Resource({ term: namedNode('http://ex.org/test'), context });
-      const action = new Resource({ term: namedNode('blabla'), context });
-      action.addProperty(pQuery, new Resource({ term: literal('ACTION.ok'), context }));
-      action.addProperty(pGraphData, new Resource({ term: namedNode('RESULT1.ttl'), context }));
-      action.addProperty(pGraphData, new Resource({ term: namedNode('RESULT2.ttl'), context }));
-      action.addProperty(pGraphData, new Resource({ term: namedNode('RESULT3.ttl'), context }));
+      const resource = new Resource({ term: DF.namedNode('http://ex.org/test'), context });
+      const action = new Resource({ term: DF.namedNode('blabla'), context });
+      action.addProperty(pQuery, new Resource({ term: DF.literal('ACTION.ok'), context }));
+      action.addProperty(pGraphData, new Resource({ term: DF.namedNode('RESULT1.ttl'), context }));
+      action.addProperty(pGraphData, new Resource({ term: DF.namedNode('RESULT2.ttl'), context }));
+      action.addProperty(pGraphData, new Resource({ term: DF.namedNode('RESULT3.ttl'), context }));
       resource.addProperty(pAction, action);
-      resource.addProperty(pResult, new Resource({ term: literal('RESULT.ttl'), context }));
+      resource.addProperty(pResult, new Resource({ term: DF.literal('RESULT.ttl'), context }));
       const testCase = await handler.resourceToTestCase(resource, <any> {});
       expect(testCase).toBeInstanceOf(TestCaseQueryEvaluation);
       expect(testCase.type).toEqual('sparql');
@@ -600,22 +601,22 @@ describe('TestCaseQueryEvaluationHandler', () => {
     });
 
     it('should produce a TestCaseQueryEvaluation with multiple labelled graph data in action', async () => {
-      const resource = new Resource({ term: namedNode('http://ex.org/test'), context });
-      const action = new Resource({ term: namedNode('action'), context });
-      action.addProperty(pQuery, new Resource({ term: literal('ACTION.ok'), context }));
+      const resource = new Resource({ term: DF.namedNode('http://ex.org/test'), context });
+      const action = new Resource({ term: DF.namedNode('action'), context });
+      action.addProperty(pQuery, new Resource({ term: DF.literal('ACTION.ok'), context }));
 
-      const graphData1 = new Resource({ term: namedNode('graphData'), context });
-      graphData1.addProperty(pLabel, new Resource({ term: namedNode('http://ex.org/graph1'), context }));
-      graphData1.addProperty(pGraph, new Resource({ term: namedNode('RESULT1.ttl'), context }));
+      const graphData1 = new Resource({ term: DF.namedNode('graphData'), context });
+      graphData1.addProperty(pLabel, new Resource({ term: DF.namedNode('http://ex.org/graph1'), context }));
+      graphData1.addProperty(pGraph, new Resource({ term: DF.namedNode('RESULT1.ttl'), context }));
       action.addProperty(pGraphData, graphData1);
 
-      const graphData2 = new Resource({ term: namedNode('graphData'), context });
-      graphData2.addProperty(pLabel, new Resource({ term: namedNode('http://ex.org/graph2'), context }));
-      graphData2.addProperty(pGraph, new Resource({ term: namedNode('RESULT2.ttl'), context }));
+      const graphData2 = new Resource({ term: DF.namedNode('graphData'), context });
+      graphData2.addProperty(pLabel, new Resource({ term: DF.namedNode('http://ex.org/graph2'), context }));
+      graphData2.addProperty(pGraph, new Resource({ term: DF.namedNode('RESULT2.ttl'), context }));
       action.addProperty(pGraphData, graphData2);
 
       resource.addProperty(pAction, action);
-      resource.addProperty(pResult, new Resource({ term: literal('RESULT.ttl'), context }));
+      resource.addProperty(pResult, new Resource({ term: DF.literal('RESULT.ttl'), context }));
       const testCase = await handler.resourceToTestCase(resource, <any> {});
       expect(testCase).toBeInstanceOf(TestCaseQueryEvaluation);
       expect(testCase.type).toEqual('sparql');
@@ -638,41 +639,41 @@ describe('TestCaseQueryEvaluationHandler', () => {
     });
 
     it('should error on a resource without action', () => {
-      const resource = new Resource({ term: namedNode('http://ex.org/test'), context });
-      resource.addProperty(pResult, new Resource({ term: literal('RESULT.ttl'), context }));
+      const resource = new Resource({ term: DF.namedNode('http://ex.org/test'), context });
+      resource.addProperty(pResult, new Resource({ term: DF.literal('RESULT.ttl'), context }));
       return expect(handler.resourceToTestCase(resource, <any> {})).rejects.toBeTruthy();
     });
 
     it('should error on a resource without result', () => {
-      const resource = new Resource({ term: namedNode('http://ex.org/test'), context });
-      resource.addProperty(pAction, new Resource({ term: literal('ACTION'), context }));
+      const resource = new Resource({ term: DF.namedNode('http://ex.org/test'), context });
+      resource.addProperty(pAction, new Resource({ term: DF.literal('ACTION'), context }));
       return expect(handler.resourceToTestCase(resource, <any> {})).rejects.toBeTruthy();
     });
 
     it('should error on a resource without query in action', () => {
-      const resource = new Resource({ term: namedNode('http://ex.org/test'), context });
-      const action = new Resource({ term: namedNode('blabla'), context });
+      const resource = new Resource({ term: DF.namedNode('http://ex.org/test'), context });
+      const action = new Resource({ term: DF.namedNode('blabla'), context });
       resource.addProperty(pAction, action);
-      resource.addProperty(pResult, new Resource({ term: literal('RESULT.ttl'), context }));
+      resource.addProperty(pResult, new Resource({ term: DF.literal('RESULT.ttl'), context }));
       return expect(handler.resourceToTestCase(resource, <any> {})).rejects.toBeTruthy();
     });
 
     it('should produce TestCaseQueryEvaluation that tests true on equal results', async () => {
-      const resource = new Resource({ term: namedNode('http://ex.org/test'), context });
-      const action = new Resource({ term: namedNode('blabla'), context });
-      action.addProperty(pQuery, new Resource({ term: literal('ACTION.ok'), context }));
+      const resource = new Resource({ term: DF.namedNode('http://ex.org/test'), context });
+      const action = new Resource({ term: DF.namedNode('blabla'), context });
+      action.addProperty(pQuery, new Resource({ term: DF.literal('ACTION.ok'), context }));
       resource.addProperty(pAction, action);
-      resource.addProperty(pResult, new Resource({ term: literal('RESULT.ttl'), context }));
+      resource.addProperty(pResult, new Resource({ term: DF.literal('RESULT.ttl'), context }));
       const testCase = await handler.resourceToTestCase(resource, <any> {});
       return expect(testCase.test(engine, {})).resolves.toBe(undefined);
     });
 
     it('should produce TestCaseQueryEvaluation that tests false on non-equal results', async () => {
-      const resource = new Resource({ term: namedNode('http://ex.org/test'), context });
-      const action = new Resource({ term: namedNode('blabla'), context });
-      action.addProperty(pQuery, new Resource({ term: literal('ACTION.ok'), context }));
+      const resource = new Resource({ term: DF.namedNode('http://ex.org/test'), context });
+      const action = new Resource({ term: DF.namedNode('blabla'), context });
+      action.addProperty(pQuery, new Resource({ term: DF.literal('ACTION.ok'), context }));
       resource.addProperty(pAction, action);
-      resource.addProperty(pResult, new Resource({ term: literal('RESULT_OTHER.ttl'), context }));
+      resource.addProperty(pResult, new Resource({ term: DF.literal('RESULT_OTHER.ttl'), context }));
       const testCase = await handler.resourceToTestCase(resource, <any> {});
       return expect(testCase.test(engine, {})).rejects.toBeTruthy();
     });

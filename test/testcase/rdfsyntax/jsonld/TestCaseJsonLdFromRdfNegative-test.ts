@@ -1,6 +1,6 @@
-import {literal, namedNode} from "@rdfjs/data-model";
+import {DataFactory} from "rdf-data-factory";
 import "jest-rdf";
-import {ContextParser, IJsonLdContextNormalized} from "jsonld-context-parser";
+import {ContextParser, JsonLdContextNormalized} from "jsonld-context-parser";
 import * as RDF from "rdf-js";
 import {Resource} from "rdf-object";
 import {
@@ -9,6 +9,7 @@ import {
 import {ErrorSkipped} from "../../../../lib/ErrorSkipped";
 
 const quad = require("rdf-quad");
+const DF = new DataFactory();
 
 // tslint:disable:no-var-requires
 const arrayifyStream = require('arrayify-stream');
@@ -52,7 +53,7 @@ describe('TestCaseJsonLdFromRdfNegativeHandler', () => {
     },
   };
 
-  let context: IJsonLdContextNormalized;
+  let context: JsonLdContextNormalized;
   let pAction: Resource;
   let pResult: Resource;
 
@@ -62,9 +63,9 @@ describe('TestCaseJsonLdFromRdfNegativeHandler', () => {
         context = parsedContext;
 
         pAction = new Resource(
-          { term: namedNode('http://www.w3.org/2001/sw/DataAccess/tests/test-manifest#action'), context });
+          { term: DF.namedNode('http://www.w3.org/2001/sw/DataAccess/tests/test-manifest#action'), context });
         pResult = new Resource(
-          { term: namedNode('http://www.w3.org/2001/sw/DataAccess/tests/test-manifest#result'), context });
+          { term: DF.namedNode('http://www.w3.org/2001/sw/DataAccess/tests/test-manifest#result'), context });
 
         done();
       });
@@ -73,9 +74,9 @@ describe('TestCaseJsonLdFromRdfNegativeHandler', () => {
 
   describe('#resourceToTestCase', () => {
     it('should produce a TestCaseEval', async () => {
-      const resource = new Resource({ term: namedNode('http://ex.org/test'), context });
-      resource.addProperty(pAction, new Resource({ term: literal('ACTION.ttl'), context }));
-      resource.addProperty(pResult, new Resource({ term: literal('CODE'), context }));
+      const resource = new Resource({ term: DF.namedNode('http://ex.org/test'), context });
+      resource.addProperty(pAction, new Resource({ term: DF.literal('ACTION.ttl'), context }));
+      resource.addProperty(pResult, new Resource({ term: DF.literal('CODE'), context }));
       const testCase = await handler.resourceToTestCase(resource, <any> {});
       expect(testCase).toBeInstanceOf(TestCaseJsonLdFromRdfHandlerNegative);
       expect(testCase.type).toEqual('fromrdfsyntax');
@@ -107,29 +108,29 @@ describe('TestCaseJsonLdFromRdfNegativeHandler', () => {
     });
 
     it('should error on a resource without action', () => {
-      const resource = new Resource({ term: namedNode('http://ex.org/test'), context });
-      resource.addProperty(pResult, new Resource({ term: literal('CODE'), context }));
+      const resource = new Resource({ term: DF.namedNode('http://ex.org/test'), context });
+      resource.addProperty(pResult, new Resource({ term: DF.literal('CODE'), context }));
       return expect(handler.resourceToTestCase(resource, <any> {})).rejects.toBeTruthy();
     });
 
     it('should error on a resource without result', () => {
-      const resource = new Resource({ term: namedNode('http://ex.org/test'), context });
-      resource.addProperty(pAction, new Resource({ term: literal('ACTION.ttl'), context }));
+      const resource = new Resource({ term: DF.namedNode('http://ex.org/test'), context });
+      resource.addProperty(pAction, new Resource({ term: DF.literal('ACTION.ttl'), context }));
       return expect(handler.resourceToTestCase(resource, <any> {})).rejects.toBeTruthy();
     });
 
     it('should produce TestCaseEval that tests true when the expected error code is thrown', async () => {
-      const resource = new Resource({ term: namedNode('http://ex.org/test'), context });
-      resource.addProperty(pAction, new Resource({ term: literal('ERRORCODE.ttl'), context }));
-      resource.addProperty(pResult, new Resource({ term: literal('CODE'), context }));
+      const resource = new Resource({ term: DF.namedNode('http://ex.org/test'), context });
+      resource.addProperty(pAction, new Resource({ term: DF.literal('ERRORCODE.ttl'), context }));
+      resource.addProperty(pResult, new Resource({ term: DF.literal('CODE'), context }));
       const testCase = await handler.resourceToTestCase(resource, <any> {});
       return expect(testCase.test(serializer, {})).resolves.toBe(undefined);
     });
 
     it('should produce TestCaseEval that tests false when no error is thrown', async () => {
-      const resource = new Resource({ term: namedNode('http://ex.org/test'), context });
-      resource.addProperty(pAction, new Resource({ term: literal('ACTION.ttl'), context }));
-      resource.addProperty(pResult, new Resource({ term: literal('CODE'), context }));
+      const resource = new Resource({ term: DF.namedNode('http://ex.org/test'), context });
+      resource.addProperty(pAction, new Resource({ term: DF.literal('ACTION.ttl'), context }));
+      resource.addProperty(pResult, new Resource({ term: DF.literal('CODE'), context }));
       const testCase = await handler.resourceToTestCase(resource, <any> {});
       return expect(testCase.test(serializer, {})).rejects
         .toThrow(new Error(`Expected to throw an error with code 'CODE' when parsing.
@@ -140,18 +141,18 @@ describe('TestCaseJsonLdFromRdfNegativeHandler', () => {
     });
 
     it('should produce TestCaseEval that tests false when an error with different error code is thrown', async () => {
-      const resource = new Resource({ term: namedNode('http://ex.org/test'), context });
-      resource.addProperty(pAction, new Resource({ term: literal('ERROR.ttl'), context }));
-      resource.addProperty(pResult, new Resource({ term: literal('CODE'), context }));
+      const resource = new Resource({ term: DF.namedNode('http://ex.org/test'), context });
+      resource.addProperty(pAction, new Resource({ term: DF.literal('ERROR.ttl'), context }));
+      resource.addProperty(pResult, new Resource({ term: DF.literal('CODE'), context }));
       const testCase = await handler.resourceToTestCase(resource, <any> {});
       return expect(testCase.test(serializer, {})).rejects
         .toThrow(new Error('Received invalid error code, expected CODE, but got undefined (ERROR)'));
     });
 
     it('should produce TestCaseEval that propagates skipped tests', async () => {
-      const resource = new Resource({ term: namedNode('http://ex.org/test'), context });
-      resource.addProperty(pAction, new Resource({ term: literal('ACTION.ttl'), context }));
-      resource.addProperty(pResult, new Resource({ term: literal('CODE'), context }));
+      const resource = new Resource({ term: DF.namedNode('http://ex.org/test'), context });
+      resource.addProperty(pAction, new Resource({ term: DF.literal('ACTION.ttl'), context }));
+      resource.addProperty(pResult, new Resource({ term: DF.literal('CODE'), context }));
       const testCase = await handler.resourceToTestCase(resource, <any> {});
       const mySerializer = {
         serialize: () => Promise.reject(new ErrorSkipped('Skipped')),

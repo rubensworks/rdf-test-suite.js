@@ -2,9 +2,9 @@ import {Resource} from "rdf-object";
 import {resolve} from "relative-to-absolute-iri";
 import {IFetchOptions, Util} from "../../../Util";
 import {ITestCase, ITestCaseData} from "../../ITestCase";
-import {IParser} from "../IParser";
 import {TestCaseEval, TestCaseEvalHandler} from "../TestCaseEval";
-import {namedNode} from "@rdfjs/data-model";
+import {DataFactory} from "rdf-data-factory";
+const DF = new DataFactory();
 
 /**
  * Test case handler for:
@@ -21,7 +21,7 @@ export class TestCaseJsonLdToRdfHandler extends TestCaseEvalHandler {
     const testProperties: any = {};
 
     // Only apply some properties for HTML tests
-    const isHtml = resource.isA(namedNode('https://w3c.github.io/json-ld-api/tests/vocab#HtmlTest'));
+    const isHtml = resource.isA(DF.namedNode('https://w3c.github.io/json-ld-api/tests/vocab#HtmlTest'));
     if (isHtml) {
       injectArguments.contentType = 'text/html';
     }

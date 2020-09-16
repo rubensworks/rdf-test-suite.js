@@ -1,13 +1,15 @@
-import {blankNode, literal, namedNode, quad} from "@rdfjs/data-model";
+import {DataFactory} from "rdf-data-factory";
 import {existsSync, mkdirSync, readFileSync} from "fs";
 import "isomorphic-fetch";
 import "jest-rdf";
 import {Util} from "../lib/Util";
+import type * as RDF from "rdf-js";
 
 // tslint:disable:no-var-requires
 const streamifyString = require('streamify-string');
 const stringifyStream = require('stream-to-string');
 const arrayifyStream = require('arrayify-stream');
+const DF = new DataFactory<RDF.BaseQuad>();
 
 // Mock fetch
 (<any> global).fetch = (url: string) => {
@@ -176,8 +178,8 @@ describe('Util', () => {
       expect(await arrayifyStream(Util.parseRdfRaw('application/x-turtle', 'http://example.org/',
         streamifyString('<a> <b> <c>.'))))
         .toEqualRdfQuadArray([
-          quad(namedNode('http://example.org/a'), namedNode('http://example.org/b'),
-            namedNode('http://example.org/c')),
+          DF.quad(DF.namedNode('http://example.org/a'), DF.namedNode('http://example.org/b'),
+            DF.namedNode('http://example.org/c')),
         ]);
     });
 
@@ -185,8 +187,8 @@ describe('Util', () => {
       expect(await arrayifyStream(Util.parseRdfRaw('text/turtle', 'http://example.org/',
         streamifyString('<a> <b> <c>.'))))
         .toEqualRdfQuadArray([
-          quad(namedNode('http://example.org/a'), namedNode('http://example.org/b'),
-            namedNode('http://example.org/c')),
+          DF.quad(DF.namedNode('http://example.org/a'), DF.namedNode('http://example.org/b'),
+            DF.namedNode('http://example.org/c')),
         ]);
     });
 
@@ -194,8 +196,8 @@ describe('Util', () => {
       expect(await arrayifyStream(Util.parseRdfRaw('text/turtle', 'http://example.org/',
         streamifyString('<a> _:b <c>.'))))
         .toEqualRdfQuadArray([
-          quad(namedNode('http://example.org/a'), blankNode('b'),
-            namedNode('http://example.org/c')),
+          DF.quad(DF.namedNode('http://example.org/a'), DF.blankNode('b'),
+            DF.namedNode('http://example.org/c')),
         ]);
     });
 
@@ -203,8 +205,8 @@ describe('Util', () => {
       expect(await arrayifyStream(Util.parseRdfRaw('application/n-triples', 'http://example.org/',
         streamifyString('<http://ex.org/a> <http://ex.org/b> <http://ex.org/c>.'))))
         .toEqualRdfQuadArray([
-          quad(namedNode('http://ex.org/a'), namedNode('http://ex.org/b'),
-            namedNode('http://ex.org/c')),
+          DF.quad(DF.namedNode('http://ex.org/a'), DF.namedNode('http://ex.org/b'),
+            DF.namedNode('http://ex.org/c')),
         ]);
     });
 
@@ -212,8 +214,8 @@ describe('Util', () => {
       expect(await arrayifyStream(Util.parseRdfRaw('application/n-quads', 'http://example.org/',
         streamifyString('<http://ex.org/a> <http://ex.org/b> <http://ex.org/c> <http://ex.org/d>.'))))
         .toEqualRdfQuadArray([
-          quad(namedNode('http://ex.org/a'), namedNode('http://ex.org/b'),
-            namedNode('http://ex.org/c'), namedNode('http://ex.org/d')),
+          DF.quad(DF.namedNode('http://ex.org/a'), DF.namedNode('http://ex.org/b'),
+            DF.namedNode('http://ex.org/c'), DF.namedNode('http://ex.org/d')),
         ]);
     });
 
@@ -229,10 +231,10 @@ describe('Util', () => {
 
 </rdf:RDF>`))))
         .toEqualRdfQuadArray([
-          quad(
-            namedNode('http://www.w3.org/TR/rdf-syntax-grammar'),
-            namedNode('http://purl.org/dc/elements/1.1/title'),
-            literal('RDF1.1 XML Syntax')),
+          DF.quad(
+            DF.namedNode('http://www.w3.org/TR/rdf-syntax-grammar'),
+            DF.namedNode('http://purl.org/dc/elements/1.1/title'),
+            DF.literal('RDF1.1 XML Syntax')),
         ]);
     });
 
@@ -243,10 +245,10 @@ describe('Util', () => {
   "http://ex.org/p": "value"
 }`))))
         .toEqualRdfQuadArray([
-          quad(
-            namedNode('http://example.org/abc'),
-            namedNode('http://ex.org/p'),
-            literal('value')),
+          DF.quad(
+            DF.namedNode('http://example.org/abc'),
+            DF.namedNode('http://ex.org/p'),
+            DF.literal('value')),
         ]);
     });
   });
@@ -256,10 +258,10 @@ describe('Util', () => {
       const response = await Util.fetchRdf('http://example.org/abc.ttl');
       expect(response[0]).toEqual('http://example.org/abc.ttl');
       expect(await arrayifyStream(response[1])).toEqualRdfQuadArray([
-        quad(
-          namedNode('http://example.org/a'),
-          namedNode('http://example.org/b'),
-          namedNode('http://example.org/c')),
+        DF.quad(
+          DF.namedNode('http://example.org/a'),
+          DF.namedNode('http://example.org/b'),
+          DF.namedNode('http://example.org/c')),
       ]);
     });
   });

@@ -1,4 +1,4 @@
-import {IDocumentLoader, IJsonLdContextNormalized} from "jsonld-context-parser";
+import {IDocumentLoader, IJsonLdContext} from "jsonld-context-parser";
 import {IFetchOptions, Util} from "./Util";
 
 /**
@@ -12,7 +12,7 @@ export class DocumentLoaderCached implements IDocumentLoader {
     this.options = options;
   }
 
-  public async load(url: string): Promise<IJsonLdContextNormalized> {
+  public async load(url: string): Promise<IJsonLdContext> {
     const { body } = await Util.fetchCached(url,
       this.options, { headers: { accept: 'application/ld+json' } });
     return JSON.parse(await require('stream-to-string')(body));

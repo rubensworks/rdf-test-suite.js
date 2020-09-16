@@ -1,4 +1,4 @@
-import {namedNode} from "@rdfjs/data-model";
+import {DataFactory} from "rdf-data-factory";
 import * as RDF from "rdf-js";
 import {RdfObjectLoader, Resource} from "rdf-object";
 import {stringToTerm} from "rdf-string";
@@ -17,6 +17,7 @@ import {QueryResultQuads} from "./QueryResultQuads";
 // tslint:disable:no-var-requires
 const arrayifyStream = require('arrayify-stream');
 const stringifyStream = require('stream-to-string');
+const DF = new DataFactory();
 
 /**
  * Test case handler for http://www.w3.org/2001/sw/DataAccess/tests/test-manifest#QueryEvaluationTest.
@@ -208,12 +209,12 @@ export class TestCaseQueryEvaluationHandler implements ITestCaseHandler<TestCase
       if (graphData.property.graph) {
         queryDataLinks.push({
           dataUri: graphData.property.graph.value,
-          dataGraph: namedNode(Util.normalizeBaseUrl(graphData.property.label.value)),
+          dataGraph: DF.namedNode(Util.normalizeBaseUrl(graphData.property.label.value)),
         });
       } else {
         queryDataLinks.push({
           dataUri: graphData.value,
-          dataGraph: namedNode(Util.normalizeBaseUrl(graphData.value)),
+          dataGraph: DF.namedNode(Util.normalizeBaseUrl(graphData.value)),
         });
       }
     }

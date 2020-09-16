@@ -1,5 +1,7 @@
-import {blankNode, literal, namedNode} from "@rdfjs/data-model";
+import {DataFactory} from "rdf-data-factory";
 import {QueryResultBindings} from "../../../lib/testcase/sparql/QueryResultBindings";
+
+const DF = new DataFactory();
 
 describe('QueryResultBindings', () => {
 
@@ -34,241 +36,241 @@ describe('QueryResultBindings', () => {
   beforeEach(() => {
     bindingsAB1 = new QueryResultBindings([ '?a', '?b' ], [
       {
-        '?a': namedNode('a1'),
-        '?b': namedNode('b1'),
+        '?a': DF.namedNode('a1'),
+        '?b': DF.namedNode('b1'),
       },
       {
-        '?a': namedNode('a2'),
-        '?b': namedNode('b2'),
+        '?a': DF.namedNode('a2'),
+        '?b': DF.namedNode('b2'),
       },
     ], false);
     bindingsAB1Duplicates = new QueryResultBindings([ '?a', '?b' ], [
       {
-        '?a': namedNode('a1'),
-        '?b': namedNode('b1'),
+        '?a': DF.namedNode('a1'),
+        '?b': DF.namedNode('b1'),
       },
       {
-        '?a': namedNode('a1'),
-        '?b': namedNode('b1'),
+        '?a': DF.namedNode('a1'),
+        '?b': DF.namedNode('b1'),
       },
       {
-        '?a': namedNode('a1'),
-        '?b': namedNode('b1'),
+        '?a': DF.namedNode('a1'),
+        '?b': DF.namedNode('b1'),
       },
       {
-        '?a': namedNode('a2'),
-        '?b': namedNode('b2'),
+        '?a': DF.namedNode('a2'),
+        '?b': DF.namedNode('b2'),
       },
       {
-        '?a': namedNode('a2'),
-        '?b': namedNode('b2'),
+        '?a': DF.namedNode('a2'),
+        '?b': DF.namedNode('b2'),
       },
       {
-        '?a': namedNode('a2'),
-        '?b': namedNode('b2'),
+        '?a': DF.namedNode('a2'),
+        '?b': DF.namedNode('b2'),
       },
       {
-        '?a': namedNode('a2'),
-        '?b': namedNode('b2'),
+        '?a': DF.namedNode('a2'),
+        '?b': DF.namedNode('b2'),
       },
       {
-        '?a': namedNode('a2'),
-        '?b': namedNode('b2'),
+        '?a': DF.namedNode('a2'),
+        '?b': DF.namedNode('b2'),
       },
     ], false);
     bindingsAB1Reduced = new QueryResultBindings([ '?a', '?b' ], [
       {
-        '?a': namedNode('a1'),
-        '?b': namedNode('b1'),
+        '?a': DF.namedNode('a1'),
+        '?b': DF.namedNode('b1'),
       },
       {
-        '?a': namedNode('a1'),
-        '?b': namedNode('b1'),
+        '?a': DF.namedNode('a1'),
+        '?b': DF.namedNode('b1'),
       },
       {
-        '?a': namedNode('a2'),
-        '?b': namedNode('b2'),
+        '?a': DF.namedNode('a2'),
+        '?b': DF.namedNode('b2'),
       },
       {
-        '?a': namedNode('a2'),
-        '?b': namedNode('b2'),
+        '?a': DF.namedNode('a2'),
+        '?b': DF.namedNode('b2'),
       },
     ], false);
     bindingsAB1oo = new QueryResultBindings([ '?a', '?b' ], [
       {
-        '?a': namedNode('a2'),
-        '?b': namedNode('b2'),
+        '?a': DF.namedNode('a2'),
+        '?b': DF.namedNode('b2'),
       },
       {
-        '?a': namedNode('a1'),
-        '?b': namedNode('b1'),
+        '?a': DF.namedNode('a1'),
+        '?b': DF.namedNode('b1'),
       },
     ], false);
     bindingsAB1Empty = new QueryResultBindings([ '?a', '?b' ], [], false);
     bindingsBA1 = new QueryResultBindings([ '?b', '?a' ], [
       {
-        '?a': namedNode('a1'),
-        '?b': namedNode('b1'),
+        '?a': DF.namedNode('a1'),
+        '?b': DF.namedNode('b1'),
       },
       {
-        '?a': namedNode('a2'),
-        '?b': namedNode('b2'),
+        '?a': DF.namedNode('a2'),
+        '?b': DF.namedNode('b2'),
       },
     ], false);
     bindingsBA1Empty = new QueryResultBindings([ '?b', '?a' ], [], false);
     bindingsCD1 = new QueryResultBindings([ '?c', '?d' ], [
       {
-        '?c': namedNode('c1'),
-        '?d': namedNode('d1'),
+        '?c': DF.namedNode('c1'),
+        '?d': DF.namedNode('d1'),
       },
       {
-        '?c': namedNode('c2'),
-        '?d': namedNode('d2'),
+        '?c': DF.namedNode('c2'),
+        '?d': DF.namedNode('d2'),
       },
     ], false);
     bindingsCD1Empty = new QueryResultBindings([ '?c', '?d' ], [], false);
     bindingDecimalShort = new QueryResultBindings([ '?c', '?d' ], [
       {
-        '?c': literal('2', namedNode('http://www.w3.org/2001/XMLSchema#decimal')),
-        '?d': literal('3', namedNode('http://www.w3.org/2001/XMLSchema#decimal')),
+        '?c': DF.literal('2', DF.namedNode('http://www.w3.org/2001/XMLSchema#decimal')),
+        '?d': DF.literal('3', DF.namedNode('http://www.w3.org/2001/XMLSchema#decimal')),
       },
       {
-        '?c': literal('4.4', namedNode('http://www.w3.org/2001/XMLSchema#decimal')),
-        '?d': literal('5.5', namedNode('http://www.w3.org/2001/XMLSchema#decimal')),
+        '?c': DF.literal('4.4', DF.namedNode('http://www.w3.org/2001/XMLSchema#decimal')),
+        '?d': DF.literal('5.5', DF.namedNode('http://www.w3.org/2001/XMLSchema#decimal')),
       },
     ], false);
     bindingDecimalLong = new QueryResultBindings([ '?c', '?d' ], [
       {
-        '?c': literal('2.000', namedNode('http://www.w3.org/2001/XMLSchema#decimal')),
-        '?d': literal('3.00', namedNode('http://www.w3.org/2001/XMLSchema#decimal')),
+        '?c': DF.literal('2.000', DF.namedNode('http://www.w3.org/2001/XMLSchema#decimal')),
+        '?d': DF.literal('3.00', DF.namedNode('http://www.w3.org/2001/XMLSchema#decimal')),
       },
       {
-        '?c': literal('4.40000', namedNode('http://www.w3.org/2001/XMLSchema#decimal')),
-        '?d': literal('5.50000000', namedNode('http://www.w3.org/2001/XMLSchema#decimal')),
+        '?c': DF.literal('4.40000', DF.namedNode('http://www.w3.org/2001/XMLSchema#decimal')),
+        '?d': DF.literal('5.50000000', DF.namedNode('http://www.w3.org/2001/XMLSchema#decimal')),
       },
     ], false);
     bindingBlankNode1Lower = new QueryResultBindings([ '?c', '?d' ], [
       {
-        '?c': blankNode('a'),
-        '?d': blankNode('b'),
+        '?c': DF.blankNode('a'),
+        '?d': DF.blankNode('b'),
       },
       {
-        '?c': blankNode('c'),
-        '?d': blankNode('d'),
+        '?c': DF.blankNode('c'),
+        '?d': DF.blankNode('d'),
       },
     ], false);
     bindingBlankNode1Upper = new QueryResultBindings([ '?c', '?d' ], [
       {
-        '?c': blankNode('A'),
-        '?d': blankNode('B'),
+        '?c': DF.blankNode('A'),
+        '?d': DF.blankNode('B'),
       },
       {
-        '?c': blankNode('C'),
-        '?d': blankNode('D'),
+        '?c': DF.blankNode('C'),
+        '?d': DF.blankNode('D'),
       },
     ], false);
     bindingBlankNode2 = new QueryResultBindings([ '?c', '?d' ], [
       {
-        '?c': blankNode('a'),
-        '?d': blankNode('a'),
+        '?c': DF.blankNode('a'),
+        '?d': DF.blankNode('a'),
       },
       {
-        '?c': blankNode('c'),
-        '?d': blankNode('d'),
+        '?c': DF.blankNode('c'),
+        '?d': DF.blankNode('d'),
       },
     ], false);
 
     bindingsAB1Order = new QueryResultBindings([ '?a', '?b' ], [
       {
-        '?a': namedNode('a1'),
-        '?b': namedNode('b1'),
+        '?a': DF.namedNode('a1'),
+        '?b': DF.namedNode('b1'),
       },
       {
-        '?a': namedNode('a2'),
-        '?b': namedNode('b2'),
+        '?a': DF.namedNode('a2'),
+        '?b': DF.namedNode('b2'),
       },
     ], true);
     bindingsAB1ooOrder = new QueryResultBindings([ '?a', '?b' ], [
       {
-        '?a': namedNode('a2'),
-        '?b': namedNode('b2'),
+        '?a': DF.namedNode('a2'),
+        '?b': DF.namedNode('b2'),
       },
       {
-        '?a': namedNode('a1'),
-        '?b': namedNode('b1'),
+        '?a': DF.namedNode('a1'),
+        '?b': DF.namedNode('b1'),
       },
     ], true);
     bindingsAB1EmptyOrder = new QueryResultBindings([ '?a', '?b' ], [], true);
     bindingsBA1Order = new QueryResultBindings([ '?b', '?a' ], [
       {
-        '?a': namedNode('a1'),
-        '?b': namedNode('b1'),
+        '?a': DF.namedNode('a1'),
+        '?b': DF.namedNode('b1'),
       },
       {
-        '?a': namedNode('a2'),
-        '?b': namedNode('b2'),
+        '?a': DF.namedNode('a2'),
+        '?b': DF.namedNode('b2'),
       },
     ], true);
     bindingsBA1EmptyOrder = new QueryResultBindings([ '?b', '?a' ], [], true);
     bindingsCD1Order = new QueryResultBindings([ '?c', '?d' ], [
       {
-        '?c': namedNode('c1'),
-        '?d': namedNode('d1'),
+        '?c': DF.namedNode('c1'),
+        '?d': DF.namedNode('d1'),
       },
       {
-        '?c': namedNode('c2'),
-        '?d': namedNode('d2'),
+        '?c': DF.namedNode('c2'),
+        '?d': DF.namedNode('d2'),
       },
     ], true);
     bindingsCD1EmptyOrder = new QueryResultBindings([ '?c', '?d' ], [], true);
     bindingDecimalShortOrder = new QueryResultBindings([ '?c', '?d' ], [
       {
-        '?c': literal('2', namedNode('http://www.w3.org/2001/XMLSchema#decimal')),
-        '?d': literal('3', namedNode('http://www.w3.org/2001/XMLSchema#decimal')),
+        '?c': DF.literal('2', DF.namedNode('http://www.w3.org/2001/XMLSchema#decimal')),
+        '?d': DF.literal('3', DF.namedNode('http://www.w3.org/2001/XMLSchema#decimal')),
       },
       {
-        '?c': literal('4.4', namedNode('http://www.w3.org/2001/XMLSchema#decimal')),
-        '?d': literal('5.5', namedNode('http://www.w3.org/2001/XMLSchema#decimal')),
+        '?c': DF.literal('4.4', DF.namedNode('http://www.w3.org/2001/XMLSchema#decimal')),
+        '?d': DF.literal('5.5', DF.namedNode('http://www.w3.org/2001/XMLSchema#decimal')),
       },
     ], true);
     bindingDecimalLongOrder = new QueryResultBindings([ '?c', '?d' ], [
       {
-        '?c': literal('2.000', namedNode('http://www.w3.org/2001/XMLSchema#decimal')),
-        '?d': literal('3.00', namedNode('http://www.w3.org/2001/XMLSchema#decimal')),
+        '?c': DF.literal('2.000', DF.namedNode('http://www.w3.org/2001/XMLSchema#decimal')),
+        '?d': DF.literal('3.00', DF.namedNode('http://www.w3.org/2001/XMLSchema#decimal')),
       },
       {
-        '?c': literal('4.40000', namedNode('http://www.w3.org/2001/XMLSchema#decimal')),
-        '?d': literal('5.50000000', namedNode('http://www.w3.org/2001/XMLSchema#decimal')),
+        '?c': DF.literal('4.40000', DF.namedNode('http://www.w3.org/2001/XMLSchema#decimal')),
+        '?d': DF.literal('5.50000000', DF.namedNode('http://www.w3.org/2001/XMLSchema#decimal')),
       },
     ], true);
     bindingBlankNode1LowerOrder = new QueryResultBindings([ '?c', '?d' ], [
       {
-        '?c': blankNode('a'),
-        '?d': blankNode('b'),
+        '?c': DF.blankNode('a'),
+        '?d': DF.blankNode('b'),
       },
       {
-        '?c': blankNode('c'),
-        '?d': blankNode('d'),
+        '?c': DF.blankNode('c'),
+        '?d': DF.blankNode('d'),
       },
     ], true);
     bindingBlankNode1UpperOrder = new QueryResultBindings([ '?c', '?d' ], [
       {
-        '?c': blankNode('A'),
-        '?d': blankNode('B'),
+        '?c': DF.blankNode('A'),
+        '?d': DF.blankNode('B'),
       },
       {
-        '?c': blankNode('C'),
-        '?d': blankNode('D'),
+        '?c': DF.blankNode('C'),
+        '?d': DF.blankNode('D'),
       },
     ], true);
     bindingBlankNode2Order = new QueryResultBindings([ '?c', '?d' ], [
       {
-        '?c': blankNode('a'),
-        '?d': blankNode('a'),
+        '?c': DF.blankNode('a'),
+        '?d': DF.blankNode('a'),
       },
       {
-        '?c': blankNode('c'),
-        '?d': blankNode('d'),
+        '?c': DF.blankNode('c'),
+        '?d': DF.blankNode('d'),
       },
     ], true);
   });
@@ -276,8 +278,8 @@ describe('QueryResultBindings', () => {
   describe('#hashBinding', () => {
     it('should a binding with named nodes', () => {
       const binding = {
-        '?a': namedNode('a1'),
-        '?b': namedNode('b1'),
+        '?a': DF.namedNode('a1'),
+        '?b': DF.namedNode('b1'),
       };
       return expect(QueryResultBindings.hashBinding(binding, {}))
         .toEqual('{\"?a\":\"a1\",\"?b\":\"b1\"}');
@@ -285,9 +287,9 @@ describe('QueryResultBindings', () => {
 
     it('should a binding with named nodes populated in a different order', () => {
       const binding = {
-        '?b': namedNode('b1'),
+        '?b': DF.namedNode('b1'),
       };
-      binding['?a'] = namedNode('a1');
+      binding['?a'] = DF.namedNode('a1');
       return expect(QueryResultBindings.hashBinding(binding, {}))
         .toEqual('{\"?a\":\"a1\",\"?b\":\"b1\"}');
     });
@@ -303,12 +305,12 @@ describe('QueryResultBindings', () => {
       it('should unordered hash bindings with named nodes', () => {
         return expect(QueryResultBindings.hashBindings([
           {
-            '?a': namedNode('a2'),
-            '?b': namedNode('b2'),
+            '?a': DF.namedNode('a2'),
+            '?b': DF.namedNode('b2'),
           },
           {
-            '?a': namedNode('a1'),
-            '?b': namedNode('b1'),
+            '?a': DF.namedNode('a1'),
+            '?b': DF.namedNode('b1'),
           },
         ], {}, false))
           .toEqual('{\"?a\":\"a1\",\"?b\":\"b1\"}{\"?a\":\"a2\",\"?b\":\"b2\"}');
@@ -329,12 +331,12 @@ describe('QueryResultBindings', () => {
       it('should unordered hash bindings with named nodes', () => {
         return expect(QueryResultBindings.hashBindings([
           {
-            '?a': namedNode('a2'),
-            '?b': namedNode('b2'),
+            '?a': DF.namedNode('a2'),
+            '?b': DF.namedNode('b2'),
           },
           {
-            '?a': namedNode('a1'),
-            '?b': namedNode('b1'),
+            '?a': DF.namedNode('a1'),
+            '?b': DF.namedNode('b1'),
           },
         ], {}, true))
           .toEqual('{\"?a\":\"a2\",\"?b\":\"b2\"}{\"?a\":\"a1\",\"?b\":\"b1\"}');
@@ -363,12 +365,12 @@ describe('QueryResultBindings', () => {
     it('should have the correct value', () => {
       return expect(bindingsAB1.value).toEqual([
         {
-          '?a': namedNode('a1'),
-          '?b': namedNode('b1'),
+          '?a': DF.namedNode('a1'),
+          '?b': DF.namedNode('b1'),
         },
         {
-          '?a': namedNode('a2'),
-          '?b': namedNode('b2'),
+          '?a': DF.namedNode('a2'),
+          '?b': DF.namedNode('b2'),
         },
       ]);
     });
@@ -536,17 +538,21 @@ describe('QueryResultBindings', () => {
     Bindings:  [
   {
     "?a": {
+      "termType": "NamedNode",
       "value": "a1"
     },
     "?b": {
+      "termType": "NamedNode",
       "value": "b1"
     }
   },
   {
     "?a": {
+      "termType": "NamedNode",
       "value": "a2"
     },
     "?b": {
+      "termType": "NamedNode",
       "value": "b2"
     }
   }

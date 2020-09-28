@@ -96,6 +96,12 @@ module.exports = {
     new TestCaseEvalHandler(),
   'http://rdfa.info/vocabs/rdfa-test#NegativeEvaluationTest':
     new TestCaseSyntaxHandler(true), // RDFa test suite never expect errors, just empty documents
+
+  // Microdata-RDF test suite
+  'http://www.w3.org/ns/rdftest#TestMicrodataEval':
+    new TestCaseEvalHandler(),
+  'http://www.w3.org/ns/rdftest#TestMicrodataNegativeSyntax':
+    new TestCaseSyntaxHandler(true), // Microdata-RDF test suite never expect errors, just empty documents
 };
 // tslint:enable:object-literal-sort-keys
 // tslint:enable:max-line-length

@@ -396,5 +396,47 @@ describe('IManifest', () => {
         uri: 'http://example.org/m1',
       });
     });
+
+    it('should return a manifest with tests not in list-form', async () => {
+      const resource = new Resource({ term: DF.namedNode('http://example.org/m1'), context });
+      resource.addProperty(pComment, new Resource({ term: DF.literal('COMMENT'), context}));
+      resource.addProperty(pLabel, new Resource({ term: DF.literal('LABEL'), context}));
+
+      const test1 = new Resource({ term: DF.namedNode('http://example.org/test1'), context });
+      test1.addProperty(pType, new Resource({ term: DF.namedNode('abc'), context}));
+      const test2 = new Resource({ term: DF.namedNode('http://example.org/test2'), context });
+      test2.addProperty(pType, new Resource({ term: DF.namedNode('abc'), context}));
+
+      resource.addProperty(pEntries, test1);
+      resource.addProperty(pEntries, test2);
+
+      return expect(await manifestFromResource(handlers, null, resource)).toEqual({
+        comment: 'COMMENT',
+        label: 'LABEL',
+        specifications: null,
+        subManifests: [],
+        testEntries: [
+          {
+            approval: null,
+            approvedBy: null,
+            comment: null,
+            name: null,
+            test: true,
+            types: [ 'abc' ],
+            uri: 'http://example.org/test1',
+          },
+          {
+            approval: null,
+            approvedBy: null,
+            comment: null,
+            name: null,
+            test: true,
+            types: [ 'abc' ],
+            uri: 'http://example.org/test2',
+          }
+        ],
+        uri: 'http://example.org/m1',
+      });
+    });
   });
 });

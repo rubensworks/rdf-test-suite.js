@@ -38,7 +38,8 @@ export async function manifestFromResource(testCaseHandlers: {[uri: string]: ITe
         .map(manifestFromResource.bind(null, testCaseHandlers, options))))),
     testEntries: (await Promise.all<ITestCase<any>>([].concat.apply([],
       resource.properties.entries.map(
-        (entryList: Resource) => entryList.list.map(testCaseFromResource.bind(null, testCaseHandlers, options))))))
+        (entryList: Resource) => (entryList.list || [entryList])
+          .map(testCaseFromResource.bind(null, testCaseHandlers, options))))))
       .filter((v) => v),
     uri: resource.value,
   };

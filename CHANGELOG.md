@@ -1,6 +1,13 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+<a name="v1.15.0"></a>
+## [v1.15.0](https://github.com/rubensworks/rdf-test-suite.js/compare/v1.14.0...v1.15.0) - 2020-10-02
+
+### Added
+* [Add Microdata-RDF test case handlers](https://github.com/rubensworks/rdf-test-suite.js/commit/18a0ea4b5c012a3fd672822d1fbe4f26607124f3)
+* [Add support for tests in manifests not in list-form](https://github.com/rubensworks/rdf-test-suite.js/commit/33973b60219ea9e04e28f4b4e92e235f7988c101)
+
 <a name="v1.14.0"></a>
 ## [v1.14.0](https://github.com/rubensworks/rdf-test-suite.js/compare/v1.13.4...v1.14.0) - 2020-09-16
 

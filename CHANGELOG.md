@@ -1,6 +1,13 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+<a name="v1.16.0"></a>
+## [v1.16.0](https://github.com/rubensworks/rdf-test-suite.js/compare/v1.15.0...v1.16.0) - 2020-10-23
+
+### Changed
+* [Add colored test output](https://github.com/rubensworks/rdf-test-suite.js/commit/13176bd1ef9696403d34f8ead59f2113dfd8355a)
+* [Include test execution time in CLI output](https://github.com/rubensworks/rdf-test-suite.js/commit/ca620025f32268b5579c27cbb6a8563df4c6e351)
+
 <a name="v1.15.0"></a>
 ## [v1.15.0](https://github.com/rubensworks/rdf-test-suite.js/compare/v1.14.0...v1.15.0) - 2020-10-02
 

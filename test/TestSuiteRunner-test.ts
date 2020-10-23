@@ -94,6 +94,11 @@ jest.mock('../lib/ManifestLoader', () => ({
   },
 }));
 
+// Mock time measurements
+(<any> process).hrtime = () => {
+  return [1, 1];
+};
+
 import "jest-rdf";
 import * as LogSymbols from "log-symbols";
 import {PassThrough} from "stream";
@@ -137,10 +142,12 @@ describe('TestSuiteRunner', () => {
         {
           ok: true,
           test: mockTest1,
+          duration: 1000.000001,
         },
         {
           ok: true,
           test: mockTest2,
+          duration: 1000.000001,
         },
         {
           error: new Error('Fail'),
@@ -155,10 +162,12 @@ describe('TestSuiteRunner', () => {
         {
           ok: true,
           test: mockTest1,
+          duration: 1000.000001,
         },
         {
           ok: true,
           test: mockTest2,
+          duration: 1000.000001,
         },
         {
           error: new Error('Fail'),
@@ -179,10 +188,12 @@ describe('TestSuiteRunner', () => {
         {
           ok: true,
           test: mockTest1,
+          duration: 1000.000001,
         },
         {
           ok: true,
           test: mockTest2,
+          duration: 1000.000001,
         },
         {
           error: new Error('Fail'),
@@ -221,6 +232,7 @@ describe('TestSuiteRunner', () => {
         {
           ok: true,
           test: mockTest1,
+          duration: 1000.000001,
         },
       ]);
     });
@@ -231,10 +243,12 @@ describe('TestSuiteRunner', () => {
         {
           ok: true,
           test: mockTest1,
+          duration: 1000.000001,
         },
         {
           ok: true,
           test: mockTest2,
+          duration: 1000.000001,
         },
         {
           error: new Error('Fail'),

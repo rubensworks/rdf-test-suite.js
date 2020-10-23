@@ -76,17 +76,17 @@ is available for the [Comunica SPARQL engine](https://github.com/comunica/comuni
 This command will output something like this:
 ```
 ...
-✔ syn-bad-pname-04 (http://www.w3.org/2009/sparql/docs/tests/data-sparql11/syntax-query/manifest#test_pn_bad_04)
-✔ syn-bad-pname-05 (http://www.w3.org/2009/sparql/docs/tests/data-sparql11/syntax-query/manifest#test_pn_bad_05)
-✔ syn-bad-pname-06 (http://www.w3.org/2009/sparql/docs/tests/data-sparql11/syntax-query/manifest#test_pn_bad_06)
-✔ syn-bad-pname-07 (http://www.w3.org/2009/sparql/docs/tests/data-sparql11/syntax-query/manifest#test_pn_bad_07)
-✔ syn-bad-pname-08 (http://www.w3.org/2009/sparql/docs/tests/data-sparql11/syntax-query/manifest#test_pn_bad_08)
-✔ syn-bad-pname-09 (http://www.w3.org/2009/sparql/docs/tests/data-sparql11/syntax-query/manifest#test_pn_bad_09)
-✔ syn-bad-pname-10 (http://www.w3.org/2009/sparql/docs/tests/data-sparql11/syntax-query/manifest#test_pn_bad_10)
-✔ syn-bad-pname-11 (http://www.w3.org/2009/sparql/docs/tests/data-sparql11/syntax-query/manifest#test_pn_bad_11)
-✔ syn-bad-pname-12 (http://www.w3.org/2009/sparql/docs/tests/data-sparql11/syntax-query/manifest#test_pn_bad_12)
-✔ syn-bad-pname-13 (http://www.w3.org/2009/sparql/docs/tests/data-sparql11/syntax-query/manifest#test_pn_bad_13)
-✔ syn-pp-in-collection (http://www.w3.org/2009/sparql/docs/tests/data-sparql11/syntax-query/manifest#test_pp_coll)
+✔ syn-bad-pname-04 (http://www.w3.org/2009/sparql/docs/tests/data-sparql11/syntax-query/manifest#test_pn_bad_04) 0.293588ms
+✔ syn-bad-pname-05 (http://www.w3.org/2009/sparql/docs/tests/data-sparql11/syntax-query/manifest#test_pn_bad_05) 0.498646ms
+✔ syn-bad-pname-06 (http://www.w3.org/2009/sparql/docs/tests/data-sparql11/syntax-query/manifest#test_pn_bad_06) 0.513092ms
+✔ syn-bad-pname-07 (http://www.w3.org/2009/sparql/docs/tests/data-sparql11/syntax-query/manifest#test_pn_bad_07) 0.498646ms
+✔ syn-bad-pname-08 (http://www.w3.org/2009/sparql/docs/tests/data-sparql11/syntax-query/manifest#test_pn_bad_08) 0.293588ms
+✔ syn-bad-pname-09 (http://www.w3.org/2009/sparql/docs/tests/data-sparql11/syntax-query/manifest#test_pn_bad_09) 0.293588ms
+✔ syn-bad-pname-10 (http://www.w3.org/2009/sparql/docs/tests/data-sparql11/syntax-query/manifest#test_pn_bad_10) 0.516346ms
+✔ syn-bad-pname-11 (http://www.w3.org/2009/sparql/docs/tests/data-sparql11/syntax-query/manifest#test_pn_bad_11) 0.498646ms
+✔ syn-bad-pname-12 (http://www.w3.org/2009/sparql/docs/tests/data-sparql11/syntax-query/manifest#test_pn_bad_12) 0.516346ms
+✔ syn-bad-pname-13 (http://www.w3.org/2009/sparql/docs/tests/data-sparql11/syntax-query/manifest#test_pn_bad_13) 0.498646ms
+✔ syn-pp-in-collection (http://www.w3.org/2009/sparql/docs/tests/data-sparql11/syntax-query/manifest#test_pp_coll) 0.516346ms
 ✖ 105 / 268 tests succeeded!
 ```
 

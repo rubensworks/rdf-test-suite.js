@@ -91,9 +91,16 @@ export class TestSuiteRunner {
       for (const test of manifest.testEntries) {
         if (!config.testRegex || config.testRegex.test(test.uri)) {
           let timeout: Timeout = null;
+          const timeStart = process.hrtime();
+          let testResultOverride: ITestResultOverride | undefined;
           try {
             await Promise.race([
-              test.test(handler, config.customEngingeOptions),
+              test.test(handler, config.customEngingeOptions)
+                .then((result) => {
+                  if (result) {
+                    testResultOverride = result;
+                  }
+                }),
               new Promise((res, rej) => {
                 // global. is needed because TSC may otherwise pick the browser version of setTimeout, which returns int
                 timeout = global.setTimeout(
@@ -107,8 +114,9 @@ export class TestSuiteRunner {
             results.push({ test, ok: false, error, skipped: error.skipped });
             continue;
           }
+          const timeEnd = process.hrtime(timeStart);
           clearTimeout(timeout);
-          results.push({ test, ok: true });
+          results.push({ test, ok: true, duration: (timeEnd[0] * 1000) + (timeEnd[1] / 1000000), ...(testResultOverride || {}) });
         }
       }
     }
@@ -134,7 +142,7 @@ export class TestSuiteRunner {
     for (const result of results) {
       if (result.ok) {
         success++;
-        stdout.write(`${LogSymbols.success} ${result.test.name} (${result.test.uri})\n`);
+        stdout.write(`${LogSymbols.success} ${result.test.name} (${result.test.uri})${result.duration ? ` \x1b[90m${result.duration}ms\x1b[0m` : ''}\n`);
       } else {
         if (result.skipped) {
           skipped++;
@@ -320,9 +328,13 @@ export interface IAuthor {
   primaryTopic?: string;
 }
 
-export interface ITestResult {
+export interface ITestResult extends ITestResultOverride{
   test: ITestCase<any>;
   ok: boolean;
   error?: Error;
   skipped?: boolean;
+}
+
+export interface ITestResultOverride {
+  duration?: number; // In ms
 }

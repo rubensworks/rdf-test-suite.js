@@ -2,6 +2,7 @@ import {Resource} from "rdf-object";
 import {termToString} from "rdf-string";
 import {IFetchOptions} from "../Util";
 import {ITestCaseHandler} from "./ITestCaseHandler";
+import { ITestResultOverride } from '../TestSuiteRunner';
 
 export interface ITestCaseData {
   uri: string;
@@ -17,7 +18,7 @@ export interface ITestCaseData {
  */
 export interface ITestCase<H> extends ITestCaseData {
   type: string;
-  test(handler: H, injectArguments: any): Promise<void>;
+  test(handler: H, injectArguments: any): Promise<void | ITestResultOverride>;
 }
 
 /**

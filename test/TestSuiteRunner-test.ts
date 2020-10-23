@@ -103,6 +103,7 @@ import "jest-rdf";
 import * as LogSymbols from "log-symbols";
 import {PassThrough} from "stream";
 import {ITestSuiteConfig, TestSuiteRunner} from "../lib/TestSuiteRunner";
+import { Util } from '../lib/Util';
 
 // tslint:disable:no-var-requires
 const stringifyStream = require('stream-to-string');
@@ -346,10 +347,10 @@ describe('TestSuiteRunner', () => {
 ${LogSymbols.success} Test2 (http://ex.org/test2)
 ${LogSymbols.error} Test3 (http://ex.org/test3)
 
-${LogSymbols.error} Test3
+${LogSymbols.error} ${Util.withColor('Test3', Util.COLOR_RED)}
   
   Error: Fail
-  More info: http://ex.org/test3
+  ${Util.withColor('More info: http://ex.org/test3', Util.COLOR_BLUE)}
 
 ${LogSymbols.error} 2 / 3 tests succeeded!
 `);
@@ -365,10 +366,10 @@ ${LogSymbols.info} Test2 (http://ex.org/test2)
 ${LogSymbols.info} Test3 (http://ex.org/test3)
 ${LogSymbols.error} Test3 (http://ex.org/test3)
 
-${LogSymbols.error} Test3
+${LogSymbols.error} ${Util.withColor('Test3', Util.COLOR_RED)}
   
   Error: Fail
-  More info: http://ex.org/test3
+  ${Util.withColor('More info: http://ex.org/test3', Util.COLOR_BLUE)}
 
 ${LogSymbols.error} 3 / 4 tests succeeded! (skipped 2)
 `);
@@ -384,10 +385,10 @@ ${LogSymbols.info} Test2 (http://ex.org/test2)
 ${LogSymbols.info} Test3 (http://ex.org/test3)
 ${LogSymbols.error} Test3 (http://ex.org/test3)
 
-${LogSymbols.error} Test3
+${LogSymbols.error} ${Util.withColor('Test3', Util.COLOR_RED)}
   
   MYSTACK
-  More info: http://ex.org/test3
+  ${Util.withColor('More info: http://ex.org/test3', Util.COLOR_BLUE)}
 
 ${LogSymbols.error} 3 / 4 tests succeeded! (skipped 2)
 `);

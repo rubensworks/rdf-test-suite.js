@@ -13,6 +13,15 @@ const streamifyString = require('streamify-string');
  */
 export class Util {
 
+  public static COLOR_RESET: string = '\x1b[0m';
+  public static COLOR_RED: string = '\x1b[31m';
+  public static COLOR_GREEN: string = '\x1b[32m';
+  public static COLOR_YELLOW: string = '\x1b[33m';
+  public static COLOR_BLUE: string = '\x1b[34m';
+  public static COLOR_MAGENTA: string = '\x1b[35m';
+  public static COLOR_CYAN: string = '\x1b[36m';
+  public static COLOR_GRAY: string = '\x1b[90m';
+
   protected static readonly EXTENSION_TO_CONTENTTYPE: {[extension: string]: string} = {
     jsonld: 'application/ld+json',
     nq: 'application/n-quads',
@@ -188,6 +197,15 @@ export class Util {
     // TODO: make this more error-prone like here:
     // https://github.com/LinkedSoftwareDependencies/npm-extraction-server/blob/master/lib/npm/NpmContext.js#L151
     return 'http://opensource.org/licenses/' + license;
+  }
+
+  /**
+   * Return a string in a given color
+   * @param str The string that should be printed in
+   * @param color A given color
+   */
+  public static withColor(str: any, color: string) {
+    return `${color}${str}${Util.COLOR_RESET}`;
   }
 
 }

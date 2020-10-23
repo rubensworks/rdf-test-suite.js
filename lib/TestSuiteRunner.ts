@@ -142,7 +142,7 @@ export class TestSuiteRunner {
     for (const result of results) {
       if (result.ok) {
         success++;
-        stdout.write(`${LogSymbols.success} ${result.test.name} (${result.test.uri})${result.duration ? ` ${Util.withColor(`${result.duration}ms`, Util.COLOR_GRAY)}` : ''}\n`);
+        stdout.write(`${LogSymbols.success} ${result.test.name} (${result.test.uri})${` ${Util.withColor(`${result.duration}ms`, Util.COLOR_GRAY)}`}\n`);
       } else {
         if (result.skipped) {
           skipped++;

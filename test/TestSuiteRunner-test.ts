@@ -2,7 +2,7 @@ import {ErrorTest} from "../lib/ErrorTest";
 
 const mockTest1 = {
   name: 'Test1',
-  test: () => Promise.resolve(1),
+  test: () => Promise.resolve(),
   uri: 'http://ex.org/test1',
 };
 const mockTest2 = {
@@ -15,6 +15,12 @@ const mockTest3 = {
   name: 'Test3',
   test: () => Promise.reject(new ErrorTest('Fail')),
   uri: 'http://ex.org/test3',
+};
+const mockTest4 = {
+  comment: 'Test4 comment',
+  name: 'Test4',
+  test: () => Promise.resolve({ duration: 1337 }),
+  uri: 'http://ex.org/test4',
 };
 
 const timeOutMockTest1 = {
@@ -82,6 +88,13 @@ jest.mock('../lib/ManifestLoader', () => ({
         } else if (manifestUrl === 'timeout') {
           return Promise.resolve({
             testEntries: [timeOutMockTest1],
+            uri: manifestUrl,
+          });
+        } else if (manifestUrl === 'override') {
+          return Promise.resolve({
+            testEntries: [
+              mockTest4,
+            ],
             uri: manifestUrl,
           });
         } else {
@@ -258,6 +271,16 @@ describe('TestSuiteRunner', () => {
         },
       ]);
     });
+
+    it('should handle test result overrides', () => {
+      return expect(runner.runManifest('override', handler, defaultConfig)).resolves.toEqual([
+        {
+          ok: true,
+          test: mockTest4,
+          duration: 1337,
+        },
+      ]);
+    });
   });
 
   describe('resultsToText', () => {
@@ -265,10 +288,12 @@ describe('TestSuiteRunner', () => {
     const testResults = [
       {
         ok: true,
+        duration: 10,
         test: mockTest1,
       },
       {
         ok: true,
+        duration: 10,
         test: mockTest2,
       },
       {
@@ -280,6 +305,7 @@ describe('TestSuiteRunner', () => {
     const testResultsSkips = [
       {
         ok: true,
+        duration: 10,
         test: mockTest1,
       },
       {
@@ -302,6 +328,7 @@ describe('TestSuiteRunner', () => {
     const testResultsExternal = [
       {
         ok: true,
+        duration: 10,
         test: mockTest1,
       },
       {
@@ -343,8 +370,8 @@ describe('TestSuiteRunner', () => {
       runner.resultsToText(stdout, testResults, false);
       stdout.end();
       // tslint:disable:no-trailing-whitespace
-      return expect(await stringifyStream(stdout)).toEqual(`${LogSymbols.success} Test1 (http://ex.org/test1)
-${LogSymbols.success} Test2 (http://ex.org/test2)
+      return expect(await stringifyStream(stdout)).toEqual(`${LogSymbols.success} Test1 (http://ex.org/test1) ${Util.withColor('10ms', Util.COLOR_GRAY)}
+${LogSymbols.success} Test2 (http://ex.org/test2) ${Util.withColor('10ms', Util.COLOR_GRAY)}
 ${LogSymbols.error} Test3 (http://ex.org/test3)
 
 ${LogSymbols.error} ${Util.withColor('Test3', Util.COLOR_RED)}
@@ -361,7 +388,7 @@ ${LogSymbols.error} 2 / 3 tests succeeded!
       runner.resultsToText(stdout, testResultsSkips, false);
       stdout.end();
       // tslint:disable:no-trailing-whitespace
-      return expect(await stringifyStream(stdout)).toEqual(`${LogSymbols.success} Test1 (http://ex.org/test1)
+      return expect(await stringifyStream(stdout)).toEqual(`${LogSymbols.success} Test1 (http://ex.org/test1) ${Util.withColor('10ms', Util.COLOR_GRAY)}
 ${LogSymbols.info} Test2 (http://ex.org/test2)
 ${LogSymbols.info} Test3 (http://ex.org/test3)
 ${LogSymbols.error} Test3 (http://ex.org/test3)
@@ -380,7 +407,7 @@ ${LogSymbols.error} 3 / 4 tests succeeded! (skipped 2)
       runner.resultsToText(stdout, testResultsExternal, false);
       stdout.end();
       // tslint:disable:no-trailing-whitespace
-      return expect(await stringifyStream(stdout)).toEqual(`${LogSymbols.success} Test1 (http://ex.org/test1)
+      return expect(await stringifyStream(stdout)).toEqual(`${LogSymbols.success} Test1 (http://ex.org/test1) ${Util.withColor('10ms', Util.COLOR_GRAY)}
 ${LogSymbols.info} Test2 (http://ex.org/test2)
 ${LogSymbols.info} Test3 (http://ex.org/test3)
 ${LogSymbols.error} Test3 (http://ex.org/test3)
@@ -399,8 +426,8 @@ ${LogSymbols.error} 3 / 4 tests succeeded! (skipped 2)
       runner.resultsToText(stdout, testResults, true);
       stdout.end();
       // tslint:disable:no-trailing-whitespace
-      return expect(await stringifyStream(stdout)).toEqual(`${LogSymbols.success} Test1 (http://ex.org/test1)
-${LogSymbols.success} Test2 (http://ex.org/test2)
+      return expect(await stringifyStream(stdout)).toEqual(`${LogSymbols.success} Test1 (http://ex.org/test1) ${Util.withColor('10ms', Util.COLOR_GRAY)}
+${LogSymbols.success} Test2 (http://ex.org/test2) ${Util.withColor('10ms', Util.COLOR_GRAY)}
 ${LogSymbols.error} Test3 (http://ex.org/test3)
 ${LogSymbols.error} 2 / 3 tests succeeded!
 `);
@@ -411,7 +438,7 @@ ${LogSymbols.error} 2 / 3 tests succeeded!
       runner.resultsToText(stdout, testResultsSkips, true);
       stdout.end();
       // tslint:disable:no-trailing-whitespace
-      return expect(await stringifyStream(stdout)).toEqual(`${LogSymbols.success} Test1 (http://ex.org/test1)
+      return expect(await stringifyStream(stdout)).toEqual(`${LogSymbols.success} Test1 (http://ex.org/test1) ${Util.withColor('10ms', Util.COLOR_GRAY)}
 ${LogSymbols.info} Test2 (http://ex.org/test2)
 ${LogSymbols.info} Test3 (http://ex.org/test3)
 ${LogSymbols.error} Test3 (http://ex.org/test3)

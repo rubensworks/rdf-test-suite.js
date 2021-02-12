@@ -185,21 +185,12 @@ export class TestCaseQueryEvaluationHandler implements ITestCaseHandler<TestCase
     return new QueryResultBindings(variables, value, checkOrder);
   }
 
-  public async resourceToTestCase(resource: Resource, testCaseData: ITestCaseData,
-                                  options?: IFetchOptions): Promise<TestCaseQueryEvaluation> {
-    if (!resource.property.action) {
-      throw new Error(`Missing mf:action in ${resource}`);
-    }
-    if (!resource.property.result) {
-      throw new Error(`Missing mf:result in ${resource}`);
-    }
-    const action = resource.property.action;
-    if (!action.property.query) {
-      throw new Error(`Missing qt:query in mf:action of ${resource}`);
-    }
-
+  /**
+   * Obtain all data links for the given query test action.
+   * @param action A query test action.
+   */
+  public static getQueryDataLinks(action: Resource): IQueryDataLink[] {
     const queryDataLinks: IQueryDataLink[] = [];
-    let laxCardinality: boolean = false;
     if (action.property.data) {
       queryDataLinks.push({
         dataUri: action.property.data.value,
@@ -218,13 +209,15 @@ export class TestCaseQueryEvaluationHandler implements ITestCaseHandler<TestCase
         });
       }
     }
+    return queryDataLinks;
+  }
 
-    if (resource.property.resultCardinality && resource.property.resultCardinality.value
-      === 'http://www.w3.org/2001/sw/DataAccess/tests/test-manifest#LaxCardinality') {
-      laxCardinality = true;
-    }
-
-    // Collect all query data
+  /**
+   * Determine the quads for the given query data links.
+   * @param queryDataLinks Links to query data.
+   * @param options Fetch options.
+   */
+  public static async resolveQueryDataLinks(queryDataLinks: IQueryDataLink[], options?: IFetchOptions): Promise<RDF.Quad[]> {
     let queryData: RDF.Quad[] = [];
     for (const queryDataLink of queryDataLinks) {
       let queryDataThis: RDF.Quad[] = await arrayifyStream((await Util.fetchRdf(queryDataLink.dataUri,
@@ -235,6 +228,34 @@ export class TestCaseQueryEvaluationHandler implements ITestCaseHandler<TestCase
       }
       queryData = [ ...queryData, ...queryDataThis ];
     }
+    return queryData;
+  }
+
+  public async resourceToTestCase(resource: Resource, testCaseData: ITestCaseData,
+                                  options?: IFetchOptions): Promise<TestCaseQueryEvaluation> {
+    if (!resource.property.action) {
+      throw new Error(`Missing mf:action in ${resource}`);
+    }
+    if (!resource.property.result) {
+      throw new Error(`Missing mf:result in ${resource}`);
+    }
+    const action = resource.property.action;
+    if (!action.property.query) {
+      throw new Error(`Missing qt:query in mf:action of ${resource}`);
+    }
+
+    // Determine links to data
+    const queryDataLinks: IQueryDataLink[] = TestCaseQueryEvaluationHandler.getQueryDataLinks(action);
+
+    // Check for lax cardinality property
+    let laxCardinality: boolean = false;
+    if (resource.property.resultCardinality && resource.property.resultCardinality.value
+      === 'http://www.w3.org/2001/sw/DataAccess/tests/test-manifest#LaxCardinality') {
+      laxCardinality = true;
+    }
+
+    // Collect all query data
+    const queryData: RDF.Quad[] = await TestCaseQueryEvaluationHandler.resolveQueryDataLinks(queryDataLinks, options);
 
     const queryResponse = await Util.fetchCached(resource.property.result.value, options);
     return new TestCaseQueryEvaluation(
@@ -291,16 +312,19 @@ export class TestCaseQueryEvaluation implements ITestCaseSparql {
     Object.assign(this, props);
   }
 
+  public static queryDataLinksToString(queryDataLinks: IQueryDataLink[]): string {
+    return queryDataLinks.map((queryDataLink) => queryDataLink.dataUri + (queryDataLink.dataGraph ? ` (named graph: ${queryDataLink.dataGraph.value})` : '')).join(',\n    ');
+  }
+
   public async test(engine: IQueryEngine, injectArguments: any): Promise<void> {
     const result: IQueryResult = await engine.query(this.queryData, this.queryString,
       { baseIRI: this.baseIRI, ...injectArguments });
-    const dataGraphInfo = this.queryDataLinks.map((queryDataLink) => queryDataLink.dataUri + (queryDataLink.dataGraph ? ` (named graph: ${queryDataLink.dataGraph.value})` : '')).join(',\n    ');
     if (!await this.queryResult.equals(result, this.laxCardinality)) {
       throw new ErrorTest(`Invalid query evaluation
 
   Query:\n\n${this.queryString}
 
-  Data links: ${dataGraphInfo}
+  Data links: ${TestCaseQueryEvaluation.queryDataLinksToString(this.queryDataLinks)}
 
   Result Source: ${this.resultSource.url}
 

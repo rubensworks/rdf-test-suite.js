@@ -9,6 +9,7 @@ import {TestCaseNegativeSyntaxHandler} from "./sparql/TestCaseNegativeSyntax";
 import {TestCasePositiveSyntaxHandler} from "./sparql/TestCasePositiveSyntax";
 import {TestCaseQueryEvaluationHandler} from "./sparql/TestCaseQueryEvaluation";
 import {TestCaseUnsupportedHandler} from "./TestCaseUnsupported";
+import { TestCaseUpdateEvaluationHandler } from './sparql/TestCaseUpdateEvaluation';
 
 // tslint:disable:max-line-length
 // tslint:disable:object-literal-sort-keys
@@ -31,7 +32,7 @@ module.exports = {
   'http://www.w3.org/2001/sw/DataAccess/tests/test-manifest#PositiveUpdateSyntaxTest11':
     new TestCasePositiveSyntaxHandler(),
   'http://www.w3.org/2001/sw/DataAccess/tests/test-manifest#UpdateEvaluationTest':
-    new TestCaseUnsupportedHandler('sparql:UpdateEvaluationTest'), // TODO: implement
+    new TestCaseUpdateEvaluationHandler(),
   'http://www.w3.org/2001/sw/DataAccess/tests/test-manifest#CSVResultFormatTest':
     new TestCaseUnsupportedHandler('sparql:CSVResultFormatTest'), // TODO: implement
   'http://www.w3.org/2001/sw/DataAccess/tests/test-manifest#ServiceDescriptionTest':

@@ -439,6 +439,20 @@ describe('TestCaseQueryEvaluationHandler', () => {
     });
   });
 
+  describe('#queryDataLinksToString', () => {
+    it('should handle the empty array', () => {
+      expect(TestCaseQueryEvaluation.queryDataLinksToString([])).toEqual(``);
+    });
+
+    it('should handle a non-empty array', () => {
+      expect(TestCaseQueryEvaluation.queryDataLinksToString([
+        { dataUri: 'ex:uri1' },
+        { dataUri: 'ex:uri2', dataGraph: DF.namedNode('ex:graph') },
+      ])).toEqual(`ex:uri1,
+    ex:uri2 (named graph: ex:graph)`);
+    });
+  });
+
   describe('#resourceToTestCase', () => {
     it('should produce a TestCaseQueryEvaluation', async () => {
       const resource = new Resource({ term: DF.namedNode('http://ex.org/test'), context });

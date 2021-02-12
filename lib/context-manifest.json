@@ -27,6 +27,12 @@
   "graphData": "q:graphData",
   "query": "q:query",
 
+  "ut": "http://www.w3.org/2009/sparql/tests/test-update#",
+  "updateQuery": "ut:request",
+  "updateData": "ut:data",
+  "updateGraph": "ut:graph",
+  "updateGraphData": "ut:graphData",
+
   "jld": "https://w3c.github.io/json-ld-api/tests/vocab#",
   "jsonLdOptions": "jld:option",
   "jsonLdProduceGeneralizedRdf": "jld:produceGeneralizedRdf",

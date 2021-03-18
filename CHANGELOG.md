@@ -1,6 +1,12 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+<a name="v1.17.0"></a>
+## [v1.17.0](https://github.com/rubensworks/rdf-test-suite.js/compare/v1.16.0...v1.17.0) - 2021-03-18
+
+### Added
+* [Add handler for SPARQL UpdateEvaluationTests](https://github.com/rubensworks/rdf-test-suite.js/commit/b49c9c9cd2c5d4f252a56a6b3efab5a3b7a0a8fb)
+
 <a name="v1.16.0"></a>
 ## [v1.16.0](https://github.com/rubensworks/rdf-test-suite.js/compare/v1.15.0...v1.16.0) - 2020-10-23
 

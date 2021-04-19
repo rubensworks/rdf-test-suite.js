@@ -91,7 +91,7 @@
     "cross-fetch": "^3.0.6",
     "json-stable-stringify": "^1.0.1",
     "jsonld-streaming-parser": "^2.1.0",
-    "log-symbols": "^4.0.0",
+    "log-symbols": "^5.0.0",
     "minimist": "^1.2.0",
     "n3": "^1.1.1",
     "rdf-data-factory": "^1.0.3",

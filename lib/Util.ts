@@ -1,6 +1,6 @@
 import {createReadStream, createWriteStream, existsSync, readFileSync, ReadStream, writeFileSync} from "fs";
 import {JsonLdParser} from "jsonld-streaming-parser";
-import * as RDF from "rdf-js";
+import * as RDF from "@rdfjs/types";
 import {RdfXmlParser} from "rdfxml-streaming-parser";
 import {PassThrough} from "stream";
 import {DocumentLoaderCached} from "./DocumentLoaderCached";

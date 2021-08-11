@@ -1,6 +1,6 @@
 import {DataFactory} from "rdf-data-factory";
 import * as LogSymbols from "log-symbols";
-import * as RDF from "rdf-js";
+import * as RDF from "@rdfjs/types";
 import {IManifest} from "./IManifest";
 import {ManifestLoader} from "./ManifestLoader";
 import {ITestCase} from "./testcase/ITestCase";

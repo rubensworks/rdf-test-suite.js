@@ -1,5 +1,5 @@
 import {DataFactory} from "rdf-data-factory";
-import * as RDF from "rdf-js";
+import * as RDF from "@rdfjs/types";
 import {RdfObjectLoader, Resource} from "rdf-object";
 import {stringToTerm} from "rdf-string";
 import {mapTerms, QuadTermName} from "rdf-terms";

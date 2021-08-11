@@ -1,5 +1,5 @@
 import {isomorphic} from "rdf-isomorphic";
-import * as RDF from "rdf-js";
+import * as RDF from "@rdfjs/types";
 import {quadToStringQuad} from "rdf-string";
 import {IQueryResult, IQueryResultQuads} from "./IQueryEngine";
 

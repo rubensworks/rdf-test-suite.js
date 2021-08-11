@@ -1,7 +1,7 @@
 import {DataFactory} from "rdf-data-factory";
 import "jest-rdf";
 import {ContextParser, JsonLdContextNormalized} from "jsonld-context-parser";
-import * as RDF from "rdf-js";
+import * as RDF from "@rdfjs/types";
 import {Resource} from "rdf-object";
 import {
   TestCaseJsonLdFromRdfHandlerNegative, TestCaseJsonLdFromRdfNegativeHandler,

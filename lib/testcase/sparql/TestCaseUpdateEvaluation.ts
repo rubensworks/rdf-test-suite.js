@@ -1,5 +1,5 @@
 import { ITestCaseSparql } from './ITestCaseSparql';
-import * as RDF from 'rdf-js';
+import * as RDF from '@rdfjs/types';
 import { ITestCaseData } from '../ITestCase';
 import { ErrorTest } from '../../ErrorTest';
 import { IUpdateEngine } from './IUpdateEngine';

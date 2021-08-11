@@ -3,7 +3,7 @@ import {existsSync, mkdirSync, readFileSync} from "fs";
 import "cross-fetch/polyfill";
 import "jest-rdf";
 import {Util} from "../lib/Util";
-import type * as RDF from "rdf-js";
+import type * as RDF from "@rdfjs/types";
 
 // tslint:disable:no-var-requires
 const streamifyString = require('streamify-string');

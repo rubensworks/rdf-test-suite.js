@@ -1,5 +1,5 @@
 import * as stringify from "json-stable-stringify";
-import * as RDF from "rdf-js";
+import * as RDF from "@rdfjs/types";
 import {fromRdf} from "rdf-literal";
 import {termToString} from "rdf-string";
 import {IQueryResult, IQueryResultBindings} from "./IQueryEngine";

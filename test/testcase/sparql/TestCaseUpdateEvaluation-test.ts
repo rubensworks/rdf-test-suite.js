@@ -4,7 +4,7 @@ const quad = require("rdf-quad");
 import {DataFactory} from "rdf-data-factory";
 import "jest-rdf";
 import {ContextParser} from "jsonld-context-parser";
-import * as RDF from "rdf-js";
+import * as RDF from "@rdfjs/types";
 import {Resource} from "rdf-object";
 import {QueryResultQuads} from "../../../lib/testcase/sparql/QueryResultQuads";
 import { IUpdateEngine } from '../../../lib/testcase/sparql/IUpdateEngine';

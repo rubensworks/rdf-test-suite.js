@@ -6,7 +6,7 @@ const quad = require("rdf-quad");
 import {DataFactory} from "rdf-data-factory";
 import "jest-rdf";
 import {ContextParser} from "jsonld-context-parser";
-import * as RDF from "rdf-js";
+import * as RDF from "@rdfjs/types";
 import {Resource} from "rdf-object";
 import {quadToStringQuad} from "rdf-string";
 import {TestCaseJsonLdFromRdf} from "../../../../lib/testcase/rdfsyntax/jsonld/TestCaseJsonLdFromRdf";

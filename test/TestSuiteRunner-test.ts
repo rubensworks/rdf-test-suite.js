@@ -26,7 +26,7 @@ const mockTest4 = {
 const timeOutMockTest1 = {
   name: 'Timeout1',
   test: () => {
-    return new Promise((resolve, reject) => setTimeout(() => resolve(), 500));
+    return new Promise<void>((resolve, reject) => setTimeout(() => resolve(), 500));
   },
   uri: 'http://ex.org/timeout1',
 };

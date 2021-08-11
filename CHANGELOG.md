@@ -1,6 +1,12 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+<a name="v1.18.0"></a>
+## [v1.18.0](https://github.com/rubensworks/rdf-test-suite.js/compare/v1.17.0...v1.18.0) - 2021-08-11
+
+### Changed
+* [Migrate to @rdfjs/types](https://github.com/rubensworks/rdf-test-suite.js/commit/6e35ffb9b0929c11d707a41ce99766cd385e1079)
+
 <a name="v1.17.0"></a>
 ## [v1.17.0](https://github.com/rubensworks/rdf-test-suite.js/compare/v1.16.0...v1.17.0) - 2021-03-18
 

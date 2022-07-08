@@ -92,7 +92,10 @@ testSuiteRunner.runManifest(args._[1], engine, config)
       onEnd(testResults);
       break;
     }
-  }).catch(console.error);
+  }).catch(e => {
+    console.error(e);
+    process.exit(1);
+  });
 
 function onEnd(testResults: ITestResult[]) {
   // Exit with status code 1 if there was at least one failing test

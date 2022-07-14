@@ -8,8 +8,9 @@ import {ITestCaseData} from "../ITestCase";
 import {ITestCaseHandler} from "../ITestCaseHandler";
 import {IParser} from "./IParser";
 import {ITestCaseRdfSyntax} from "./ITestCaseRdfSyntax";
+import arrayifyStream from "arrayify-stream";
+
 // tslint:disable:no-var-requires
-const arrayifyStream = require('arrayify-stream');
 const stringifyStream = require('stream-to-string');
 
 /**

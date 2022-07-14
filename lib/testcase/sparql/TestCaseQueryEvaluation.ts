@@ -14,8 +14,9 @@ import {ITestCaseSparql} from "./ITestCaseSparql";
 import {QueryResultBindings} from "./QueryResultBindings";
 import {QueryResultBoolean} from "./QueryResultBoolean";
 import {QueryResultQuads} from "./QueryResultQuads";
+import arrayifyStream from "arrayify-stream";
+
 // tslint:disable:no-var-requires
-const arrayifyStream = require('arrayify-stream');
 const stringifyStream = require('stream-to-string');
 const DF = new DataFactory();
 
@@ -75,20 +76,23 @@ export class TestCaseQueryEvaluationHandler implements ITestCaseHandler<TestCase
    * @return {Promise<IQueryResult>} A promise resolving to a SPARQL query result.
    */
   public static async parseSparqlResults(type: 'json' | 'xml', data: NodeJS.ReadableStream): Promise<IQueryResult> {
-    let parser;
     let booleanPromise: Promise<boolean>;
     let bindingsStream: NodeJS.ReadableStream;
     if (type === 'json') {
-      parser = new SparqlJsonParser({ prefixVariableQuestionMark: true });
+      const parser = new SparqlJsonParser({ prefixVariableQuestionMark: true });
       booleanPromise = parser.parseJsonBooleanStream(data);
       bindingsStream = parser.parseJsonResultsStream(data);
     } else {
-      parser = new SparqlXmlParser({ prefixVariableQuestionMark: true });
+      const parser = new SparqlXmlParser({ prefixVariableQuestionMark: true });
       booleanPromise = parser.parseXmlBooleanStream(data);
       bindingsStream = parser.parseXmlResultsStream(data);
     }
     const bindingsPromise: Promise<[RDF.Variable[], { [variable: string]: RDF.Term }[]]> = Promise.all([
-      new Promise<RDF.Variable[]>((resolve) => bindingsStream.on('variables', resolve)),
+      new Promise<RDF.Variable[]>((resolve) => {
+        bindingsStream
+            .on('variables', resolve)
+            .on('end', _ => resolve([]))
+      }),
       arrayifyStream(bindingsStream),
     ]);
 
@@ -110,10 +114,10 @@ export class TestCaseQueryEvaluationHandler implements ITestCaseHandler<TestCase
       return new QueryResultBoolean(parsingResults[0]);
     } else if (!bindingsError) {
       return new QueryResultBindings(parsingResults[1][0].map((variable: RDF.Variable) => '?' + variable.value),
-        parsingResults[1][1], false);
+          parsingResults[1][1], false);
     } else {
       throw new Error('Found no valid ASK or SELECT query.\n'
-        + bindingsError.message + '\n' + booleanError.message);
+          + bindingsError.message + '\n' + booleanError.message);
     }
   }
 

@@ -7,6 +7,7 @@ import {ITestCase} from "./testcase/ITestCase";
 import WriteStream = NodeJS.WriteStream;
 import {Util} from "./Util";
 import Timeout = NodeJS.Timeout;
+
 // tslint:disable:no-var-requires
 const quad = require('rdf-quad');
 const streamifyArray = require('streamify-array');

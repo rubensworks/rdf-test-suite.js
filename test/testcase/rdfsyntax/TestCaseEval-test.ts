@@ -5,9 +5,9 @@ import "jest-rdf";
 import {ContextParser} from "jsonld-context-parser";
 import {Resource} from "rdf-object";
 import {RdfXmlParser} from "rdfxml-streaming-parser";
+import arrayifyStream from "arrayify-stream";
 
 // tslint:disable:no-var-requires
-const arrayifyStream = require('arrayify-stream');
 const streamifyString = require('streamify-string');
 const DF = new DataFactory();
 

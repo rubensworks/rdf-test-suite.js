@@ -117,10 +117,10 @@ import * as LogSymbols from "log-symbols";
 import {PassThrough} from "stream";
 import {ITestSuiteConfig, TestSuiteRunner} from "../lib/TestSuiteRunner";
 import { Util } from '../lib/Util';
+import arrayifyStream from "arrayify-stream";
 
 // tslint:disable:no-var-requires
 const stringifyStream = require('stream-to-string');
-const arrayifyStream = require('arrayify-stream');
 const quad = require('rdf-quad');
 
 describe('TestSuiteRunner', () => {

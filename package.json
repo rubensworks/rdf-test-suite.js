@@ -52,7 +52,7 @@
   "jest": {
     "globals": {
       "ts-jest": {
-        "tsConfig": "test/tsconfig.json"
+        "tsconfig": "test/tsconfig.json"
       }
     },
     "transform": {
@@ -81,16 +81,16 @@
     "version": "manual-git-changelog onversion"
   },
   "dependencies": {
+    "@rdfjs/types": "*",
     "@types/json-stable-stringify": "^1.0.32",
     "@types/log-symbols": "^3.0.0",
     "@types/minimist": "^1.2.0",
     "@types/n3": "^1.10.3",
-    "@rdfjs/types": "*",
     "@types/sax": "^1.0.1",
-    "arrayify-stream": "^1.0.0",
+    "arrayify-stream": "^2.0.0",
     "cross-fetch": "^3.0.6",
     "json-stable-stringify": "^1.0.1",
-    "jsonld-streaming-parser": "^2.4.0",
+    "jsonld-streaming-parser": "^3.0.0",
     "log-symbols": "^4.0.0",
     "minimist": "^1.2.0",
     "n3": "^1.11.1",
@@ -101,10 +101,10 @@
     "rdf-quad": "^1.5.0",
     "rdf-string": "^1.6.0",
     "rdf-terms": "^1.7.0",
-    "rdfxml-streaming-parser": "^1.5.0",
+    "rdfxml-streaming-parser": "^2.0.0",
     "relative-to-absolute-iri": "^1.0.6",
-    "sparqljson-parse": "^1.7.0",
-    "sparqlxml-parse": "^1.5.0",
+    "sparqljson-parse": "^2.0.1",
+    "sparqlxml-parse": "^2.0.1",
     "stream-to-string": "^1.1.0",
     "streamify-string": "^1.0.1"
   }

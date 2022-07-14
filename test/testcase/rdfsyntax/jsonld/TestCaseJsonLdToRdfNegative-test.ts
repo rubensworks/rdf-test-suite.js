@@ -4,12 +4,9 @@ import {ContextParser} from "jsonld-context-parser";
 import {Resource} from "rdf-object";
 import {TestCaseJsonLdToRdfNegativeHandler,
 } from "../../../../lib/testcase/rdfsyntax/jsonld/TestCaseJsonLdToRdfNegative";
-import {TestCaseSyntax, TestCaseSyntaxHandler} from "../../../../lib/testcase/rdfsyntax/TestCaseSyntax";
-
-const quad = require("rdf-quad");
+import {TestCaseSyntax} from "../../../../lib/testcase/rdfsyntax/TestCaseSyntax";
 
 // tslint:disable:no-var-requires
-const arrayifyStream = require('arrayify-stream');
 const streamifyString = require('streamify-string');
 const DF = new DataFactory();
 

@@ -9,7 +9,6 @@ import {Resource} from "rdf-object";
 import {QueryResultQuads} from "../../../lib/testcase/sparql/QueryResultQuads";
 
 // tslint:disable:no-var-requires
-const arrayifyStream = require('arrayify-stream');
 const streamifyString = require('streamify-string');
 const DF = new DataFactory();
 
@@ -111,8 +110,7 @@ describe('TestCaseQueryEvaluationHandler', () => {
 
     it('should resolve on SPARQL/XML', async () => {
       return expect(TestCaseQueryEvaluationHandler.parseQueryResult('application/sparql-results+xml',
-        'a', streamifyString(`
-<?xml version="1.0"?>
+        'a', streamifyString(`<?xml version="1.0" encoding="UTF-8"?>
 <sparql xmlns="http://www.w3.org/2005/sparql-results#">
   <head>
     <variable name="book"/>
@@ -247,8 +245,7 @@ describe('TestCaseQueryEvaluationHandler', () => {
     });
 
     it('should should parse XML booleans', async () => {
-      return expect(TestCaseQueryEvaluationHandler.parseSparqlResults('xml', streamifyString(`
-<?xml version="1.0"?>
+      return expect(TestCaseQueryEvaluationHandler.parseSparqlResults('xml', streamifyString(`<?xml version="1.0"?>
 <sparql xmlns="http://www.w3.org/2005/sparql-results#">
   <boolean>true</boolean>
 </sparql>
@@ -260,8 +257,7 @@ describe('TestCaseQueryEvaluationHandler', () => {
     });
 
     it('should should parse XML bindings', async () => {
-      return expect(TestCaseQueryEvaluationHandler.parseSparqlResults('xml', streamifyString(`
-<?xml version="1.0"?>
+      return expect(TestCaseQueryEvaluationHandler.parseSparqlResults('xml', streamifyString(`<?xml version="1.0"?>
 <sparql xmlns="http://www.w3.org/2005/sparql-results#">
   <head>
     <variable name="book"/>

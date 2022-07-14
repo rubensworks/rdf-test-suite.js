@@ -8,9 +8,9 @@ import {
   TestCaseJsonLdSyntaxHandler,
 } from "../../../../lib/testcase/rdfsyntax/jsonld/TestCaseJsonLdSyntax";
 import {TestCaseSyntax} from "../../../../lib/testcase/rdfsyntax/TestCaseSyntax";
+import arrayifyStream from "arrayify-stream";
 
 // tslint:disable:no-var-requires
-const arrayifyStream = require('arrayify-stream');
 const streamifyString = require('streamify-string');
 const DF = new DataFactory();
 

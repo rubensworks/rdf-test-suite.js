@@ -6,9 +6,9 @@ import {ContextParser} from "jsonld-context-parser";
 import {JsonLdParser} from "jsonld-streaming-parser";
 import {Resource} from "rdf-object";
 import {TestCaseEval} from "../../../../lib/testcase/rdfsyntax/TestCaseEval";
+import arrayifyStream from "arrayify-stream";
 
 // tslint:disable:no-var-requires
-const arrayifyStream = require('arrayify-stream');
 const streamifyString = require('streamify-string');
 const DF = new DataFactory();
 

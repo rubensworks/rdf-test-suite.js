@@ -4,11 +4,11 @@ import "cross-fetch/polyfill";
 import "jest-rdf";
 import {Util} from "../lib/Util";
 import type * as RDF from "@rdfjs/types";
+import arrayifyStream from "arrayify-stream";
 
 // tslint:disable:no-var-requires
 const streamifyString = require('streamify-string');
 const stringifyStream = require('stream-to-string');
-const arrayifyStream = require('arrayify-stream');
 const DF = new DataFactory<RDF.BaseQuad>();
 
 // Mock fetch

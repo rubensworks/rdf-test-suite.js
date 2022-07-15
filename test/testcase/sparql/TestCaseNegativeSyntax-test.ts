@@ -6,7 +6,6 @@ import {TestCaseNegativeSyntax,
   TestCaseNegativeSyntaxHandler} from "../../../lib/testcase/sparql/TestCaseNegativeSyntax";
 
 // tslint:disable:no-var-requires
-const arrayifyStream = require('arrayify-stream');
 const streamifyString = require('streamify-string');
 const DF = new DataFactory();
 

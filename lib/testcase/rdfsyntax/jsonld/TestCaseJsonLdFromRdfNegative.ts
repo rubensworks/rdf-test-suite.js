@@ -7,10 +7,8 @@ import {ITestCaseData} from "../../ITestCase";
 import {ITestCaseHandler} from "../../ITestCaseHandler";
 import {ISerializer} from "../ISerializer";
 import {ITestCaseFromRdfSyntax} from "../ITestCaseFromRdfSyntax";
-import {TestCaseJsonLdFromRdf} from "./TestCaseJsonLdFromRdf";
 import {TestCaseJsonLdToRdfHandler} from "./TestCaseJsonLdToRdf";
-// tslint:disable:no-var-requires
-const arrayifyStream = require('arrayify-stream');
+import arrayifyStream from "arrayify-stream";
 
 /**
  * Test case handler for:

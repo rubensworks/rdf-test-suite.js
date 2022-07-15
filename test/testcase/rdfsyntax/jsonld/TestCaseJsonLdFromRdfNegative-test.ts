@@ -12,7 +12,6 @@ const quad = require("rdf-quad");
 const DF = new DataFactory();
 
 // tslint:disable:no-var-requires
-const arrayifyStream = require('arrayify-stream');
 const streamifyString = require('streamify-string');
 
 // Mock fetch

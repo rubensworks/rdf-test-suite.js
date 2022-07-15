@@ -6,11 +6,9 @@ import "jest-rdf";
 import {ContextParser} from "jsonld-context-parser";
 import * as RDF from "@rdfjs/types";
 import {Resource} from "rdf-object";
-import {QueryResultQuads} from "../../../lib/testcase/sparql/QueryResultQuads";
 import { IUpdateEngine } from '../../../lib/testcase/sparql/IUpdateEngine';
 
 // tslint:disable:no-var-requires
-const arrayifyStream = require('arrayify-stream');
 const streamifyString = require('streamify-string');
 const DF = new DataFactory();
 

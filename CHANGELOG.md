@@ -1,6 +1,12 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+<a name="v1.19.1"></a>
+## [v1.19.1](https://github.com/rubensworks/rdf-test-suite.js/compare/v1.19.0...v1.19.1) - 2022-07-15
+
+### Fixed
+* [Fixes compatibility with the Node.js 18 fetch implementation](https://github.com/rubensworks/rdf-test-suite.js/commit/8d5cd3b3f21e4f82c7de01a93e38f767dd9f907d)
+
 <a name="v1.19.0"></a>
 ## [v1.19.0](https://github.com/rubensworks/rdf-test-suite.js/compare/v1.18.0...v1.19.0) - 2022-07-15
 

@@ -35,7 +35,7 @@ const DF = new DataFactory();
     return Promise.reject(new Error('Fetch error for ' + url));
     break;
   }
-  return Promise.resolve(new Response(body, <any> { headers, status: 200, url }));
+  return Promise.resolve(new Response(body, <any> { headers, status: 200 }));
 };
 
 describe('TestCaseUpdateEvaluationHandler', () => {

@@ -70,7 +70,7 @@ const streamifyString = require('streamify-string');
     break;
   }
   const headers = new Headers({ 'Content-Type': 'text/turtle' });
-  return Promise.resolve(new Response(body, <any> { headers, status: 200, url }));
+  return Promise.resolve(new Response(body, <any> { headers, status: 200 }));
 };
 
 describe('ManifestLoader', () => {

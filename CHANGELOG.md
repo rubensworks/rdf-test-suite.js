@@ -1,6 +1,16 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+<a name="v1.19.0"></a>
+## [v1.19.0](https://github.com/rubensworks/rdf-test-suite.js/compare/v1.18.0...v1.19.0) - 2022-07-15
+
+### Fixed
+* [Exit with status code 1 if the runner fails](https://github.com/rubensworks/rdf-test-suite.js/commit/72bea155644508eafd0e10397d73744b8a6cf910)
+* [Bump rdf-object to fix unresolved promise rejection on Node 16](https://github.com/rubensworks/rdf-test-suite.js/commit/4f51c40854c8a112a9eb1f99d8e02f847fc95aec)
+
+### Changed
+* [Upgrade parsers to latest versions](https://github.com/rubensworks/rdf-test-suite.js/commit/def607a295683ee237872b9531733778c4f30c73)
+
 <a name="v1.18.0"></a>
 ## [v1.18.0](https://github.com/rubensworks/rdf-test-suite.js/compare/v1.17.0...v1.18.0) - 2021-08-11
 

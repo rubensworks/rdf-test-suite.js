@@ -27,7 +27,7 @@ const DF = new DataFactory<RDF.BaseQuad>();
     return Promise.reject(new Error('Fetch error'));
     break;
   }
-  return Promise.resolve(new Response(body, <any> { headers: new Headers({ a: 'b' }), status: 200, url }));
+  return Promise.resolve(new Response(body, <any> { headers: new Headers({ a: 'b' }), status: 200 }));
 };
 
 describe('Util', () => {

@@ -1,12 +1,14 @@
-import {createReadStream, createWriteStream, existsSync, readFileSync, ReadStream, writeFileSync} from "fs";
+import {createReadStream, createWriteStream, existsSync, readFileSync, writeFileSync} from "fs";
 import {JsonLdParser} from "jsonld-streaming-parser";
 import * as RDF from "@rdfjs/types";
 import {RdfXmlParser} from "rdfxml-streaming-parser";
 import {PassThrough} from "stream";
 import {DocumentLoaderCached} from "./DocumentLoaderCached";
 import {GeneralizedN3StreamParser} from "./GeneralizedN3StreamParser";
-// tslint:disable:no-var-requires
-const streamifyString = require('streamify-string');
+import {ReadableWebToNodeStream} from 'readable-web-to-node-stream';
+
+// tslint:disable-next-line:no-var-requires
+const isStream = require('is-stream');
 
 /**
  * Utility functions
@@ -145,8 +147,12 @@ export class Util {
       if (!response.ok) {
         throw new Error(`Could not find ${url}`);
       }
-      const body1 = (<any> response.body).pipe(new PassThrough());
-      const body2 = (<any> response.body).pipe(new PassThrough());
+      /* istanbul ignore next */
+      const body: NodeJS.ReadableStream = isStream(response.body) || response.body === null ?
+          <any> response.body :
+          new ReadableWebToNodeStream(response.body);
+      const body1 = body.pipe(new PassThrough());
+      const body2 = body.pipe(new PassThrough());
 
       // Remove unneeded headers
       response.headers.delete('content-length');
@@ -161,7 +167,7 @@ export class Util {
           writeStream.on('close', resolve);
           writeStream.on('error', reject);
         });*/
-        writeFileSync(cachePathLocal + '.url', response.url);
+        writeFileSync(cachePathLocal + '.url', response.url || url);
         const headersRaw: any = {};
         response.headers.forEach((value: string, key: string) => headersRaw[key] = value);
         writeFileSync(cachePathLocal + '.headers', JSON.stringify(headersRaw));
@@ -170,7 +176,7 @@ export class Util {
       return {
         body: body2,
         headers: response.headers,
-        url: response.url,
+        url: response.url || url,
       };
     }
   }
@@ -214,7 +220,7 @@ export class Util {
  * A fetch response.
  */
 export interface IFetchResponse {
-  body: ReadStream;
+  body: NodeJS.ReadableStream;
   headers: Headers;
   url: string;
 }

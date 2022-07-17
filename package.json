@@ -89,7 +89,7 @@
     "@types/sax": "^1.0.1",
     "arrayify-stream": "^2.0.0",
     "cross-fetch": "^3.0.6",
-    "is-stream": "^2.0.0",
+    "is-stream": "^3.0.0",
     "json-stable-stringify": "^1.0.1",
     "jsonld-streaming-parser": "^3.0.0",
     "log-symbols": "^4.0.0",

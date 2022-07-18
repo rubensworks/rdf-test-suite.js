@@ -154,9 +154,10 @@ export class Util {
       const body1 = body.pipe(new PassThrough());
       const body2 = body.pipe(new PassThrough());
 
-      // Remove unneeded headers
-      response.headers.delete('content-length');
-      response.headers.delete('content-encoding');
+      // Remove unneeded headers (copy to make sure the Headers object is not immutable)
+      const headers = new Headers(response.headers);
+      headers.delete('content-length');
+      headers.delete('content-encoding');
 
       if (cachePathLocal) {
         // Save in cache
@@ -169,13 +170,13 @@ export class Util {
         });*/
         writeFileSync(cachePathLocal + '.url', response.url || url);
         const headersRaw: any = {};
-        response.headers.forEach((value: string, key: string) => headersRaw[key] = value);
+        headers.forEach((value: string, key: string) => headersRaw[key] = value);
         writeFileSync(cachePathLocal + '.headers', JSON.stringify(headersRaw));
       }
 
       return {
         body: body2,
-        headers: response.headers,
+        headers: headers,
         url: response.url || url,
       };
     }

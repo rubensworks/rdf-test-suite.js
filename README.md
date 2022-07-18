@@ -270,6 +270,14 @@ $ rdf-test-suite myengine.js http://w3c.github.io/rdf-tests/sparql11/data-sparql
 | [JSON-LD Test Suite](https://w3c.github.io/json-ld-api/tests/) | [JSON-LD (1.0 and 1.1)](https://www.w3.org/TR/json-ld/) | [`ISerializer`](https://github.com/rubensworks/rdf-test-suite.js/blob/master/lib/testcase/rdfsyntax/ISerializer.ts) | https://w3c.github.io/json-ld-api/tests/fromRdf-manifest.jsonld |
 | [RDFa Test Suite](http://rdfa.info/test-suite/) | [RDFa 1.1](https://www.w3.org/TR/html-rdfa/) | [`IParser`](https://github.com/rubensworks/rdf-test-suite.js/blob/master/lib/testcase/rdfsyntax/IParser.ts) | http://rdfa.info/test-suite/test-cases/rdfa1.1/html5/manifest.ttl |
 | [Microdata to RDF Test Suite](https://w3c.github.io/microdata-rdf/tests/) | [Microdata to RDF](https://w3c.github.io/microdata-rdf/) | [`IParser`](https://github.com/rubensworks/rdf-test-suite.js/blob/master/lib/testcase/rdfsyntax/IParser.ts) | https://w3c.github.io/microdata-rdf/tests/manifest.ttl |
+| [Turtle-star Evaluation Tests](https://w3c.github.io/rdf-star/tests/turtle/eval/manifest.html) | [RDF-star and SPARQL-star](https://www.w3.org/2021/12/rdf-star.html) | ✖ | https://w3c.github.io/rdf-star/tests/turtle/eval/manifest.jsonld |
+| [Turtle-star Syntax Tests](https://w3c.github.io/rdf-star/tests/turtle/syntax/manifest.html) | [RDF-star and SPARQL-star](https://www.w3.org/2021/12/rdf-star.html) | ✖ | https://w3c.github.io/rdf-star/tests/turtle/syntax/manifest.jsonld |
+| [TriG-star Evaluation Tests](https://w3c.github.io/rdf-star/tests/trig/eval/manifest.html) | [RDF-star and SPARQL-star](https://www.w3.org/2021/12/rdf-star.html) | ✖ | https://w3c.github.io/rdf-star/tests/trig/eval/manifest.jsonld |
+| [TriG-star Syntax Tests](https://w3c.github.io/rdf-star/tests/trig/eval/manifest.html) | [RDF-star and SPARQL-star](https://www.w3.org/2021/12/rdf-star.html) | ✖ | https://w3c.github.io/rdf-star/tests/trig/syntax/manifest.jsonld |
+| [N-Triples-star Syntax Tests](https://w3c.github.io/rdf-star/tests/nt/syntax/manifest.html) | [RDF-star and SPARQL-star](https://www.w3.org/2021/12/rdf-star.html) | ✖ | https://w3c.github.io/rdf-star/tests/nt/syntax/manifest.jsonld |
+| [RDF-star Semantics tests](https://w3c.github.io/rdf-star/tests/semantics/manifest.html) | [RDF-star and SPARQL-star](https://www.w3.org/2021/12/rdf-star.html) | ✖ | https://w3c.github.io/rdf-star/tests/semantics/manifest.jsonld |
+| [SPARQL-star Syntax Tests](https://w3c.github.io/rdf-star/tests/sparql/syntax/manifest.html) | [RDF-star and SPARQL-star](https://www.w3.org/2021/12/rdf-star.html) | ✖ | https://w3c.github.io/rdf-star/tests/sparql/syntax/manifest.jsonld |
+| [SPARQL-star Evaluation Tests](https://w3c.github.io/rdf-star/tests/sparql/eval/manifest.html) | [RDF-star and SPARQL-star](https://www.w3.org/2021/12/rdf-star.html) | ✖ | https://w3c.github.io/rdf-star/tests/sparql/eval/manifest.jsonld |
 
 ## License
 This software is written by [Ruben Taelman](http://rubensworks.net/).

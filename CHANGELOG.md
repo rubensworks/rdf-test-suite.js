@@ -1,6 +1,12 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+<a name="v1.19.2"></a>
+## [v1.19.2](https://github.com/rubensworks/rdf-test-suite.js/compare/v1.19.1...v1.19.2) - 2022-07-18
+
+### Fixed
+* [Fix crash due to immutable Header object Node 18](https://github.com/rubensworks/rdf-test-suite.js/commit/83ac5a4bd602b53798ea3afc07cf330a101eca52)
+
 <a name="v1.19.1"></a>
 ## [v1.19.1](https://github.com/rubensworks/rdf-test-suite.js/compare/v1.19.0...v1.19.1) - 2022-07-15
 

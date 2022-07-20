@@ -87,6 +87,7 @@ export class TestSuiteRunner {
     config: ITestSuiteConfig,
     results: ITestResult[],
   ) {
+    console.log('top level running manifest', manifest)
     // Execute all tests in this manifest
     if (manifest.testEntries) {
       for (const test of manifest.testEntries) {
@@ -125,6 +126,7 @@ export class TestSuiteRunner {
     // Recursively handle all sub-manifests
     if (manifest.subManifests) {
       for (const subManifest of manifest.subManifests) {
+        // console.log('running subManifest', subManifest)
         await (this.runManifestConcrete(subManifest, handler, config, results));
       }
     }

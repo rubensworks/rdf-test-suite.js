@@ -35,7 +35,7 @@ export async function manifestFromResource(testCaseHandlers: {[uri: string]: ITe
                 manifestFromSpecificationResource(testCaseHandlers, options, specificationResource) }))))) : null,
     subManifests: await Promise.all<IManifest>([].concat.apply([],
       resource.properties.include.map((includeList: Resource) => includeList.list
-        .map(manifestFromResource.bind(null, testCaseHandlers, options))))),
+        .map(resource => manifestFromResource(testCaseHandlers, options, resource))))),
     testEntries: (await Promise.all<ITestCase<any>>([].concat.apply([],
       resource.properties.entries.map(
         (entryList: Resource) => (entryList.list || [entryList])

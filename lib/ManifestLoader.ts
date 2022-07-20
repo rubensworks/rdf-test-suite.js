@@ -64,7 +64,14 @@ export class ManifestLoader {
         includeJobs.push(this.import(objectLoader, include.value, options));
       }
     }
-    await Promise.all(includeJobs);
+    const jobs: Resource[] = await Promise.all(includeJobs);
+    
+    console.log('------------------------------------------------------------');
+    console.log('include jobs')
+    console.log(jobs)
+    console.log('------------------------------------------------------------');
+    // console.log(jobs.map(job => this.from(job.term.value)))
+
 
     return manifest;
   }

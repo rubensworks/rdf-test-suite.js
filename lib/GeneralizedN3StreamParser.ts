@@ -27,6 +27,9 @@ export class GeneralizedN3StreamParser extends Transform {
     // Set up parser
     const parser: any = new Parser(options);
     parser.allowBlankNodePredicates = true;
+    // This is a workaround to resolve the RDF* syntax issue seen in
+    // https://github.com/rubensworks/rdf-test-suite.js/pull/78#issue-1307275029
+    parser._supportsRDFStar = true;
 
     let onData: any;
     let onEnd: any;

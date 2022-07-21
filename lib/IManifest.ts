@@ -1,4 +1,5 @@
 import {Resource} from "rdf-object";
+import { ManifestLoader } from "./ManifestLoader";
 import {ITestCase, testCaseFromResource} from "./testcase/ITestCase";
 import {ITestCaseHandler} from "./testcase/ITestCaseHandler";
 import {IFetchOptions, Util} from "./Util";
@@ -35,7 +36,7 @@ export async function manifestFromResource(testCaseHandlers: {[uri: string]: ITe
                 manifestFromSpecificationResource(testCaseHandlers, options, specificationResource) }))))) : null,
     subManifests: await Promise.all<IManifest>([].concat.apply([],
       resource.properties.include.map((includeList: Resource) => includeList.list
-        .map(resource => manifestFromResource(testCaseHandlers, options, resource))))),
+        .map(resource => new ManifestLoader().from(resource.value))))),
     testEntries: (await Promise.all<ITestCase<any>>([].concat.apply([],
       resource.properties.entries.map(
         (entryList: Resource) => (entryList.list || [entryList])

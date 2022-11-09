@@ -1,6 +1,15 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+<a name="v1.19.3"></a>
+## [v1.19.3](https://github.com/rubensworks/rdf-test-suite.js/compare/v1.19.2...v1.19.3) - 2022-11-09
+
+### Fixed
+* [Include source map files in packed files](https://github.com/rubensworks/rdf-test-suite.js/commit/d14bc3a27b66b2621b83b03b97f6c52702034ed9)
+
+### Changed
+* [Remove stub types definition of log-symbols](https://github.com/rubensworks/rdf-test-suite.js/commit/dd9a675be908355f51526da27f0312c53a42a039)
+
 <a name="v1.19.2"></a>
 ## [v1.19.2](https://github.com/rubensworks/rdf-test-suite.js/compare/v1.19.1...v1.19.2) - 2022-07-18
 

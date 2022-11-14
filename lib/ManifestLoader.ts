@@ -38,7 +38,6 @@ export class ManifestLoader {
   protected async import(objectLoader: RdfObjectLoader, urlInitial: string, options?: IFetchOptions)
     : Promise<Resource> {
     const [url, parsed] = await Util.fetchRdf(urlInitial, options);
-    console.log('running import', url, urlInitial, Object.values(objectLoader.resources).length);
     // Dereference the URL and load it
     await objectLoader.import(parsed);
 
@@ -51,8 +50,6 @@ export class ManifestLoader {
       // Also try extension-less and with the last '/' replaced with a '#' (needed for RDFstar test suite)
       // @see https://github.com/w3c/rdf-star/issues/269
       ?? objectLoader.resources[url.slice(0, url.lastIndexOf('.')).replace(/\/manifest$/, '#manifest')];
-    
-    console.log(!!manifest)
 
     if (!manifest) {
       throw new Error(`Could not find a resource ${url} in the document at ${url}`);
@@ -66,15 +63,9 @@ export class ManifestLoader {
         includeJobs.push(this.import(objectLoader, include.value, options));
       }
     }
+    // TODO: Work out why this is here
     const jobs: Resource[] = await Promise.all(includeJobs);
-    
-    
-    
-    console.log('------------------------------------------------------------');
-    console.log('include jobs')
-    console.log(jobs)
-    console.log('------------------------------------------------------------');
-    // console.log(jobs.map(job => this.from(job.term.value)))
+
     manifest =
       // First try the same URL as the document URL
       objectLoader.resources[url]

@@ -1,4 +1,7 @@
 import {ManifestLoader} from "../lib/ManifestLoader";
+import * as fs from 'fs';
+import * as path from 'path';
+import { IManifest } from "../lib/IManifest";
 
 // tslint:disable:no-var-requires
 const streamifyString = require('streamify-string');
@@ -76,7 +79,7 @@ const streamifyString = require('streamify-string');
 	mf:include ("http://invalid1").
 `);
     break;
-  case 'http://w3c.github.io/rdf-star/tests/manifest.jsonld':
+  case 'https://w3c.github.io/rdf-star/tests/manifest.jsonld':
       body = streamifyString(`
       ## [1] https://www.w3.org/Consortium/Legal/2008/04-testsuite-license
       ## [2] https://www.w3.org/Consortium/Legal/2008/03-bsd-license
@@ -112,9 +115,17 @@ const streamifyString = require('streamify-string');
           ) .
       `);
     break;
-  default:
-    body = streamifyString('ABC');
+    case 'https://w3c.github.io/rdf-star/tests/turtle/syntax/manifest.ttl':
+      body = streamifyString(fs.readFileSync(path.join(__dirname, 'assets', 'sample_manifest.ttl')).toString());
     break;
+  default: {
+    if (url.startsWith('https://w3c.github.io/rdf-star/')) {
+      body = streamifyString(`<${url}> a <http://www.w3.org/2001/sw/DataAccess/tests/test-manifest#Manifest> .`);
+    } else {
+      body = streamifyString('ABC');
+    }
+    break;
+  }
   }
   const headers = new Headers({ 'Content-Type': 'text/turtle' });
   return Promise.resolve(new Response(body, <any> { headers, status: 200 }));
@@ -197,15 +208,21 @@ describe('ManifestLoader', () => {
       });
     });
 
-    it('should load sub-manifests for the RDF-star test suite', () => {
-      return expect(loader.from('http://w3c.github.io/rdf-star/tests/manifest.jsonld')).resolves.toEqual({
+    it('should load sub-manifests for the RDF-star test suite', async () => {
+      const load = await loader.from('https://w3c.github.io/rdf-star/tests/manifest.jsonld');
+
+      expect(load).toMatchObject({
         comment: null,
-        label: 'SPARQL 1.1 tests',
+        label: 'RDF-star test suite',
         specifications: null,
-        subManifests: [],
-        testEntries: [],
-        uri: 'http://w3c.github.io/rdf-star/tests#manifest',
+        uri: 'https://w3c.github.io/rdf-star/tests#manifest',
       });
+
+      expect(
+        load.subManifests
+          .find((manifest: IManifest) => manifest.uri === 'https://w3c.github.io/rdf-star/tests/turtle/syntax#manifest')
+          .testEntries
+      ).toHaveLength(35);
     });
 
     it('should error on invalid submanifests', () => {

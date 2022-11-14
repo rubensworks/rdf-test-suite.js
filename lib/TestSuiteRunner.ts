@@ -59,10 +59,6 @@ export class TestSuiteRunner {
     const manifest: IManifest = await new ManifestLoader().from(manifestUrl, { cachePath, urlToFileMappings });
     const results: ITestResult[] = [];
 
-    console.log('###################\n'.repeat(10))
-    console.log('loaded manifest', manifest)
-    console.log('###################\n'.repeat(10))
-
     // Only run the tests for the given specification if one was defined.
     if (specification) {
       if (!manifest.specifications || !manifest.specifications[specification]) {
@@ -91,7 +87,6 @@ export class TestSuiteRunner {
     config: ITestSuiteConfig,
     results: ITestResult[],
   ) {
-    console.log('top level running manifest', manifest)
     // Execute all tests in this manifest
     if (manifest.testEntries) {
       for (const test of manifest.testEntries) {
@@ -130,7 +125,6 @@ export class TestSuiteRunner {
     // Recursively handle all sub-manifests
     if (manifest.subManifests) {
       for (const subManifest of manifest.subManifests) {
-        // console.log('running subManifest', subManifest)
         await (this.runManifestConcrete(subManifest, handler, config, results));
       }
     }

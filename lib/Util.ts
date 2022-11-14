@@ -67,7 +67,7 @@ export class Util {
   public static async fetchRdf(url: string, options: IFetchOptions = {}): Promise<[string, RDF.Stream]> {
     const response = await Util.fetchCached(url, options);
     const contentType = Util.identifyContentType(response.url, response.headers);
-    return [response.url, await Util.parseRdfRaw(contentType,
+    return [response.url, Util.parseRdfRaw(contentType,
       options.normalizeUrl ? Util.normalizeBaseUrl(response.url) : response.url, response.body, options)];
   }
 

@@ -76,7 +76,7 @@ const streamifyString = require('streamify-string');
 	mf:include ("http://invalid1").
 `);
     break;
-  case 'https://w3c.github.io/rdf-star/tests/manifest.jsonld':
+  case 'http://w3c.github.io/rdf-star/tests/manifest.jsonld':
       body = streamifyString(`
       ## [1] https://www.w3.org/Consortium/Legal/2008/04-testsuite-license
       ## [2] https://www.w3.org/Consortium/Legal/2008/03-bsd-license
@@ -198,13 +198,13 @@ describe('ManifestLoader', () => {
     });
 
     it('should load sub-manifests for the RDF-star test suite', () => {
-      return expect(loader.from('https://w3c.github.io/rdf-star/tests/manifest.jsonld')).resolves.toEqual({
+      return expect(loader.from('http://w3c.github.io/rdf-star/tests/manifest.jsonld')).resolves.toEqual({
         comment: null,
         label: 'SPARQL 1.1 tests',
         specifications: null,
         subManifests: [],
         testEntries: [],
-        uri: 'https://w3c.github.io/rdf-star/tests#manifest',
+        uri: 'http://w3c.github.io/rdf-star/tests#manifest',
       });
     });
 

@@ -59,6 +59,10 @@ export class TestSuiteRunner {
     const manifest: IManifest = await new ManifestLoader().from(manifestUrl, { cachePath, urlToFileMappings });
     const results: ITestResult[] = [];
 
+    console.log('###################\n'.repeat(10))
+    console.log('loaded manifest', manifest)
+    console.log('###################\n'.repeat(10))
+
     // Only run the tests for the given specification if one was defined.
     if (specification) {
       if (!manifest.specifications || !manifest.specifications[specification]) {

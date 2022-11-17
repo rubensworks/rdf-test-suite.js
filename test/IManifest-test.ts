@@ -58,7 +58,7 @@ describe('IManifest', () => {
   describe('#manifestFromResource', () => {
     it('should return a manifest without optional properties', async () => {
       const resource = new Resource({ term: DF.namedNode('http://example.org/m1'), context });
-      return expect(await manifestFromResource(handlers, null, resource)).toEqual({
+      return expect(await manifestFromResource(handlers, {}, resource)).toEqual({
         comment: null,
         label: null,
         specifications: null,
@@ -80,7 +80,7 @@ describe('IManifest', () => {
       ];
       resource.addProperty(pInclude, resourceIncludeList);
 
-      return expect(await manifestFromResource(handlers, null, resource)).toEqual({
+      return expect(await manifestFromResource(handlers, {}, resource)).toEqual({
         comment: 'COMMENT',
         label: 'LABEL',
         specifications: null,
@@ -121,7 +121,7 @@ describe('IManifest', () => {
       ];
       resource.addProperty(pIncludeSpec, resourceIncludeSpecList);
 
-      return expect(await manifestFromResource(handlers, null, resource)).toEqual({
+      return expect(await manifestFromResource(handlers, {}, resource)).toEqual({
         comment: 'COMMENT',
         label: 'LABEL',
         specifications: {
@@ -160,7 +160,7 @@ describe('IManifest', () => {
       ];
       resource.addProperty(pIncludeSpec, resourceIncludeSpecList);
 
-      return expect(await manifestFromResource(handlers, null, resource)).toEqual({
+      return expect(await manifestFromResource(handlers, {}, resource)).toEqual({
         comment: 'COMMENT',
         label: 'LABEL',
         specifications: {
@@ -207,7 +207,7 @@ describe('IManifest', () => {
       ];
       resource.addProperty(pIncludeSpec, resourceIncludeSpecList);
 
-      return expect(await manifestFromResource(handlers, null, resource)).toEqual({
+      return expect(await manifestFromResource(handlers, {}, resource)).toEqual({
         comment: 'COMMENT',
         label: 'LABEL',
         specifications: {
@@ -294,7 +294,7 @@ describe('IManifest', () => {
       ];
       resource.addProperty(pIncludeSpec, resourceIncludeSpecList);
 
-      return expect(await manifestFromResource(handlers, null, resource)).toEqual({
+      return expect(await manifestFromResource(handlers, {}, resource)).toEqual({
         comment: 'COMMENT',
         label: 'LABEL',
         specifications: {
@@ -368,7 +368,7 @@ describe('IManifest', () => {
       ];
       resource.addProperty(pEntries, testList);
 
-      return expect(await manifestFromResource(handlers, null, resource)).toEqual({
+      return expect(await manifestFromResource(handlers, {}, resource)).toEqual({
         comment: 'COMMENT',
         label: 'LABEL',
         specifications: null,
@@ -410,7 +410,7 @@ describe('IManifest', () => {
       resource.addProperty(pEntries, test1);
       resource.addProperty(pEntries, test2);
 
-      return expect(await manifestFromResource(handlers, null, resource)).toEqual({
+      return expect(await manifestFromResource(handlers, {}, resource)).toEqual({
         comment: 'COMMENT',
         label: 'LABEL',
         specifications: null,

@@ -1,4 +1,5 @@
 import {Resource} from "rdf-object";
+import { ManifestLoader } from "./ManifestLoader";
 import {ITestCase, testCaseFromResource} from "./testcase/ITestCase";
 import {ITestCaseHandler} from "./testcase/ITestCaseHandler";
 import {IFetchOptions, Util} from "./Util";
@@ -35,11 +36,11 @@ export async function manifestFromResource(testCaseHandlers: {[uri: string]: ITe
                 manifestFromSpecificationResource(testCaseHandlers, options, specificationResource) }))))) : null,
     subManifests: await Promise.all<IManifest>([].concat.apply([],
       resource.properties.include.map((includeList: Resource) => includeList.list
-        .map(resource => manifestFromResource(testCaseHandlers, options, resource))))),
+        .map(resource => new ManifestLoader({ testCaseHandlers }).from(resource.value, options))))),
     testEntries: (await Promise.all<ITestCase<any>>([].concat.apply([],
       resource.properties.entries.map(
         (entryList: Resource) => (entryList.list || [entryList])
-          .map(resource => testCaseFromResource(testCaseHandlers, options, resource))))))
+          .map(testCaseFromResource.bind(null, testCaseHandlers, options))))))
       .filter((v) => v),
     uri: resource.value,
   };
@@ -58,7 +59,8 @@ export async function manifestFromSpecificationResource(testCaseHandlers: {[uri:
                                                         resource: Resource): Promise<IManifest> {
   if (resource.property.conformanceRequirements) {
     const subManifests = await Promise.all<IManifest>(resource.property.conformanceRequirements.list
-      .map(manifestFromResource.bind(null, testCaseHandlers, options)));
+      .map(resource => new ManifestLoader({ testCaseHandlers }).from(resource.value, options)));
+      // .map(manifestFromResource.bind(null, testCaseHandlers, options)));
     return {
       comment: resource.property.comment ? resource.property.comment.value : null,
       label: resource.property.label ? resource.property.label.value : null,

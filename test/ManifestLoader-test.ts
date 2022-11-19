@@ -219,10 +219,8 @@ describe('ManifestLoader', () => {
       });
 
       expect(
-        load.subManifests
-          .find((manifest: IManifest) => manifest.uri === 'https://w3c.github.io/rdf-star/tests/turtle/syntax#manifest')
-          .testEntries
-      ).toHaveLength(35);
+        [...load.subManifests.map(elem => elem.testEntries)]
+      ).toHaveLength(8);
     });
 
     it('should error on invalid submanifests', () => {

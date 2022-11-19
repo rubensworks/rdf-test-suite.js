@@ -32,7 +32,7 @@ export class ManifestLoader {
   public async from(url: string, options?: IFetchOptions): Promise<IManifest> {
     const objectLoader = new RdfObjectLoader({ context: ManifestLoader.LOADER_CONTEXT });
     const manifest: Resource = await this.import(objectLoader, url, options);
-    return manifestFromResource(this.testCaseHandlers, options, manifest);
+    return manifestFromResource(this.testCaseHandlers, options, manifest, objectLoader);
   }
 
   protected async import(objectLoader: RdfObjectLoader, urlInitial: string, options?: IFetchOptions)
@@ -74,7 +74,6 @@ export class ManifestLoader {
       // Also try extension-less and with the last '/' replaced with a '#' (needed for RDFstar test suite)
       // @see https://github.com/w3c/rdf-star/issues/269
       ?? objectLoader.resources[url.slice(0, url.lastIndexOf('.')).replace(/\/manifest$/, '#manifest')];
-
 
     return manifest;
   }

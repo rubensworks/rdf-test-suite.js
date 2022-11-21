@@ -63,7 +63,7 @@ export class ManifestLoader {
         includeJobs.push(this.import(objectLoader, include.value, options));
       }
     }
-    // TODO: Work out why this is here
+
     const jobs: Resource[] = await Promise.all(includeJobs);
 
     manifest =

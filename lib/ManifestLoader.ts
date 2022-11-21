@@ -32,24 +32,27 @@ export class ManifestLoader {
   public async from(url: string, options?: IFetchOptions): Promise<IManifest> {
     const objectLoader = new RdfObjectLoader({ context: ManifestLoader.LOADER_CONTEXT });
     const manifest: Resource = await this.import(objectLoader, url, options);
-    return manifestFromResource(this.testCaseHandlers, options, manifest);
+    return manifestFromResource(this.testCaseHandlers, options, manifest, objectLoader);
   }
 
   protected async import(objectLoader: RdfObjectLoader, urlInitial: string, options?: IFetchOptions)
     : Promise<Resource> {
     const [url, parsed] = await Util.fetchRdf(urlInitial, options);
-
     // Dereference the URL and load it
     await objectLoader.import(parsed);
 
     // Import all sub-manifests
-    let manifest: Resource = objectLoader.resources[url];
-    if (!manifest) {
+    let manifest: Resource =
+      // First try the same URL as the document URL
+      objectLoader.resources[url]
       // Also try extension-less manifest URL (needed for RDFa test suite)
-      manifest = objectLoader.resources[url.substr(0, url.lastIndexOf('.'))];
-      if (!manifest) {
-        throw new Error(`Could not find a resource ${url} in the document at ${url}`);
-      }
+      ?? objectLoader.resources[url.slice(0, url.lastIndexOf('.'))]
+      // Also try extension-less and with the last '/' replaced with a '#' (needed for RDFstar test suite)
+      // @see https://github.com/w3c/rdf-star/issues/269
+      ?? objectLoader.resources[url.slice(0, url.lastIndexOf('.')).replace(/\/manifest$/, '#manifest')];
+
+    if (!manifest) {
+      throw new Error(`Could not find a resource ${url} in the document at ${url}`);
     }
     const includeJobs: Promise<any>[] = [];
     for (const includeList of manifest.properties.include) {
@@ -60,7 +63,17 @@ export class ManifestLoader {
         includeJobs.push(this.import(objectLoader, include.value, options));
       }
     }
-    await Promise.all(includeJobs);
+
+    const jobs: Resource[] = await Promise.all(includeJobs);
+
+    manifest =
+      // First try the same URL as the document URL
+      objectLoader.resources[url]
+      // Also try extension-less manifest URL (needed for RDFa test suite)
+      ?? objectLoader.resources[url.slice(0, url.lastIndexOf('.'))]
+      // Also try extension-less and with the last '/' replaced with a '#' (needed for RDFstar test suite)
+      // @see https://github.com/w3c/rdf-star/issues/269
+      ?? objectLoader.resources[url.slice(0, url.lastIndexOf('.')).replace(/\/manifest$/, '#manifest')];
 
     return manifest;
   }

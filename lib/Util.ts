@@ -67,7 +67,7 @@ export class Util {
   public static async fetchRdf(url: string, options: IFetchOptions = {}): Promise<[string, RDF.Stream]> {
     const response = await Util.fetchCached(url, options);
     const contentType = Util.identifyContentType(response.url, response.headers);
-    return [response.url, await Util.parseRdfRaw(contentType,
+    return [response.url, Util.parseRdfRaw(contentType,
       options.normalizeUrl ? Util.normalizeBaseUrl(response.url) : response.url, response.body, options)];
   }
 
@@ -85,7 +85,7 @@ export class Util {
       || contentType.indexOf('text/turtle') >= 0
       || contentType.indexOf('application/n-triples') >= 0
       || contentType.indexOf('application/n-quads') >= 0) {
-      return data.pipe(new GeneralizedN3StreamParser({ baseIRI, format: contentType }));
+      return data.pipe(new GeneralizedN3StreamParser({ baseIRI, format: contentType,  }));
     }
     if (contentType.indexOf('application/rdf+xml') >= 0) {
       return data.pipe(new RdfXmlParser({ baseIRI }));

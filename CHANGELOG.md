@@ -1,6 +1,12 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+<a name="v1.21.0"></a>
+## [v1.21.0](https://github.com/rubensworks/rdf-test-suite.js/compare/v1.20.0...v1.21.0) - 2023-01-27
+
+### Added
+* [Add support for JSON-LD-star test suite](https://github.com/rubensworks/rdf-test-suite.js/commit/88de8131d84a5ea396bef697c5ff8ca1b43249b7)
+
 <a name="v1.20.0"></a>
 ## [v1.20.0](https://github.com/rubensworks/rdf-test-suite.js/compare/v1.19.3...v1.20.0) - 2022-11-21
 

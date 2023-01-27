@@ -23,6 +23,8 @@ Currently, the following test suites are supported:
 * [JSON-LD (1.0 and 1.1)](https://w3c.github.io/json-ld-api/tests/)
 * [RDFa](http://rdfa.info/test-suite/)
 * [Microdata to RDF](https://w3c.github.io/microdata-rdf/tests/)
+* [RDF-star and SPARQL-star](https://www.w3.org/2021/12/rdf-star.html)
+* [JSON-LD-Star](https://json-ld.github.io/json-ld-star/)
 
 Not all [RDF test suites](https://w3c.github.io/rdf-tests/) are supported at the moment.
 However, this package is fully _modular_,
@@ -268,6 +270,8 @@ $ rdf-test-suite myengine.js http://w3c.github.io/rdf-tests/sparql11/data-sparql
 | [JSON-LD Test Suite](https://w3c.github.io/json-ld-api/tests/) | [JSON-LD (1.0 and 1.1)](https://www.w3.org/TR/json-ld/) | [`IParser`](https://github.com/rubensworks/rdf-test-suite.js/blob/master/lib/testcase/rdfsyntax/IParser.ts) | https://w3c.github.io/json-ld-api/tests/toRdf-manifest.jsonld |
 | [JSON-LD Test Suite](https://w3c.github.io/json-ld-api/tests/) | [JSON-LD (1.0 and 1.1)](https://www.w3.org/TR/json-ld/) | [`IParser`](https://github.com/rubensworks/rdf-test-suite.js/blob/master/lib/testcase/rdfsyntax/IParser.ts) | https://w3c.github.io/json-ld-api/tests/html-manifest.jsonld |
 | [JSON-LD Test Suite](https://w3c.github.io/json-ld-api/tests/) | [JSON-LD (1.0 and 1.1)](https://www.w3.org/TR/json-ld/) | [`ISerializer`](https://github.com/rubensworks/rdf-test-suite.js/blob/master/lib/testcase/rdfsyntax/ISerializer.ts) | https://w3c.github.io/json-ld-api/tests/fromRdf-manifest.jsonld |
+| [JSON-LD-Star Test Suite](https://json-ld.github.io/json-ld-star/tests/) | [JSON-LD-Star](https://json-ld.github.io/json-ld-star/) | [`IParser`](https://github.com/rubensworks/rdf-test-suite.js/blob/master/lib/testcase/rdfsyntax/IParser.ts) | https://json-ld.github.io/json-ld-star/tests/toRdf-manifest.jsonld |
+| [JSON-LD-Star Test Suite](https://json-ld.github.io/json-ld-star/tests/) | [JSON-LD-Star](https://json-ld.github.io/json-ld-star/) | [`ISerializer`](https://github.com/rubensworks/rdf-test-suite.js/blob/master/lib/testcase/rdfsyntax/ISerializer.ts) | https://json-ld.github.io/json-ld-star/tests/fromRdf-manifest.jsonld |
 | [RDFa Test Suite](http://rdfa.info/test-suite/) | [RDFa 1.1](https://www.w3.org/TR/html-rdfa/) | [`IParser`](https://github.com/rubensworks/rdf-test-suite.js/blob/master/lib/testcase/rdfsyntax/IParser.ts) | http://rdfa.info/test-suite/test-cases/rdfa1.1/html5/manifest.ttl |
 | [Microdata to RDF Test Suite](https://w3c.github.io/microdata-rdf/tests/) | [Microdata to RDF](https://w3c.github.io/microdata-rdf/) | [`IParser`](https://github.com/rubensworks/rdf-test-suite.js/blob/master/lib/testcase/rdfsyntax/IParser.ts) | https://w3c.github.io/microdata-rdf/tests/manifest.ttl |
 | [Turtle-star Evaluation Tests](https://w3c.github.io/rdf-star/tests/turtle/eval/manifest.html) | [RDF-star and SPARQL-star](https://www.w3.org/2021/12/rdf-star.html) | ✖ | https://w3c.github.io/rdf-star/tests/turtle/eval/manifest.jsonld |

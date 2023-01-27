@@ -64,6 +64,7 @@ describe('TestCaseJsonLdToRdfHandler', () => {
   let pJsonLdExpandContext;
   let pProcessingMode;
   let pSpecVersion;
+  let pRdfstar;
   let pRdfDirection;
   let pExtractAllScripts;
   let pContentType;
@@ -91,6 +92,8 @@ describe('TestCaseJsonLdToRdfHandler', () => {
           { term: DF.namedNode('https://w3c.github.io/json-ld-api/tests/vocab#processingMode'), context });
         pSpecVersion = new Resource(
           { term: DF.namedNode('https://w3c.github.io/json-ld-api/tests/vocab#specVersion'), context });
+        pRdfstar = new Resource(
+          { term: DF.namedNode('https://w3c.github.io/json-ld-api/tests/vocab#rdfstar'), context });
         pRdfDirection = new Resource(
           { term: DF.namedNode('https://w3c.github.io/json-ld-api/tests/vocab#rdfDirection'), context });
         pExtractAllScripts = new Resource(
@@ -153,6 +156,8 @@ describe('TestCaseJsonLdToRdfHandler', () => {
       optionProcessingMode.addProperty(pProcessingMode, new Resource({ term: DF.literal('json-ld-1.1'), context }));
       const optionSpecVersion = new Resource({ term: DF.namedNode('http://ex.org/o1'), context });
       optionSpecVersion.addProperty(pSpecVersion, new Resource({ term: DF.literal('json-ld-1.1'), context }));
+      const optionRdfstar = new Resource({ term: DF.namedNode('http://ex.org/o1'), context });
+      optionRdfstar.addProperty(pRdfstar, new Resource({ term: DF.literal('true'), context }));
       const optionRdfDirection = new Resource({ term: DF.namedNode('http://ex.org/o1'), context });
       optionRdfDirection.addProperty(pRdfDirection, new Resource({ term: DF.literal('compound-DF.literal('), context }));
 
@@ -160,6 +165,7 @@ describe('TestCaseJsonLdToRdfHandler', () => {
       resource.addProperty(pOption, optionBase);
       resource.addProperty(pOption, optionProcessingMode);
       resource.addProperty(pOption, optionSpecVersion);
+      resource.addProperty(pOption, optionRdfstar);
       resource.addProperty(pOption, optionRdfDirection);
       const testCase = await handler.resourceToTestCase(resource, <any> {});
       const spy = jest.spyOn(parser, 'parse');
@@ -177,6 +183,7 @@ describe('TestCaseJsonLdToRdfHandler', () => {
           processingMode: "1.1",
           produceGeneralizedRdf: true,
           specVersion: "1.1",
+          rdfstar: true,
           rdfDirection: "compound-DF.literal(",
         });
     });

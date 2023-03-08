@@ -23,6 +23,7 @@ Currently, the following test suites are supported:
 * [JSON-LD (1.0 and 1.1)](https://w3c.github.io/json-ld-api/tests/)
 * [RDFa](http://rdfa.info/test-suite/)
 * [Microdata to RDF](https://w3c.github.io/microdata-rdf/tests/)
+* [Notation3](https://w3c.github.io/N3/spec/)
 * [RDF-star and SPARQL-star](https://www.w3.org/2021/12/rdf-star.html)
 * [JSON-LD-Star](https://json-ld.github.io/json-ld-star/)
 

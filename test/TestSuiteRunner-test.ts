@@ -22,6 +22,20 @@ const mockTest4 = {
   test: () => Promise.resolve({ duration: 1337 }),
   uri: 'http://ex.org/test4',
 };
+const mockTest5 = {
+  comment: 'Test5 comment',
+  approval: 'http://www.w3.org/ns/rdftest#Rejected',
+  name: 'Test5',
+  test: () => Promise.resolve(),
+  uri: 'http://ex.org/test5',
+};
+const mockTest6 = {
+  comment: 'Test6 comment',
+  approval: 'http://www.w3.org/ns/rdftest#Approved',
+  name: 'Test6',
+  test: () => Promise.resolve(),
+  uri: 'http://ex.org/test6',
+};
 
 const timeOutMockTest1 = {
   name: 'Timeout1',
@@ -49,6 +63,8 @@ jest.mock('../lib/ManifestLoader', () => ({
               mockTest1,
               mockTest2,
               mockTest3,
+              mockTest5,
+              mockTest6,
             ],
             uri: manifestUrl,
           });
@@ -168,6 +184,17 @@ describe('TestSuiteRunner', () => {
           ok: false,
           test: mockTest3,
         },
+        {
+          error: new Error('Rejected Test'),
+          ok: false,
+          skipped: true,
+          test: mockTest5,
+        },
+        {
+          ok: true,
+          test: mockTest6,
+          duration: 1000.000001,
+        },
       ]);
     });
 
@@ -268,6 +295,52 @@ describe('TestSuiteRunner', () => {
           error: new Error('Fail'),
           ok: false,
           test: mockTest3,
+        },
+        {
+          error: new Error('Rejected Test'),
+          ok: false,
+          skipped: true,
+          test: mockTest5,
+        },
+        {
+          ok: true,
+          test: mockTest6,
+          duration: 1000.000001,
+        },
+      ]);
+    });
+
+    it('should produce results for a valid manifest requiring explicit approval to run tests', () => {
+      const config: ITestSuiteConfig = { ...defaultConfig, explicitApproval: true };
+      return expect(runner.runManifest('valid', handler, config)).resolves.toEqual([
+        {
+          error: new Error('Test not explicitly approved'),
+          ok: false,
+          skipped: true,
+          test: mockTest1,
+        },
+        {
+          error: new Error('Test not explicitly approved'),
+          ok: false,
+          skipped: true,
+          test: mockTest2,
+        },
+        {
+          error: new Error('Test not explicitly approved'),
+          ok: false,
+          skipped: true,
+          test: mockTest3,
+        },
+        {
+          error: new Error('Rejected Test'),
+          ok: false,
+          skipped: true,
+          test: mockTest5,
+        },
+        {
+          ok: true,
+          test: mockTest6,
+          duration: 1000.000001,
         },
       ]);
     });

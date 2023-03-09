@@ -44,7 +44,7 @@ module.exports = {
 
   // RDF/XML test suite
   'http://www.w3.org/ns/rdftest#TestXMLEval':
-    new TestCaseEvalHandler(),
+    new TestCaseEvalHandler({ normalizeUrl: true }),
   'http://www.w3.org/ns/rdftest#TestXMLNegativeSyntax':
     new TestCaseSyntaxHandler(false),
 
@@ -103,6 +103,15 @@ module.exports = {
     new TestCaseEvalHandler(),
   'http://www.w3.org/ns/rdftest#TestMicrodataNegativeSyntax':
     new TestCaseSyntaxHandler(true), // Microdata-RDF test suite never expect errors, just empty documents
+
+  // N3 test suite
+  'https://w3c.github.io/N3/tests/test.n3#TestN3PositiveSyntax':
+    new TestCaseSyntaxHandler(true),
+  'https://w3c.github.io/N3/tests/test.n3#TestN3NegativeSyntax':
+    new TestCaseSyntaxHandler(false),
+  'https://w3c.github.io/N3/tests/test.n3#TestN3Eval':
+    new TestCaseEvalHandler(),
+
 };
 // tslint:enable:object-literal-sort-keys
 // tslint:enable:max-line-length

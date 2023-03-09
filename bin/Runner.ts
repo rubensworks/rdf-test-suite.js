@@ -30,6 +30,8 @@ Options:
   -i    JSON string with custom options that need to be passed to the engine
   -d    time out duration for test cases (in milliseconds, default 3000)
   -m    URL to local path mapping (e.g. 'https://w3c.github.io/json-ld-api/|/path/to/folder/')
+  -a    Only run tests that have an explicit rdft:Accepted status [default: false]
+  -r    Run tests that have an explicit rdft:Rejected status [default: false]
 `);
   process.exit(1);
 }
@@ -61,6 +63,8 @@ const config: ITestSuiteConfig = {
   testRegex: new RegExp(args.t),
   timeOutDuration: args.d || defaultConfig.timeOutDuration,
   urlToFileMapping: args.m,
+  runRejected: !!args.r,
+  explicitApproval: !!args.a,
 };
 
 // Fetch the manifest, run the tests, and print them

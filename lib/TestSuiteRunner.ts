@@ -15,6 +15,8 @@ const DF = new DataFactory();
 
 export interface ITestSuiteConfig {
   exitWithStatusCode0: boolean;
+  explicitApproval?: boolean;
+  runRejected?: boolean;
   outputFormat: string;
   timeOutDuration: number;
   customEngingeOptions: object;
@@ -91,33 +93,41 @@ export class TestSuiteRunner {
     if (manifest.testEntries) {
       for (const test of manifest.testEntries) {
         if (!config.testRegex || config.testRegex.test(test.uri)) {
-          let timeout: Timeout = null;
-          const timeStart = process.hrtime();
-          let testResultOverride: ITestResultOverride | undefined;
-          try {
-            await Promise.race([
-              test.test(handler, config.customEngingeOptions)
-                .then((result) => {
-                  if (result) {
-                    testResultOverride = result;
-                  }
-                }),
-              new Promise((res, rej) => {
-                // global. is needed because TSC may otherwise pick the browser version of setTimeout, which returns int
-                timeout = global.setTimeout(
-                  () => rej(new Error(`Test case '${test.uri}' timed out`)),
-                  config.timeOutDuration);
-              },
-              ),
-            ]);
-          } catch (error) {
+          if (!config.runRejected && test.approval === 'http://www.w3.org/ns/rdftest#Rejected') {
+            // Skip tests that are explicitly rejected
+            results.push({ test, ok: false, skipped: true, error: new Error('Rejected Test') });
+          } else if (config.explicitApproval && test.approval !== 'http://www.w3.org/ns/rdftest#Approved') {
+            // Skip tests that are explicitly rejected
+            results.push({ test, ok: false, skipped: true, error: new Error('Test not explicitly approved') });
+          } else {
+            let timeout: Timeout = null;
+            const timeStart = process.hrtime();
+            let testResultOverride: ITestResultOverride | undefined;
+            try {
+              await Promise.race([
+                test.test(handler, config.customEngingeOptions)
+                  .then((result) => {
+                    if (result) {
+                      testResultOverride = result;
+                    }
+                  }),
+                new Promise((res, rej) => {
+                  // global. is needed because TSC may otherwise pick the browser version of setTimeout, which returns int
+                  timeout = global.setTimeout(
+                    () => rej(new Error(`Test case '${test.uri}' timed out`)),
+                    config.timeOutDuration);
+                },
+                ),
+              ]);
+            } catch (error) {
+              clearTimeout(timeout);
+              results.push({ test, ok: false, error, skipped: error.skipped });
+              continue;
+            }
+            const timeEnd = process.hrtime(timeStart);
             clearTimeout(timeout);
-            results.push({ test, ok: false, error, skipped: error.skipped });
-            continue;
+            results.push({ test, ok: true, duration: (timeEnd[0] * 1000) + (timeEnd[1] / 1000000), ...(testResultOverride || {}) });
           }
-          const timeEnd = process.hrtime(timeStart);
-          clearTimeout(timeout);
-          results.push({ test, ok: true, duration: (timeEnd[0] * 1000) + (timeEnd[1] / 1000000), ...(testResultOverride || {}) });
         }
       }
     }

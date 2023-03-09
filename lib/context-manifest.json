@@ -11,6 +11,9 @@
   "approval": "dawg:approval",
   "approvedBy": "dawg:approvedBy",
 
+  "rdft": "http://www.w3.org/ns/rdftest#",
+  "rdftApproval": "rdft:approval",
+
   "mf": "http://www.w3.org/2001/sw/DataAccess/tests/test-manifest#",
   "action": "mf:action",
   "conformanceRequirements": "mf:conformanceRequirement",

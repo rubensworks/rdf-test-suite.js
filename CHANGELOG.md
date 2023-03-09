@@ -1,6 +1,12 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+<a name="v1.22.0"></a>
+## [v1.22.0](https://github.com/rubensworks/rdf-test-suite.js/compare/v1.21.0...v1.22.0) - 2023-03-09
+
+### Added
+* [Add support for Notation3 test suite](https://github.com/rubensworks/rdf-test-suite.js/commit/166687dd6afcec869764bb684237b65ded9d0206)
+
 <a name="v1.21.0"></a>
 ## [v1.21.0](https://github.com/rubensworks/rdf-test-suite.js/compare/v1.20.0...v1.21.0) - 2023-01-27
 

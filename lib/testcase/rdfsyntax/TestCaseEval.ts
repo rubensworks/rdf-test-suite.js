@@ -34,7 +34,7 @@ export class TestCaseEvalHandler implements ITestCaseHandler<TestCaseEval> {
     return new TestCaseEval(testCaseData,
       await stringifyStream((await Util.fetchCached(resource.property.action.value, options)).body),
       await arrayifyStream(<any> (await Util.fetchRdf(resource.property.result.value,
-        {...options, normalizeUrl: true}))[1]),
+        {...options, normalizeUrl: this.shouldNormalizeUrl }))[1]),
       this.normalizeUrl(resource.property.action.value));
   }
 

@@ -17,6 +17,12 @@ const stringifyStream = require('stream-to-string');
  * Test case handler for testing if two RDF serialization are isomorphic.
  */
 export class TestCaseEvalHandler implements ITestCaseHandler<TestCaseEval> {
+  private shouldNormalizeUrl: boolean;
+
+  constructor(options?: { normalizeUrl?: boolean }) {
+    this.shouldNormalizeUrl = options?.normalizeUrl === true;
+  }
+
   public async resourceToTestCase(resource: Resource, testCaseData: ITestCaseData,
                                   options?: IFetchOptions): Promise<TestCaseEval> {
     if (!resource.property.action) {
@@ -33,9 +39,8 @@ export class TestCaseEvalHandler implements ITestCaseHandler<TestCaseEval> {
   }
 
   protected normalizeUrl(url: string) {
-    return Util.normalizeBaseUrl(url);
+    return this.shouldNormalizeUrl ? Util.normalizeBaseUrl(url) : url;
   }
-
 }
 
 export class TestCaseEval implements ITestCaseRdfSyntax {

@@ -31,7 +31,7 @@ export interface ITestCase<H> extends ITestCaseData {
 export async function testCaseFromResource(testCaseHandlers: {[uri: string]: ITestCaseHandler<ITestCase<any>>},
                                            options: IFetchOptions, resource: Resource): Promise<ITestCase<any>> {
   const baseTestCase: ITestCaseData = {
-    approval: resource.property.approval ? resource.property.approval.value : null,
+    approval: resource.property.approval ? resource.property.approval.value : (resource.property.rdftApproval ? resource.property.rdftApproval.value : null),
     approvedBy: resource.property.approvedBy ? resource.property.approvedBy.value : null,
     comment: resource.property.comment ? resource.property.comment.value : null,
     name: resource.property.name ? resource.property.name.value : null,

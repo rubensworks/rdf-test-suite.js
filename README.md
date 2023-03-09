@@ -249,6 +249,31 @@ $ rdf-test-suite myengine.js http://w3c.github.io/rdf-tests/sparql11/data-sparql
   -m http://w3c.github.io/rdf-tests/sparql11/data-sparql11/~/path/to/my/files/
 ```
 
+### Using rejected tests
+
+In cases where you wish to execute a test suite that contains
+`rdft:Rejected` test entries rdf-test-suite will skip those tests
+by default. If you wish to execute those tests as well, you can
+use the `-r` option.
+
+```bash
+$ rdf-test-suite myengine.js http://w3c.github.io/rdf-tests/sparql11/data-sparql11/manifest-all.ttl \
+  -r
+```
+
+### Only using explicitly approved tests
+
+In cases where you wish to execute a test suite that contains
+`rdft:Approved` test entries rdf-test-suite will, by default
+execute those tests as well as all other tests that are not
+explicitly rejected. If you wish to only execute those tests
+that are explicitly approved, you can use the `-a` option.
+
+```bash
+$ rdf-test-suite myengine.js http://w3c.github.io/rdf-tests/sparql11/data-sparql11/manifest-all.ttl \
+  -a
+```
+
 ## Supported test suites
 
 | Manifest | Specification | Interface | Entry manifest |
@@ -275,6 +300,8 @@ $ rdf-test-suite myengine.js http://w3c.github.io/rdf-tests/sparql11/data-sparql
 | [JSON-LD-Star Test Suite](https://json-ld.github.io/json-ld-star/tests/) | [JSON-LD-Star](https://json-ld.github.io/json-ld-star/) | [`ISerializer`](https://github.com/rubensworks/rdf-test-suite.js/blob/master/lib/testcase/rdfsyntax/ISerializer.ts) | https://json-ld.github.io/json-ld-star/tests/fromRdf-manifest.jsonld |
 | [RDFa Test Suite](http://rdfa.info/test-suite/) | [RDFa 1.1](https://www.w3.org/TR/html-rdfa/) | [`IParser`](https://github.com/rubensworks/rdf-test-suite.js/blob/master/lib/testcase/rdfsyntax/IParser.ts) | http://rdfa.info/test-suite/test-cases/rdfa1.1/html5/manifest.ttl |
 | [Microdata to RDF Test Suite](https://w3c.github.io/microdata-rdf/tests/) | [Microdata to RDF](https://w3c.github.io/microdata-rdf/) | [`IParser`](https://github.com/rubensworks/rdf-test-suite.js/blob/master/lib/testcase/rdfsyntax/IParser.ts) | https://w3c.github.io/microdata-rdf/tests/manifest.ttl |
+| [Notation3 Test Suite](https://w3c.github.io/N3/tests/) | [N3 Grammar](https://w3c.github.io/N3/tests/N3Tests/manifest-parser.ttl) | [`IParser`](https://github.com/rubensworks/rdf-test-suite.js/blob/master/lib/testcase/rdfsyntax/IParser.ts) | https://w3c.github.io/N3/tests/N3Tests/manifest-parser.ttl |
+| [Notation3 Test Suite](https://w3c.github.io/N3/tests/) | [Extended N3 Grammar](https://w3c.github.io/N3/tests/N3Tests/manifest-extended.ttl) | [`IParser`](https://github.com/rubensworks/rdf-test-suite.js/blob/master/lib/testcase/rdfsyntax/IParser.ts) | https://w3c.github.io/N3/tests/N3Tests/manifest-extended.ttl |
 | [Turtle-star Evaluation Tests](https://w3c.github.io/rdf-star/tests/turtle/eval/manifest.html) | [RDF-star and SPARQL-star](https://www.w3.org/2021/12/rdf-star.html) | ✖ | https://w3c.github.io/rdf-star/tests/turtle/eval/manifest.jsonld |
 | [Turtle-star Syntax Tests](https://w3c.github.io/rdf-star/tests/turtle/syntax/manifest.html) | [RDF-star and SPARQL-star](https://www.w3.org/2021/12/rdf-star.html) | ✖ | https://w3c.github.io/rdf-star/tests/turtle/syntax/manifest.jsonld |
 | [TriG-star Evaluation Tests](https://w3c.github.io/rdf-star/tests/trig/eval/manifest.html) | [RDF-star and SPARQL-star](https://www.w3.org/2021/12/rdf-star.html) | ✖ | https://w3c.github.io/rdf-star/tests/trig/eval/manifest.jsonld |

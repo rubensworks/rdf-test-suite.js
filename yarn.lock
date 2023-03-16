@@ -719,7 +719,7 @@
 
 abort-controller@^3.0.0:
   version "3.0.0"
-  resolved "https://registry.npmjs.org/abort-controller/-/abort-controller-3.0.0.tgz"
+  resolved "https://registry.yarnpkg.com/abort-controller/-/abort-controller-3.0.0.tgz#eaf54d53b62bae4138e809ca225c8439a6efb392"
   integrity sha512-h8lQ8tacZYnR3vNQTgibj+tODHI5/+l06Au2Pcriv/Gmet0eaj4TwWH41sO9wnHDiQsEj19q0drzdWdeAHtweg==
   dependencies:
     event-target-shim "^5.0.0"
@@ -1308,8 +1308,13 @@ esutils@^1.1.6:
 
 event-target-shim@^5.0.0:
   version "5.0.1"
-  resolved "https://registry.npmjs.org/event-target-shim/-/event-target-shim-5.0.1.tgz"
+  resolved "https://registry.yarnpkg.com/event-target-shim/-/event-target-shim-5.0.1.tgz#5d4d3ebdf9583d63a5333ce2deb7480ab2b05789"
   integrity sha512-i/2XbnSz/uxRCU6+NdVJgKWDTM427+MqYbkQzD321DuCQJUqOuJKIA0IM2+W2xtYHdKOmZ4dR6fExsd4SXL+WQ==
+
+events@^3.3.0:
+  version "3.3.0"
+  resolved "https://registry.yarnpkg.com/events/-/events-3.3.0.tgz#31a95ad0a924e2d2c419a813aeb2c4e878ea7400"
+  integrity sha512-mQw+2fkQbALzQ7V0MY0IqdnXNOeTtP4r0lN9z7AAawCXgqea7bDii20AYrIBrFd/Hx0M2Ocz6S111CaFkUcb0Q==
 
 execa@^5.0.0:
   version "5.1.1"
@@ -2471,12 +2476,12 @@ ms@2.1.2:
   integrity sha512-sGkPx+VjMtmA6MX27oA4FBFELFCZZ4S4XqeGOXCv68tT+jb3vk/RyaKWP0PTKyWtmLSM0b+adUTEvbs1PEaH2w==
 
 n3@^1.11.1:
-  version "1.16.2"
-  resolved "https://registry.npmjs.org/n3/-/n3-1.16.2.tgz"
-  integrity sha512-5vYa2HuNEJ+a26FEs4FGgfFLgaPOODaZpJlc7FS0eUjDumc4uK0cvx216PjKXBkLzmAsSqGgQPwqztcLLvwDsw==
+  version "1.16.3"
+  resolved "https://registry.yarnpkg.com/n3/-/n3-1.16.3.tgz#d339dca14c79648b1595a3252c5410b800b896f8"
+  integrity sha512-9caLSZuMW1kdlPxEN4ka6E4E8a5QKoZ2emxpW+zHMofI+Bo92nJhN//wNub15S5T9I4c6saEqdGEu+YXJqMZVA==
   dependencies:
     queue-microtask "^1.1.2"
-    readable-stream "^3.6.0"
+    readable-stream "^4.0.0"
 
 natural-compare@^1.4.0:
   version "1.4.0"
@@ -2706,6 +2711,11 @@ process-nextick-args@~2.0.0:
   resolved "https://registry.npmjs.org/process-nextick-args/-/process-nextick-args-2.0.1.tgz"
   integrity sha512-3ouUOpQhtgrbOa17J7+uxOTpITYWaGP7/AhoR3+A+/1e9skrzelGi/dXzEYyvbxubEF6Wn2ypscTKiKJFFn1ag==
 
+process@^0.11.10:
+  version "0.11.10"
+  resolved "https://registry.yarnpkg.com/process/-/process-0.11.10.tgz#7332300e840161bda3e69a1d1d91a7d4bc16f182"
+  integrity sha512-cdGef/drWFoydD1JsMzuFf8100nZl+GT+yacc2bEced5f9Rjk4z+WtFUTBu9PhOi9j/jfmBPu0mMEY4wIdAF8A==
+
 promise-polyfill@^1.1.6:
   version "1.1.6"
   resolved "https://registry.npmjs.org/promise-polyfill/-/promise-polyfill-1.1.6.tgz"
@@ -2741,7 +2751,7 @@ qs@~6.5.2:
 
 queue-microtask@^1.1.2:
   version "1.2.3"
-  resolved "https://registry.npmjs.org/queue-microtask/-/queue-microtask-1.2.3.tgz"
+  resolved "https://registry.yarnpkg.com/queue-microtask/-/queue-microtask-1.2.3.tgz#4929228bbc724dfac43e0efb058caf7b6cfb6243"
   integrity sha512-NuaNSa6flKT5JaSYQzJok04JzTL1CA6aGhv5rfLW3PgqA+M2ChpZQnAC8h8i4ZFkBS8X5RqkDBHA7r4hej3K9A==
 
 quick-lru@^1.0.0:
@@ -2900,11 +2910,14 @@ readable-stream@^2.2.2, readable-stream@~2.3.6:
     util-deprecate "~1.0.1"
 
 readable-stream@^4.0.0:
-  version "4.1.0"
-  resolved "https://registry.npmjs.org/readable-stream/-/readable-stream-4.1.0.tgz"
-  integrity sha512-sVisi3+P2lJ2t0BPbpK629j8wRW06yKGJUcaLAGXPAUhyUxVJm7VsCTit1PFgT4JHUDMrGNR+ZjSKpzGaRF3zw==
+  version "4.3.0"
+  resolved "https://registry.yarnpkg.com/readable-stream/-/readable-stream-4.3.0.tgz#0914d0c72db03b316c9733bb3461d64a3cc50cba"
+  integrity sha512-MuEnA0lbSi7JS8XM+WNJlWZkHAAdm7gETHdFK//Q/mChGyj2akEFtdLZh32jSdkWGbRwCW9pn6g3LWDdDeZnBQ==
   dependencies:
     abort-controller "^3.0.0"
+    buffer "^6.0.3"
+    events "^3.3.0"
+    process "^0.11.10"
 
 readable-web-to-node-stream@^3.0.2:
   version "3.0.2"

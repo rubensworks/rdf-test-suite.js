@@ -2829,9 +2829,9 @@ rdf-quad@^1.5.0:
     rdf-string "^1.5.0"
 
 rdf-string@^1.5.0, rdf-string@^1.6.0:
-  version "1.6.1"
-  resolved "https://registry.npmjs.org/rdf-string/-/rdf-string-1.6.1.tgz"
-  integrity sha512-EDNVQs9jDgm4hkY8TZLhQI3rYUduecMRxLu3szldAdS2CHEo8aFqlHcZDFgBcaJN2XJWoRJU8YQT85wmb8gPEA==
+  version "1.6.3"
+  resolved "https://registry.yarnpkg.com/rdf-string/-/rdf-string-1.6.3.tgz#5c3173fad13e6328698277fb8ff151e3423282ab"
+  integrity sha512-HIVwQ2gOqf+ObsCLSUAGFZMIl3rh9uGcRf1KbM85UDhKqP+hy6qj7Vz8FKt3GA54RiThqK3mNcr66dm1LP0+6g==
   dependencies:
     "@rdfjs/types" "*"
     rdf-data-factory "^1.1.0"

@@ -2954,12 +2954,7 @@ redent@^3.0.0:
     indent-string "^4.0.0"
     strip-indent "^3.0.0"
 
-relative-to-absolute-iri@^1.0.0, relative-to-absolute-iri@^1.0.6:
-  version "1.0.6"
-  resolved "https://registry.npmjs.org/relative-to-absolute-iri/-/relative-to-absolute-iri-1.0.6.tgz"
-  integrity sha512-Xw5/Zx6iWSCMJUXwXVOjySjH8Xli4hVFL9QQFvkl1qEmFBG94J+QUI9emnoctOCD3285f1jNV+QWV9eDYwIdfQ==
-
-relative-to-absolute-iri@^1.0.5:
+relative-to-absolute-iri@^1.0.0, relative-to-absolute-iri@^1.0.5, relative-to-absolute-iri@^1.0.6:
   version "1.0.7"
   resolved "https://registry.yarnpkg.com/relative-to-absolute-iri/-/relative-to-absolute-iri-1.0.7.tgz#f2fd6ee60c78d9ffc4926bd20bdf84479b91d765"
   integrity sha512-Xjyl4HmIzg2jzK/Un2gELqbcE8Fxy85A/aLSHE6PE/3+OGsFwmKVA1vRyGaz6vLWSqLDMHA+5rjD/xbibSQN1Q==

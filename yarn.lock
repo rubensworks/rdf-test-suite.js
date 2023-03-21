@@ -2841,9 +2841,9 @@ rdf-terms@^1.7.0:
     rdf-string "^1.6.0"
 
 rdfxml-streaming-parser@^2.0.0:
-  version "2.0.0"
-  resolved "https://registry.npmjs.org/rdfxml-streaming-parser/-/rdfxml-streaming-parser-2.0.0.tgz"
-  integrity sha512-O6sxOWPckQJVfZH1NUBongsArW103TGZ8Vaj9pUlDCNtLfBg3e4UrZLbi5v7zevGWhsQc6+5qtPQis2JdnPYMg==
+  version "2.2.1"
+  resolved "https://registry.yarnpkg.com/rdfxml-streaming-parser/-/rdfxml-streaming-parser-2.2.1.tgz#10c16ed3aabe88c59c0ba503b4c54cd8f4588649"
+  integrity sha512-1r7aXfSRCLkBYXGcko/GpSZdHxXKvYaeUi2ulEbB7cLvACD7DNoAA/uW6dsETEhgmsEipJZI7NLqBl2whOse8Q==
   dependencies:
     "@rdfjs/types" "*"
     "@types/readable-stream" "^2.3.13"
@@ -2852,6 +2852,7 @@ rdfxml-streaming-parser@^2.0.0:
     readable-stream "^4.0.0"
     relative-to-absolute-iri "^1.0.0"
     saxes "^6.0.0"
+    validate-iri "^1.0.0"
 
 react-is@^18.0.0:
   version "18.2.0"
@@ -3025,7 +3026,7 @@ safe-buffer@^5.0.1, safe-buffer@^5.1.2, safe-buffer@~5.2.0:
 
 safe-buffer@~5.1.0, safe-buffer@~5.1.1:
   version "5.1.2"
-  resolved "https://registry.npmjs.org/safe-buffer/-/safe-buffer-5.1.2.tgz"
+  resolved "https://registry.yarnpkg.com/safe-buffer/-/safe-buffer-5.1.2.tgz#991ec69d296e0313747d59bdfd2b745c35f8828d"
   integrity sha512-Gd2UZBJDkXlY7GbJxfsE8/nvKkUEU1G38c1siN6QP6a9PT9MmHB8GnpscSmMJSoF8LOIrt8ud/wPtojys4G6+g==
 
 safer-buffer@^2.0.2, safer-buffer@^2.1.0, safer-buffer@~2.1.0:
@@ -3035,7 +3036,7 @@ safer-buffer@^2.0.2, safer-buffer@^2.1.0, safer-buffer@~2.1.0:
 
 saxes@^6.0.0:
   version "6.0.0"
-  resolved "https://registry.npmjs.org/saxes/-/saxes-6.0.0.tgz"
+  resolved "https://registry.yarnpkg.com/saxes/-/saxes-6.0.0.tgz#fe5b4a4768df4f14a201b1ba6a65c1f3d9988cc5"
   integrity sha512-xAg7SOnEhrm5zI3puOOKyy1OMcMlIJZYNJY7xLBwSze0UjhPLnWfj2GF2EpT0jmzaJKIWKHLsaSSajf35bcYnA==
   dependencies:
     xmlchars "^2.2.0"
@@ -3525,6 +3526,11 @@ v8-to-istanbul@^9.0.1:
     "@types/istanbul-lib-coverage" "^2.0.1"
     convert-source-map "^1.6.0"
 
+validate-iri@^1.0.0:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/validate-iri/-/validate-iri-1.0.1.tgz#4f7289a479e2ed96d3b8b613e12674c725fbb29b"
+  integrity sha512-gLXi7351CoyVVQw8XE5sgpYawRKatxE7kj/xmCxXOZS1kMdtcqC0ILIqLuVEVnAUQSL/evOGG3eQ+8VgbdnstA==
+
 validate-npm-package-license@^3.0.1:
   version "3.0.4"
   resolved "https://registry.npmjs.org/validate-npm-package-license/-/validate-npm-package-license-3.0.4.tgz"
@@ -3607,7 +3613,7 @@ write-file-atomic@^5.0.0:
 
 xmlchars@^2.2.0:
   version "2.2.0"
-  resolved "https://registry.npmjs.org/xmlchars/-/xmlchars-2.2.0.tgz"
+  resolved "https://registry.yarnpkg.com/xmlchars/-/xmlchars-2.2.0.tgz#060fe1bcb7f9c76fe2a17db86a9bc3ab894210cb"
   integrity sha512-JZnDKK8B0RCDw84FNdDAIpZK+JuJw+s7Lz8nksI7SIuU3UXJJslUthsi+uWBUYOwPFwW7W7PRLRfUKpxjtjFCw==
 
 xtend@~4.0.1:

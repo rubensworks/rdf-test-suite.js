@@ -22,15 +22,8 @@ export interface ITestCase<H> extends ITestCaseData {
 }
 
 export function testCasesFromResource(testCaseHandlers: {[uri: string]: ITestCaseHandler<ITestCase<any>>}, options: IFetchOptions, resource: Resource): Promise<ITestCase<any>>[] {
-  const types = resource.properties.types;
-
-  if (!types.length) {
-    // Ignore undefined test cases, this is applicable in the official test cases,
-    // like http://www.w3.org/2009/sparql/docs/tests/data-sparql11/http-rdf-update/manifest#put__empty_graph
-    return [];
-  }
-
-  return types.map((type) => testCaseFromResource(testCaseHandlers, options, resource, [type])).filter(elem => elem !== null);
+  return resource.properties.types
+    .map((type) => testCaseFromResource(testCaseHandlers, options, resource, [type])).filter(elem => elem !== null);
 }
 
 /**

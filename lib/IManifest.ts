@@ -1,5 +1,5 @@
 import {RdfObjectLoader, Resource} from "rdf-object";
-import {ITestCase, testCaseFromResource} from "./testcase/ITestCase";
+import {ITestCase, testCasesFromResource} from "./testcase/ITestCase";
 import {ITestCaseHandler} from "./testcase/ITestCaseHandler";
 import {IFetchOptions, Util} from "./Util";
 
@@ -51,7 +51,7 @@ export async function manifestFromResource(testCaseHandlers: {[uri: string]: ITe
           (objectLoader.resources?.[resource.value.slice(0, resource.value.lastIndexOf('.')).replace(/\/manifest$/, '#manifest')] ?? resource)
       ).properties.entries.map(
         (entryList: Resource) => (entryList.list || [entryList])
-          .map(testCaseFromResource.bind(null, testCaseHandlers, options))))))
+          .flatMap((resource) => testCasesFromResource(testCaseHandlers, options, resource))))))
       .filter((v) => v),
     uri: resource.value,
   };

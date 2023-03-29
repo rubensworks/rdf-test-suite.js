@@ -21,6 +21,18 @@ export interface ITestCase<H> extends ITestCaseData {
   test(handler: H, injectArguments: any): Promise<void | ITestResultOverride>;
 }
 
+export function testCasesFromResource(testCaseHandlers: {[uri: string]: ITestCaseHandler<ITestCase<any>>}, options: IFetchOptions, resource: Resource): Promise<ITestCase<any>>[] {
+  const types = resource.properties.types;
+
+  if (!types.length) {
+    // Ignore undefined test cases, this is applicable in the official test cases,
+    // like http://www.w3.org/2009/sparql/docs/tests/data-sparql11/http-rdf-update/manifest#put__empty_graph
+    return [];
+  }
+
+  return types.map((type) => testCaseFromResource(testCaseHandlers, options, resource, [type])).filter(elem => elem !== null);
+}
+
 /**
  * Create a test case object from a resource.
  * @param {{[uri: string]: ITestCaseHandler<ITestCase<any>>}} testCaseHandlers Handlers for constructing test cases.
@@ -29,13 +41,13 @@ export interface ITestCase<H> extends ITestCaseData {
  * @return {Promise<ITestCase<any>>} A promise resolving to a test case object.
  */
 export async function testCaseFromResource(testCaseHandlers: {[uri: string]: ITestCaseHandler<ITestCase<any>>},
-                                           options: IFetchOptions, resource: Resource): Promise<ITestCase<any>> {
+                                           options: IFetchOptions, resource: Resource, types = resource.properties.types): Promise<ITestCase<any>> | null {
   const baseTestCase: ITestCaseData = {
     approval: resource.property.approval ? resource.property.approval.value : (resource.property.rdftApproval ? resource.property.rdftApproval.value : null),
     approvedBy: resource.property.approvedBy ? resource.property.approvedBy.value : null,
     comment: resource.property.comment ? resource.property.comment.value : null,
     name: resource.property.name ? resource.property.name.value : null,
-    types: resource.properties.types.map((r) => termToString(r.term)),
+    types: types.map((r) => termToString(r.term)),
     uri: resource.term.value,
   };
 
@@ -49,7 +61,7 @@ export async function testCaseFromResource(testCaseHandlers: {[uri: string]: ITe
   let handler: ITestCaseHandler<ITestCase<any>>;
   for (const testCaseHandlerKey in testCaseHandlers) {
     const testCaseHandlerTypes: string[] = testCaseHandlerKey.split(' ');
-    const availableTypes = resource.properties.types.map((term) => term.value);
+    const availableTypes = types.map((term) => term.value);
     let valid: boolean = true;
     for (const testCaseHandlerType of testCaseHandlerTypes) {
       if (availableTypes.indexOf(testCaseHandlerType) < 0) {

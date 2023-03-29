@@ -186,7 +186,7 @@ describe('TestCaseSyntaxHandler negative', () => {
       const testCase = await handler.resourceToTestCase(resource, <any> { types: [ 'http://www.w3.org/ns/rdftest#TestTurtlePositiveSyntax' ] });
       const spy = jest.spyOn(parser, 'parse');
       await expect(testCase.test(parser, {})).resolves.toBe(undefined);
-      await expect(spy).toHaveBeenCalledWith(testCase.data, "ACTION.invalid", {}, { mediaType: 'text/turtle', ...testCase });
+      await expect(spy).toHaveBeenCalledWith(testCase.data, "ACTION.invalid", {}, testCase);
     });
 
     it('should produce TestCaseSyntax that tests false on valid data', async () => {

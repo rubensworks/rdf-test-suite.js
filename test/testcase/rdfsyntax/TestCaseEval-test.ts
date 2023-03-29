@@ -176,7 +176,7 @@ describe('TestCaseEvalHandler', () => {
       const testCase = await handler.resourceToTestCase(resource, <any> { types: [ 'http://www.w3.org/ns/rdftest#TestTurtleEval' ] });
       const spy = jest.spyOn(parser, 'parse');
       await expect(testCase.test(parser, {})).resolves.toBe(undefined);
-      await expect(spy).toHaveBeenCalledWith(testCase.data, "https://example.org/myTestFile", {}, { mediaType: 'text/turtle', ...testCase });
+      await expect(spy).toHaveBeenCalledWith(testCase.data, "https://example.org/myTestFile", {}, testCase);
     });
 
     it('should produce TestCaseEval that tests false on isomorphic data', async () => {

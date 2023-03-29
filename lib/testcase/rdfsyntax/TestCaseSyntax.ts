@@ -5,6 +5,7 @@ import {ITestCaseData} from "../ITestCase";
 import {ITestCaseHandler} from "../ITestCaseHandler";
 import {IParser} from "./IParser";
 import {ITestCaseRdfSyntax} from "./ITestCaseRdfSyntax";
+import mediaTypeMappings from "../TestCaseMediaTypes";
 // tslint:disable-next-line:no-var-requires
 const stringifyStream = require('stream-to-string');
 
@@ -61,7 +62,7 @@ export class TestCaseSyntax implements ITestCaseRdfSyntax {
 
   public async test(parser: IParser, injectArguments: any): Promise<void> {
     try {
-      await parser.parse(this.data, this.baseIRI, injectArguments);
+      await parser.parse(this.data, this.baseIRI, injectArguments, { mediaType: this.types && mediaTypeMappings[this.types.find(type => type in mediaTypeMappings)],  ...this });
     } catch (e) {
       if (e.skipped) {
         throw e;

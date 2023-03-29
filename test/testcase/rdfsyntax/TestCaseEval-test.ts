@@ -65,6 +65,7 @@ describe('TestCaseEvalHandler', () => {
   let context;
   let pAction;
   let pResult;
+  let pType;
 
   beforeEach((done) => {
     handler = new TestCaseEvalHandler();
@@ -76,6 +77,8 @@ describe('TestCaseEvalHandler', () => {
           { term: DF.namedNode('http://www.w3.org/2001/sw/DataAccess/tests/test-manifest#action'), context });
         pResult = new Resource(
           { term: DF.namedNode('http://www.w3.org/2001/sw/DataAccess/tests/test-manifest#result'), context });
+        pType = new Resource(
+          { term: DF.namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'), context });
 
         done();
       });
@@ -163,6 +166,17 @@ describe('TestCaseEvalHandler', () => {
       resource.addProperty(pResult, new Resource({ term: DF.literal('RESULT.ttl'), context }));
       const testCase = await handler.resourceToTestCase(resource, <any> {});
       return expect(testCase.test(parser, {})).resolves.toBe(undefined);
+    });
+
+    it('should produce TestCaseEval that tests true on isomorphic data and have mediaType passed to parser', async () => {
+      const resource = new Resource({ term: DF.namedNode('http://ex.org/test'), context });
+      resource.addProperty(pAction, new Resource({ term: DF.literal('https://example.org/myTestFile'), context }));
+      resource.addProperty(pResult, new Resource({ term: DF.literal('RESULT.ttl'), context }));
+      resource.addProperty(pType, new Resource({ term: DF.namedNode('http://www.w3.org/ns/rdftest#TestTurtleEval'), context }));
+      const testCase = await handler.resourceToTestCase(resource, <any> { types: [ 'http://www.w3.org/ns/rdftest#TestTurtleEval' ] });
+      const spy = jest.spyOn(parser, 'parse');
+      await expect(testCase.test(parser, {})).resolves.toBe(undefined);
+      await expect(spy).toHaveBeenCalledWith(testCase.data, "https://example.org/myTestFile", {}, { mediaType: 'text/turtle', ...testCase });
     });
 
     it('should produce TestCaseEval that tests false on isomorphic data', async () => {

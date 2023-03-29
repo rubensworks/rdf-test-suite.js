@@ -128,6 +128,7 @@ describe('TestCaseSyntaxHandler negative', () => {
 
   let context;
   let pAction;
+  let pType;
 
   beforeEach((done) => {
     new ContextParser().parse(require('../../../lib/context-manifest.json'))
@@ -136,7 +137,9 @@ describe('TestCaseSyntaxHandler negative', () => {
 
         pAction = new Resource(
           { term: DF.namedNode('http://www.w3.org/2001/sw/DataAccess/tests/test-manifest#action'), context });
-
+        pType = new Resource(
+          { term: DF.namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'), context });
+  
         done();
       });
   });
@@ -172,6 +175,16 @@ describe('TestCaseSyntaxHandler negative', () => {
       resource.addProperty(pAction, new Resource({ term: DF.literal('ACTION.invalid'), context }));
       const testCase = await handler.resourceToTestCase(resource, <any> {});
       return expect(testCase.test(parser, {})).resolves.toBe(undefined);
+    });
+
+    it('should produce TestCaseSyntax that tests true on invalid data ', async () => {
+      const resource = new Resource({ term: DF.namedNode('http://ex.org/test'), context });
+      resource.addProperty(pAction, new Resource({ term: DF.literal('ACTION.invalid'), context }));
+      resource.addProperty(pType, new Resource({ term: DF.namedNode('http://www.w3.org/ns/rdftest#TestTurtlePositiveSyntax'), context }));
+      const testCase = await handler.resourceToTestCase(resource, <any> { types: [ 'http://www.w3.org/ns/rdftest#TestTurtlePositiveSyntax' ] });
+      const spy = jest.spyOn(parser, 'parse');
+      await expect(testCase.test(parser, {})).resolves.toBe(undefined);
+      await expect(spy).toHaveBeenCalledWith(testCase.data, "ACTION.invalid", {}, { mediaType: 'text/turtle', ...testCase });
     });
 
     it('should produce TestCaseSyntax that tests false on valid data', async () => {

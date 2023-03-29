@@ -3,6 +3,8 @@ import "jest-rdf";
 import {ContextParser} from "jsonld-context-parser";
 import {Resource} from "rdf-object";
 import {RdfXmlParser} from "rdfxml-streaming-parser";
+import {testCasesFromResource} from "../../../lib/testcase/ITestCase";
+import * as handlers from '../../../lib/testcase/TestCaseHandlers';
 import {ErrorSkipped} from "../../../lib/ErrorSkipped";
 import {TestCaseSyntax, TestCaseSyntaxHandler} from "../../../lib/testcase/rdfsyntax/TestCaseSyntax";
 import arrayifyStream from "arrayify-stream";
@@ -193,6 +195,17 @@ describe('TestCaseSyntaxHandler negative', () => {
       const testCase = await handler.resourceToTestCase(resource, <any> {});
       return expect(testCase.test(parser, {})).rejects.toBeTruthy();
     });
+
+    it('should produce multiple test cases when multiple types are available for the resource', async () => {
+      const resource = new Resource({ term: DF.namedNode('http://ex.org/test'), context });
+      resource.addProperty(pAction, new Resource({ term: DF.literal('ACTION.invalid'), context }));
+      resource.addProperty(pType, new Resource({ term: DF.namedNode('http://www.w3.org/ns/rdftest#TestTurtleNegativeSyntax'), context }));
+      resource.addProperty(pType, new Resource({ term: DF.namedNode('https://w3c.github.io/N3/tests/test.n3#TestN3PositiveSyntax'), context }));
+      const cases = testCasesFromResource(handlers, {}, resource);
+      expect(cases).toHaveLength(2);
+      await expect(cases[0]).resolves.toBeInstanceOf(TestCaseSyntax);
+      await expect(cases[1]).resolves.toBeInstanceOf(TestCaseSyntax);
+    })
   });
 
 });

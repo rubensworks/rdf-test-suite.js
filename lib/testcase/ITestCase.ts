@@ -41,17 +41,17 @@ export async function testCaseFromResource(testCaseHandlers: {[uri: string]: ITe
 
   const empty: null | never[] = allowMultiple ? [] : null;
 
-  if (!baseTestCase.types.length) {
+  if (!resource.properties.types.length) {
     // Ignore undefined test cases, this is applicable in the official test cases,
     // like http://www.w3.org/2009/sparql/docs/tests/data-sparql11/http-rdf-update/manifest#put__empty_graph
     return empty;
   }
 
-  const handlers: ITestCaseHandler<ITestCase<any>>[] = [];
+  const handlers: [string, ITestCaseHandler<ITestCase<any>>][] = [];
   const availableTypes = resource.properties.types.map((term) => term.value);
   for (const [key, handler] of Object.entries(testCaseHandlers)) {
     if (key.split(' ').every((type) => availableTypes.includes(type)))
-      handlers.push(handler);
+      handlers.push([key, handler]);
   }
 
   if (handlers.length === 0) {
@@ -62,7 +62,10 @@ export async function testCaseFromResource(testCaseHandlers: {[uri: string]: ITe
   }
 
   try {
-    const res = (await Promise.all(handlers.map(handler => handler.resourceToTestCase(resource, baseTestCase, options)))).filter(x => x);
+    const res = (await Promise.all(handlers.map(([key, handler]) => handler.resourceToTestCase(resource, {
+      ...baseTestCase,
+      types: key.split(' '),
+    }, options)))).filter(x => x);
     return allowMultiple ? res : res[0];
   } catch (e) {
     // tslint:disable-next-line:no-console

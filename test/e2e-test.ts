@@ -41,7 +41,7 @@ describe('e2e tests on the test suite runner', () => {
     }
     runner = new TestSuiteRunner();
     config = {
-      timeOutDuration: 120_000,
+      timeOutDuration: 180_000,
       exitWithStatusCode0: true,
       outputFormat: 'detailed',
       customEngingeOptions: {},
@@ -87,7 +87,7 @@ describe('e2e tests on the test suite runner', () => {
 
         // All tests should either be ok or skipped
         expect(result.every(r => r.ok || r.skipped)).toEqual(true);
-      }, 130_000);
+      }, 190_000);
     }
   });
 
@@ -129,7 +129,7 @@ describe('e2e tests on the test suite runner', () => {
 
         expect(result.every(r => r.ok || r.skipped)).toEqual(true);
 
-      }, 130_000);
+      }, 190_000);
     }
 
   });

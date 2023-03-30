@@ -10,6 +10,12 @@ const handlers: any = {
   abc: {
     resourceToTestCase: (resource, data) => Promise.resolve({ ...data, test: true }),
   },
+  def: {
+    resourceToTestCase: (resource, data) => Promise.resolve({ ...data, test: true }),
+  },
+  'p q': {
+    resourceToTestCase: (resource, data) => Promise.resolve({ ...data, test: true }),
+  },
   error: {
     resourceToTestCase: () => Promise.reject(new Error('Test case handler error')),
   },
@@ -93,6 +99,76 @@ describe('ITestCase', () => {
         types: [ 'abc' ],
         uri: 'http://example.org/test1',
       });
+      expect(console.error).toHaveBeenCalledTimes(0);
+    });
+
+    it('should return a list of test cases when allowMultiple is enabled', async () => {
+      const resource = new Resource({ term: DF.namedNode('http://example.org/test1'), context });
+      resource.addProperty(pType, new Resource({ term: DF.namedNode('abc'), context}));
+      expect(await testCaseFromResource(handlers, null, resource, true)).toEqual([{
+        approval: null,
+        approvedBy: null,
+        comment: null,
+        name: null,
+        test: true,
+        types: [ 'abc' ],
+        uri: 'http://example.org/test1',
+      }]);
+      expect(console.error).toHaveBeenCalledTimes(0);
+    });
+
+    it('should return an empty list of multiple test cases when allowMultiple is enabled but no types are given', async () => {
+      const resource = new Resource({ term: DF.namedNode('http://example.org/test1'), context });
+      expect(await testCaseFromResource(handlers, null, resource, true)).toEqual([]);
+      expect(console.error).toHaveBeenCalledTimes(0);
+    });
+
+    it('should return a list of multiple test cases when allowMultiple is enabled with multiple types', async () => {
+      const resource = new Resource({ term: DF.namedNode('http://example.org/test1'), context });
+      resource.addProperty(pType, new Resource({ term: DF.namedNode('abc'), context}));
+      resource.addProperty(pType, new Resource({ term: DF.namedNode('def'), context}));
+      expect(await testCaseFromResource(handlers, null, resource, true)).toEqual([{
+        approval: null,
+        approvedBy: null,
+        comment: null,
+        name: null,
+        test: true,
+        types: [ 'abc' ],
+        uri: 'http://example.org/test1',
+      }, {
+        approval: null,
+        approvedBy: null,
+        comment: null,
+        name: null,
+        test: true,
+        types: [ 'def' ],
+        uri: 'http://example.org/test1',
+      }]);
+      expect(console.error).toHaveBeenCalledTimes(0);
+    });
+
+    it('should return a list of multiple test cases when allowMultiple is enabled with multiple types and include all types needed for each case', async () => {
+      const resource = new Resource({ term: DF.namedNode('http://example.org/test1'), context });
+      resource.addProperty(pType, new Resource({ term: DF.namedNode('abc'), context}));
+      resource.addProperty(pType, new Resource({ term: DF.namedNode('p'), context}));
+      resource.addProperty(pType, new Resource({ term: DF.namedNode('q'), context}));
+      expect(await testCaseFromResource(handlers, null, resource, true)).toEqual([{
+        approval: null,
+        approvedBy: null,
+        comment: null,
+        name: null,
+        test: true,
+        types: [ 'abc' ],
+        uri: 'http://example.org/test1',
+      }, {
+        approval: null,
+        approvedBy: null,
+        comment: null,
+        name: null,
+        test: true,
+        types: [ 'p', 'q' ],
+        uri: 'http://example.org/test1',
+      }]);
       expect(console.error).toHaveBeenCalledTimes(0);
     });
 

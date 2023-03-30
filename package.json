@@ -38,6 +38,8 @@
     "test"
   ],
   "devDependencies": {
+    "@comunica/actor-http-proxy": "^2.6.9",
+    "@comunica/query-sparql": "^2.6.9",
     "@types/jest": "^29.0.0",
     "coveralls": "^3.0.0",
     "jest": "^29.0.0",
@@ -79,7 +81,10 @@
         "statements": 100
       }
     },
-    "coveragePathIgnorePatterns": ["/node_modules/", "index.js"]
+    "coveragePathIgnorePatterns": [
+      "/node_modules/",
+      "index.js"
+    ]
   },
   "scripts": {
     "test": "jest ${1}",

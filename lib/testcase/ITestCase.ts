@@ -29,7 +29,7 @@ export interface ITestCase<H> extends ITestCaseData {
  * @return {Promise<ITestCase<any>>} A promise resolving to a test case object.
  */
 export async function testCaseFromResource(testCaseHandlers: {[uri: string]: ITestCaseHandler<ITestCase<any>>},
-                                           options: IFetchOptions, resource: Resource): Promise<ITestCase<any>> {
+                                           options: IFetchOptions, resource: Resource, allowMultiple = false): Promise<ITestCase<any> | ITestCase<any>[] | null> {
   const baseTestCase: ITestCaseData = {
     approval: resource.property.approval ? resource.property.approval.value : (resource.property.rdftApproval ? resource.property.rdftApproval.value : null),
     approvedBy: resource.property.approvedBy ? resource.property.approvedBy.value : null,
@@ -39,42 +39,34 @@ export async function testCaseFromResource(testCaseHandlers: {[uri: string]: ITe
     uri: resource.term.value,
   };
 
+  const empty: null | never[] = allowMultiple ? [] : null;
+
   if (!baseTestCase.types.length) {
     // Ignore undefined test cases, this is applicable in the official test cases,
     // like http://www.w3.org/2009/sparql/docs/tests/data-sparql11/http-rdf-update/manifest#put__empty_graph
-    return null;
+    return empty;
   }
 
-  // Find the first handler that has all its required types in the given test case
-  let handler: ITestCaseHandler<ITestCase<any>>;
-  for (const testCaseHandlerKey in testCaseHandlers) {
-    const testCaseHandlerTypes: string[] = testCaseHandlerKey.split(' ');
-    const availableTypes = resource.properties.types.map((term) => term.value);
-    let valid: boolean = true;
-    for (const testCaseHandlerType of testCaseHandlerTypes) {
-      if (availableTypes.indexOf(testCaseHandlerType) < 0) {
-        valid = false;
-        break;
-      }
-    }
-    if (valid) {
-      handler = testCaseHandlers[testCaseHandlerKey];
-      break;
-    }
+  const handlers: ITestCaseHandler<ITestCase<any>>[] = [];
+  const availableTypes = resource.properties.types.map((term) => term.value);
+  for (const [key, handler] of Object.entries(testCaseHandlers)) {
+    if (key.split(' ').every((type) => availableTypes.includes(type)))
+      handlers.push(handler);
   }
 
-  if (!handler) {
+  if (handlers.length === 0) {
     // tslint:disable-next-line:no-console
     console.error(new Error(
       `Could not find a test case handler for ${resource.value} with types ${baseTestCase.types}`).toString());
-    return null;
+    return empty;
   }
 
   try {
-    return await handler.resourceToTestCase(resource, baseTestCase, options);
+    const res = (await Promise.all(handlers.map(handler => handler.resourceToTestCase(resource, baseTestCase, options)))).filter(x => x);
+    return allowMultiple ? res : res[0];
   } catch (e) {
     // tslint:disable-next-line:no-console
     console.error(e.toString());
-    return null;
+    return empty;
   }
 }

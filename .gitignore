@@ -14,5 +14,6 @@ yarn-error.log
 **/index.js
 **/index.js.map
 **/index.d.ts
+test/cache
 coverage
 documentation

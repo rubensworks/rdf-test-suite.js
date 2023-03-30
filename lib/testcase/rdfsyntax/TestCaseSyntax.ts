@@ -61,7 +61,7 @@ export class TestCaseSyntax implements ITestCaseRdfSyntax {
 
   public async test(parser: IParser, injectArguments: any): Promise<void> {
     try {
-      await parser.parse(this.data, this.baseIRI, injectArguments);
+      await parser.parse(this.data, this.baseIRI, injectArguments, this);
     } catch (e) {
       if (e.skipped) {
         throw e;

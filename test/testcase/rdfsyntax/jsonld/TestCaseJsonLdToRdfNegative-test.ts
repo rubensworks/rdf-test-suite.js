@@ -102,7 +102,7 @@ describe('TestCaseJsonLdToRdfNegativeHandler', () => {
 }`, "ACTION",
         {
           produceGeneralizedRdf: false,
-        });
+        }, testCase);
     });
 
     it('should error on a resource without action', () => {

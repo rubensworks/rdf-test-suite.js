@@ -1,6 +1,13 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+<a name="v1.23.0"></a>
+## [v1.23.0](https://github.com/rubensworks/rdf-test-suite.js/compare/v1.22.0...v1.23.0) - 2023-03-30
+
+### Added
+* [Handle test cases with multiple types](https://github.com/rubensworks/rdf-test-suite.js/commit/3c82db1b836c4f144b21963671710731a2999742)
+* [Forward types relevant to test case](https://github.com/rubensworks/rdf-test-suite.js/commit/f8092203ad4013d2e854f88a989adb85778ceb14)
+
 <a name="v1.22.0"></a>
 ## [v1.22.0](https://github.com/rubensworks/rdf-test-suite.js/compare/v1.21.0...v1.22.0) - 2023-03-09
 

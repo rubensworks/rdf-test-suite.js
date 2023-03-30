@@ -1,6 +1,6 @@
 {
   "name": "rdf-test-suite",
-  "version": "1.22.0",
+  "version": "1.23.0",
   "description": "Executes the RDF and SPARQL test suites.",
   "keywords": [
     "sparql",
@@ -56,7 +56,12 @@
   },
   "jest": {
     "transform": {
-      "^.+\\.ts$": ["ts-jest", { "tsconfig": "test/tsconfig.json" }]
+      "^.+\\.ts$": [
+        "ts-jest",
+        {
+          "tsconfig": "test/tsconfig.json"
+        }
+      ]
     },
     "transformIgnorePatterns": [
       "[/\\\\]node_modules[/\\\\].+\\.(js|jsx)$"

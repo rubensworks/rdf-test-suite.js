@@ -80,6 +80,7 @@ describe('e2e tests on the test suite runner', () => {
 
         if (spec.includes('json-ld')) {
           expect(skipped).toBeLessThanOrEqual(11);
+          expect(skipped).toBeLessThan(result.length);
         } else {
           expect(skipped).toEqual(0);
         }
@@ -102,33 +103,33 @@ describe('e2e tests on the test suite runner', () => {
       "http://www.w3.org/TR/sparql11-protocol/",
       "http://www.w3.org/TR/sparql11-http-rdf-update/",
     ]) {
-      
-    it(`should run correctly on [${spec}]`, async () => {
-    config.specification = spec
-    const result = await runner.runManifest('http://w3c.github.io/rdf-tests/sparql/sparql11/manifest-all.ttl', queryEngine(new QueryEngine()), config);
 
-    // Run assertions
-    expect(console.log).not.toHaveBeenCalled();
-    // Warnings occur when the runner cannot handle a test
-    expect(console.warn).not.toHaveBeenCalled();
-    // One error for each of the tsv cases
-    expect(console.error).toHaveBeenCalledTimes(6);
+      it(`should run correctly on [${spec}]`, async () => {
+        config.specification = spec
+        const result = await runner.runManifest('http://w3c.github.io/rdf-tests/sparql/sparql11/manifest-all.ttl', queryEngine(new QueryEngine()), config);
 
-    expect(result.length).toBeGreaterThan(0)
+        // Run assertions
+        expect(console.log).not.toHaveBeenCalled();
+        // Warnings occur when the runner cannot handle a test
+        expect(console.warn).not.toHaveBeenCalled();
+        // One error for each of the tsv cases
+        expect(console.error).toHaveBeenCalledTimes(6);
 
-    let skipped = 0;
-    result.forEach(r => {
-      if (r.skipped)
-      skipped++;
-    });
+        expect(result.length).toBeGreaterThan(0)
 
-    // Unsupported test can be skipped
-    if (!spec.includes('tsv') && !spec.includes('rdf-update') && !spec.includes('service-description') && !spec.includes('protocol'))
-      expect(skipped).toEqual(0);
+        let skipped = 0;
+        result.forEach(r => {
+          if (r.skipped)
+            skipped++;
+        });
 
-    expect(result.every(r => r.ok || r.skipped)).toEqual(true);
-  
-  }, 130_000);
+        // Unsupported test can be skipped
+        if (!spec.includes('tsv') && !spec.includes('rdf-update') && !spec.includes('service-description') && !spec.includes('protocol'))
+          expect(skipped).toEqual(0);
+
+        expect(result.every(r => r.ok || r.skipped)).toEqual(true);
+
+      }, 130_000);
     }
 
   });
@@ -139,10 +140,10 @@ function queryEngine(engine) {
     parse: function (query, options) {
       return engine.actorInitQuery.mediatorQueryParse.mediate({ query: query, baseIRI: options.baseIRI });
     },
-    query: function(data, queryString, options) {
+    query: function (data, queryString, options) {
       return this.queryLdf([{ type: 'rdfjsSource', value: source(data) }], null, queryString, options);
     },
-    queryLdf: async function(sources, proxyUrl, queryString, options) {
+    queryLdf: async function (sources, proxyUrl, queryString, options) {
       const result = await engine.query(queryString, {
         baseIRI: options.baseIRI,
         sources,
@@ -157,16 +158,16 @@ function queryEngine(engine) {
         return new QueryResultQuads(await require('arrayify-stream').default(await result.execute()));
       } else if (result.resultType === 'bindings') {
         return new QueryResultBindings(
-            (await result.metadata()).variables.map(variable => `?${variable.value}`),
-            (await require('arrayify-stream').default(await result.execute()))
-              .map((binding) => Object.fromEntries([ ...binding ]
-                  .map(([ key, value ]) => [ `?${key.value}`, value ]))), false
+          (await result.metadata()).variables.map(variable => `?${variable.value}`),
+          (await require('arrayify-stream').default(await result.execute()))
+            .map((binding) => Object.fromEntries([...binding]
+              .map(([key, value]) => [`?${key.value}`, value]))), false
         );
       } else {
         throw new Error('Invalid query result type: ' + result.resultType);
       }
     },
-    update: async function(data, queryString, options) {
+    update: async function (data, queryString, options) {
       const store = await source(data);
       const result = await engine.query(queryString, {
         baseIRI: options.baseIRI,

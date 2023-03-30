@@ -139,7 +139,7 @@ describe('TestCaseJsonLdToRdfHandler', () => {
 }`, "ACTION",
         {
           produceGeneralizedRdf: false,
-        });
+        }, testCase);
     });
 
     it('should produce a TestCaseEval with all optional data', async () => {
@@ -185,7 +185,7 @@ describe('TestCaseJsonLdToRdfHandler', () => {
           specVersion: "1.1",
           rdfstar: true,
           rdfDirection: "compound-DF.literal(",
-        });
+        }, testCase);
     });
 
     it('should produce a TestCaseEval with an expand context', async () => {
@@ -211,7 +211,7 @@ describe('TestCaseJsonLdToRdfHandler', () => {
         {
           context: { "@context": {"@base": "http://www.w3.org/TR/BASED/"} },
           produceGeneralizedRdf: false,
-        });
+        }, testCase);
     });
 
     it('should error on a resource without action', () => {
@@ -278,7 +278,7 @@ describe('TestCaseJsonLdToRdfHandler', () => {
         {
           produceGeneralizedRdf: false,
           contentType: 'text/html',
-        });
+        }, testCase);
     });
 
     it('should produce a TestCaseEval with all optional data when HTML', async () => {
@@ -331,7 +331,7 @@ describe('TestCaseJsonLdToRdfHandler', () => {
           rdfDirection: "compound-DF.literal(",
           extractAllScripts: false,
           contentType: 'CT',
-        });
+        }, testCase);
     });
   });
 

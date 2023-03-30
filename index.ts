@@ -28,3 +28,4 @@ export * from "./lib/Util";
 export * from "./lib/ErrorSkipped";
 export * from "./lib/ErrorTest";
 export * from "./lib/DocumentLoaderCached";
+export * from "./lib/testcase/TestCaseMediaTypes";

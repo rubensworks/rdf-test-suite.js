@@ -64,7 +64,7 @@ export class TestCaseEval implements ITestCaseRdfSyntax {
   }
 
   public async test(parser: IParser, injectArguments: any): Promise<void> {
-    const quads: RDF.Quad[] = await parser.parse(this.data, this.baseIRI, injectArguments);
+    const quads: RDF.Quad[] = await parser.parse(this.data, this.baseIRI, injectArguments, this);
     if (!isomorphic(quads, this.expected)) {
       throw new ErrorTest(`Invalid data parsing
   Input: ${this.data}

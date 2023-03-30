@@ -51,8 +51,9 @@ export async function manifestFromResource(testCaseHandlers: {[uri: string]: ITe
           (objectLoader.resources?.[resource.value.slice(0, resource.value.lastIndexOf('.')).replace(/\/manifest$/, '#manifest')] ?? resource)
       ).properties.entries.map(
         (entryList: Resource) => (entryList.list || [entryList])
-          .map(testCaseFromResource.bind(null, testCaseHandlers, options))))))
-      .filter((v) => v),
+          .map((resource) => testCaseFromResource(testCaseHandlers, options, resource, true))))))
+          .filter(v => v)
+          .flat(),
     uri: resource.value,
   };
 }

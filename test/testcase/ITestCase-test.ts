@@ -1,3 +1,4 @@
+/* tslint:disable:no-console */
 import {DataFactory} from "rdf-data-factory";
 import {ContextParser} from "jsonld-context-parser";
 import {Resource} from "rdf-object";

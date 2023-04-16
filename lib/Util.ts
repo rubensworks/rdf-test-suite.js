@@ -94,6 +94,9 @@ export class Util {
       const documentLoader = new DocumentLoaderCached(options);
       return data.pipe(new JsonLdParser({ baseIRI, documentLoader }));
     }
+    if (baseIRI.endsWith('.ttl')) {
+      return data.pipe(new GeneralizedN3StreamParser({ baseIRI, format: 'text/turtle',  }));
+    }
 
     throw new Error(`Could not parse the RDF serialization ${contentType} on ${baseIRI}`);
   }

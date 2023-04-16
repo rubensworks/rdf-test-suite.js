@@ -42,6 +42,9 @@ export class TestCaseQueryEvaluationHandler implements ITestCaseHandler<TestCase
   public static async parseQueryResult(contentType: string, url: string,
                                        data: NodeJS.ReadableStream): Promise<IQueryResult> {
     let queryResult: IQueryResult;
+    if (url.endsWith('.srx')) {
+      contentType = 'application/sparql-results+xml';
+    }
     try {
       const rdfStream: RDF.Stream = Util.parseRdfRaw(contentType, url, data);
       queryResult = new QueryResultQuads(await arrayifyStream(rdfStream));

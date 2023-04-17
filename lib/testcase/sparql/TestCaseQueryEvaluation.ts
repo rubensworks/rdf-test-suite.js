@@ -42,16 +42,14 @@ export class TestCaseQueryEvaluationHandler implements ITestCaseHandler<TestCase
   public static async parseQueryResult(contentType: string, url: string,
                                        data: NodeJS.ReadableStream): Promise<IQueryResult> {
     let queryResult: IQueryResult;
-    if (url.endsWith('.srx')) {
-      contentType = 'application/sparql-results+xml';
-    }
     try {
       const rdfStream: RDF.Stream = Util.parseRdfRaw(contentType, url, data);
       queryResult = new QueryResultQuads(await arrayifyStream(rdfStream));
     } catch (e) {
       // Fallthrough to the next cases
     }
-    if (contentType.indexOf('application/sparql-results+xml') >= 0) {
+    if (contentType.indexOf('application/sparql-results+xml') >= 0 || url.endsWith('.srx')) {
+      contentType = 'application/sparql-results+xml';
       queryResult = await TestCaseQueryEvaluationHandler.parseSparqlResults('xml', data);
     }
     if (contentType.indexOf('application/sparql-results+json') >= 0) {

@@ -1,6 +1,12 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+<a name="v1.23.1"></a>
+## [v1.23.1](https://github.com/rubensworks/rdf-test-suite.js/compare/v1.23.0...v1.23.1) - 2023-04-19
+
+### Fixed
+* [Support srx and ttl files without content type](https://github.com/rubensworks/rdf-test-suite.js/commit/9abe521e72f81b2542710f01c2f43a56ffcc233e)
+
 <a name="v1.23.0"></a>
 ## [v1.23.0](https://github.com/rubensworks/rdf-test-suite.js/compare/v1.22.0...v1.23.0) - 2023-03-30
 

@@ -169,9 +169,18 @@ describe('Util', () => {
   });
 
   describe('#parseRdfRaw', () => {
-    it('should error on an unknown content type', async () => {
+    it('should error on an unknown content type with vague url', async () => {
       expect(() => Util.parseRdfRaw('unknown', 'http://example.org/', streamifyString('ABC')))
         .toThrow();
+    });
+
+    it('should workaround an unknown content type with explicit url extension', async () => {
+      expect(await arrayifyStream(Util.parseRdfRaw('unknown', 'http://example.org/apples.ttl',
+        streamifyString('<a> <b> <c>.'))))
+        .toEqualRdfQuadArray([
+          DF.quad(DF.namedNode('http://example.org/a'), DF.namedNode('http://example.org/b'),
+            DF.namedNode('http://example.org/c')),
+        ]);
     });
 
     it('should parse application/x-turtle streams', async () => {

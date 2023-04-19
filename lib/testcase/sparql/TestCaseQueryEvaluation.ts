@@ -48,7 +48,8 @@ export class TestCaseQueryEvaluationHandler implements ITestCaseHandler<TestCase
     } catch (e) {
       // Fallthrough to the next cases
     }
-    if (contentType.indexOf('application/sparql-results+xml') >= 0) {
+    if (contentType.indexOf('application/sparql-results+xml') >= 0 || url.endsWith('.srx')) {
+      contentType = 'application/sparql-results+xml';
       queryResult = await TestCaseQueryEvaluationHandler.parseSparqlResults('xml', data);
     }
     if (contentType.indexOf('application/sparql-results+json') >= 0) {

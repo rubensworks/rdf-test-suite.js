@@ -1,6 +1,12 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+<a name="v1.24.0"></a>
+## [v1.24.0](https://github.com/rubensworks/rdf-test-suite.js/compare/v1.23.1...v1.24.0) - 2023-04-21
+
+### Added
+* [Add option to skip tests](https://github.com/rubensworks/rdf-test-suite.js/commit/d440069d93b27f4b69d44f54011ea3db87e6294d)
+
 <a name="v1.23.1"></a>
 ## [v1.23.1](https://github.com/rubensworks/rdf-test-suite.js/compare/v1.23.0...v1.23.1) - 2023-04-19
 

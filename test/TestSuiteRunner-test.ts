@@ -262,12 +262,12 @@ describe('TestSuiteRunner', () => {
         });
     });
 
-    it('should produce results for a valid manifest with a non-matching regex', () => {
+    it('should produce results for a valid manifest with a non-matching test regex', () => {
       const config: ITestSuiteConfig = { ...defaultConfig, testRegex: /abc/ };
       return expect(runner.runManifest('valid', handler, config)).resolves.toEqual([]);
     });
 
-    it('should produce results for a valid manifest with a single-matching regex', () => {
+    it('should produce results for a valid manifest with a single-matching test regex', () => {
       const config: ITestSuiteConfig = { ...defaultConfig, testRegex: /1/ };
       return expect(runner.runManifest('valid', handler, config)).resolves.toEqual([
         {
@@ -278,7 +278,7 @@ describe('TestSuiteRunner', () => {
       ]);
     });
 
-    it('should produce results for a valid manifest with a multiple-matching regex', () => {
+    it('should produce results for a valid manifest with a multiple-matching test regex', () => {
       const config: ITestSuiteConfig = { ...defaultConfig, testRegex: /^.*test.*$/ };
       return expect(runner.runManifest('valid', handler, config)).resolves.toEqual([
         {
@@ -308,6 +308,71 @@ describe('TestSuiteRunner', () => {
           duration: 1000.000001,
         },
       ]);
+    });
+
+    it('should produce results for a valid manifest with a non-matching skip regex', () => {
+      const config: ITestSuiteConfig = { ...defaultConfig, skipRegex: /abc/ };
+      return expect(runner.runManifest('valid', handler, config)).resolves.toEqual([
+        {
+          ok: true,
+          test: mockTest1,
+          duration: 1000.000001,
+        },
+        {
+          ok: true,
+          test: mockTest2,
+          duration: 1000.000001,
+        },
+        {
+          error: new Error('Fail'),
+          ok: false,
+          test: mockTest3,
+        },
+        {
+          error: new Error('Rejected Test'),
+          ok: false,
+          skipped: true,
+          test: mockTest5,
+        },
+        {
+          ok: true,
+          test: mockTest6,
+          duration: 1000.000001,
+        },
+      ]);
+    });
+
+    it('should produce results for a valid manifest with a single-matching skip regex', () => {
+      const config: ITestSuiteConfig = { ...defaultConfig, skipRegex: /1/ };
+      return expect(runner.runManifest('valid', handler, config)).resolves.toEqual([
+        {
+          ok: true,
+          test: mockTest2,
+          duration: 1000.000001,
+        },
+        {
+          error: new Error('Fail'),
+          ok: false,
+          test: mockTest3,
+        },
+        {
+          error: new Error('Rejected Test'),
+          ok: false,
+          skipped: true,
+          test: mockTest5,
+        },
+        {
+          ok: true,
+          test: mockTest6,
+          duration: 1000.000001,
+        },
+      ]);
+    });
+
+    it('should produce results for a valid manifest with a multiple-matching skip regex', () => {
+      const config: ITestSuiteConfig = { ...defaultConfig, skipRegex: /^.*test.*$/ };
+
+      return expect(runner.runManifest('valid', handler, config)).resolves.toEqual([]);
     });
 
     it('should produce results for a valid manifest requiring explicit approval to run tests', () => {

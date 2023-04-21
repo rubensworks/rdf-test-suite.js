@@ -105,6 +105,22 @@ $ rdf-test-suite myengine.js http://w3c.github.io/rdf-tests/sparql/sparql11/mani
   -t test_pn_bad_0
 ```
 
+### Test skipping
+
+With the `--skip` option you can filter tests that should be skipped
+based on a regex that will be matched with the test URI.
+
+For example:
+
+```bash
+$ rdf-test-suite myengine.js http://w3c.github.io/rdf-tests/sparql/sparql11/manifest-all.ttl \
+  --skip test_pn_bad_0
+```
+```bash
+$ rdf-test-suite myengine.js http://w3c.github.io/rdf-tests/sparql/sparql11/manifest-all.ttl \
+  --skip (test_pn_bad_0|test_pn_bad_1)
+```
+
 ### Summarized output
 
 By default, the printed test results are verbose,

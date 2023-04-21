@@ -116,6 +116,10 @@ For example:
 $ rdf-test-suite myengine.js http://w3c.github.io/rdf-tests/sparql/sparql11/manifest-all.ttl \
   --skip test_pn_bad_0
 ```
+```bash
+$ rdf-test-suite myengine.js http://w3c.github.io/rdf-tests/sparql/sparql11/manifest-all.ttl \
+  --skip (test_pn_bad_0|test_pn_bad_1)
+```
 
 ### Summarized output
 

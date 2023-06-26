@@ -84,7 +84,8 @@ export class Util {
     if (contentType.indexOf('application/x-turtle') >= 0
       || contentType.indexOf('text/turtle') >= 0
       || contentType.indexOf('application/n-triples') >= 0
-      || contentType.indexOf('application/n-quads') >= 0) {
+      || contentType.indexOf('application/n-quads') >= 0
+      || contentType.indexOf('application/trig') >= 0) {
       return data.pipe(new GeneralizedN3StreamParser({ baseIRI, format: contentType,  }));
     }
     if (contentType.indexOf('application/rdf+xml') >= 0) {
@@ -164,13 +165,9 @@ export class Util {
 
       if (cachePathLocal) {
         // Save in cache
-        const writeStream = createWriteStream(cachePathLocal);
+        const writeStream = createWriteStream(cachePathLocal, 'utf8');
         body1.pipe(writeStream);
-        // Due to an unknown reason, large streams don't seem to emit a close event, which causes program hanging.
-        /*await new Promise((resolve, reject) => {
-          writeStream.on('close', resolve);
-          writeStream.on('error', reject);
-        });*/
+        await new Promise((resolve) => setImmediate(resolve)); // To fix the problem of files being empty sometimes
         writeFileSync(cachePathLocal + '.url', response.url || url);
         const headersRaw: any = {};
         headers.forEach((value: string, key: string) => headersRaw[key] = value);

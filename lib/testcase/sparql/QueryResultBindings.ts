@@ -29,6 +29,12 @@ export class QueryResultBindings implements IQueryResultBindings {
       }
       const blankNodeCounter = blankNodeCounters[term.value];
       return '_:' + blankNodeCounter;
+    case 'Quad':
+      return `<<${QueryResultBindings.serializeTerm(term.subject, blankNodeCounters)
+      } ${QueryResultBindings.serializeTerm(term.predicate, blankNodeCounters)
+      } ${QueryResultBindings.serializeTerm(term.object, blankNodeCounters)
+      } ${QueryResultBindings.serializeTerm(term.graph, blankNodeCounters)
+      }>>`
     default:
       return termToString(term);
     }

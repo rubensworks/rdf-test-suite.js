@@ -320,6 +320,20 @@ describe('QueryResultBindings', () => {
         return expect(QueryResultBindings.hashBindings(bindingBlankNode1Lower.value, {}, false))
           .toEqual('{\"?c\":\"_:0\",\"?d\":\"_:1\"}{\"?c\":\"_:2\",\"?d\":\"_:3\"}');
       });
+
+      it('should unordered hash bindings with quoted triples', () => {
+        return expect(QueryResultBindings.hashBindings([
+          {
+            '?a': DF.quad(DF.namedNode('s1a'), DF.namedNode('o1a'), DF.namedNode('o1a')),
+            '?b': DF.quad(DF.namedNode('s1b'), DF.namedNode('o1b'), DF.namedNode('o1b')),
+          },
+          {
+            '?a': DF.quad(DF.namedNode('s2a'), DF.namedNode('o2a'), DF.namedNode('o2a')),
+            '?b': DF.quad(DF.namedNode('s2b'), DF.namedNode('o2b'), DF.namedNode('o2b')),
+          },
+        ], {}, false))
+          .toEqual(`{"?a":"<<s1a o1a o1a >>","?b":"<<s1b o1b o1b >>"}{"?a":"<<s2a o2a o2a >>","?b":"<<s2b o2b o2b >>"}`);
+      });
     });
 
     describe('checking order', () => {

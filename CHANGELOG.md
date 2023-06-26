@@ -1,6 +1,12 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+<a name="v1.25.0"></a>
+## [v1.25.0](https://github.com/rubensworks/rdf-test-suite.js/compare/v1.24.0...v1.25.0) - 2023-06-26
+
+### Added
+* [Handle SPARQL query tests with quoted triples](https://github.com/rubensworks/rdf-test-suite.js/commit/787ae59a805921e121ef98121c5b0da41754c0ab)
+
 <a name="v1.24.0"></a>
 ## [v1.24.0](https://github.com/rubensworks/rdf-test-suite.js/compare/v1.23.1...v1.24.0) - 2023-04-21
 

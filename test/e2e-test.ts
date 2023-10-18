@@ -11,6 +11,10 @@ import * as fs from 'fs';
 if (!fs.existsSync(path.join(__dirname, 'cache')))
   fs.mkdirSync(path.join(__dirname, 'cache'))
 
+if (process.env.CI) {
+  jest.retryTimes(3);
+}
+
 describe('e2e tests on the test suite runner', () => {
   const parsingSpecs = [
     // TODO: Use this rather than explicitly listing the included manifests

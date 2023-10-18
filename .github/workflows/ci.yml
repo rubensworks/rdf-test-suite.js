@@ -17,6 +17,8 @@ jobs:
       - run: yarn run lint
 
   test:
+    env:
+      CI: true
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -25,6 +27,7 @@ jobs:
           - 14.x
           - 16.x
           - 18.x
+          - 20.x
     steps:
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v3

@@ -113,7 +113,7 @@ describe('e2e tests on the test suite runner', () => {
 
       it(`should run correctly on [${spec}]`, async () => {
         config.specification = spec
-        let result = await runner.runManifest('http://w3c.github.io/rdf-tests/sparql/sparql11/manifest-all.ttl', queryEngine(new QueryEngine()), config);
+        const result = await runner.runManifest('http://w3c.github.io/rdf-tests/sparql/sparql11/manifest-all.ttl', queryEngine(new QueryEngine()), config);
 
         // Run assertions
         expect(console.log).not.toHaveBeenCalled();

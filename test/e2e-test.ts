@@ -129,9 +129,7 @@ describe('e2e tests on the test suite runner', () => {
         // Unsupported test can be skipped
         if (!spec.includes('tsv') && !spec.includes('rdf-update') && !spec.includes('service-description') && !spec.includes('protocol'))
           expect(skipped).toEqual(0);
-        
-        // Comunica does not support ZeroOrOne paths with a variable at the start and end
-        result = result.filter(r => r.test.uri !== 'http://www.w3.org/2009/sparql/docs/tests/data-sparql11/property-path/manifest#values_and_path');
+
         expect(result.every(r => r.ok || r.skipped)).toEqual(true);
 
       }, 190_000);

@@ -11,12 +11,19 @@ import * as fs from 'fs';
 if (!fs.existsSync(path.join(__dirname, 'cache')))
   fs.mkdirSync(path.join(__dirname, 'cache'))
 
+if (process.env.CI) {
+  jest.retryTimes(3);
+}
+
 describe('e2e tests on the test suite runner', () => {
   const parsingSpecs = [
-    "http://w3c.github.io/rdf-tests/ntriples/manifest.ttl",
-    "http://w3c.github.io/rdf-tests/nquads/manifest.ttl",
-    "http://w3c.github.io/rdf-tests/turtle/manifest.ttl",
-    "http://w3c.github.io/rdf-tests/trig/manifest.ttl",
+    // TODO: Use this rather than explicitly listing the included manifests
+    // this requires supporting the RDF-MT and RDF/XML test suite
+    // "https://w3c.github.io/rdf-tests/rdf/rdf11/manifest.ttl",
+    "https://w3c.github.io/rdf-tests/rdf/rdf11/rdf-n-triples/manifest.ttl",
+    "https://w3c.github.io/rdf-tests/rdf/rdf11/rdf-n-quads/manifest.ttl",
+    "https://w3c.github.io/rdf-tests/rdf/rdf11/rdf-turtle/manifest.ttl",
+    "https://w3c.github.io/rdf-tests/rdf/rdf11/rdf-trig/manifest.ttl",
     "https://w3c.github.io/json-ld-api/tests/toRdf-manifest.jsonld",
     "https://w3c.github.io/json-ld-streaming/tests/stream-toRdf-manifest.jsonld",
 

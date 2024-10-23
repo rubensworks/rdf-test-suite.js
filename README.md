@@ -13,13 +13,13 @@ or it can output machine-readable reports in the
 [EARL](https://www.w3.org/TR/EARL10-Schema/) vocabulary.
 
 Currently, the following test suites are supported:
-* [SPARQL 1.0](http://w3c.github.io/rdf-tests/sparql/sparql10/)
-* [SPARQL 1.1](http://w3c.github.io/rdf-tests/sparql/sparql11/)
-* [RDF/XML](http://w3c.github.io/rdf-tests/rdf-xml/)
-* [N-Triples](https://w3c.github.io/rdf-tests/ntriples/)
-* [N-Quads](https://w3c.github.io/rdf-tests/nquads/)
-* [Turtle](https://w3c.github.io/rdf-tests/turtle/)
-* [TriG](https://w3c.github.io/rdf-tests/trig/)
+* [SPARQL 1.0](https://w3c.github.io/rdf-tests/sparql/sparql10/)
+* [SPARQL 1.1](https://w3c.github.io/rdf-tests/sparql/sparql11/)
+* [RDF/XML](https://w3c.github.io/rdf-tests/rdf/rdf11/rdf-xml/)
+* [N-Triples](https://w3c.github.io/rdf-tests/rdf/rdf11/rdf-n-triples/)
+* [N-Quads](https://w3c.github.io/rdf-tests/rdf/rdf11/rdf-n-quads/)
+* [Turtle](https://w3c.github.io/rdf-tests/rdf/rdf11/rdf-turtle/)
+* [TriG](https://w3c.github.io/rdf-tests/rdf/rdf11/rdf-trig/)
 * [JSON-LD (1.0 and 1.1)](https://w3c.github.io/json-ld-api/tests/)
 * [RDFa](http://rdfa.info/test-suite/)
 * [Microdata to RDF](https://w3c.github.io/microdata-rdf/tests/)
@@ -70,7 +70,7 @@ The following command executes the SPARQL 1.1 test suite
 on the engine `myengine.js`:
 
 ```bash
-$ rdf-test-suite myengine.js http://w3c.github.io/rdf-tests/sparql/sparql11/manifest-all.ttl
+$ rdf-test-suite myengine.js https://w3c.github.io/rdf-tests/sparql/sparql11/manifest-all.ttl
 ```
 
 An example of what this `myengine.js` looks like
@@ -101,7 +101,7 @@ based on a regex that will be matched with the test URI.
 For example:
 
 ```bash
-$ rdf-test-suite myengine.js http://w3c.github.io/rdf-tests/sparql/sparql11/manifest-all.ttl \
+$ rdf-test-suite myengine.js https://w3c.github.io/rdf-tests/sparql/sparql11/manifest-all.ttl \
   -t test_pn_bad_0
 ```
 
@@ -113,11 +113,11 @@ based on a regex that will be matched with the test URI.
 For example:
 
 ```bash
-$ rdf-test-suite myengine.js http://w3c.github.io/rdf-tests/sparql/sparql11/manifest-all.ttl \
+$ rdf-test-suite myengine.js https://w3c.github.io/rdf-tests/sparql/sparql11/manifest-all.ttl \
   --skip test_pn_bad_0
 ```
 ```bash
-$ rdf-test-suite myengine.js http://w3c.github.io/rdf-tests/sparql/sparql11/manifest-all.ttl \
+$ rdf-test-suite myengine.js https://w3c.github.io/rdf-tests/sparql/sparql11/manifest-all.ttl \
   --skip (test_pn_bad_0|test_pn_bad_1)
 ```
 
@@ -131,7 +131,7 @@ You can change this to a more compact view using `-o summary`.
 For example:
 
 ```bash
-$ rdf-test-suite myengine.js http://w3c.github.io/rdf-tests/sparql/sparql11/manifest-all.ttl \
+$ rdf-test-suite myengine.js https://w3c.github.io/rdf-tests/sparql/sparql11/manifest-all.ttl \
   -o summary
 ```
 
@@ -180,7 +180,7 @@ file in the current working directory.
 For example:
 
 ```bash
-$ rdf-test-suite myengine.js http://w3c.github.io/rdf-tests/sparql/sparql11/manifest-all.ttl \
+$ rdf-test-suite myengine.js https://w3c.github.io/rdf-tests/sparql/sparql11/manifest-all.ttl \
   -o earl -p earl-meta.json
 ```
 
@@ -196,7 +196,7 @@ that apply to the [http://www.w3.org/TR/sparql11-query/](http://www.w3.org/TR/sp
 specification.
 
 ```bash
-$ rdf-test-suite myengine.js http://w3c.github.io/rdf-tests/sparql/sparql11/manifest-all.ttl \
+$ rdf-test-suite myengine.js https://w3c.github.io/rdf-tests/sparql/sparql11/manifest-all.ttl \
   -s http://www.w3.org/TR/sparql11-query/
 ```
 
@@ -208,7 +208,7 @@ then you can enable HTTP caching with the `-c` argument,
 so that all files only have to be looked up once.
 
 ```bash
-$ rdf-test-suite myengine.js http://w3c.github.io/rdf-tests/sparql/sparql11/manifest-all.ttl \
+$ rdf-test-suite myengine.js https://w3c.github.io/rdf-tests/sparql/sparql11/manifest-all.ttl \
   -c path/to/cache/
 ```
 _If you don't provide a caching value after the `-c`,
@@ -224,7 +224,7 @@ If you want to disable this behaviour,
 you can add the `-e` flag to force an exit code `0`.
 
 ```bash
-$ rdf-test-suite myengine.js http://w3c.github.io/rdf-tests/sparql/sparql11/manifest-all.ttl \
+$ rdf-test-suite myengine.js https://w3c.github.io/rdf-tests/sparql/sparql11/manifest-all.ttl \
   -e
 ```
 
@@ -247,7 +247,7 @@ By default, all tests are allowed to run 3000 ms.
 Using the `-d` option, you can change this value.
 
 ```bash
-$ rdf-test-suite myengine.js http://w3c.github.io/rdf-tests/sparql/sparql11/manifest-all.ttl \
+$ rdf-test-suite myengine.js https://w3c.github.io/rdf-tests/sparql/sparql11/manifest-all.ttl \
   -d 5000
 ```
 
@@ -261,8 +261,8 @@ In order to achieve this, the `-m` option can be used,
 with a mapping defined with the following pattern: `URL~PATH`.
 
 ```
-$ rdf-test-suite myengine.js http://w3c.github.io/rdf-tests/sparql/sparql11/manifest-all.ttl \
-  -m http://w3c.github.io/rdf-tests/sparql11/data-sparql11/~/path/to/my/files/
+$ rdf-test-suite myengine.js https://w3c.github.io/rdf-tests/sparql/sparql11/manifest-all.ttl \
+  -m https://w3c.github.io/rdf-tests/sparql11/data-sparql11/~/path/to/my/files/
 ```
 
 ### Using rejected tests
@@ -273,7 +273,7 @@ by default. If you wish to execute those tests as well, you can
 use the `-r` option.
 
 ```bash
-$ rdf-test-suite myengine.js http://w3c.github.io/rdf-tests/sparql/sparql11/manifest-all.ttl \
+$ rdf-test-suite myengine.js https://w3c.github.io/rdf-tests/sparql/sparql11/manifest-all.ttl \
   -r
 ```
 
@@ -286,7 +286,7 @@ explicitly rejected. If you wish to only execute those tests
 that are explicitly approved, you can use the `-a` option.
 
 ```bash
-$ rdf-test-suite myengine.js http://w3c.github.io/rdf-tests/sparql/sparql11/manifest-all.ttl \
+$ rdf-test-suite myengine.js https://w3c.github.io/rdf-tests/sparql/sparql11/manifest-all.ttl \
   -a
 ```
 
@@ -294,21 +294,21 @@ $ rdf-test-suite myengine.js http://w3c.github.io/rdf-tests/sparql/sparql11/mani
 
 | Manifest | Specification | Interface | Entry manifest |
 | -------- | ------------- | --------- | -------------- |
-| [SPARQL 1.0 tests](https://w3c.github.io/rdf-tests/sparql11/data-r2/) | [SPARQL 1.0](https://www.w3.org/TR/rdf-sparql-query/) | [`IQueryEngine`](https://github.com/rubensworks/rdf-test-suite.js/blob/master/lib/testcase/sparql/IQueryEngine.ts) | https://w3c.github.io/rdf-tests/sparql11/data-r2/manifest.ttl |
-| [SPARQL 1.1 tests](http://w3c.github.io/rdf-tests/sparql11/data-sparql11/) | [SPARQL 1.1 Query](http://www.w3.org/TR/sparql11-query/) | [`IQueryEngine`](https://github.com/rubensworks/rdf-test-suite.js/blob/master/lib/testcase/sparql/IQueryEngine.ts) | http://w3c.github.io/rdf-tests/sparql/sparql11/manifest-all.ttl |
-| [SPARQL 1.1 tests](http://w3c.github.io/rdf-tests/sparql11/data-sparql11/) | [SPARQL 1.1 Update](http://www.w3.org/TR/sparql11-update/) | [`IUpdateEngine`](https://github.com/rubensworks/rdf-test-suite.js/blob/master/lib/testcase/sparql/IUpdateEngine.ts) | http://w3c.github.io/rdf-tests/sparql/sparql11/manifest-all.ttl |
-| [SPARQL 1.1 tests](http://w3c.github.io/rdf-tests/sparql11/data-sparql11/) | [SPARQL 1.1 Results CSV/TSV](http://www.w3.org/TR/sparql11-results-csv-tsv/) | ✖ | http://w3c.github.io/rdf-tests/sparql/sparql11/manifest-all.ttl |
-| [SPARQL 1.1 tests](http://w3c.github.io/rdf-tests/sparql11/data-sparql11/) | [SPARQL 1.1 Results JSON](http://www.w3.org/TR/sparql11-results-json/) | ✖ | http://w3c.github.io/rdf-tests/sparql/sparql11/manifest-all.ttl |
-| [SPARQL 1.1 tests](http://w3c.github.io/rdf-tests/sparql11/data-sparql11/) | [SPARQL 1.1 Federated Query](http://www.w3.org/TR/sparql11-federated-query/) | ✖ | http://w3c.github.io/rdf-tests/sparql/sparql11/manifest-all.ttl |
-| [SPARQL 1.1 tests](http://w3c.github.io/rdf-tests/sparql11/data-sparql11/) | [SPARQL 1.1 Entailment](http://www.w3.org/TR/sparql11-entailment/) | ✖ | http://w3c.github.io/rdf-tests/sparql/sparql11/manifest-all.ttl |
-| [SPARQL 1.1 tests](http://w3c.github.io/rdf-tests/sparql11/data-sparql11/) | [SPARQL 1.1 Service Description](http://www.w3.org/TR/sparql11-service-description/) | ✖ | http://w3c.github.io/rdf-tests/sparql/sparql11/manifest-all.ttl |
-| [SPARQL 1.1 tests](http://w3c.github.io/rdf-tests/sparql11/data-sparql11/) | [SPARQL 1.1 Protocol](http://www.w3.org/TR/sparql11-protocol/) | ✖ | http://w3c.github.io/rdf-tests/sparql/sparql11/manifest-all.ttl |
-| [SPARQL 1.1 tests](http://w3c.github.io/rdf-tests/sparql11/data-sparql11/) | [SPARQL 1.1 HTTP RDF Update](http://www.w3.org/TR/sparql11-http-rdf-update/) | ✖ | http://w3c.github.io/rdf-tests/sparql/sparql11/manifest-all.ttl |
-| [RDF/XML Syntax Tests](https://w3c.github.io/rdf-tests/rdf-xml/) | [RDF 1.1 XML Syntax](https://www.w3.org/TR/rdf-syntax-grammar/) | [`IParser`](https://github.com/rubensworks/rdf-test-suite.js/blob/master/lib/testcase/rdfsyntax/IParser.ts) | http://w3c.github.io/rdf-tests/rdf-xml/manifest.ttl |
-| [N-Triples Tests](https://w3c.github.io/rdf-tests/ntriples/) | [RDF 1.1 N-Triples](https://www.w3.org/TR/n-triples/) | [`IParser`](https://github.com/rubensworks/rdf-test-suite.js/blob/master/lib/testcase/rdfsyntax/IParser.ts) | http://w3c.github.io/rdf-tests/ntriples/manifest.ttl |
-| [N-Quads Tests](https://w3c.github.io/rdf-tests/nquads/) | [RDF 1.1 N-Quads](https://www.w3.org/TR/n-quads/) | [`IParser`](https://github.com/rubensworks/rdf-test-suite.js/blob/master/lib/testcase/rdfsyntax/IParser.ts) | http://w3c.github.io/rdf-tests/nquads/manifest.ttl |
-| [Turtle Tests](https://w3c.github.io/rdf-tests/turtle/) | [RDF 1.1 Turtle](https://www.w3.org/TR/turtle/) | [`IParser`](https://github.com/rubensworks/rdf-test-suite.js/blob/master/lib/testcase/rdfsyntax/IParser.ts) | http://w3c.github.io/rdf-tests/turtle/manifest.ttl |
-| [TriG Tests](https://w3c.github.io/rdf-tests/trig/) | [RDF 1.1 TriG](https://www.w3.org/TR/trig/) | [`IParser`](https://github.com/rubensworks/rdf-test-suite.js/blob/master/lib/testcase/rdfsyntax/IParser.ts) | http://w3c.github.io/rdf-tests/trig/manifest.ttl |
+| [SPARQL 1.0 tests](https://w3c.github.io/rdf-tests/sparql/sparql10/) | [SPARQL 1.0](https://www.w3.org/TR/rdf-sparql-query/) | [`IQueryEngine`](https://github.com/rubensworks/rdf-test-suite.js/blob/master/lib/testcase/sparql/IQueryEngine.ts) | https://w3c.github.io/rdf-tests/sparql/sparql10/manifest.ttl |
+| [SPARQL 1.1 tests](https://w3c.github.io/rdf-tests/sparql/sparql11/) | [SPARQL 1.1 Query](http://www.w3.org/TR/sparql11-query/) | [`IQueryEngine`](https://github.com/rubensworks/rdf-test-suite.js/blob/master/lib/testcase/sparql/IQueryEngine.ts) | http://w3c.github.io/rdf-tests/sparql/sparql11/manifest-all.ttl |
+| [SPARQL 1.1 tests](https://w3c.github.io/rdf-tests/sparql/sparql11/) | [SPARQL 1.1 Update](http://www.w3.org/TR/sparql11-update/) | [`IUpdateEngine`](https://github.com/rubensworks/rdf-test-suite.js/blob/master/lib/testcase/sparql/IUpdateEngine.ts) | http://w3c.github.io/rdf-tests/sparql/sparql11/manifest-all.ttl |
+| [SPARQL 1.1 tests](https://w3c.github.io/rdf-tests/sparql/sparql11/) | [SPARQL 1.1 Results CSV/TSV](http://www.w3.org/TR/sparql11-results-csv-tsv/) | ✖ | http://w3c.github.io/rdf-tests/sparql/sparql11/manifest-all.ttl |
+| [SPARQL 1.1 tests](https://w3c.github.io/rdf-tests/sparql/sparql11/) | [SPARQL 1.1 Results JSON](http://www.w3.org/TR/sparql11-results-json/) | ✖ | http://w3c.github.io/rdf-tests/sparql/sparql11/manifest-all.ttl |
+| [SPARQL 1.1 tests](https://w3c.github.io/rdf-tests/sparql/sparql11/) | [SPARQL 1.1 Federated Query](http://www.w3.org/TR/sparql11-federated-query/) | ✖ | http://w3c.github.io/rdf-tests/sparql/sparql11/manifest-all.ttl |
+| [SPARQL 1.1 tests](https://w3c.github.io/rdf-tests/sparql/sparql11/) | [SPARQL 1.1 Entailment](http://www.w3.org/TR/sparql11-entailment/) | ✖ | http://w3c.github.io/rdf-tests/sparql/sparql11/manifest-all.ttl |
+| [SPARQL 1.1 tests](https://w3c.github.io/rdf-tests/sparql/sparql11/) | [SPARQL 1.1 Service Description](http://www.w3.org/TR/sparql11-service-description/) | ✖ | http://w3c.github.io/rdf-tests/sparql/sparql11/manifest-all.ttl |
+| [SPARQL 1.1 tests](https://w3c.github.io/rdf-tests/sparql/sparql11/) | [SPARQL 1.1 Protocol](http://www.w3.org/TR/sparql11-protocol/) | ✖ | http://w3c.github.io/rdf-tests/sparql/sparql11/manifest-all.ttl |
+| [SPARQL 1.1 tests](https://w3c.github.io/rdf-tests/sparql/sparql11/) | [SPARQL 1.1 HTTP RDF Update](http://www.w3.org/TR/sparql11-http-rdf-update/) | ✖ | http://w3c.github.io/rdf-tests/sparql/sparql11/manifest-all.ttl |
+| [RDF/XML Syntax Tests](https://w3c.github.io/rdf-tests/rdf/rdf11/rdf-xml/) | [RDF 1.1 XML Syntax](https://www.w3.org/TR/rdf-syntax-grammar/) | [`IParser`](https://github.com/rubensworks/rdf-test-suite.js/blob/master/lib/testcase/rdfsyntax/IParser.ts) | https://w3c.github.io/rdf-tests/rdf/rdf11/rdf-xml/manifest.ttl |
+| [N-Triples Tests](https://w3c.github.io/rdf-tests/rdf/rdf11/rdf-n-triples//) | [RDF 1.1 N-Triples](https://www.w3.org/TR/n-triples/) | [`IParser`](https://github.com/rubensworks/rdf-test-suite.js/blob/master/lib/testcase/rdfsyntax/IParser.ts) | https://w3c.github.io/rdf-tests/rdf/rdf11/rdf-n-triples/manifest.ttl |
+| [N-Quads Tests](https://w3c.github.io/rdf-tests/rdf/rdf11/rdf-n-quads/) | [RDF 1.1 N-Quads](https://www.w3.org/TR/n-quads/) | [`IParser`](https://github.com/rubensworks/rdf-test-suite.js/blob/master/lib/testcase/rdfsyntax/IParser.ts) | https://w3c.github.io/rdf-tests/rdf/rdf11/rdf-n-quads/manifest.ttl |
+| [Turtle Tests](https://w3c.github.io/rdf-tests/rdf/rdf11/rdf-turtle/) | [RDF 1.1 Turtle](https://www.w3.org/TR/turtle/) | [`IParser`](https://github.com/rubensworks/rdf-test-suite.js/blob/master/lib/testcase/rdfsyntax/IParser.ts) | https://w3c.github.io/rdf-tests/rdf/rdf11/rdf-turtle/manifest.ttl |
+| [TriG Tests](https://w3c.github.io/rdf-tests/rdf/rdf11/rdf-trig/) | [RDF 1.1 TriG](https://www.w3.org/TR/trig/) | [`IParser`](https://github.com/rubensworks/rdf-test-suite.js/blob/master/lib/testcase/rdfsyntax/IParser.ts) | https://w3c.github.io/rdf-tests/rdf/rdf11/rdf-trig/manifest.ttl |
 | [JSON-LD Test Suite](https://w3c.github.io/json-ld-api/tests/) | [JSON-LD (1.0 and 1.1)](https://www.w3.org/TR/json-ld/) | [`IParser`](https://github.com/rubensworks/rdf-test-suite.js/blob/master/lib/testcase/rdfsyntax/IParser.ts) | https://w3c.github.io/json-ld-api/tests/toRdf-manifest.jsonld |
 | [JSON-LD Test Suite](https://w3c.github.io/json-ld-api/tests/) | [JSON-LD (1.0 and 1.1)](https://www.w3.org/TR/json-ld/) | [`IParser`](https://github.com/rubensworks/rdf-test-suite.js/blob/master/lib/testcase/rdfsyntax/IParser.ts) | https://w3c.github.io/json-ld-api/tests/html-manifest.jsonld |
 | [JSON-LD Test Suite](https://w3c.github.io/json-ld-api/tests/) | [JSON-LD (1.0 and 1.1)](https://www.w3.org/TR/json-ld/) | [`ISerializer`](https://github.com/rubensworks/rdf-test-suite.js/blob/master/lib/testcase/rdfsyntax/ISerializer.ts) | https://w3c.github.io/json-ld-api/tests/fromRdf-manifest.jsonld |

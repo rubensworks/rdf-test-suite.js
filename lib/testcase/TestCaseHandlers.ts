@@ -31,6 +31,14 @@ module.exports = {
     new TestCaseNegativeSyntaxHandler(),
   'http://www.w3.org/2001/sw/DataAccess/tests/test-manifest#PositiveUpdateSyntaxTest11':
     new TestCasePositiveSyntaxHandler(),
+  'http://www.w3.org/2001/sw/DataAccess/tests/test-manifest#NegativeSyntaxTestSparql':
+    new TestCaseNegativeSyntaxHandler(),
+  'http://www.w3.org/2001/sw/DataAccess/tests/test-manifest#PositiveSyntaxTestSparql':
+    new TestCasePositiveSyntaxHandler(),
+  'http://www.w3.org/2001/sw/DataAccess/tests/test-manifest#NegativeUpdateSyntaxTestSparql':
+    new TestCaseNegativeSyntaxHandler(),
+  'http://www.w3.org/2001/sw/DataAccess/tests/test-manifest#PositiveUpdateSyntaxTestSparql':
+    new TestCasePositiveSyntaxHandler(),
   'http://www.w3.org/2001/sw/DataAccess/tests/test-manifest#UpdateEvaluationTest':
     new TestCaseUpdateEvaluationHandler(),
   'http://www.w3.org/2001/sw/DataAccess/tests/test-manifest#CSVResultFormatTest':

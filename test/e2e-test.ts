@@ -24,8 +24,8 @@ describe('e2e tests on the test suite runner', () => {
     // "https://w3c.github.io/rdf-tests/rdf/rdf11/manifest.ttl",
     "https://w3c.github.io/rdf-tests/rdf/rdf11/rdf-n-triples/manifest.ttl": 56,
     "https://w3c.github.io/rdf-tests/rdf/rdf11/rdf-n-quads/manifest.ttl": 72,
-    "https://w3c.github.io/rdf-tests/rdf/rdf11/rdf-turtle/manifest.ttl": 280,
-    "https://w3c.github.io/rdf-tests/rdf/rdf11/rdf-trig/manifest.ttl": 319,
+    "https://w3c.github.io/rdf-tests/rdf/rdf11/rdf-turtle/manifest.ttl": 295,
+    "https://w3c.github.io/rdf-tests/rdf/rdf11/rdf-trig/manifest.ttl": 337,
     "https://w3c.github.io/json-ld-api/tests/toRdf-manifest.jsonld": 466,
     "https://w3c.github.io/json-ld-streaming/tests/stream-toRdf-manifest.jsonld": 483,
 

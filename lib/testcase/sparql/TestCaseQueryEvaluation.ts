@@ -101,11 +101,11 @@ export class TestCaseQueryEvaluationHandler implements ITestCaseHandler<TestCase
     let bindingsError: Error = null;
     let booleanError: Error = null;
     const parsingResults = await Promise.all([
-      booleanPromise.catch((e) => {
+      booleanPromise.catch((e): any => {
         booleanError = e;
         return null;
       }),
-      bindingsPromise.catch((e) => {
+      bindingsPromise.catch((e): any => {
         bindingsError = e;
         return null;
       }),

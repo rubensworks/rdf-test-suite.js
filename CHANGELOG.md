@@ -1,6 +1,16 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+<a name="v2.0.0"></a>
+## [v2.0.0](https://github.com/rubensworks/rdf-test-suite.js/compare/v1.25.0...v2.0.0) - 2025-01-08
+
+### BREAKING CHANGES
+* [Update to rdf-data-factory v2](https://github.com/rubensworks/rdf-test-suite.js/commit/6140a12ef53d4a12ea8e3363334028adc4a5b6fa)
+    This includes a bump to @rdfjs/types@2.0.0, which requires TypeScript 5 and Node 14+
+
+### Added
+* [Support version-agnostic SPARQL test classes](https://github.com/rubensworks/rdf-test-suite.js/commit/58c030944a2e249c664fa60f206b2a2ba5f2a96b)
+
 <a name="v1.25.0"></a>
 ## [v1.25.0](https://github.com/rubensworks/rdf-test-suite.js/compare/v1.24.0...v1.25.0) - 2023-06-26
 

@@ -183,6 +183,15 @@ describe('Util', () => {
         ]);
     });
 
+    it('should workaround an unknown content type with explicit url extension for trig', async () => {
+      expect(await arrayifyStream(Util.parseRdfRaw('unknown', 'http://example.org/apples.trig',
+        streamifyString('<a> <b> <c>.'))))
+        .toEqualRdfQuadArray([
+          DF.quad(DF.namedNode('http://example.org/a'), DF.namedNode('http://example.org/b'),
+            DF.namedNode('http://example.org/c')),
+        ]);
+    });
+
     it('should parse application/x-turtle streams', async () => {
       expect(await arrayifyStream(Util.parseRdfRaw('application/x-turtle', 'http://example.org/',
         streamifyString('<a> <b> <c>.'))))

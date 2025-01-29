@@ -98,6 +98,9 @@ export class Util {
     if (baseIRI.endsWith('.ttl')) {
       return data.pipe(new GeneralizedN3StreamParser({ baseIRI, format: 'text/turtle',  }));
     }
+    if (baseIRI.endsWith('.trig')) {
+      return data.pipe(new GeneralizedN3StreamParser({ baseIRI, format: 'application/trig',  }));
+    }
 
     throw new Error(`Could not parse the RDF serialization ${contentType} on ${baseIRI}`);
   }

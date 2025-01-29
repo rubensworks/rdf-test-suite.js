@@ -1,6 +1,12 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+<a name="v2.1.0"></a>
+## [v2.1.0](https://github.com/rubensworks/rdf-test-suite.js/compare/v2.0.0...v2.1.0) - 2025-01-29
+
+### Added
+* [Support .trig extensions without content type](https://github.com/rubensworks/rdf-test-suite.js/commit/a94a70b14e9a60c26c7575316d29bb4ca3ecd9a8)
+
 <a name="v2.0.0"></a>
 ## [v2.0.0](https://github.com/rubensworks/rdf-test-suite.js/compare/v1.25.0...v2.0.0) - 2025-01-08
 

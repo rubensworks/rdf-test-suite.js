@@ -1,6 +1,12 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+<a name="v2.1.1"></a>
+## [v2.1.1](https://github.com/rubensworks/rdf-test-suite.js/compare/v2.1.0...v2.1.1) - 2025-06-30
+
+### Fixed
+* [Remove URL normalization for RDF/XML](https://github.com/rubensworks/rdf-test-suite.js/commit/b95037e54a21e9e37edf4b929d5865d60120918a)
+
 <a name="v2.1.0"></a>
 ## [v2.1.0](https://github.com/rubensworks/rdf-test-suite.js/compare/v2.0.0...v2.1.0) - 2025-01-29
 

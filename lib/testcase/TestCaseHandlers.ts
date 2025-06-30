@@ -48,7 +48,7 @@ module.exports = {
 
   // RDF/XML test suite
   'http://www.w3.org/ns/rdftest#TestXMLEval':
-    new TestCaseEvalHandler({ normalizeUrl: true }),
+    new TestCaseEvalHandler(),
   'http://www.w3.org/ns/rdftest#TestXMLNegativeSyntax':
     new TestCaseSyntaxHandler(false),
 

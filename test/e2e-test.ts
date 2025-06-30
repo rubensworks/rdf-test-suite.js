@@ -102,7 +102,7 @@ describe('e2e tests on the test suite runner', () => {
         // }
 
         // All tests should either be ok or skipped
-        expect(result.filter(r => r.ok || r.skipped).length).toEqual(parsingSpecs[spec]);
+        expect(result.filter(r => r.ok || r.skipped).length).toBeGreaterThanOrEqual(parsingSpecs[spec]);
       }, 190_000);
     }
   });

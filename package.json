@@ -111,7 +111,7 @@
     "is-stream": "^2.0.0",
     "json-stable-stringify": "^1.0.1",
     "jsonld-streaming-parser": "^4.0.1",
-    "log-symbols": "^4.0.0",
+    "log-symbols": "^7.0.0",
     "minimist": "^1.2.0",
     "n3": "^1.26.0",
     "rdf-data-factory": "^2.0.0",

@@ -51,7 +51,7 @@
     "manual-git-changelog": "^1.0.1",
     "pre-commit": "^1.2.2",
     "rdf-parse": "^4.0.0",
-    "rimraf": "^3.0.0",
+    "rimraf": "^6.0.0",
     "streamify-array": "^1.0.1",
     "ts-jest": "^29.0.0",
     "tslint": "^6.0.0",

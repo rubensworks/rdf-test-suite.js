@@ -122,7 +122,7 @@
     "rdf-string": "^2.0.0",
     "rdf-terms": "^2.0.0",
     "rdfxml-streaming-parser": "^3.0.0",
-    "readable-web-to-node-stream": "^3.0.2",
+    "readable-web-to-node-stream": "^5.0.0",
     "relative-to-absolute-iri": "^1.0.7",
     "sparqljson-parse": "^3.0.0",
     "sparqlxml-parse": "^3.0.0",

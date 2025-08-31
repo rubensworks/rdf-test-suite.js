@@ -106,7 +106,7 @@
     "@types/minimist": "^1.2.0",
     "@types/n3": "^1.10.3",
     "@types/sax": "^1.0.1",
-    "arrayify-stream": "^2.0.0",
+    "arrayify-stream": "^3.0.0",
     "cross-fetch": "^3.0.6",
     "is-stream": "^2.0.0",
     "json-stable-stringify": "^1.0.1",

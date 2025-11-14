@@ -1,6 +1,12 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+<a name="v2.1.2"></a>
+## [v2.1.2](https://github.com/rubensworks/rdf-test-suite.js/compare/v2.1.1...v2.1.2) - 2025-11-14
+
+### Fixed
+* [Avoid hard-crash if cache file names are too long](https://github.com/rubensworks/rdf-test-suite.js/commit/d56735215d14a107c19de3eaabae475c8c037955)
+
 <a name="v2.1.1"></a>
 ## [v2.1.1](https://github.com/rubensworks/rdf-test-suite.js/compare/v2.1.0...v2.1.1) - 2025-06-30
 

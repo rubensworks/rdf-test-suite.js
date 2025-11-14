@@ -140,7 +140,8 @@ export class Util {
       }
     }
 
-    const cachePathLocal: string = options.cachePath ? options.cachePath + encodeURIComponent(url) : null;
+    const encodedUrl = encodeURIComponent(url);
+    const cachePathLocal: string = options.cachePath && encodedUrl.length <= 255 ? options.cachePath + encodedUrl : null;
     if (cachePathLocal && existsSync(cachePathLocal)) {
       // Read from cache
       return {

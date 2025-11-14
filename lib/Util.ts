@@ -171,10 +171,19 @@ export class Util {
         const writeStream = createWriteStream(cachePathLocal, 'utf8');
         body1.pipe(writeStream);
         await new Promise((resolve) => setImmediate(resolve)); // To fix the problem of files being empty sometimes
-        writeFileSync(cachePathLocal + '.url', response.url || url);
-        const headersRaw: any = {};
-        headers.forEach((value: string, key: string) => headersRaw[key] = value);
-        writeFileSync(cachePathLocal + '.headers', JSON.stringify(headersRaw));
+        try {
+          writeFileSync(cachePathLocal + '.url', response.url || url);
+          const headersRaw: any = {};
+          headers.forEach((value: string, key: string) => headersRaw[key] = value);
+          writeFileSync(cachePathLocal + '.headers', JSON.stringify(headersRaw));
+        } catch (error) {
+          // Silently ignore errors if name is too long
+          if (error.code === 'ENAMETOOLONG') {
+            console.error(error.toString());
+          } else {
+            throw error;
+          }
+        }
       }
 
       return {

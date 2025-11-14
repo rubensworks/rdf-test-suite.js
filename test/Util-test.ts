@@ -5,6 +5,7 @@ import "jest-rdf";
 import {Util} from "../lib/Util";
 import type * as RDF from "@rdfjs/types";
 import arrayifyStream from "arrayify-stream";
+import * as fs from "node:fs";
 
 // tslint:disable:no-var-requires
 const streamifyString = require('streamify-string');
@@ -165,6 +166,22 @@ describe('Util', () => {
       expect(response2.url).toEqual('http://example.org/');
 
       expect(spy).toHaveBeenCalledTimes(1);
+    });
+
+    it('should reject if writeFileSync fails', () => {
+      jest.spyOn(fs, 'writeFileSync').mockImplementation(() => {
+        throw new Error('unknown error');
+      });
+      return expect(Util.fetchCached('http://example.org/', { cachePath })).rejects.toThrow('unknown error');
+    });
+
+    it('should not reject if writeFileSync fails with ENAMETOOLONG', () => {
+      jest.spyOn(fs, 'writeFileSync').mockImplementation(() => {
+        const error = new Error('unknown error');
+        (<any> error).code = 'ENAMETOOLONG';
+        throw error;
+      });
+      return expect(Util.fetchCached('http://example.org/', { cachePath })).resolves.toBeTruthy();
     });
   });
 

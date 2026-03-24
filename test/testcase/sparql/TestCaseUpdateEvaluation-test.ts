@@ -175,14 +175,14 @@ describe('TestCaseUpdateEvaluationHandler', () => {
       const resource = new Resource({ term: DF.namedNode('http://ex.org/test'), context });
       resource.addProperty(pResult, new Resource({ term: DF.literal('RESULT.ttl'), context }));
       return expect(handler.resourceToTestCase(resource, <any> {})).rejects
-        .toThrowError('Missing mf:action in http://ex.org/test');
+        .toThrow('Missing mf:action in http://ex.org/test');
     });
 
     it('should error on a resource without result', () => {
       const resource = new Resource({ term: DF.namedNode('http://ex.org/test'), context });
       resource.addProperty(pAction, new Resource({ term: DF.literal('ACTION'), context }));
       return expect(handler.resourceToTestCase(resource, <any> {})).rejects
-        .toThrowError('Missing mf:result in http://ex.org/test');
+        .toThrow('Missing mf:result in http://ex.org/test');
     });
 
     it('should error on a resource without update query in action', () => {
@@ -191,7 +191,7 @@ describe('TestCaseUpdateEvaluationHandler', () => {
       resource.addProperty(pAction, action);
       resource.addProperty(pResult, new Resource({ term: DF.literal('RESULT.ttl'), context }));
       return expect(handler.resourceToTestCase(resource, <any> {})).rejects
-        .toThrowError('Missing ut:request in mf:action of http://ex.org/test');
+        .toThrow('Missing ut:request in mf:action of http://ex.org/test');
     });
 
     it('should produce TestCaseUpdateEvaluation that tests true on equal results', async () => {

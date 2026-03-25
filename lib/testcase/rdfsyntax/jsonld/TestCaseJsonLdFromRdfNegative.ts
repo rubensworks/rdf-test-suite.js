@@ -68,11 +68,11 @@ export class TestCaseJsonLdFromRdfHandlerNegative implements ITestCaseFromRdfSyn
     try {
       await serializer.serialize(this.data, this.baseIRI, {...this.options, ...injectArguments});
     } catch (e) {
-      if (e.skipped) {
+      if ((<any> e).skipped) {
         throw e;
       }
 
-      this.validateError(e, injectArguments);
+      this.validateError((<Error> e), injectArguments);
 
       return;
     }

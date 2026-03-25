@@ -1,8 +1,9 @@
-import * as stringify from "json-stable-stringify";
 import * as RDF from "@rdfjs/types";
 import {fromRdf} from "rdf-literal";
 import {termToString} from "rdf-string";
 import {IQueryResult, IQueryResultBindings} from "./IQueryEngine";
+// tslint:disable-next-line:no-var-requires
+const stringify = require('json-stable-stringify');
 
 /**
  * Holds bindings-based query results.

@@ -63,7 +63,7 @@ export class TestCaseSyntax implements ITestCaseRdfSyntax {
     try {
       await parser.parse(this.data, this.baseIRI, injectArguments, this);
     } catch (e) {
-      if (e.skipped) {
+      if ((<any> e).skipped) {
         throw e;
       }
 
@@ -74,7 +74,7 @@ export class TestCaseSyntax implements ITestCaseRdfSyntax {
 `);
       }
 
-      this.validateError(e, injectArguments);
+      this.validateError(<Error> e, injectArguments);
 
       return;
     }

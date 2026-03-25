@@ -76,7 +76,7 @@ describe('TestCaseJsonLdToRdfNegativeHandler', () => {
       const resource = new Resource({ term: DF.namedNode('http://ex.org/test'), context });
       resource.addProperty(pAction, new Resource({ term: DF.literal('ACTION'), context }));
       resource.addProperty(pResult, new Resource({ term: DF.literal('CODE'), context }));
-      const testCase = await handler.resourceToTestCase(resource, <any> {});
+      const testCase: any = await handler.resourceToTestCase(resource, <any> {});
       expect(testCase).toBeInstanceOf(TestCaseSyntax);
       expect(testCase.type).toEqual('rdfsyntax');
       expect(testCase.data).toEqual(`{

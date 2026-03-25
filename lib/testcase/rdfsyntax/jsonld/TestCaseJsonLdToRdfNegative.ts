@@ -16,7 +16,7 @@ export class TestCaseJsonLdToRdfNegativeHandler extends TestCaseSyntaxHandler {
   }
 
   public resourceToTestCase(resource: Resource, testCaseData: ITestCaseData,
-                            options?: IFetchOptions): Promise<TestCaseJsonLdToRdfHandlerNegative> {
+                            options?: IFetchOptions): Promise<TestCaseSyntax> {
     return TestCaseJsonLdToRdfHandler.wrap(super.resourceToTestCase.bind(this), resource, testCaseData, options);
   }
 

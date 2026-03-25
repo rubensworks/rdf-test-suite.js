@@ -122,7 +122,7 @@ export class TestSuiteRunner {
               ]);
             } catch (error) {
               clearTimeout(timeout);
-              results.push({ test, ok: false, error, skipped: error.skipped });
+              results.push({ test, ok: false, error: <any> error, skipped: (<any> error).skipped });
               continue;
             }
             const timeEnd = process.hrtime(timeStart);

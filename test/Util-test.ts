@@ -7,6 +7,14 @@ import type * as RDF from "@rdfjs/types";
 import arrayifyStream from "arrayify-stream";
 import * as fs from "node:fs";
 
+// This allows mocking of fs functions later on
+jest.mock('fs', () => {
+  return {
+    __esModule: true,
+    ...jest.requireActual('fs')
+  };
+});
+
 // tslint:disable:no-var-requires
 const streamifyString = require('streamify-string');
 const stringifyStream = require('stream-to-string');

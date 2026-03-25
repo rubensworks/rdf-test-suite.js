@@ -179,7 +179,7 @@ export class Util {
           writeFileSync(cachePathLocal + '.headers', JSON.stringify(headersRaw));
         } catch (error) {
           // Silently ignore errors if name is too long
-          if (error.code === 'ENAMETOOLONG') {
+          if ((<any> error).code === 'ENAMETOOLONG') {
             console.error(error.toString());
           } else {
             throw error;

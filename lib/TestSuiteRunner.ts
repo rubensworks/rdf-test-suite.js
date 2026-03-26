@@ -10,7 +10,7 @@ import Timeout = NodeJS.Timeout;
 
 // tslint:disable:no-var-requires
 const quad = require('rdf-quad');
-const streamifyArray = require('streamify-array');
+const streamifyArray = require('streamify-array').streamifyArray;
 const DF = new DataFactory();
 
 export interface ITestSuiteConfig {

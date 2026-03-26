@@ -169,11 +169,11 @@ function queryEngine(engine) {
       if (result.resultType === 'boolean') {
         return new QueryResultBoolean(await result.execute());
       } else if (result.resultType === 'quads') {
-        return new QueryResultQuads(await require('arrayify-stream').default(await result.execute()));
+        return new QueryResultQuads(await require('arrayify-stream').arrayifyStream(await result.execute()));
       } else if (result.resultType === 'bindings') {
         return new QueryResultBindings(
           (await result.metadata()).variables.map(variable => `?${variable.value}`),
-          (await require('arrayify-stream').default(await result.execute()))
+          (await require('arrayify-stream').arrayifyStream(await result.execute()))
             .map((binding) => Object.fromEntries([...binding]
               .map(([key, value]) => [`?${key.value}`, value]))), false
         );
@@ -202,7 +202,7 @@ function source(data) {
 
 const normalParser = {
   parse(data, baseIRI, _, test) {
-    return require('arrayify-stream').default(rdfParser.parse(require('streamify-string')(data), {
+    return require('arrayify-stream').arrayifyStream(rdfParser.parse(require('streamify-string')(data), {
       // baseIRI,
       contentType: test.types && testCaseToMediaMappings[test.types.find(type => type in testCaseToMediaMappings)]
     }));
@@ -219,7 +219,7 @@ const jsonldParser = {
       return Promise.reject(
         new ErrorSkipped(`Test with spec version ${options.specVersion} was skipped, only 1.1 is supported.`));
     }
-    return require('arrayify-stream').default(require('streamify-string')(data)
+    return require('arrayify-stream').arrayifyStream(require('streamify-string')(data)
       .pipe(new JsonLdParser(Object.assign({
         baseIRI,
         validateValueIndexes: true,

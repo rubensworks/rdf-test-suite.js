@@ -14,7 +14,7 @@ import {ITestCaseSparql} from "./ITestCaseSparql";
 import {QueryResultBindings} from "./QueryResultBindings";
 import {QueryResultBoolean} from "./QueryResultBoolean";
 import {QueryResultQuads} from "./QueryResultQuads";
-import arrayifyStream from "arrayify-stream";
+import { arrayifyStream } from "arrayify-stream";
 
 // tslint:disable:no-var-requires
 const stringifyStream = require('stream-to-string');

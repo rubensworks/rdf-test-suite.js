@@ -4,7 +4,7 @@ import "cross-fetch/polyfill";
 import "jest-rdf";
 import {Util} from "../lib/Util";
 import type * as RDF from "@rdfjs/types";
-import arrayifyStream from "arrayify-stream";
+import { arrayifyStream } from "arrayify-stream";
 import * as fs from "node:fs";
 
 // This allows mocking of fs functions later on

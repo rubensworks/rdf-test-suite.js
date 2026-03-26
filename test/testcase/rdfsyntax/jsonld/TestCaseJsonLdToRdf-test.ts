@@ -6,7 +6,7 @@ import {ContextParser} from "jsonld-context-parser";
 import {JsonLdParser} from "jsonld-streaming-parser";
 import {Resource} from "rdf-object";
 import {TestCaseEval} from "../../../../lib/testcase/rdfsyntax/TestCaseEval";
-import arrayifyStream from "arrayify-stream";
+import { arrayifyStream } from "arrayify-stream";
 
 // tslint:disable:no-var-requires
 const streamifyString = require('streamify-string');

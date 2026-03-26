@@ -106,7 +106,7 @@ describe('Util', () => {
     });
 
     afterEach((done) => {
-      require('rimraf')(cachePath, {}, done);
+      require('rimraf').rimraf(cachePath).then(() => done());
     });
 
     it('should reject on 404s', () => {

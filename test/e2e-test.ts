@@ -26,8 +26,8 @@ describe('e2e tests on the test suite runner', () => {
     "https://w3c.github.io/rdf-tests/rdf/rdf11/rdf-n-quads/manifest.ttl": 72,
     "https://w3c.github.io/rdf-tests/rdf/rdf11/rdf-turtle/manifest.ttl": 295,
     "https://w3c.github.io/rdf-tests/rdf/rdf11/rdf-trig/manifest.ttl": 337,
-    "https://w3c.github.io/json-ld-api/tests/toRdf-manifest.jsonld": 466,
-    "https://w3c.github.io/json-ld-streaming/tests/stream-toRdf-manifest.jsonld": 483,
+    "https://w3c.github.io/json-ld-api/tests/toRdf-manifest.jsonld": 464,
+    "https://w3c.github.io/json-ld-streaming/tests/stream-toRdf-manifest.jsonld": 480,
 
     // TODO: Enable these when the next version of n3.js is released
     // "http://w3c.github.io/N3/tests/manifest.ttl",

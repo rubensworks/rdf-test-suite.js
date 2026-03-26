@@ -6564,6 +6564,16 @@ jsonld-context-parser@^3.0.0:
     http-link-header "^1.0.2"
     relative-to-absolute-iri "^1.0.5"
 
+jsonld-context-parser@^3.1.0:
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/jsonld-context-parser/-/jsonld-context-parser-3.1.0.tgz#208249ab0e412c16e89788738e542b84d0d26041"
+  integrity sha512-BfgNJ/t9jjK7Lun9XRCJM6YeNqDk8B6/lg+KS8rzhXAOtS0FvoClSmtLvF24V1M2CDYRy2LcEBt0ilxqSX93WA==
+  dependencies:
+    "@types/http-link-header" "^1.0.1"
+    "@types/node" "^18.0.0"
+    http-link-header "^1.0.2"
+    relative-to-absolute-iri "^1.0.5"
+
 jsonld-streaming-parser@^3.0.1:
   version "3.4.0"
   resolved "https://registry.yarnpkg.com/jsonld-streaming-parser/-/jsonld-streaming-parser-3.4.0.tgz#ea0c74b7a108c4aacd4eaa8518348bd89b9fff0a"
@@ -6594,6 +6604,21 @@ jsonld-streaming-parser@^4.0.1:
     http-link-header "^1.0.2"
     jsonld-context-parser "^3.0.0"
     rdf-data-factory "^1.1.0"
+    readable-stream "^4.0.0"
+
+jsonld-streaming-parser@^5.0.0:
+  version "5.0.1"
+  resolved "https://registry.yarnpkg.com/jsonld-streaming-parser/-/jsonld-streaming-parser-5.0.1.tgz#b61f0eea4d1311ec903ee0c48a5d73cf45cf673d"
+  integrity sha512-Rf230DRAWe5p1H4e7phk1vo4FHEMOmC5xVcIywKJBBcwy6zaJWFcAvPcwngufNTdJs7dpTMbKQDjp4TYDpMKUQ==
+  dependencies:
+    "@bergos/jsonparse" "^1.4.0"
+    "@types/http-link-header" "^1.0.1"
+    "@types/readable-stream" "^4.0.0"
+    buffer "^6.0.3"
+    canonicalize "^1.0.1"
+    http-link-header "^1.0.2"
+    jsonld-context-parser "^3.1.0"
+    rdf-data-factory "^2.0.0"
     readable-stream "^4.0.0"
 
 jsonld-streaming-serializer@^3.0.1:

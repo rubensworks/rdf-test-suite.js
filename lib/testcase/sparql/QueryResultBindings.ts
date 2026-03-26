@@ -87,7 +87,8 @@ export class QueryResultBindings implements IQueryResultBindings {
     if (that.type !== 'bindings') {
       return false;
     }
-    if (JSON.stringify(this.variables.sort()) !== JSON.stringify(that.variables.sort())) {
+    if ((this.value.length > 0 || that.value.length > 0) &&
+        JSON.stringify(this.variables.sort()) !== JSON.stringify(that.variables.sort())) {
       return false;
     }
     if (laxCardinality) {

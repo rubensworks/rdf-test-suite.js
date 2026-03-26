@@ -401,8 +401,8 @@ describe('QueryResultBindings', () => {
           return expect(bindingsAB1EmptyOrder.equals(<any> {})).toBeFalsy();
         });
 
-        it('should be false for different variables', () => {
-          return expect(bindingsAB1EmptyOrder.equals(bindingsCD1EmptyOrder)).toBeFalsy();
+        it('should be true for different variables when results are empty', () => {
+          return expect(bindingsAB1EmptyOrder.equals(bindingsCD1EmptyOrder)).toBeTruthy();
         });
 
         it('should be true for equal variables', () => {
@@ -443,8 +443,8 @@ describe('QueryResultBindings', () => {
           return expect(bindingsAB1Empty.equals(<any> {})).toBeFalsy();
         });
 
-        it('should be false for different variables', () => {
-          return expect(bindingsAB1Empty.equals(bindingsCD1Empty)).toBeFalsy();
+        it('should be true for different variables when results are empty', () => {
+          return expect(bindingsAB1Empty.equals(bindingsCD1Empty)).toBeTruthy();
         });
 
         it('should be true for equal variables', () => {
@@ -487,8 +487,8 @@ describe('QueryResultBindings', () => {
           return expect(bindingsAB1Empty.equals(<any> {}, true)).toBeFalsy();
         });
 
-        it('should be false for different variables', () => {
-          return expect(bindingsAB1Empty.equals(bindingsCD1Empty, true)).toBeFalsy();
+        it('should be true for different variables when results are empty', () => {
+          return expect(bindingsAB1Empty.equals(bindingsCD1Empty, true)).toBeTruthy();
         });
 
         it('should be true for equal variables', () => {

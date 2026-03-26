@@ -1,7 +1,7 @@
 import "jest-rdf";
 import {GeneralizedN3StreamParser} from "../lib/GeneralizedN3StreamParser";
 import {StreamParser} from "n3";
-import arrayifyStream from "arrayify-stream";
+import { arrayifyStream } from "arrayify-stream";
 
 // tslint:disable:no-var-requires
 const quad = require("rdf-quad");

@@ -8,7 +8,7 @@ import {ITestCaseHandler} from "../../ITestCaseHandler";
 import {ISerializer} from "../ISerializer";
 import {ITestCaseFromRdfSyntax} from "../ITestCaseFromRdfSyntax";
 import {TestCaseJsonLdToRdfHandler} from "./TestCaseJsonLdToRdf";
-import arrayifyStream from "arrayify-stream";
+import { arrayifyStream } from "arrayify-stream";
 
 /**
  * Test case handler for:

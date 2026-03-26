@@ -8,7 +8,7 @@ import {
   TestCaseJsonLdSyntaxHandler,
 } from "../../../../lib/testcase/rdfsyntax/jsonld/TestCaseJsonLdSyntax";
 import {TestCaseSyntax} from "../../../../lib/testcase/rdfsyntax/TestCaseSyntax";
-import arrayifyStream from "arrayify-stream";
+import { arrayifyStream } from "arrayify-stream";
 
 // tslint:disable:no-var-requires
 const streamifyString = require('streamify-string');

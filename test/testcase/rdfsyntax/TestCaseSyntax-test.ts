@@ -5,7 +5,7 @@ import {Resource} from "rdf-object";
 import {RdfXmlParser} from "rdfxml-streaming-parser";
 import {ErrorSkipped} from "../../../lib/ErrorSkipped";
 import {TestCaseSyntax, TestCaseSyntaxHandler} from "../../../lib/testcase/rdfsyntax/TestCaseSyntax";
-import arrayifyStream from "arrayify-stream";
+import { arrayifyStream } from "arrayify-stream";
 
 // tslint:disable:no-var-requires
 const streamifyString = require('streamify-string');

@@ -5,7 +5,7 @@ import "jest-rdf";
 import {ContextParser} from "jsonld-context-parser";
 import {Resource} from "rdf-object";
 import {RdfXmlParser} from "rdfxml-streaming-parser";
-import arrayifyStream from "arrayify-stream";
+import { arrayifyStream } from "arrayify-stream";
 
 // tslint:disable:no-var-requires
 const streamifyString = require('streamify-string');

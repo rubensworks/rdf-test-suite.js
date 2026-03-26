@@ -1,6 +1,12 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+<a name="v2.1.5"></a>
+## [v2.1.5](https://github.com/rubensworks/rdf-test-suite.js/compare/v2.1.4...v2.1.5) - 2026-03-26
+
+### Changed
+* [Allow unequal variables when comparing empty SPARQL results](https://github.com/rubensworks/rdf-test-suite.js/commit/a8d742a0b2a37f3fdee2a7f43a5d1911c39ee97e)
+
 <a name="v2.1.4"></a>
 ## [v2.1.4](https://github.com/rubensworks/rdf-test-suite.js/compare/v2.1.3...v2.1.4) - 2026-01-07
 

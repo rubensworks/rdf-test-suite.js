@@ -42,8 +42,8 @@
     "test"
   ],
   "devDependencies": {
-    "@comunica/actor-http-proxy": "^4.0.2",
-    "@comunica/query-sparql": "^4.0.2",
+    "@comunica/actor-http-proxy": "^5.0.0",
+    "@comunica/query-sparql": "^5.0.0",
     "@types/jest": "^30.0.0",
     "coveralls": "^3.0.0",
     "jest": "^30.0.0",

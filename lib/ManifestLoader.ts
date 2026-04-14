@@ -12,18 +12,21 @@ import { Util } from './Util';
  * A ManifestLoader loads test suites from URLs.
  */
 export class ManifestLoader {
-  public static readonly DEFAULT_TEST_CASE_HANDLERS: Record<string, ITestCaseHandler<ITestCase<any>>> =
-    require('./testcase/TestCaseHandlers');
+  // eslint-disable-next-line ts/no-require-imports, ts/no-var-requires
+  public static readonly defaultTestCaseHandlers: Record<string, ITestCaseHandler<ITestCase<any>>> =
+    require('./testcase/TestCaseHandlers') as Record<string, ITestCaseHandler<ITestCase<any>>>;
 
-  public static readonly LOADER_CONTEXT = require('./context-manifest.json');
+  // eslint-disable-next-line ts/no-require-imports, ts/no-var-requires
+  public static readonly loaderContext: Record<string, unknown> =
+    require('./context-manifest.json') as Record<string, unknown>;
 
   private readonly testCaseHandlers: Record<string, ITestCaseHandler<ITestCase<any>>>;
 
-  constructor(args?: IManifestLoaderArgs) {
+  public constructor(args?: IManifestLoaderArgs) {
     if (!args) {
       args = {};
     }
-    this.testCaseHandlers = args.testCaseHandlers || ManifestLoader.DEFAULT_TEST_CASE_HANDLERS;
+    this.testCaseHandlers = args.testCaseHandlers || ManifestLoader.defaultTestCaseHandlers;
   }
 
   /**
@@ -33,7 +36,7 @@ export class ManifestLoader {
    * @return {Promise<IManifest>} A promise that resolves to a manifest object.
    */
   public async from(url: string, options?: IFetchOptions): Promise<IManifest> {
-    const objectLoader = new RdfObjectLoader({ context: ManifestLoader.LOADER_CONTEXT });
+    const objectLoader = new RdfObjectLoader({ context: ManifestLoader.loaderContext });
     const manifest: Resource = await this.import(objectLoader, url, options);
     return manifestFromResource(this.testCaseHandlers, options, manifest, objectLoader);
   }
@@ -51,13 +54,12 @@ export class ManifestLoader {
       objectLoader.resources[url.slice(0, url.lastIndexOf('.'))] ??
       // Also try extension-less and with the last '/' replaced with a '#' (needed for RDFstar test suite)
       // @see https://github.com/w3c/rdf-star/issues/269
-      objectLoader.resources[url.slice(0, url.lastIndexOf('.')).replace(/\/manifest$/, '#manifest')];
+      objectLoader.resources[url.slice(0, url.lastIndexOf('.')).replace(/\/manifest$/u, '#manifest')];
 
     if (!manifest) {
       throw new Error(`Could not find a resource ${url} in the document at ${url}`);
     }
     const includeJobs: Promise<any>[] = [];
-    for (const includeList of manifest.properties.include) {
       for (const include of includeList.list) {
         if (include.term.termType !== 'NamedNode') {
           throw new Error(`Found invalid manifest term ${termToString(include.term)} when parsing ${url}`);
@@ -66,7 +68,7 @@ export class ManifestLoader {
       }
     }
 
-    const jobs: Resource[] = await Promise.all(includeJobs);
+    await Promise.all(includeJobs);
 
     manifest =
       // First try the same URL as the document URL
@@ -75,7 +77,7 @@ export class ManifestLoader {
       objectLoader.resources[url.slice(0, url.lastIndexOf('.'))] ??
       // Also try extension-less and with the last '/' replaced with a '#' (needed for RDFstar test suite)
       // @see https://github.com/w3c/rdf-star/issues/269
-      objectLoader.resources[url.slice(0, url.lastIndexOf('.')).replace(/\/manifest$/, '#manifest')];
+      objectLoader.resources[url.slice(0, url.lastIndexOf('.')).replace(/\/manifest$/u, '#manifest')];
 
     return manifest;
   }

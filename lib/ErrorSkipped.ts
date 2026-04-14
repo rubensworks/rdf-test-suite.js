@@ -4,8 +4,6 @@
 export class ErrorSkipped extends Error {
   public readonly skipped: boolean;
 
-  constructor(message?: string) {
-    super(message);
-    this.skipped = true;
+  public constructor(message?: string) {
   }
 }

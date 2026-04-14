@@ -4,8 +4,6 @@
 export class ErrorTest extends Error {
   public readonly test: boolean;
 
-  constructor(message?: string) {
-    super(message);
-    this.test = true;
+  public constructor(message?: string) {
   }
 }

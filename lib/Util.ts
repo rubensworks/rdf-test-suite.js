@@ -1,29 +1,29 @@
 import { createReadStream, createWriteStream, existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { PassThrough } from 'node:stream';
 import type * as RDF from '@rdfjs/types';
+// eslint-disable-next-line ts/no-require-imports, ts/no-var-requires
+import isStream = require('is-stream');
 import { JsonLdParser } from 'jsonld-streaming-parser';
 import { RdfXmlParser } from 'rdfxml-streaming-parser';
 import { ReadableWebToNodeStream } from 'readable-web-to-node-stream';
 import { DocumentLoaderCached } from './DocumentLoaderCached';
 import { GeneralizedN3StreamParser } from './GeneralizedN3StreamParser';
 
-// Tslint:disable-next-line:no-var-requires
-const isStream = require('is-stream');
-
 /**
  * Utility functions
  */
+// eslint-disable-next-line ts/no-extraneous-class
 export class Util {
-  public static COLOR_RESET = '\x1B[0m';
-  public static COLOR_RED = '\x1B[31m';
-  public static COLOR_GREEN = '\x1B[32m';
-  public static COLOR_YELLOW = '\x1B[33m';
-  public static COLOR_BLUE = '\x1B[34m';
-  public static COLOR_MAGENTA = '\x1B[35m';
-  public static COLOR_CYAN = '\x1B[36m';
-  public static COLOR_GRAY = '\x1B[90m';
+  public static colorReset = '\x1B[0m';
+  public static colorRed = '\x1B[31m';
+  public static colorGreen = '\x1B[32m';
+  public static colorYellow = '\x1B[33m';
+  public static colorBlue = '\x1B[34m';
+  public static colorMagenta = '\x1B[35m';
+  public static colorCyan = '\x1B[36m';
+  public static colorGray = '\x1B[90m';
 
-  protected static readonly EXTENSION_TO_CONTENTTYPE: Record<string, string> = {
+  protected static readonly extensionToContentType: Record<string, string> = {
     jsonld: 'application/ld+json',
     nq: 'application/n-quads',
     nt: 'application/n-triples',
@@ -41,7 +41,7 @@ export class Util {
   public static identifyContentType(url: string, headers: Headers): string {
     const contentType = headers.get('Content-Type');
     return (contentType && !contentType.includes('application/octet-stream') ? contentType : false) ||
-      Util.EXTENSION_TO_CONTENTTYPE[url.slice(url.lastIndexOf('\.') + 1)] ||
+      Util.extensionToContentType[url.slice(url.lastIndexOf('.') + 1)] ||
       'unknown';
   }
 
@@ -50,7 +50,7 @@ export class Util {
    * @param {string} url A URL.
    * @return {string} An http URL.
    */
-  public static normalizeBaseUrl(url: string) {
+  public static normalizeBaseUrl(url: string): string {
     if (url.startsWith('https://')) {
       return url.replace('https', 'http');
     }
@@ -66,7 +66,8 @@ export class Util {
   public static async fetchRdf(url: string, options: IFetchOptions = {}): Promise<[string, RDF.Stream]> {
     const response = await Util.fetchCached(url, options);
     const contentType = Util.identifyContentType(response.url, response.headers);
-    return [ response.url, Util.parseRdfRaw(contentType, options.normalizeUrl ? Util.normalizeBaseUrl(response.url) : response.url, response.body, options) ];
+    const baseIri = options.normalizeUrl ? Util.normalizeBaseUrl(response.url) : response.url;
+    return [ response.url, Util.parseRdfRaw(contentType, baseIri, response.body, options) ];
   }
 
   /**
@@ -77,7 +78,12 @@ export class Util {
    * @param {IFetchOptions} options Options for fetching.
    * @return {Stream} A parsed RDF stream.
    */
-  public static parseRdfRaw(contentType: string, baseIRI: string, data: NodeJS.ReadableStream, options: IFetchOptions = {}): RDF.Stream {
+  public static parseRdfRaw(
+    contentType: string,
+    baseIRI: string,
+    data: NodeJS.ReadableStream,
+    options: IFetchOptions = {},
+  ): RDF.Stream {
     if (contentType.includes('application/x-turtle') ||
       contentType.includes('text/turtle') ||
       contentType.includes('application/n-triples') ||
@@ -109,7 +115,11 @@ export class Util {
    * @param {RequestInit} init Fetch init options.
    * @return {Promise<IFetchResponse>} A promise resolving to the response.
    */
-  public static async fetchCached(url: string, options: IFetchOptions = {}, init?: RequestInit): Promise<IFetchResponse> {
+  public static async fetchCached(
+    url: string,
+    options: IFetchOptions = {},
+    init?: RequestInit,
+  ): Promise<IFetchResponse> {
     // First check local file mappings
     if (options.urlToFileMappings) {
       for (const urlToFileMapping of options.urlToFileMappings) {
@@ -137,12 +147,14 @@ export class Util {
     }
 
     const encodedUrl = encodeURIComponent(url);
-    const cachePathLocal: string = options.cachePath && encodedUrl.length <= 255 ? options.cachePath + encodedUrl : null;
+    const cachePathLocal: string = options.cachePath && encodedUrl.length <= 255 ?
+      options.cachePath + encodedUrl :
+      null;
     if (cachePathLocal && existsSync(cachePathLocal)) {
       // Read from cache
       return {
         body: createReadStream(cachePathLocal),
-        headers: new Headers(JSON.parse(readFileSync(`${cachePathLocal}.headers`, { encoding: 'utf8' }))),
+        headers: new Headers(JSON.parse(readFileSync(`${cachePathLocal}.headers`, { encoding: 'utf8' })) as HeadersInit),
         url: readFileSync(`${cachePathLocal}.url`, { encoding: 'utf8' }),
       };
     }
@@ -153,7 +165,7 @@ export class Util {
     }
     /* istanbul ignore next */
     const body: NodeJS.ReadableStream = isStream(response.body) || response.body === null ?
-          <any> response.body :
+          response.body as NodeJS.ReadableStream :
       new ReadableWebToNodeStream(response.body);
     const body1 = body.pipe(new PassThrough());
     const body2 = body.pipe(new PassThrough());
@@ -167,16 +179,20 @@ export class Util {
       // Save in cache
       const writeStream = createWriteStream(cachePathLocal, 'utf8');
       body1.pipe(writeStream);
-      await new Promise(resolve => setImmediate(resolve)); // To fix the problem of files being empty sometimes
+      // To fix the problem of files being empty sometimes
+      await new Promise(resolve => setImmediate(resolve));
       try {
         writeFileSync(`${cachePathLocal}.url`, response.url || url);
-        const headersRaw: any = {};
-        headers.forEach((value: string, key: string) => headersRaw[key] = value);
+        const headersRaw: Record<string, string> = {};
+        for (const [key, value] of headers) {
+          headersRaw[key] = value;
+        }
         writeFileSync(`${cachePathLocal}.headers`, JSON.stringify(headersRaw));
       } catch (error) {
         // Silently ignore errors if name is too long
-        if ((<any> error).code === 'ENAMETOOLONG') {
-          console.error(error.toString());
+        if ((error as NodeJS.ErrnoException).code === 'ENAMETOOLONG') {
+          // eslint-disable-next-line no-console
+          console.error(String(error));
         } else {
           throw error;
         }
@@ -208,7 +224,7 @@ export class Util {
    * @param {string} license A license string.
    * @return {string} A license URI.
    */
-  public static licenseToUri(license: string) {
+  public static licenseToUri(license: string): string {
     // TODO: make this more error-prone like here:
     // https://github.com/LinkedSoftwareDependencies/npm-extraction-server/blob/master/lib/npm/NpmContext.js#L151
     return `http://opensource.org/licenses/${license}`;
@@ -219,8 +235,8 @@ export class Util {
    * @param str The string that should be printed in
    * @param color A given color
    */
-  public static withColor(str: any, color: string) {
-    return `${color}${str}${Util.COLOR_RESET}`;
+  public static withColor(str: any, color: string): string {
+    return `${color}${str}${Util.colorReset}`;
   }
 }
 

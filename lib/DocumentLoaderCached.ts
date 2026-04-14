@@ -8,12 +8,13 @@ import { Util } from './Util';
 export class DocumentLoaderCached implements IDocumentLoader {
   private readonly options: IFetchOptions;
 
-  constructor(options: IFetchOptions) {
+  public constructor(options: IFetchOptions) {
     this.options = options;
   }
 
   public async load(url: string): Promise<IJsonLdContext> {
     const { body } = await Util.fetchCached(url, this.options, { headers: { accept: 'application/ld+json' }});
-    return JSON.parse(await require('stream-to-string')(body));
+    // eslint-disable-next-line ts/no-require-imports, ts/no-var-requires, ts/no-unsafe-call
+    return JSON.parse(await (require('stream-to-string') as (s: NodeJS.ReadableStream) => Promise<string>)(body)) as IJsonLdContext;
   }
 }

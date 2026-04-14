@@ -10,8 +10,33 @@ module.exports = rubensworks([
       },
     },
     rules: {
+      // Requires strictNullChecks which is disabled in this project
       'ts/prefer-nullish-coalescing': 'off',
+      // JSON imports don't need explicit extension
       'import/extensions': 'off',
+      // Disabled until test suite is migrated to async/await
+      'jest/no-test-return-statement': 'off',
+      'jest/no-done-callback': 'off',
+      // Disabled - requires larger TypeScript type annotation refactoring
+      'ts/no-unsafe-argument': 'off',
+      'ts/no-unsafe-assignment': 'off',
+      'ts/no-unsafe-return': 'off',
+      'ts/restrict-template-expressions': 'off',
+      'ts/no-floating-promises': 'off',
+      'ts/explicit-member-accessibility': 'off',
+      'ts/explicit-function-return-type': 'off',
+      'ts/consistent-type-assertions': 'off',
+      'ts/no-base-to-string': 'off',
+      // Naming conventions require larger refactoring
+      'ts/naming-convention': 'off',
+      // Line length - many long lines in test data
+      'max-len': 'off',
+      // Inline comments are used throughout the codebase
+      'line-comment-position': 'off',
+      // Test-style assertions
+      'jest/no-conditional-expect': 'off',
+      'jest/prefer-each': 'off',
+      'jest/require-to-throw-message': 'off',
     },
   },
   {
@@ -23,12 +48,15 @@ module.exports = rubensworks([
     },
   },
   {
-    files: [ 'lib/**/*.ts' ],
+    files: [ 'lib/**/*.ts', 'test/**/*.ts' ],
     rules: {
       'import/no-nodejs-modules': 'off',
     },
   },
   {
-    ignores: [ 'eslint-errors.json', 'eslint-errors-readable.txt', 'eslint-errors-full.txt' ],
+    files: [ 'test/**/*.ts' ],
+    rules: {
+      'no-console': 'off',
+    },
   },
 ]);

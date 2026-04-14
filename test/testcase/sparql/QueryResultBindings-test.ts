@@ -281,7 +281,7 @@ describe('QueryResultBindings', () => {
         '?b': DF.namedNode('b1'),
       };
       return expect(QueryResultBindings.hashBinding(binding, {}))
-        .toBe('{\"?a\":\"a1\",\"?b\":\"b1\"}');
+        .toBe('{"?a":"a1","?b":"b1"}');
     });
 
     it('should a binding with named nodes populated in a different order', () => {
@@ -290,7 +290,7 @@ describe('QueryResultBindings', () => {
       };
       binding['?a'] = DF.namedNode('a1');
       return expect(QueryResultBindings.hashBinding(binding, {}))
-        .toBe('{\"?a\":\"a1\",\"?b\":\"b1\"}');
+        .toBe('{"?a":"a1","?b":"b1"}');
     });
   });
 
@@ -298,7 +298,7 @@ describe('QueryResultBindings', () => {
     describe('ignoring order', () => {
       it('should hash bindings with named nodes', () => {
         return expect(QueryResultBindings.hashBindings(bindingsAB1.value, {}, false))
-          .toBe('{\"?a\":\"a1\",\"?b\":\"b1\"}{\"?a\":\"a2\",\"?b\":\"b2\"}');
+          .toBe('{"?a":"a1","?b":"b1"}{"?a":"a2","?b":"b2"}');
       });
 
       it('should unordered hash bindings with named nodes', () => {
@@ -312,12 +312,12 @@ describe('QueryResultBindings', () => {
             '?b': DF.namedNode('b1'),
           },
         ], {}, false))
-          .toBe('{\"?a\":\"a1\",\"?b\":\"b1\"}{\"?a\":\"a2\",\"?b\":\"b2\"}');
+          .toBe('{"?a":"a1","?b":"b1"}{"?a":"a2","?b":"b2"}');
       });
 
       it('should hash bindings with blank nodes', () => {
         return expect(QueryResultBindings.hashBindings(bindingBlankNode1Lower.value, {}, false))
-          .toBe('{\"?c\":\"_:0\",\"?d\":\"_:1\"}{\"?c\":\"_:2\",\"?d\":\"_:3\"}');
+          .toBe('{"?c":"_:0","?d":"_:1"}{"?c":"_:2","?d":"_:3"}');
       });
 
       it('should unordered hash bindings with quoted triples', () => {
@@ -338,7 +338,7 @@ describe('QueryResultBindings', () => {
     describe('checking order', () => {
       it('should hash bindings with named nodes', () => {
         return expect(QueryResultBindings.hashBindings(bindingsAB1.value, {}, true))
-          .toBe('{\"?a\":\"a1\",\"?b\":\"b1\"}{\"?a\":\"a2\",\"?b\":\"b2\"}');
+          .toBe('{"?a":"a1","?b":"b1"}{"?a":"a2","?b":"b2"}');
       });
 
       it('should unordered hash bindings with named nodes', () => {
@@ -352,12 +352,12 @@ describe('QueryResultBindings', () => {
             '?b': DF.namedNode('b1'),
           },
         ], {}, true))
-          .toBe('{\"?a\":\"a2\",\"?b\":\"b2\"}{\"?a\":\"a1\",\"?b\":\"b1\"}');
+          .toBe('{"?a":"a2","?b":"b2"}{"?a":"a1","?b":"b1"}');
       });
 
       it('should hash bindings with blank nodes', () => {
         return expect(QueryResultBindings.hashBindings(bindingBlankNode1Lower.value, {}, true))
-          .toBe('{\"?c\":\"_:0\",\"?d\":\"_:1\"}{\"?c\":\"_:2\",\"?d\":\"_:3\"}');
+          .toBe('{"?c":"_:0","?d":"_:1"}{"?c":"_:2","?d":"_:3"}');
       });
     });
   });

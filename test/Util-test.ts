@@ -168,7 +168,7 @@ describe('Util', () => {
       await new Promise(resolve => setTimeout(resolve, 100)); // Hack to wait until file has been written
 
       expect(readFileSync(`${cachePath}http%3A%2F%2Fexample.org%2F`, 'utf8')).toBe('ABC');
-      expect(readFileSync(`${cachePath}http%3A%2F%2Fexample.org%2F.headers`, 'utf8')).toBe('{\"a\":\"b\"}');
+      expect(readFileSync(`${cachePath}http%3A%2F%2Fexample.org%2F.headers`, 'utf8')).toBe('{"a":"b"}');
       expect(readFileSync(`${cachePath}http%3A%2F%2Fexample.org%2F.url`, 'utf8')).toBe('http://example.org/');
 
       const response2 = await Util.fetchCached('http://example.org/', { cachePath });

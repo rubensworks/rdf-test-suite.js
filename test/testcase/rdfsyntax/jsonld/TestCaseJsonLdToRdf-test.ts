@@ -1,11 +1,11 @@
-import { DataFactory } from 'rdf-data-factory';
-import { TestCaseJsonLdToRdfHandler } from '../../../../lib/testcase/rdfsyntax/jsonld/TestCaseJsonLdToRdf';
-import 'jest-rdf';
+import { arrayifyStream } from 'arrayify-stream';
 import { ContextParser } from 'jsonld-context-parser';
 import { JsonLdParser } from 'jsonld-streaming-parser';
+import { DataFactory } from 'rdf-data-factory';
+import 'jest-rdf';
 import { Resource } from 'rdf-object';
+import { TestCaseJsonLdToRdfHandler } from '../../../../lib/testcase/rdfsyntax/jsonld/TestCaseJsonLdToRdf';
 import { TestCaseEval } from '../../../../lib/testcase/rdfsyntax/TestCaseEval';
-import { arrayifyStream } from 'arrayify-stream';
 
 const quad = require('rdf-quad');
 
@@ -15,7 +15,7 @@ const streamifyString = require('streamify-string');
 const DF = new DataFactory();
 
 // Mock fetch
-(<any> global).fetch = (url: string) => {
+(<any> globalThis).fetch = (url: string) => {
   let body;
   switch (url) {
     case 'http://ex.org/action.ttl':
@@ -51,7 +51,7 @@ const DF = new DataFactory();
 describe('TestCaseJsonLdToRdfHandler', () => {
   const handler = new TestCaseJsonLdToRdfHandler();
   const parser = {
-    parse: (data: string, baseIRI: string, injectArguments: any) => Promise.resolve(arrayifyStream(streamifyString(data)
+    parse: (data: string, baseIRI: string, _injectArguments: any) => Promise.resolve(arrayifyStream(streamifyString(data)
       .pipe(new JsonLdParser({ baseIRI })))),
   };
 

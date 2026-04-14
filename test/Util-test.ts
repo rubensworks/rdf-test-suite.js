@@ -1,11 +1,12 @@
-import { existsSync, mkdirSync, readFileSync } from 'node:fs';
-import { DataFactory } from 'rdf-data-factory';
 import 'cross-fetch/polyfill';
 import 'jest-rdf';
-import { Util } from '../lib/Util';
+import { existsSync, mkdirSync, readFileSync } from 'node:fs';
+import * as fs from 'node:fs';
+import { join as pathJoin } from 'node:path';
 import type * as RDF from '@rdfjs/types';
 import { arrayifyStream } from 'arrayify-stream';
-import * as fs from 'node:fs';
+import { DataFactory } from 'rdf-data-factory';
+import { Util } from '../lib/Util';
 
 // This allows mocking of fs functions later on
 jest.mock<typeof import('fs')>('fs', () => {
@@ -22,7 +23,7 @@ const streamifyString = require('streamify-string');
 const DF = new DataFactory<RDF.BaseQuad>();
 
 // Mock fetch
-(<any> global).fetch = (url: string) => {
+(<any> globalThis).fetch = (url: string) => {
   let body;
   switch (url) {
     case 'http://example.org/':
@@ -100,7 +101,7 @@ describe('Util', () => {
   });
 
   describe('#fetchCached', () => {
-    const cachePath = `${__dirname}/.rdf-test-cache/`;
+    const cachePath = `${pathJoin(__dirname, '.rdf-test-cache')}/`;
 
     beforeEach(() => {
       if (!existsSync(cachePath)) {
@@ -118,7 +119,7 @@ describe('Util', () => {
 
     it('should handle urlToFileMappings', async() => {
       const urlToFileMappings = [
-        { url: 'http://example.org/abc/', path: `${__dirname}/assets/mappings/` },
+        { url: 'http://example.org/abc/', path: `${pathJoin(__dirname, 'assets', 'mappings')}/` },
       ];
       const response = await Util.fetchCached('http://example.org/abc/def.txt', { urlToFileMappings });
       await expect(stringifyStream(response.body)).resolves.toBe('XYZ\n');
@@ -128,7 +129,7 @@ describe('Util', () => {
 
     it('should handle urlToFileMappings with hash', async() => {
       const urlToFileMappings = [
-        { url: 'http://example.org/abc/', path: `${__dirname}/assets/mappings/` },
+        { url: 'http://example.org/abc/', path: `${pathJoin(__dirname, 'assets', 'mappings')}/` },
       ];
       const response = await Util.fetchCached('http://example.org/abc/def.txt#hash', { urlToFileMappings });
       await expect(stringifyStream(response.body)).resolves.toBe('XYZ\n');
@@ -138,15 +139,15 @@ describe('Util', () => {
 
     it('should handle urlToFileMappings and error on non-existing file', async() => {
       const urlToFileMappings = [
-        { url: 'http://example.org/abc/', path: `${__dirname}/assets/mappings/` },
+        { url: 'http://example.org/abc/', path: `${pathJoin(__dirname, 'assets', 'mappings')}/` },
       ];
-      expect(Util.fetchCached('http://example.org/abc/notfound.txt', { urlToFileMappings }))
+      return expect(Util.fetchCached('http://example.org/abc/notfound.txt', { urlToFileMappings }))
         .rejects.toThrow();
     });
 
     it('should handle urlToFileMappings and skip non-mapped URLs', () => {
       const urlToFileMappings = [
-        { url: 'http://example.org/abc/', path: `${__dirname}/assets/mappings/` },
+        { url: 'http://example.org/abc/', path: `${pathJoin(__dirname, 'assets', 'mappings')}/` },
       ];
       return expect(Util.fetchCached('http://example.org/def/', { urlToFileMappings })).rejects.toBeTruthy();
     });
@@ -159,7 +160,7 @@ describe('Util', () => {
     });
 
     it('should cache with cachePath', async() => {
-      const spy = jest.spyOn(<any> global, 'fetch');
+      const spy = jest.spyOn(<any> globalThis, 'fetch');
 
       const response1 = await Util.fetchCached('http://example.org/', { cachePath });
       await expect(stringifyStream(response1.body)).resolves.toBe('ABC');

@@ -1,6 +1,6 @@
+import { ContextParser } from 'jsonld-context-parser';
 import { DataFactory } from 'rdf-data-factory';
 import 'jest-rdf';
-import { ContextParser } from 'jsonld-context-parser';
 import { Resource } from 'rdf-object';
 import { TestCaseJsonLdToRdfNegativeHandler,
 } from '../../../../lib/testcase/rdfsyntax/jsonld/TestCaseJsonLdToRdfNegative';
@@ -12,7 +12,7 @@ const streamifyString = require('streamify-string');
 const DF = new DataFactory();
 
 // Mock fetch
-(<any> global).fetch = (url: string) => {
+(<any> globalThis).fetch = (url: string) => {
   let body;
   switch (url) {
     case 'http://ex.org/action.ttl':
@@ -40,7 +40,7 @@ const DF = new DataFactory();
 describe('TestCaseJsonLdToRdfNegativeHandler', () => {
   const handler = new TestCaseJsonLdToRdfNegativeHandler();
   const parser = {
-    parse: async(data: string, baseIRI: string, injectArguments: any) => {
+    parse: async(data: string, _baseIRI: string, _injectArguments: any) => {
       if (data === 'ERROR') {
         throw new Error('ERROR');
       } else if (data === 'ERRORCODE') {

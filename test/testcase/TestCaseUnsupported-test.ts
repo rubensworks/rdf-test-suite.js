@@ -14,7 +14,7 @@ describe('TestCaseUnsupportedHandler', () => {
 
     it('should produce TestCaseUnsupported that reject on test', async() => {
       const testCase = await handler.resourceToTestCase(null, <any> { a: 'b' });
-      expect(testCase.test(null)).rejects.toBeTruthy();
+      return expect(testCase.test(null)).rejects.toBeTruthy();
     });
   });
 });

@@ -1,10 +1,10 @@
-import { DataFactory } from 'rdf-data-factory';
-import { TestCaseEval, TestCaseEvalHandler } from '../../../lib/testcase/rdfsyntax/TestCaseEval';
-import 'jest-rdf';
+import { arrayifyStream } from 'arrayify-stream';
 import { ContextParser } from 'jsonld-context-parser';
+import { DataFactory } from 'rdf-data-factory';
 import { Resource } from 'rdf-object';
 import { RdfXmlParser } from 'rdfxml-streaming-parser';
-import { arrayifyStream } from 'arrayify-stream';
+import { TestCaseEval, TestCaseEvalHandler } from '../../../lib/testcase/rdfsyntax/TestCaseEval';
+import 'jest-rdf';
 
 const quad = require('rdf-quad');
 
@@ -14,7 +14,7 @@ const streamifyString = require('streamify-string');
 const DF = new DataFactory();
 
 // Mock fetch
-(<any> global).fetch = (url: string) => {
+(<any> globalThis).fetch = (url: string) => {
   let body;
   switch (url) {
     case 'https://example.org/myTestFile':

@@ -1,10 +1,10 @@
-import { TestCaseQueryEvaluation, TestCaseQueryEvaluationHandler } from '../../../lib/testcase/sparql/TestCaseQueryEvaluation';
-import { DataFactory } from 'rdf-data-factory';
-import 'jest-rdf';
 import type * as RDF from '@rdfjs/types';
 import { ContextParser } from 'jsonld-context-parser';
+import { DataFactory } from 'rdf-data-factory';
+import 'jest-rdf';
 import { Resource } from 'rdf-object';
 import { QueryResultQuads } from '../../../lib/testcase/sparql/QueryResultQuads';
+import { TestCaseQueryEvaluation, TestCaseQueryEvaluationHandler } from '../../../lib/testcase/sparql/TestCaseQueryEvaluation';
 
 const quad = require('rdf-quad');
 
@@ -14,7 +14,7 @@ const streamifyString = require('streamify-string');
 const DF = new DataFactory();
 
 // Mock fetch
-(<any> global).fetch = (url: string) => {
+(<any> globalThis).fetch = (url: string) => {
   let body;
   let headers = new Headers({ a: 'b' });
   switch (url) {
@@ -58,7 +58,7 @@ describe('TestCaseQueryEvaluationHandler', () => {
     parse: (queryString: string) => queryString === 'OK' ?
       Promise.resolve(null) :
       Promise.reject(new Error(`Invalid data ${queryString}`)),
-    query: (data: RDF.Quad[], queryString: string) => Promise.resolve(new QueryResultQuads([
+    query: (_data: RDF.Quad[], _queryString: string) => Promise.resolve(new QueryResultQuads([
       quad('http://www.w3.org/TR/rdf-syntax-grammar', 'http://purl.org/dc/elements/1.1/title', '"RDF1.1 XML Syntax 1"'),
       quad('http://www.w3.org/TR/rdf-syntax-grammar', 'http://purl.org/dc/elements/1.1/title', '"RDF1.1 XML Syntax 2"'),
     ])),
@@ -510,7 +510,7 @@ describe('TestCaseQueryEvaluationHandler', () => {
         quad('http://www.w3.org/TR/rdf-syntax-grammar', 'http://purl.org/dc/elements/1.1/title', '"RDF1.1 XML Syntax 2"'),
       ]);
       expect(testCase.laxCardinality).toBe(false);
-      expect(testCase.test(engine, {})).resolves.toBeUndefined();
+      return expect(testCase.test(engine, {})).resolves.toBeUndefined();
     });
 
     it('should produce a TestCaseQueryEvaluation with raw graph data in action', async() => {
@@ -534,7 +534,7 @@ describe('TestCaseQueryEvaluationHandler', () => {
         quad('http://www.w3.org/TR/rdf-syntax-grammar', 'http://purl.org/dc/elements/1.1/title', '"RDF1.1 XML Syntax 2"'),
       ]);
       expect(testCase.laxCardinality).toBe(false);
-      expect(testCase.test(engine, {})).resolves.toBeUndefined();
+      return expect(testCase.test(engine, {})).resolves.toBeUndefined();
     });
 
     it('should produce a TestCaseQueryEvaluation with labelled graph data in action', async() => {
@@ -561,7 +561,7 @@ describe('TestCaseQueryEvaluationHandler', () => {
         quad('http://www.w3.org/TR/rdf-syntax-grammar', 'http://purl.org/dc/elements/1.1/title', '"RDF1.1 XML Syntax 2"'),
       ]);
       expect(testCase.laxCardinality).toBe(false);
-      expect(testCase.test(engine, {})).resolves.toBeUndefined();
+      return expect(testCase.test(engine, {})).resolves.toBeUndefined();
     });
 
     it('should produce a TestCaseQueryEvaluation with multiple raw graph data in action', async() => {
@@ -588,7 +588,7 @@ describe('TestCaseQueryEvaluationHandler', () => {
         quad('http://www.w3.org/TR/rdf-syntax-grammar', 'http://purl.org/dc/elements/1.1/title', '"RDF1.1 XML Syntax 2"'),
       ]);
       expect(testCase.laxCardinality).toBe(false);
-      expect(testCase.test(engine, {})).resolves.toBeUndefined();
+      return expect(testCase.test(engine, {})).resolves.toBeUndefined();
     });
 
     it('should produce a TestCaseQueryEvaluation with multiple labelled graph data in action', async() => {
@@ -622,7 +622,7 @@ describe('TestCaseQueryEvaluationHandler', () => {
         quad('http://www.w3.org/TR/rdf-syntax-grammar', 'http://purl.org/dc/elements/1.1/title', '"RDF1.1 XML Syntax 2"'),
       ]);
       expect(testCase.laxCardinality).toBe(false);
-      expect(testCase.test(engine, {})).resolves.toBeUndefined();
+      return expect(testCase.test(engine, {})).resolves.toBeUndefined();
     });
 
     it('should error on a resource without action', () => {

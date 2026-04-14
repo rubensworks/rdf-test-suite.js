@@ -1,8 +1,8 @@
-import { DataFactory } from 'rdf-data-factory';
-import 'jest-rdf';
+import type * as RDF from '@rdfjs/types';
 import type { JsonLdContextNormalized } from 'jsonld-context-parser';
 import { ContextParser } from 'jsonld-context-parser';
-import type * as RDF from '@rdfjs/types';
+import { DataFactory } from 'rdf-data-factory';
+import 'jest-rdf';
 import { Resource } from 'rdf-object';
 import { ErrorSkipped } from '../../../../lib/ErrorSkipped';
 import {
@@ -18,7 +18,7 @@ const DF = new DataFactory();
 const streamifyString = require('streamify-string');
 
 // Mock fetch
-(<any> global).fetch = (url: string) => {
+(<any> globalThis).fetch = (url: string) => {
   let body;
   switch (url) {
     case 'http://ex.org/action.ttl':

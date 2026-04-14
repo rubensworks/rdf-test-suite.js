@@ -1,14 +1,14 @@
+import type * as RDF from '@rdfjs/types';
+import { ContextParser } from 'jsonld-context-parser';
+import { DataFactory } from 'rdf-data-factory';
+import { Resource } from 'rdf-object';
+import { quadToStringQuad } from 'rdf-string';
 import {
   objectsIsomorphic,
   TestCaseJsonLdFromRdfHandler,
   TestCaseJsonLdFromRdf,
 } from '../../../../lib/testcase/rdfsyntax/jsonld/TestCaseJsonLdFromRdf';
-import { DataFactory } from 'rdf-data-factory';
 import 'jest-rdf';
-import type * as RDF from '@rdfjs/types';
-import { ContextParser } from 'jsonld-context-parser';
-import { Resource } from 'rdf-object';
-import { quadToStringQuad } from 'rdf-string';
 
 const quad = require('rdf-quad');
 
@@ -18,7 +18,7 @@ const streamifyString = require('streamify-string');
 const DF = new DataFactory();
 
 // Mock fetch
-(<any> global).fetch = (url: string) => {
+(<any> globalThis).fetch = (url: string) => {
   let body;
   switch (url) {
     case 'ACTION.ttl':

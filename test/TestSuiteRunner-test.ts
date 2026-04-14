@@ -1,9 +1,9 @@
-import 'jest-rdf';
+import { PassThrough } from 'node:stream';
 import { arrayifyStream } from 'arrayify-stream';
 import * as LogSymbols from 'log-symbols';
-import { PassThrough } from 'node:stream';
-import type { ITestSuiteConfig } from '../lib/TestSuiteRunner';
+import 'jest-rdf';
 import { ErrorTest } from '../lib/ErrorTest';
+import type { ITestSuiteConfig } from '../lib/TestSuiteRunner';
 import { TestSuiteRunner } from '../lib/TestSuiteRunner';
 import { Util } from '../lib/Util';
 
@@ -61,7 +61,7 @@ const defaultConfig: ITestSuiteConfig = {
 
 // Mock ManifestLoader
 jest.mock<typeof import('../lib/ManifestLoader')>('../lib/ManifestLoader', () => ({
-  ManifestLoader: function ManifestLoader() {
+  ManifestLoader: <any> function ManifestLoader() {
     return {
       from: (manifestUrl: string, _cachePath: string) => {
         if (manifestUrl === 'valid') {
@@ -266,12 +266,12 @@ describe('TestSuiteRunner', () => {
     });
 
     it('should produce results for a valid manifest with a non-matching test regex', () => {
-      const config: ITestSuiteConfig = { ...defaultConfig, testRegex: /abc/ };
+      const config: ITestSuiteConfig = { ...defaultConfig, testRegex: /abc/u };
       return expect(runner.runManifest('valid', handler, config)).resolves.toEqual([]);
     });
 
     it('should produce results for a valid manifest with a single-matching test regex', () => {
-      const config: ITestSuiteConfig = { ...defaultConfig, testRegex: /1/ };
+      const config: ITestSuiteConfig = { ...defaultConfig, testRegex: /1/u };
       return expect(runner.runManifest('valid', handler, config)).resolves.toEqual([
         {
           ok: true,
@@ -282,7 +282,7 @@ describe('TestSuiteRunner', () => {
     });
 
     it('should produce results for a valid manifest with a multiple-matching test regex', () => {
-      const config: ITestSuiteConfig = { ...defaultConfig, testRegex: /^.*test.*$/ };
+      const config: ITestSuiteConfig = { ...defaultConfig, testRegex: /^.*test.*$/u };
       return expect(runner.runManifest('valid', handler, config)).resolves.toEqual([
         {
           ok: true,
@@ -314,7 +314,7 @@ describe('TestSuiteRunner', () => {
     });
 
     it('should produce results for a valid manifest with a non-matching skip regex', () => {
-      const config: ITestSuiteConfig = { ...defaultConfig, skipRegex: /abc/ };
+      const config: ITestSuiteConfig = { ...defaultConfig, skipRegex: /abc/u };
       return expect(runner.runManifest('valid', handler, config)).resolves.toEqual([
         {
           ok: true,
@@ -346,7 +346,7 @@ describe('TestSuiteRunner', () => {
     });
 
     it('should produce results for a valid manifest with a single-matching skip regex', () => {
-      const config: ITestSuiteConfig = { ...defaultConfig, skipRegex: /1/ };
+      const config: ITestSuiteConfig = { ...defaultConfig, skipRegex: /1/u };
       return expect(runner.runManifest('valid', handler, config)).resolves.toEqual([
         {
           ok: true,
@@ -373,7 +373,7 @@ describe('TestSuiteRunner', () => {
     });
 
     it('should produce results for a valid manifest with a multiple-matching skip regex', () => {
-      const config: ITestSuiteConfig = { ...defaultConfig, skipRegex: /^.*test.*$/ };
+      const config: ITestSuiteConfig = { ...defaultConfig, skipRegex: /^.*test.*$/u };
 
       return expect(runner.runManifest('valid', handler, config)).resolves.toEqual([]);
     });
@@ -510,14 +510,14 @@ describe('TestSuiteRunner', () => {
       runner.resultsToText(stdout, testResults, false);
       stdout.end();
       // Tslint:disable:no-trailing-whitespace
-      return await expect(stringifyStream(stdout)).resolves.toBe(`${LogSymbols.success} Test1 (http://ex.org/test1) ${Util.withColor('10ms', Util.COLOR_GRAY)}
-${LogSymbols.success} Test2 (http://ex.org/test2) ${Util.withColor('10ms', Util.COLOR_GRAY)}
+      return await expect(stringifyStream(stdout)).resolves.toBe(`${LogSymbols.success} Test1 (http://ex.org/test1) ${Util.withColor('10ms', Util.colorGray)}
+${LogSymbols.success} Test2 (http://ex.org/test2) ${Util.withColor('10ms', Util.colorGray)}
 ${LogSymbols.error} Test3 (http://ex.org/test3)
 
-${LogSymbols.error} ${Util.withColor('Test3', Util.COLOR_RED)}
+${LogSymbols.error} ${Util.withColor('Test3', Util.colorRed)}
   
   Error: Fail
-  ${Util.withColor('More info: http://ex.org/test3', Util.COLOR_BLUE)}
+  ${Util.withColor('More info: http://ex.org/test3', Util.colorBlue)}
 
 ${LogSymbols.error} 2 / 3 tests succeeded!
 `);
@@ -528,15 +528,15 @@ ${LogSymbols.error} 2 / 3 tests succeeded!
       runner.resultsToText(stdout, testResultsSkips, false);
       stdout.end();
       // Tslint:disable:no-trailing-whitespace
-      return await expect(stringifyStream(stdout)).resolves.toBe(`${LogSymbols.success} Test1 (http://ex.org/test1) ${Util.withColor('10ms', Util.COLOR_GRAY)}
+      return await expect(stringifyStream(stdout)).resolves.toBe(`${LogSymbols.success} Test1 (http://ex.org/test1) ${Util.withColor('10ms', Util.colorGray)}
 ${LogSymbols.info} Test2 (http://ex.org/test2)
 ${LogSymbols.info} Test3 (http://ex.org/test3)
 ${LogSymbols.error} Test3 (http://ex.org/test3)
 
-${LogSymbols.error} ${Util.withColor('Test3', Util.COLOR_RED)}
+${LogSymbols.error} ${Util.withColor('Test3', Util.colorRed)}
   
   Error: Fail
-  ${Util.withColor('More info: http://ex.org/test3', Util.COLOR_BLUE)}
+  ${Util.withColor('More info: http://ex.org/test3', Util.colorBlue)}
 
 ${LogSymbols.error} 3 / 4 tests succeeded! (skipped 2)
 `);
@@ -547,15 +547,15 @@ ${LogSymbols.error} 3 / 4 tests succeeded! (skipped 2)
       runner.resultsToText(stdout, testResultsExternal, false);
       stdout.end();
       // Tslint:disable:no-trailing-whitespace
-      return await expect(stringifyStream(stdout)).resolves.toBe(`${LogSymbols.success} Test1 (http://ex.org/test1) ${Util.withColor('10ms', Util.COLOR_GRAY)}
+      return await expect(stringifyStream(stdout)).resolves.toBe(`${LogSymbols.success} Test1 (http://ex.org/test1) ${Util.withColor('10ms', Util.colorGray)}
 ${LogSymbols.info} Test2 (http://ex.org/test2)
 ${LogSymbols.info} Test3 (http://ex.org/test3)
 ${LogSymbols.error} Test3 (http://ex.org/test3)
 
-${LogSymbols.error} ${Util.withColor('Test3', Util.COLOR_RED)}
+${LogSymbols.error} ${Util.withColor('Test3', Util.colorRed)}
   
   MYSTACK
-  ${Util.withColor('More info: http://ex.org/test3', Util.COLOR_BLUE)}
+  ${Util.withColor('More info: http://ex.org/test3', Util.colorBlue)}
 
 ${LogSymbols.error} 3 / 4 tests succeeded! (skipped 2)
 `);
@@ -566,8 +566,8 @@ ${LogSymbols.error} 3 / 4 tests succeeded! (skipped 2)
       runner.resultsToText(stdout, testResults, true);
       stdout.end();
       // Tslint:disable:no-trailing-whitespace
-      return await expect(stringifyStream(stdout)).resolves.toBe(`${LogSymbols.success} Test1 (http://ex.org/test1) ${Util.withColor('10ms', Util.COLOR_GRAY)}
-${LogSymbols.success} Test2 (http://ex.org/test2) ${Util.withColor('10ms', Util.COLOR_GRAY)}
+      return await expect(stringifyStream(stdout)).resolves.toBe(`${LogSymbols.success} Test1 (http://ex.org/test1) ${Util.withColor('10ms', Util.colorGray)}
+${LogSymbols.success} Test2 (http://ex.org/test2) ${Util.withColor('10ms', Util.colorGray)}
 ${LogSymbols.error} Test3 (http://ex.org/test3)
 ${LogSymbols.error} 2 / 3 tests succeeded!
 `);
@@ -578,7 +578,7 @@ ${LogSymbols.error} 2 / 3 tests succeeded!
       runner.resultsToText(stdout, testResultsSkips, true);
       stdout.end();
       // Tslint:disable:no-trailing-whitespace
-      return await expect(stringifyStream(stdout)).resolves.toBe(`${LogSymbols.success} Test1 (http://ex.org/test1) ${Util.withColor('10ms', Util.COLOR_GRAY)}
+      return await expect(stringifyStream(stdout)).resolves.toBe(`${LogSymbols.success} Test1 (http://ex.org/test1) ${Util.withColor('10ms', Util.colorGray)}
 ${LogSymbols.info} Test2 (http://ex.org/test2)
 ${LogSymbols.info} Test3 (http://ex.org/test3)
 ${LogSymbols.error} Test3 (http://ex.org/test3)

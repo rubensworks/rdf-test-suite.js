@@ -1,6 +1,6 @@
+import { ContextParser } from 'jsonld-context-parser';
 import { DataFactory } from 'rdf-data-factory';
 import 'jest-rdf';
-import { ContextParser } from 'jsonld-context-parser';
 import { Resource } from 'rdf-object';
 import { TestCasePositiveSyntax, TestCasePositiveSyntaxHandler } from '../../../lib/testcase/sparql/TestCasePositiveSyntax';
 
@@ -10,7 +10,7 @@ const streamifyString = require('streamify-string');
 const DF = new DataFactory();
 
 // Mock fetch
-(<any> global).fetch = (url: string) => {
+(<any> globalThis).fetch = (url: string) => {
   let body;
   switch (url) {
     case 'ACTION.ok':
@@ -31,7 +31,7 @@ describe('TestCasePositiveSyntaxHandler', () => {
     parse: (queryString: string) => queryString === 'OK' ?
       Promise.resolve(null) :
       Promise.reject(new Error(`Invalid data ${queryString}`)),
-    query: () => Promise.reject(),
+    query: () => Promise.reject(new Error('Not implemented')),
   };
 
   let context;

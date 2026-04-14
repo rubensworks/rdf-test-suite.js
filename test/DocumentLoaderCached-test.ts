@@ -27,7 +27,7 @@ describe('DocumentLoaderCached', () => {
     });
 
     it('should load documents', async() => {
-      const spy = jest.spyOn(<any> global, 'fetch');
+      const spy = jest.spyOn(<any> globalThis, 'fetch');
 
       const response1 = await loader.load('http://example.org/');
       expect(response1).toEqual({ a: 'b' });

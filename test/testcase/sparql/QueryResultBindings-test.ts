@@ -9,7 +9,7 @@ describe('QueryResultBindings', () => {
   let bindingsAB1Reduced;
   let bindingsAB1oo;
   let bindingsAB1Empty;
-  let bindingsBA1;
+  let _bindingsBA1;
   let bindingsBA1Empty;
   let bindingsCD1;
   let bindingsCD1Empty;
@@ -22,7 +22,7 @@ describe('QueryResultBindings', () => {
   let bindingsAB1Order;
   let bindingsAB1ooOrder;
   let bindingsAB1EmptyOrder;
-  let bindingsBA1Order;
+  let _bindingsBA1Order;
   let bindingsBA1EmptyOrder;
   let bindingsCD1Order;
   let bindingsCD1EmptyOrder;
@@ -106,7 +106,7 @@ describe('QueryResultBindings', () => {
       },
     ], false);
     bindingsAB1Empty = new QueryResultBindings([ '?a', '?b' ], [], false);
-    bindingsBA1 = new QueryResultBindings([ '?b', '?a' ], [
+    _bindingsBA1 = new QueryResultBindings([ '?b', '?a' ], [
       {
         '?a': DF.namedNode('a1'),
         '?b': DF.namedNode('b1'),
@@ -200,7 +200,7 @@ describe('QueryResultBindings', () => {
       },
     ], true);
     bindingsAB1EmptyOrder = new QueryResultBindings([ '?a', '?b' ], [], true);
-    bindingsBA1Order = new QueryResultBindings([ '?b', '?a' ], [
+    _bindingsBA1Order = new QueryResultBindings([ '?b', '?a' ], [
       {
         '?a': DF.namedNode('a1'),
         '?b': DF.namedNode('b1'),

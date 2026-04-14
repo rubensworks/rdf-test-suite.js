@@ -1,10 +1,10 @@
-import { TestCaseUpdateEvaluation, TestCaseUpdateEvaluationHandler } from '../../../lib/testcase/sparql/TestCaseUpdateEvaluation';
-import { DataFactory } from 'rdf-data-factory';
-import 'jest-rdf';
 import type * as RDF from '@rdfjs/types';
 import { ContextParser } from 'jsonld-context-parser';
+import { DataFactory } from 'rdf-data-factory';
+import 'jest-rdf';
 import { Resource } from 'rdf-object';
 import type { IUpdateEngine } from '../../../lib/testcase/sparql/IUpdateEngine';
+import { TestCaseUpdateEvaluation, TestCaseUpdateEvaluationHandler } from '../../../lib/testcase/sparql/TestCaseUpdateEvaluation';
 
 const quad = require('rdf-quad');
 
@@ -14,7 +14,7 @@ const streamifyString = require('streamify-string');
 const DF = new DataFactory();
 
 // Mock fetch
-(<any> global).fetch = (url: string) => {
+(<any> globalThis).fetch = (url: string) => {
   let body;
   let headers = new Headers({ a: 'b' });
   switch (url) {
@@ -42,7 +42,7 @@ const DF = new DataFactory();
 describe('TestCaseUpdateEvaluationHandler', () => {
   const handler = new TestCaseUpdateEvaluationHandler();
   const engine: IUpdateEngine = <any> {
-    update: (data: RDF.Quad[], updateQueryString: string) => Promise.resolve([
+    update: (_data: RDF.Quad[], _updateQueryString: string) => Promise.resolve([
       quad('http://www.w3.org/TR/rdf-syntax-grammar', 'http://purl.org/dc/elements/1.1/title', '"B"'),
     ]),
   };

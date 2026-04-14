@@ -1,14 +1,14 @@
-import { DataFactory } from 'rdf-data-factory';
-import 'jest-rdf';
+import { arrayifyStream } from 'arrayify-stream';
 import { ContextParser } from 'jsonld-context-parser';
 import { JsonLdParser } from 'jsonld-streaming-parser';
+import { DataFactory } from 'rdf-data-factory';
+import 'jest-rdf';
 import { Resource } from 'rdf-object';
 import { ErrorSkipped } from '../../../../lib/ErrorSkipped';
 import {
   TestCaseJsonLdSyntaxHandler,
 } from '../../../../lib/testcase/rdfsyntax/jsonld/TestCaseJsonLdSyntax';
 import { TestCaseSyntax } from '../../../../lib/testcase/rdfsyntax/TestCaseSyntax';
-import { arrayifyStream } from 'arrayify-stream';
 
 // Tslint:disable:no-var-requires
 const streamifyString = require('streamify-string');
@@ -16,7 +16,7 @@ const streamifyString = require('streamify-string');
 const DF = new DataFactory();
 
 // Mock fetch
-(<any> global).fetch = (url: string) => {
+(<any> globalThis).fetch = (url: string) => {
   let body;
   switch (url) {
     case 'ACTION.ok':

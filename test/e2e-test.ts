@@ -169,9 +169,11 @@ function queryEngine(engine) {
       });
       if (result.resultType === 'boolean') {
         return new QueryResultBoolean(await result.execute());
-      } if (result.resultType === 'quads') {
+      }
+      if (result.resultType === 'quads') {
         return new QueryResultQuads(await require('arrayify-stream').arrayifyStream(await result.execute()));
-      } if (result.resultType === 'bindings') {
+      }
+      if (result.resultType === 'bindings') {
         return new QueryResultBindings(
           (await result.metadata()).variables.map(variable => `?${variable.value}`),
           (await require('arrayify-stream').arrayifyStream(await result.execute()))
@@ -183,7 +185,7 @@ function queryEngine(engine) {
       throw new Error(`Invalid query result type: ${result.resultType}`);
     },
     async update(data, queryString, options) {
-      const store = await source(data);
+      const store = source(data);
       const result = await engine.query(queryString, {
         baseIRI: options.baseIRI,
         sources: [{ type: 'rdfjs', value: store }],
@@ -211,7 +213,7 @@ const normalParser = {
 };
 
 const jsonldParser = {
-  parse(data, baseIRI, options, test) {
+  parse(data, baseIRI, options, _test) {
     if (options.processingMode && (options.processingMode !== '1.0' && options.processingMode !== '1.1')) {
       return Promise.reject(
         new ErrorSkipped(`Test with processing mode ${options.processingMode} was skipped, only 1.0 is supported.`),

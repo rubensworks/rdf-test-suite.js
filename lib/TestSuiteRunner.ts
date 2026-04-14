@@ -154,7 +154,7 @@ export class TestSuiteRunner {
     for (const result of results) {
       if (result.ok) {
         success++;
-        stdout.write(`${LogSymbols.success} ${result.test.name} (${result.test.uri})${` ${Util.withColor(`${result.duration}ms`, Util.COLOR_GRAY)}`}\n`);
+        stdout.write(`${LogSymbols.success} ${result.test.name} (${result.test.uri})${` ${Util.withColor(`${result.duration}ms`, Util.colorGray)}`}\n`);
       } else if (result.skipped) {
         skipped++;
         stdout.write(`${LogSymbols.info} ${result.test.name} (${result.test.uri})\n`);
@@ -167,10 +167,10 @@ export class TestSuiteRunner {
     if (!compact) {
       for (const result of failedTests) {
         stdout.write(`
-${LogSymbols.error} ${Util.withColor(result.test.name, Util.COLOR_RED)}
+${LogSymbols.error} ${Util.withColor(result.test.name, Util.colorRed)}
   ${result.test.comment || ''}
   ${'test' in result.error ? result.error : result.error.stack}
-  ${Util.withColor(`More info: ${result.test.uri}`, Util.COLOR_BLUE)}
+  ${Util.withColor(`More info: ${result.test.uri}`, Util.colorBlue)}
 
 `);
       }

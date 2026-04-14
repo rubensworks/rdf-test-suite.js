@@ -18,7 +18,7 @@ export interface ITestCaseData {
  */
 export interface ITestCase<H> extends ITestCaseData {
   type: string;
-  test: (handler: H, injectArguments: any) => Promise<void | ITestResultOverride>;
+  test(handler: H, injectArguments: any): Promise<void | ITestResultOverride>;
 }
 
 /**

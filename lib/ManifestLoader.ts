@@ -60,6 +60,7 @@ export class ManifestLoader {
       throw new Error(`Could not find a resource ${url} in the document at ${url}`);
     }
     const includeJobs: Promise<any>[] = [];
+    for (const includeList of manifest.properties.include) {
       for (const include of includeList.list) {
         if (include.term.termType !== 'NamedNode') {
           throw new Error(`Found invalid manifest term ${termToString(include.term)} when parsing ${url}`);

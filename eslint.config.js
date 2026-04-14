@@ -27,8 +27,8 @@ module.exports = rubensworks([
       'ts/explicit-function-return-type': 'off',
       'ts/consistent-type-assertions': 'off',
       'ts/no-base-to-string': 'off',
-      // Naming conventions require larger refactoring
-      'ts/naming-convention': 'off',
+      // Method signature style - property arrow function syntax breaks TypeScript variance in this codebase
+      'ts/method-signature-style': 'off',
       // Line length - many long lines in test data
       'max-len': 'off',
       // Inline comments are used throughout the codebase

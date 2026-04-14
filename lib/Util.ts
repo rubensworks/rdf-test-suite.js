@@ -165,7 +165,7 @@ export class Util {
     }
     /* istanbul ignore next */
     const body: NodeJS.ReadableStream = isStream(response.body) || response.body === null ?
-          response.body as NodeJS.ReadableStream :
+          response.body as unknown as NodeJS.ReadableStream :
       new ReadableWebToNodeStream(response.body);
     const body1 = body.pipe(new PassThrough());
     const body2 = body.pipe(new PassThrough());

@@ -1,6 +1,8 @@
 #!/usr/bin/env node
 import { existsSync, mkdirSync, writeFileSync } from 'node:fs';
 import * as Path from 'node:path';
+
+// eslint-disable-next-line ts/no-require-imports
 import minimist = require('minimist');
 import { StreamWriter } from 'n3';
 import type { ITestResult, ITestSuiteConfig } from '../lib/TestSuiteRunner';
@@ -48,6 +50,7 @@ if (args.c) {
 }
 
 // Import the engine
+// eslint-disable-next-line ts/no-require-imports, ts/no-var-requires
 const engine = require(`${process.cwd()}/${args._[0]}`);
 
 const defaultConfig = {
@@ -62,8 +65,8 @@ const config: ITestSuiteConfig = {
   exitWithStatusCode0: Boolean(args.e) || defaultConfig.exitWithStatusCode0,
   outputFormat: args.o || defaultConfig.outputFormat,
   specification: args.s,
-  testRegex: new RegExp(args.t),
-  skipRegex: args.skip ? new RegExp(args.skip) : undefined,
+  testRegex: new RegExp(args.t, 'u'),
+  skipRegex: args.skip ? new RegExp(args.skip, 'u') : undefined,
   timeOutDuration: args.d || defaultConfig.timeOutDuration,
   urlToFileMapping: args.m,
   runRejected: Boolean(args.r),
@@ -81,9 +84,12 @@ testSuiteRunner.runManifest(args._[1], engine, config)
         }
         // Create properties file if it does not exist
         if (!existsSync(Path.join(process.cwd(), args.p))) {
+          // eslint-disable-next-line ts/no-require-imports, ts/no-var-requires
           writeFileSync(Path.join(process.cwd(), args.p), JSON.stringify(testSuiteRunner.packageJsonToEarlProperties(require(Path.join(process.cwd(), 'package.json'))), null, '  '));
         }
+        // eslint-disable-next-line ts/no-require-imports, ts/no-var-requires
         (<any> testSuiteRunner.resultsToEarl(testResults, require(Path.join(process.cwd(), args.p)), new Date()))
+        // eslint-disable-next-line ts/no-require-imports
           .pipe(new StreamWriter({ format: 'text/turtle', prefixes: require('../lib/prefixes.json') }))
           .pipe(process.stdout)
           .on('end', () => onEnd(testResults));

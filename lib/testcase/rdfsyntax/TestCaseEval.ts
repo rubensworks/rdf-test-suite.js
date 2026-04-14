@@ -11,7 +11,7 @@ import type { ITestCaseHandler } from '../ITestCaseHandler';
 import type { IParser } from './IParser';
 import type { ITestCaseRdfSyntax } from './ITestCaseRdfSyntax';
 
-// Tslint:disable:no-var-requires
+// eslint-disable-next-line ts/no-require-imports, ts/no-var-requires
 const stringifyStream = require('stream-to-string');
 
 /**

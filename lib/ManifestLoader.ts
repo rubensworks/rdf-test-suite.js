@@ -13,12 +13,10 @@ import { Util } from './Util';
  */
 export class ManifestLoader {
   // eslint-disable-next-line ts/no-require-imports, ts/no-var-requires
-  public static readonly defaultTestCaseHandlers: Record<string, ITestCaseHandler<ITestCase<any>>> =
-    require('./testcase/TestCaseHandlers') as Record<string, ITestCaseHandler<ITestCase<any>>>;
+  public static readonly defaultTestCaseHandlers: Record<string, ITestCaseHandler<ITestCase<any>>> = require('./testcase/TestCaseHandlers') as Record<string, ITestCaseHandler<ITestCase<any>>>;
 
   // eslint-disable-next-line ts/no-require-imports, ts/no-var-requires
-  public static readonly loaderContext: Record<string, unknown> =
-    require('./context-manifest.json') as Record<string, unknown>;
+  public static readonly loaderContext: Record<string, unknown> = require('./context-manifest.json') as Record<string, unknown>;
 
   private readonly testCaseHandlers: Record<string, ITestCaseHandler<ITestCase<any>>>;
 

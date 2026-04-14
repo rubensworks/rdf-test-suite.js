@@ -4,12 +4,13 @@ import { DataFactory } from 'rdf-data-factory';
 import type { IManifest } from './IManifest';
 import { ManifestLoader } from './ManifestLoader';
 import type { ITestCase } from './testcase/ITestCase';
-import WriteStream = NodeJS.WriteStream;
 import { Util } from './Util';
+import WriteStream = NodeJS.WriteStream;
 import Timeout = NodeJS.Timeout;
 
-// Tslint:disable:no-var-requires
+// eslint-disable-next-line ts/no-require-imports, ts/no-var-requires
 const quad = require('rdf-quad');
+// eslint-disable-next-line ts/no-require-imports, ts/no-var-requires
 const streamifyArray = require('streamify-array').streamifyArray;
 
 const DF = new DataFactory();
@@ -50,10 +51,7 @@ export class TestSuiteRunner {
    * Run the manifest with the given URL.
    * @param {string} manifestUrl The URL of a manifest.
    * @param handler The handler to run the tests with.
-   * @param {string} cachePath The base directory to cache files in. If falsy, then no cache will be used.
-   * @param {string} specification An optional specification to scope the manifest tests by.
-   * @param {RegExp} testRegex An optional regex to filter test IRIs by.
-   * @param {any} injectArguments An optional set of arguments to pass to the handler.
+   * @param config The test suite configuration.
    * @return {Promise<ITestResult[]>} A promise resolving to an array of test results.
    */
   public async runManifest(manifestUrl: string, handler: any, config: ITestSuiteConfig): Promise<ITestResult[]> {
@@ -79,8 +77,7 @@ export class TestSuiteRunner {
    * Run the given manifest.
    * @param {string} manifest A manifest.
    * @param handler The handler to run the tests with.
-   * @param {RegExp} testRegex An optional regex to filter test IRIs by.
-   * @param {any} injectArguments An optional set of arguments to pass to the handler.
+   * @param config The test suite configuration.
    * @param {ITestResult[]} results An array to append the test results to
    * @return {Promise<void>} A promise resolving when the tests are finished.
    */
@@ -113,8 +110,8 @@ export class TestSuiteRunner {
                     }
                   }),
                 new Promise((res, rej) => {
-                  // Global. is needed because TSC may otherwise pick the browser version of setTimeout, which returns int
-                  timeout = global.setTimeout(
+                  // Global.setTimeout is used here to avoid browser/node compatibility issues
+                  timeout = globalThis.setTimeout(
                     () => rej(new Error(`Test case '${test.uri}' timed out`)),
                     config.timeOutDuration,
                   );
@@ -193,6 +190,7 @@ ${LogSymbols.error} ${Util.withColor(result.test.name, Util.colorRed)}
    * @return {Stream} An RDF stream of quads.
    */
   public resultsToEarl(results: ITestResult[], properties: IEarlProperties, testDate: Date): RDF.Stream {
+    // eslint-disable-next-line ts/no-require-imports, ts/no-var-requires
     const p = require('./prefixes.json');
     const dateRaw = testDate.toISOString();
     const date = `"${dateRaw}"^^${p.xsd}dateTime`;

@@ -3,7 +3,7 @@ import { fromRdf } from 'rdf-literal';
 import { termToString } from 'rdf-string';
 import type { IQueryResult, IQueryResultBindings } from './IQueryEngine';
 
-// Tslint:disable-next-line:no-var-requires
+// eslint-disable-next-line ts/no-require-imports, ts/no-var-requires
 const stringify = require('json-stable-stringify');
 
 /**
@@ -25,12 +25,13 @@ export class QueryResultBindings implements IQueryResultBindings {
     switch (term.termType) {
       case 'Literal':
         return fromRdf(term);
-      case 'BlankNode':
+      case 'BlankNode': {
         if (!(term.value in blankNodeCounters)) {
           blankNodeCounters[term.value] = Object.keys(blankNodeCounters).length;
         }
         const blankNodeCounter = blankNodeCounters[term.value];
         return `_:${blankNodeCounter}`;
+      }
       case 'Quad':
         return `<<${QueryResultBindings.serializeTerm(term.subject, blankNodeCounters)
       } ${QueryResultBindings.serializeTerm(term.predicate, blankNodeCounters)

@@ -14,7 +14,7 @@ export class DocumentLoaderCached implements IDocumentLoader {
 
   public async load(url: string): Promise<IJsonLdContext> {
     const { body } = await Util.fetchCached(url, this.options, { headers: { accept: 'application/ld+json' }});
-    // eslint-disable-next-line ts/no-require-imports, ts/no-var-requires, ts/no-unsafe-call
+    // eslint-disable-next-line ts/no-require-imports, ts/no-var-requires
     return JSON.parse(await (require('stream-to-string') as (s: NodeJS.ReadableStream) => Promise<string>)(body)) as IJsonLdContext;
   }
 }

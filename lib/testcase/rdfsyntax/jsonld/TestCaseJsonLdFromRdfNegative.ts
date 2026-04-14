@@ -78,7 +78,7 @@ export class TestCaseJsonLdFromRdfHandlerNegative implements ITestCaseFromRdfSyn
 `);
   }
 
-  public validateError(error: Error, injectArguments: any) {
+  public validateError(error: Error, _injectArguments: any) {
     if ((<any> error).code !== this.expectErrorCode) {
       throw new Error(`Received invalid error code, expected ${this.expectErrorCode
          }, but got ${(<any> error).code} (${error.message})`);

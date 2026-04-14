@@ -37,13 +37,17 @@ export class GeneralizedN3StreamParser extends Transform {
       {
         on: (event: any, callback: any) => {
           switch (event) {
-            case 'data': onData = callback; break;
-            case 'end': onEnd = callback; break;
+            case 'data':
+              onData = callback;
+              break;
+            case 'end':
+              onEnd = callback;
+              break;
           }
         },
       },
       // Handle quads by pushing them down the pipeline
-      (error: any, quad: any) => error && this.emit('error', error) || quad && this.push(quad),
+      (error: any, quad: any) => (error && this.emit('error', error)) || (quad && this.push(quad)),
       // Emit prefixes through the `prefix` event
       (prefix: any, uri: any) => {
         this.emit('prefix', prefix, uri);
@@ -52,10 +56,12 @@ export class GeneralizedN3StreamParser extends Transform {
 
     // Implement Transform methods through parser callbacks
     this._transform = (chunk, encoding, done) => {
-      onData(chunk); done();
+      onData(chunk);
+      done();
     };
     this._flush = (done) => {
-      onEnd(); done();
+      onEnd();
+      done();
     };
   }
 }

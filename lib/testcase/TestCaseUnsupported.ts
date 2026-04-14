@@ -34,7 +34,7 @@ export class TestCaseUnsupported implements ITestCase<any> {
     Object.assign(this, testCaseData);
   }
 
-  public async test(engine: any): Promise<void> {
+  public async test(_engine: any): Promise<void> {
     throw new ErrorSkipped(`Unsupported test case ${this.testCaseName}`);
   }
 }

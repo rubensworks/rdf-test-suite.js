@@ -19,7 +19,7 @@ import { QueryResultBindings } from './QueryResultBindings';
 import { QueryResultBoolean } from './QueryResultBoolean';
 import { QueryResultQuads } from './QueryResultQuads';
 
-// Tslint:disable:no-var-requires
+// eslint-disable-next-line ts/no-require-imports, ts/no-var-requires
 const stringifyStream = require('stream-to-string');
 
 const DF = new DataFactory();
@@ -115,7 +115,8 @@ export class TestCaseQueryEvaluationHandler implements ITestCaseHandler<TestCase
 
     if (!booleanError) {
       return new QueryResultBoolean(parsingResults[0]);
-    } if (!bindingsError) {
+    }
+    if (!bindingsError) {
       return new QueryResultBindings(parsingResults[1][0].map((variable: RDF.Variable) => `?${variable.value}`), parsingResults[1][1], false);
     }
     throw new Error(`Found no valid ASK or SELECT query.\n${
@@ -318,7 +319,7 @@ export class TestCaseQueryEvaluation implements ITestCaseSparql {
 
   public async test(engine: IQueryEngine, injectArguments: any): Promise<void> {
     const result: IQueryResult = await engine.query(this.queryData, this.queryString, { baseIRI: this.baseIRI, ...injectArguments });
-    if (!await this.queryResult.equals(result, this.laxCardinality)) {
+    if (!this.queryResult.equals(result, this.laxCardinality)) {
       throw new ErrorTest(`Invalid query evaluation
 
   Query:\n\n${this.queryString}

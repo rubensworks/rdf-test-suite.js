@@ -38,26 +38,30 @@ export async function manifestFromResource(testCaseHandlers: Record<string, ITes
         )),
       ) :
       null,
-    subManifests: await Promise.all<IManifest>([].concat.apply([],
+    subManifests: await Promise.all<IManifest>(
       // This is here because of the way the rdf-star test suite is published
       // @see https://github.com/rubensworks/rdf-test-suite.js/pull/78/files#r1026326410
-        <any> ((resource.properties.include.length > 0 || !objectLoader) ?
-          resource :
-            (objectLoader.resources?.[resource.value.slice(0, resource.value.lastIndexOf('.')).replace(/\/manifest$/, '#manifest')] ?? resource)
+      (<any> ((resource.properties.include.length > 0 || !objectLoader) ?
+        resource :
+          (objectLoader.resources?.[resource.value.slice(0, resource.value.lastIndexOf('.')).replace(/\/manifest$/u, '#manifest')] ?? resource)
+      )
+        .properties.include.flatMap(
+          (includeList: Resource) => includeList.list.map(res => manifestFromResource(testCaseHandlers, options, res, objectLoader)),
         )
-          .properties.include.map((includeList: Resource) =>
-            includeList.list.map(res => manifestFromResource(testCaseHandlers, options, res, objectLoader))))),
-    testEntries: (await Promise.all<ITestCase<any>>([].concat.apply([],
+      ),
+    ),
+    testEntries: (await Promise.all<ITestCase<any>>(
       // This is here because of the way the rdf-star test suite is published
       // @see https://github.com/rubensworks/rdf-test-suite.js/pull/78/files#r1026326410
-        <any> (
-          (resource.properties.entries.length > 0 || !objectLoader) ?
-            resource :
-              (objectLoader.resources?.[resource.value.slice(0, resource.value.lastIndexOf('.')).replace(/\/manifest$/, '#manifest')] ?? resource)
-        ).properties.entries.map(
-          (entryList: Resource) => (entryList.list || [ entryList ])
-            .map(res => testCaseFromResource(testCaseHandlers, options, res, true)),
-        ))))
+      (<any> (
+        (resource.properties.entries.length > 0 || !objectLoader) ?
+          resource :
+            (objectLoader.resources?.[resource.value.slice(0, resource.value.lastIndexOf('.')).replace(/\/manifest$/u, '#manifest')] ?? resource)
+      ).properties.entries.flatMap(
+        (entryList: Resource) => (entryList.list || [ entryList ])
+          .map(res => testCaseFromResource(testCaseHandlers, options, res, true)),
+      )),
+    ))
       .filter(Boolean)
       .flat(),
     uri: resource.value,

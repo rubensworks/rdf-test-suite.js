@@ -42,6 +42,7 @@ export class TestCaseJsonLdToRdfHandler extends TestCaseEvalHandler {
       // Override the default base IRI
       if (option.property.jsonLdExpandContext) {
         const expandContextUrl = resolve(option.property.jsonLdExpandContext.term.value, resource.property.action.value);
+        // eslint-disable-next-line ts/no-require-imports, ts/no-var-requires
         injectArguments.context = JSON.parse(await require('stream-to-string')((
           await Util.fetchCached(expandContextUrl, options)).body));
       }
@@ -94,6 +95,7 @@ export class TestCaseJsonLdToRdfHandler extends TestCaseEvalHandler {
 
     // An optional root context.
     if (resource.property.context) {
+      // eslint-disable-next-line ts/no-require-imports, ts/no-var-requires
       injectArguments.context = JSON.parse(await require('stream-to-string')((
         await Util.fetchCached(resource.property.context.term.value, options)).body));
     }
@@ -117,6 +119,7 @@ export class TestCaseJsonLdToRdfHandler extends TestCaseEvalHandler {
     const testCaseEval = await superHandler(resource, testCaseData, options);
 
     // Add additional inject arguments
+    // eslint-disable-next-line ts/unbound-method
     const testOld = testCaseEval.test;
     testCaseEval.test = (handler: H, injectArguments: any) => testOld.bind(testCaseEval)(handler, { ...injectArgumentsAdditional, ...injectArguments });
 

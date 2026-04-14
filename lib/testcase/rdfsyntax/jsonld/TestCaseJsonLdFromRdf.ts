@@ -10,7 +10,7 @@ import type { ISerializer } from '../ISerializer';
 import type { ITestCaseFromRdfSyntax } from '../ITestCaseFromRdfSyntax';
 import { TestCaseJsonLdToRdfHandler } from './TestCaseJsonLdToRdf';
 
-// Tslint:disable:no-var-requires
+// eslint-disable-next-line ts/no-require-imports, ts/no-var-requires
 const stringifyStream = require('stream-to-string');
 
 /**
@@ -74,6 +74,7 @@ export class TestCaseJsonLdFromRdf implements ITestCaseFromRdfSyntax {
 }
 
 // Tslint:disable:align
+// eslint-disable-next-line unicorn/no-object-as-default-parameter
 export function objectsIsomorphic(obj1: any, obj2: any, options: IObjectsIsomorphicOptions = {
   ordered: false,
   strictBlankNodes: false,
@@ -103,6 +104,7 @@ export function objectsIsomorphic(obj1: any, obj2: any, options: IObjectsIsomorp
           return true;
         }
         // Compare values
+        // falls through
       default:
         if (obj1[p] !== obj2[p]) {
           return false;

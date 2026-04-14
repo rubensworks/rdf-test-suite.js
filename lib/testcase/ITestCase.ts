@@ -24,8 +24,9 @@ export interface ITestCase<H> extends ITestCaseData {
 /**
  * Create a test case object from a resource.
  * @param {{[uri: string]: ITestCaseHandler<ITestCase<any>>}} testCaseHandlers Handlers for constructing test cases.
- * @param {string} cachePath The base directory to cache files in. If falsy, then no cache will be used.
+ * @param options Fetch options.
  * @param {Resource} resource A resource.
+ * @param allowMultiple Whether to allow multiple test cases.
  * @return {Promise<ITestCase<any>>} A promise resolving to a test case object.
  */
 export async function testCaseFromResource(testCaseHandlers: Record<string, ITestCaseHandler<ITestCase<any>>>, options: IFetchOptions, resource: Resource, allowMultiple = false): Promise<ITestCase<any> | ITestCase<any>[] | null> {
@@ -56,6 +57,7 @@ export async function testCaseFromResource(testCaseHandlers: Record<string, ITes
 
   if (handlers.length === 0) {
     // Tslint:disable-next-line:no-console
+    // eslint-disable-next-line no-console
     console.error(new Error(
       `Could not find a test case handler for ${resource.value} with types ${baseTestCase.types}`,
     ).toString());
@@ -70,6 +72,7 @@ export async function testCaseFromResource(testCaseHandlers: Record<string, ITes
     return allowMultiple ? res : res[0];
   } catch (e) {
     // Tslint:disable-next-line:no-console
+    // eslint-disable-next-line no-console
     console.error(e.toString());
     return empty;
   }

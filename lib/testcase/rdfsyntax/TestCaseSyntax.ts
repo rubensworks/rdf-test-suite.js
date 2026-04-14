@@ -7,7 +7,7 @@ import type { ITestCaseHandler } from '../ITestCaseHandler';
 import type { IParser } from './IParser';
 import type { ITestCaseRdfSyntax } from './ITestCaseRdfSyntax';
 
-// Tslint:disable-next-line:no-var-requires
+// eslint-disable-next-line ts/no-require-imports, ts/no-var-requires
 const stringifyStream = require('stream-to-string');
 
 /**
@@ -82,7 +82,7 @@ export class TestCaseSyntax implements ITestCaseRdfSyntax {
     }
   }
 
-  public validateError(error: Error, injectArguments: any) {
+  public validateError(_error: Error, _injectArguments: any) {
     // Overridable
   }
 

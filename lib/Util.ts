@@ -1,7 +1,8 @@
 import { createReadStream, createWriteStream, existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { PassThrough } from 'node:stream';
 import type * as RDF from '@rdfjs/types';
-// eslint-disable-next-line ts/no-require-imports, ts/no-var-requires
+
+// eslint-disable-next-line ts/no-require-imports
 import isStream = require('is-stream');
 import { JsonLdParser } from 'jsonld-streaming-parser';
 import { RdfXmlParser } from 'rdfxml-streaming-parser';
@@ -165,7 +166,7 @@ export class Util {
     }
     /* istanbul ignore next */
     const body: NodeJS.ReadableStream = isStream(response.body) || response.body === null ?
-          response.body as unknown as NodeJS.ReadableStream :
+      response.body as unknown as NodeJS.ReadableStream :
       new ReadableWebToNodeStream(response.body);
     const body1 = body.pipe(new PassThrough());
     const body2 = body.pipe(new PassThrough());
@@ -184,7 +185,7 @@ export class Util {
       try {
         writeFileSync(`${cachePathLocal}.url`, response.url || url);
         const headersRaw: Record<string, string> = {};
-        for (const [key, value] of headers) {
+        for (const [ key, value ] of headers) {
           headersRaw[key] = value;
         }
         writeFileSync(`${cachePathLocal}.headers`, JSON.stringify(headersRaw));

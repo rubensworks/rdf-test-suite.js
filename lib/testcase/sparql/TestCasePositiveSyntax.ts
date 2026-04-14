@@ -7,7 +7,7 @@ import type { ITestCaseHandler } from '../ITestCaseHandler';
 import type { IQueryEngine } from './IQueryEngine';
 import type { ITestCaseSparql } from './ITestCaseSparql';
 
-// Tslint:disable:no-var-requires
+// eslint-disable-next-line ts/no-require-imports, ts/no-var-requires
 const stringifyStream = require('stream-to-string');
 
 /**

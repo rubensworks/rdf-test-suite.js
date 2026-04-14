@@ -13,7 +13,7 @@ import type { IUpdateEngine } from './IUpdateEngine';
 import type { IQueryDataLink } from './TestCaseQueryEvaluation';
 import { TestCaseQueryEvaluation, TestCaseQueryEvaluationHandler } from './TestCaseQueryEvaluation';
 
-// Tslint:disable:no-var-requires
+// eslint-disable-next-line ts/no-require-imports, ts/no-var-requires
 const stringifyStream = require('stream-to-string');
 
 const DF = new DataFactory();

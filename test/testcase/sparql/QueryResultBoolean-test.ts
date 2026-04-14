@@ -1,7 +1,6 @@
-import {QueryResultBoolean} from "../../../lib/testcase/sparql/QueryResultBoolean";
+import { QueryResultBoolean } from '../../../lib/testcase/sparql/QueryResultBoolean';
 
 describe('QueryResultBoolean', () => {
-
   let booleanTrue;
   let booleanFalse;
 
@@ -16,11 +15,11 @@ describe('QueryResultBoolean', () => {
     });
 
     it('should be of type boolean', () => {
-      return expect(booleanFalse.type).toEqual('boolean');
+      return expect(booleanFalse.type).toBe('boolean');
     });
 
     it('should have the correct value', () => {
-      return expect(booleanFalse.value).toEqual(false);
+      return expect(booleanFalse.value).toBe(false);
     });
   });
 
@@ -40,8 +39,7 @@ describe('QueryResultBoolean', () => {
 
   describe('#toString', () => {
     it('should stringify the boolean', () => {
-      return expect(booleanTrue.toString()).toEqual(`[QueryResultBoolean: true]`);
+      return expect(booleanTrue.toString()).toBe(`[QueryResultBoolean: true]`);
     });
   });
-
 });

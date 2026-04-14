@@ -1,15 +1,16 @@
-import * as RDF from "@rdfjs/types";
-import {Resource} from "rdf-object";
-import {quadToStringQuad} from "rdf-string";
-import {IFetchOptions, Util} from "../../../Util";
-import {ITestCaseData} from "../../ITestCase";
-import {ITestCaseHandler} from "../../ITestCaseHandler";
-import {ISerializer} from "../ISerializer";
-import {ITestCaseFromRdfSyntax} from "../ITestCaseFromRdfSyntax";
-import {TestCaseJsonLdToRdfHandler} from "./TestCaseJsonLdToRdf";
-import { arrayifyStream } from "arrayify-stream";
+import type * as RDF from '@rdfjs/types';
+import { arrayifyStream } from 'arrayify-stream';
+import type { Resource } from 'rdf-object';
+import { quadToStringQuad } from 'rdf-string';
+import type { IFetchOptions } from '../../../Util';
+import { Util } from '../../../Util';
+import type { ITestCaseData } from '../../ITestCase';
+import type { ITestCaseHandler } from '../../ITestCaseHandler';
+import type { ISerializer } from '../ISerializer';
+import type { ITestCaseFromRdfSyntax } from '../ITestCaseFromRdfSyntax';
+import { TestCaseJsonLdToRdfHandler } from './TestCaseJsonLdToRdf';
 
-// tslint:disable:no-var-requires
+// Tslint:disable:no-var-requires
 const stringifyStream = require('stream-to-string');
 
 /**
@@ -20,31 +21,23 @@ const stringifyStream = require('stream-to-string');
  * It will check if the serialization from RDF to JSON-LD matches with the expected JSON-LD document.
  */
 export class TestCaseJsonLdFromRdfHandler implements ITestCaseHandler<TestCaseJsonLdFromRdf> {
-
-  public async resourceToTestCaseInner(resource: Resource, testCaseData: ITestCaseData,
-                                       options?: IFetchOptions): Promise<TestCaseJsonLdFromRdf> {
+  public async resourceToTestCaseInner(resource: Resource, testCaseData: ITestCaseData, options?: IFetchOptions): Promise<TestCaseJsonLdFromRdf> {
     if (!resource.property.action) {
       throw new Error(`Missing mf:action in ${resource}`);
     }
     if (!resource.property.result) {
       throw new Error(`Missing mf:result in ${resource}`);
     }
-    return new TestCaseJsonLdFromRdf(testCaseData,
-      await arrayifyStream(<any> (await Util.fetchRdf(resource.property.action.value,
-        {...options, normalizeUrl: true}))[1]),
-      await stringifyStream((await Util.fetchCached(resource.property.result.value, options)).body),
-      resource.property.action.value, {...options, normalizeUrl: true});
+    return new TestCaseJsonLdFromRdf(testCaseData, await arrayifyStream(<any> (await Util.fetchRdf(resource.property.action.value, { ...options, normalizeUrl: true }))[1]), await stringifyStream((await Util.fetchCached(resource.property.result.value, options)).body), resource.property.action.value, { ...options, normalizeUrl: true });
   }
 
-  public async resourceToTestCase(resource: Resource, testCaseData: ITestCaseData,
-                                  options?: IFetchOptions): Promise<TestCaseJsonLdFromRdf> {
+  public async resourceToTestCase(resource: Resource, testCaseData: ITestCaseData, options?: IFetchOptions): Promise<TestCaseJsonLdFromRdf> {
     return TestCaseJsonLdToRdfHandler.wrap(this.resourceToTestCaseInner.bind(this), resource, testCaseData, options);
   }
-
 }
 
 export class TestCaseJsonLdFromRdf implements ITestCaseFromRdfSyntax {
-  public readonly type = "fromrdfsyntax";
+  public readonly type = 'fromrdfsyntax';
   public readonly approval: string;
   public readonly approvedBy: string;
   public readonly comment: string;
@@ -66,12 +59,11 @@ export class TestCaseJsonLdFromRdf implements ITestCaseFromRdfSyntax {
   }
 
   public async test(serializer: ISerializer, injectArguments: any): Promise<void> {
-    const serialized: string = await serializer.serialize(this.data, this.baseIRI,
-      { ...this.options, ...injectArguments });
+    const serialized: string = await serializer.serialize(this.data, this.baseIRI, { ...this.options, ...injectArguments });
     if (!objectsIsomorphic(JSON.parse(serialized), JSON.parse(this.expected))) {
       throw new Error(`Invalid data serialization
   Input:
-    ${this.data.map((quad) => JSON.stringify(quadToStringQuad(quad))).join(',\n    ')}
+    ${this.data.map(quad => JSON.stringify(quadToStringQuad(quad))).join(',\n    ')}
 
   Expected: ${this.expected}
 
@@ -79,10 +71,9 @@ export class TestCaseJsonLdFromRdf implements ITestCaseFromRdfSyntax {
 `);
     }
   }
-
 }
 
-// tslint:disable:align
+// Tslint:disable:align
 export function objectsIsomorphic(obj1: any, obj2: any, options: IObjectsIsomorphicOptions = {
   ordered: false,
   strictBlankNodes: false,
@@ -100,22 +91,22 @@ export function objectsIsomorphic(obj1: any, obj2: any, options: IObjectsIsomorp
     }
 
     switch (typeof (obj1[p])) {
-    case 'object':
-      if (typeof obj2[p] !== 'object' || !objectsIsomorphic(obj1[p], obj2[p], options, p)) {
-        return false;
-      }
-      break;
-    case 'string':
+      case 'object':
+        if (typeof obj2[p] !== 'object' || !objectsIsomorphic(obj1[p], obj2[p], options, p)) {
+          return false;
+        }
+        break;
+      case 'string':
       // Don't match blank nodes strictly
-      if (!options.strictBlankNodes && obj1[p].startsWith('_:')
-        && typeof obj2[p] === 'string' && obj2[p].startsWith('_:')) {
-        return true;
-      }
-    // Compare values
-    default:
-      if (obj1[p] !== obj2[p]) {
-        return false;
-      }
+        if (!options.strictBlankNodes && obj1[p].startsWith('_:') &&
+        typeof obj2[p] === 'string' && obj2[p].startsWith('_:')) {
+          return true;
+        }
+        // Compare values
+      default:
+        if (obj1[p] !== obj2[p]) {
+          return false;
+        }
     }
   }
 

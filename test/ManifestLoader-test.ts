@@ -1,17 +1,16 @@
-import {ManifestLoader} from "../lib/ManifestLoader";
-import * as fs from 'fs';
-import * as path from 'path';
-import { IManifest } from "../lib/IManifest";
+import * as fs from 'node:fs';
+import * as path from 'node:path';
+import { ManifestLoader } from '../lib/ManifestLoader';
 
-// tslint:disable:no-var-requires
+// Tslint:disable:no-var-requires
 const streamifyString = require('streamify-string');
 
 // Mock fetch
 (<any> global).fetch = (url: string) => {
   let body;
   switch (url) {
-  case 'http://valid1':
-    body = streamifyString(`
+    case 'http://valid1':
+      body = streamifyString(`
 @prefix rdf:    <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs:	<http://www.w3.org/2000/01/rdf-schema#> .
 @prefix mf:     <http://www.w3.org/2001/sw/DataAccess/tests/test-manifest#> .
@@ -20,9 +19,9 @@ const streamifyString = require('streamify-string');
 <> a mf:Manifest ;
 	rdfs:label "SPARQL 1.1 tests".
 `);
-    break;
-  case 'http://valid1.txt':
-    body = streamifyString(`
+      break;
+    case 'http://valid1.txt':
+      body = streamifyString(`
 @prefix rdf:    <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs:	<http://www.w3.org/2000/01/rdf-schema#> .
 @prefix mf:     <http://www.w3.org/2001/sw/DataAccess/tests/test-manifest#> .
@@ -31,9 +30,9 @@ const streamifyString = require('streamify-string');
 <http://valid1> a mf:Manifest ;
 	rdfs:label "SPARQL 1.1 tests".
 `);
-    break;
-  case 'http://valid1/with/slash/manifest.jsonld':
-    body = streamifyString(`
+      break;
+    case 'http://valid1/with/slash/manifest.jsonld':
+      body = streamifyString(`
 @prefix rdf:    <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs:	<http://www.w3.org/2000/01/rdf-schema#> .
 @prefix mf:     <http://www.w3.org/2001/sw/DataAccess/tests/test-manifest#> .
@@ -42,9 +41,9 @@ const streamifyString = require('streamify-string');
 <http://valid1/with/slash#manifest> a mf:Manifest ;
 	rdfs:label "SPARQL 1.1 tests".
 `);
-    break;
-  case 'http://validsub1':
-    body = streamifyString(`
+      break;
+    case 'http://validsub1':
+      body = streamifyString(`
 @prefix rdf:    <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs:	<http://www.w3.org/2000/01/rdf-schema#> .
 @prefix mf:     <http://www.w3.org/2001/sw/DataAccess/tests/test-manifest#> .
@@ -54,9 +53,9 @@ const streamifyString = require('streamify-string');
 	rdfs:label "SPARQL 1.1 tests";
 	mf:include (<http://valid1>).
 `);
-    break;
-  case 'http://invalidroot':
-    body = streamifyString(`
+      break;
+    case 'http://invalidroot':
+      body = streamifyString(`
 @prefix rdf:    <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs:	<http://www.w3.org/2000/01/rdf-schema#> .
 @prefix mf:     <http://www.w3.org/2001/sw/DataAccess/tests/test-manifest#> .
@@ -66,9 +65,9 @@ const streamifyString = require('streamify-string');
 	rdfs:label "SPARQL 1.1 tests";
 	mf:include ("http://invalid1").
 `);
-    break;
-  case 'http://invalidsub1':
-    body = streamifyString(`
+      break;
+    case 'http://invalidsub1':
+      body = streamifyString(`
 @prefix rdf:    <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs:	<http://www.w3.org/2000/01/rdf-schema#> .
 @prefix mf:     <http://www.w3.org/2001/sw/DataAccess/tests/test-manifest#> .
@@ -78,8 +77,8 @@ const streamifyString = require('streamify-string');
 	rdfs:label "SPARQL 1.1 tests";
 	mf:include ("http://invalid1").
 `);
-    break;
-  case 'https://w3c.github.io/rdf-star/tests/manifest.jsonld':
+      break;
+    case 'https://w3c.github.io/rdf-star/tests/manifest.jsonld':
       body = streamifyString(`
       ## [1] https://www.w3.org/Consortium/Legal/2008/04-testsuite-license
       ## [2] https://www.w3.org/Consortium/Legal/2008/03-bsd-license
@@ -114,18 +113,18 @@ const streamifyString = require('streamify-string');
             <turtle/syntax/manifest.ttl>
           ) .
       `);
-    break;
+      break;
     case 'https://w3c.github.io/rdf-star/tests/turtle/syntax/manifest.ttl':
       body = streamifyString(fs.readFileSync(path.join(__dirname, 'assets', 'sample_manifest.ttl')).toString());
-    break;
-  default: {
-    if (url.startsWith('https://w3c.github.io/rdf-star/')) {
-      body = streamifyString(`<${url}> a <http://www.w3.org/2001/sw/DataAccess/tests/test-manifest#Manifest> .`);
-    } else {
-      body = streamifyString('ABC');
+      break;
+    default: {
+      if (url.startsWith('https://w3c.github.io/rdf-star/')) {
+        body = streamifyString(`<${url}> a <http://www.w3.org/2001/sw/DataAccess/tests/test-manifest#Manifest> .`);
+      } else {
+        body = streamifyString('ABC');
+      }
+      break;
     }
-    break;
-  }
   }
   const headers = new Headers({ 'Content-Type': 'text/turtle' });
   return Promise.resolve(new Response(body, <any> { headers, status: 200 }));
@@ -147,7 +146,7 @@ describe('ManifestLoader', () => {
       loader = new ManifestLoader();
     });
 
-    it('should error on invalid manifests', async () => {
+    it('should error on invalid manifests', async() => {
       return await expect(loader.from('error')).rejects.toThrow(new Error('Unexpected "ABC" on line 1.'));
     });
 
@@ -208,7 +207,7 @@ describe('ManifestLoader', () => {
       });
     });
 
-    it('should load sub-manifests for the RDF-star test suite', async () => {
+    it('should load sub-manifests for the RDF-star test suite', async() => {
       const load = await loader.from('https://w3c.github.io/rdf-star/tests/manifest.jsonld');
 
       expect(load).toMatchObject({
@@ -219,7 +218,7 @@ describe('ManifestLoader', () => {
       });
 
       expect(
-        [...load.subManifests.map(elem => elem.testEntries)]
+        load.subManifests.map(elem => elem.testEntries),
       ).toHaveLength(8);
     });
 

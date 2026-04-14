@@ -1,14 +1,15 @@
-import * as RDF from "@rdfjs/types";
-import {Resource} from "rdf-object";
-import {quadToStringQuad} from "rdf-string";
-import {ErrorTest} from "../../../ErrorTest";
-import {IFetchOptions, Util} from "../../../Util";
-import {ITestCaseData} from "../../ITestCase";
-import {ITestCaseHandler} from "../../ITestCaseHandler";
-import {ISerializer} from "../ISerializer";
-import {ITestCaseFromRdfSyntax} from "../ITestCaseFromRdfSyntax";
-import {TestCaseJsonLdToRdfHandler} from "./TestCaseJsonLdToRdf";
-import { arrayifyStream } from "arrayify-stream";
+import type * as RDF from '@rdfjs/types';
+import { arrayifyStream } from 'arrayify-stream';
+import type { Resource } from 'rdf-object';
+import { quadToStringQuad } from 'rdf-string';
+import { ErrorTest } from '../../../ErrorTest';
+import type { IFetchOptions } from '../../../Util';
+import { Util } from '../../../Util';
+import type { ITestCaseData } from '../../ITestCase';
+import type { ITestCaseHandler } from '../../ITestCaseHandler';
+import type { ISerializer } from '../ISerializer';
+import type { ITestCaseFromRdfSyntax } from '../ITestCaseFromRdfSyntax';
+import { TestCaseJsonLdToRdfHandler } from './TestCaseJsonLdToRdf';
 
 /**
  * Test case handler for:
@@ -16,9 +17,7 @@ import { arrayifyStream } from "arrayify-stream";
  * * https://w3c.github.io/json-ld-api/tests/vocab#NegativeEvaluationTest
  */
 export class TestCaseJsonLdFromRdfNegativeHandler implements ITestCaseHandler<TestCaseJsonLdFromRdfHandlerNegative> {
-
-  public async resourceToTestCaseInner(resource: Resource, testCaseData: ITestCaseData,
-                                       options?: IFetchOptions): Promise<TestCaseJsonLdFromRdfHandlerNegative> {
+  public async resourceToTestCaseInner(resource: Resource, testCaseData: ITestCaseData, options?: IFetchOptions): Promise<TestCaseJsonLdFromRdfHandlerNegative> {
     if (!resource.property.action) {
       throw new Error(`Missing mf:action in ${resource}`);
     }
@@ -28,22 +27,19 @@ export class TestCaseJsonLdFromRdfNegativeHandler implements ITestCaseHandler<Te
     return new TestCaseJsonLdFromRdfHandlerNegative(
       testCaseData,
       resource.property.result.value,
-      await arrayifyStream(<any> (await Util.fetchRdf(resource.property.action.value,
-        {...options, normalizeUrl: true}))[1]),
+      await arrayifyStream(<any> (await Util.fetchRdf(resource.property.action.value, { ...options, normalizeUrl: true }))[1]),
       resource.property.action.value,
-      {...options, normalizeUrl: true},
-      );
+      { ...options, normalizeUrl: true },
+    );
   }
 
-  public resourceToTestCase(resource: Resource, testCaseData: ITestCaseData,
-                            options?: IFetchOptions): Promise<TestCaseJsonLdFromRdfHandlerNegative> {
+  public resourceToTestCase(resource: Resource, testCaseData: ITestCaseData, options?: IFetchOptions): Promise<TestCaseJsonLdFromRdfHandlerNegative> {
     return TestCaseJsonLdToRdfHandler.wrap(this.resourceToTestCaseInner.bind(this), resource, testCaseData, options);
   }
-
 }
 
 export class TestCaseJsonLdFromRdfHandlerNegative implements ITestCaseFromRdfSyntax {
-  public readonly type = "fromrdfsyntax";
+  public readonly type = 'fromrdfsyntax';
   public readonly approval: string;
   public readonly approvedBy: string;
   public readonly comment: string;
@@ -66,7 +62,7 @@ export class TestCaseJsonLdFromRdfHandlerNegative implements ITestCaseFromRdfSyn
 
   public async test(serializer: ISerializer, injectArguments: any): Promise<void> {
     try {
-      await serializer.serialize(this.data, this.baseIRI, {...this.options, ...injectArguments});
+      await serializer.serialize(this.data, this.baseIRI, { ...this.options, ...injectArguments });
     } catch (e) {
       if ((<any> e).skipped) {
         throw e;
@@ -78,19 +74,18 @@ export class TestCaseJsonLdFromRdfHandlerNegative implements ITestCaseFromRdfSyn
     }
     throw new ErrorTest(`${this.getErrorMessage()}
   Input:
-    ${this.data.map((quad) => JSON.stringify(quadToStringQuad(quad))).join(',\n    ')}
+    ${this.data.map(quad => JSON.stringify(quadToStringQuad(quad))).join(',\n    ')}
 `);
   }
 
   public validateError(error: Error, injectArguments: any) {
     if ((<any> error).code !== this.expectErrorCode) {
-      throw new Error('Received invalid error code, expected ' + this.expectErrorCode
-        + ', but got ' + (<any> error).code + ' (' + error.message + ')');
+      throw new Error(`Received invalid error code, expected ${this.expectErrorCode
+         }, but got ${(<any> error).code} (${error.message})`);
     }
   }
 
   public getErrorMessage() {
     return `Expected to throw an error with code '${this.expectErrorCode}' when parsing.`;
   }
-
 }

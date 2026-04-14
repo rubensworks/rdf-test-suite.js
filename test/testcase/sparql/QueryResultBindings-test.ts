@@ -1,10 +1,9 @@
-import {DataFactory} from "rdf-data-factory";
-import {QueryResultBindings} from "../../../lib/testcase/sparql/QueryResultBindings";
+import { DataFactory } from 'rdf-data-factory';
+import { QueryResultBindings } from '../../../lib/testcase/sparql/QueryResultBindings';
 
 const DF = new DataFactory();
 
 describe('QueryResultBindings', () => {
-
   let bindingsAB1;
   let bindingsAB1Duplicates;
   let bindingsAB1Reduced;
@@ -282,7 +281,7 @@ describe('QueryResultBindings', () => {
         '?b': DF.namedNode('b1'),
       };
       return expect(QueryResultBindings.hashBinding(binding, {}))
-        .toEqual('{\"?a\":\"a1\",\"?b\":\"b1\"}');
+        .toBe('{\"?a\":\"a1\",\"?b\":\"b1\"}');
     });
 
     it('should a binding with named nodes populated in a different order', () => {
@@ -291,7 +290,7 @@ describe('QueryResultBindings', () => {
       };
       binding['?a'] = DF.namedNode('a1');
       return expect(QueryResultBindings.hashBinding(binding, {}))
-        .toEqual('{\"?a\":\"a1\",\"?b\":\"b1\"}');
+        .toBe('{\"?a\":\"a1\",\"?b\":\"b1\"}');
     });
   });
 
@@ -299,7 +298,7 @@ describe('QueryResultBindings', () => {
     describe('ignoring order', () => {
       it('should hash bindings with named nodes', () => {
         return expect(QueryResultBindings.hashBindings(bindingsAB1.value, {}, false))
-          .toEqual('{\"?a\":\"a1\",\"?b\":\"b1\"}{\"?a\":\"a2\",\"?b\":\"b2\"}');
+          .toBe('{\"?a\":\"a1\",\"?b\":\"b1\"}{\"?a\":\"a2\",\"?b\":\"b2\"}');
       });
 
       it('should unordered hash bindings with named nodes', () => {
@@ -313,12 +312,12 @@ describe('QueryResultBindings', () => {
             '?b': DF.namedNode('b1'),
           },
         ], {}, false))
-          .toEqual('{\"?a\":\"a1\",\"?b\":\"b1\"}{\"?a\":\"a2\",\"?b\":\"b2\"}');
+          .toBe('{\"?a\":\"a1\",\"?b\":\"b1\"}{\"?a\":\"a2\",\"?b\":\"b2\"}');
       });
 
       it('should hash bindings with blank nodes', () => {
         return expect(QueryResultBindings.hashBindings(bindingBlankNode1Lower.value, {}, false))
-          .toEqual('{\"?c\":\"_:0\",\"?d\":\"_:1\"}{\"?c\":\"_:2\",\"?d\":\"_:3\"}');
+          .toBe('{\"?c\":\"_:0\",\"?d\":\"_:1\"}{\"?c\":\"_:2\",\"?d\":\"_:3\"}');
       });
 
       it('should unordered hash bindings with quoted triples', () => {
@@ -332,14 +331,14 @@ describe('QueryResultBindings', () => {
             '?b': DF.quad(DF.namedNode('s2b'), DF.namedNode('o2b'), DF.namedNode('o2b')),
           },
         ], {}, false))
-          .toEqual(`{"?a":"<<s1a o1a o1a >>","?b":"<<s1b o1b o1b >>"}{"?a":"<<s2a o2a o2a >>","?b":"<<s2b o2b o2b >>"}`);
+          .toBe(`{"?a":"<<s1a o1a o1a >>","?b":"<<s1b o1b o1b >>"}{"?a":"<<s2a o2a o2a >>","?b":"<<s2b o2b o2b >>"}`);
       });
     });
 
     describe('checking order', () => {
       it('should hash bindings with named nodes', () => {
         return expect(QueryResultBindings.hashBindings(bindingsAB1.value, {}, true))
-          .toEqual('{\"?a\":\"a1\",\"?b\":\"b1\"}{\"?a\":\"a2\",\"?b\":\"b2\"}');
+          .toBe('{\"?a\":\"a1\",\"?b\":\"b1\"}{\"?a\":\"a2\",\"?b\":\"b2\"}');
       });
 
       it('should unordered hash bindings with named nodes', () => {
@@ -353,12 +352,12 @@ describe('QueryResultBindings', () => {
             '?b': DF.namedNode('b1'),
           },
         ], {}, true))
-          .toEqual('{\"?a\":\"a2\",\"?b\":\"b2\"}{\"?a\":\"a1\",\"?b\":\"b1\"}');
+          .toBe('{\"?a\":\"a2\",\"?b\":\"b2\"}{\"?a\":\"a1\",\"?b\":\"b1\"}');
       });
 
       it('should hash bindings with blank nodes', () => {
         return expect(QueryResultBindings.hashBindings(bindingBlankNode1Lower.value, {}, true))
-          .toEqual('{\"?c\":\"_:0\",\"?d\":\"_:1\"}{\"?c\":\"_:2\",\"?d\":\"_:3\"}');
+          .toBe('{\"?c\":\"_:0\",\"?d\":\"_:1\"}{\"?c\":\"_:2\",\"?d\":\"_:3\"}');
       });
     });
   });
@@ -369,7 +368,7 @@ describe('QueryResultBindings', () => {
     });
 
     it('should be of type bindings', () => {
-      return expect(bindingsAB1.type).toEqual('bindings');
+      return expect(bindingsAB1.type).toBe('bindings');
     });
 
     it('should have the correct variables', () => {
@@ -390,7 +389,7 @@ describe('QueryResultBindings', () => {
     });
 
     it('should have the correct checkOrder flag', () => {
-      return expect(bindingsAB1.checkOrder).toEqual(false);
+      return expect(bindingsAB1.checkOrder).toBe(false);
     });
   });
 
@@ -544,7 +543,7 @@ describe('QueryResultBindings', () => {
 
   describe('#toString', () => {
     it('should stringify the bindings', () => {
-      return expect(bindingsAB1.toString()).toEqual(`[QueryResultBindings:
+      return expect(bindingsAB1.toString()).toBe(`[QueryResultBindings:
     Variables: [
   "?a",
   "?b"
@@ -574,5 +573,4 @@ describe('QueryResultBindings', () => {
 ]`);
     });
   });
-
 });

@@ -1,7 +1,7 @@
-import {isomorphic} from "rdf-isomorphic";
-import * as RDF from "@rdfjs/types";
-import {quadToStringQuad} from "rdf-string";
-import {IQueryResult, IQueryResultQuads} from "./IQueryEngine";
+import type * as RDF from '@rdfjs/types';
+import { isomorphic } from 'rdf-isomorphic';
+import { quadToStringQuad } from 'rdf-string';
+import type { IQueryResult, IQueryResultQuads } from './IQueryEngine';
 
 /**
  * Holds quad-based query results.
@@ -24,5 +24,4 @@ export class QueryResultQuads implements IQueryResultQuads {
   public toString(): string {
     return `[QueryResultQuads: ${JSON.stringify(this.value.map(quadToStringQuad), null, '  ')}]`;
   }
-
 }

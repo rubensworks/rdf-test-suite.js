@@ -1,8 +1,9 @@
-import * as RDF from "@rdfjs/types";
-import {fromRdf} from "rdf-literal";
-import {termToString} from "rdf-string";
-import {IQueryResult, IQueryResultBindings} from "./IQueryEngine";
-// tslint:disable-next-line:no-var-requires
+import type * as RDF from '@rdfjs/types';
+import { fromRdf } from 'rdf-literal';
+import { termToString } from 'rdf-string';
+import type { IQueryResult, IQueryResultBindings } from './IQueryEngine';
+
+// Tslint:disable-next-line:no-var-requires
 const stringify = require('json-stable-stringify');
 
 /**
@@ -11,53 +12,51 @@ const stringify = require('json-stable-stringify');
 export class QueryResultBindings implements IQueryResultBindings {
   public readonly type = 'bindings';
   public variables: string[];
-  public value: {[variable: string]: RDF.Term}[];
+  public value: Record<string, RDF.Term>[];
   public checkOrder: boolean;
 
-  constructor(variables: string[], value: {[variable: string]: RDF.Term}[], checkOrder: boolean) {
+  constructor(variables: string[], value: Record<string, RDF.Term>[], checkOrder: boolean) {
     this.variables = variables;
     this.value = value;
     this.checkOrder = checkOrder;
   }
 
-  public static serializeTerm(term: RDF.Term, blankNodeCounters: {[label: string]: number}): any {
+  public static serializeTerm(term: RDF.Term, blankNodeCounters: Record<string, number>): any {
     switch (term.termType) {
-    case 'Literal':
-      return fromRdf(term);
-    case 'BlankNode':
-      if (!(term.value in blankNodeCounters)) {
-        blankNodeCounters[term.value] = Object.keys(blankNodeCounters).length;
-      }
-      const blankNodeCounter = blankNodeCounters[term.value];
-      return '_:' + blankNodeCounter;
-    case 'Quad':
-      return `<<${QueryResultBindings.serializeTerm(term.subject, blankNodeCounters)
+      case 'Literal':
+        return fromRdf(term);
+      case 'BlankNode':
+        if (!(term.value in blankNodeCounters)) {
+          blankNodeCounters[term.value] = Object.keys(blankNodeCounters).length;
+        }
+        const blankNodeCounter = blankNodeCounters[term.value];
+        return `_:${blankNodeCounter}`;
+      case 'Quad':
+        return `<<${QueryResultBindings.serializeTerm(term.subject, blankNodeCounters)
       } ${QueryResultBindings.serializeTerm(term.predicate, blankNodeCounters)
       } ${QueryResultBindings.serializeTerm(term.object, blankNodeCounters)
       } ${QueryResultBindings.serializeTerm(term.graph, blankNodeCounters)
-      }>>`
-    default:
-      return termToString(term);
+      }>>`;
+      default:
+        return termToString(term);
     }
   }
 
-  public static hashBinding(binding: {[variable: string]: RDF.Term},
-                            blankNodeCounters: {[label: string]: number}) {
-    const bHash: {[id: string]: string} = {};
+  public static hashBinding(binding: Record<string, RDF.Term>, blankNodeCounters: Record<string, number>) {
+    const bHash: Record<string, string> = {};
     for (const variable of Object.keys(binding).sort()) {
       bHash[variable] = QueryResultBindings.serializeTerm(binding[variable], blankNodeCounters);
     }
     return stringify(bHash);
   }
 
-  public static hashBindings(bindings: {[variable: string]: RDF.Term}[],
-                             blankNodeCounters: {[label: string]: number}, checkOrder: boolean): string {
+  public static hashBindings(bindings: Record<string, RDF.Term>[], blankNodeCounters: Record<string, number>, checkOrder: boolean): string {
     const hash = [];
     if (!checkOrder) {
       // Sort *before* we normalize blank nodes, otherwise isomorphic bindings may end up being sorted differently.
       // We do this sorting using fresh blank node counters for each binding.
       bindings = bindings.sort((binding1, binding2) => QueryResultBindings.hashBinding(binding1, {})
-          .localeCompare(QueryResultBindings.hashBinding(binding2, {})));
+        .localeCompare(QueryResultBindings.hashBinding(binding2, {})));
     }
     for (const b of bindings) {
       hash.push(QueryResultBindings.hashBinding(b, blankNodeCounters));
@@ -65,19 +64,18 @@ export class QueryResultBindings implements IQueryResultBindings {
     return hash.join('');
   }
 
-  public static hashBindingsCount(bindings: {[variable: string]: RDF.Term}[],
-                                  blankNodeCounters: {[label: string]: number}): {[hash: string]: number} {
-    const hash: {[hash: string]: number} = {};
+  public static hashBindingsCount(bindings: Record<string, RDF.Term>[], blankNodeCounters: Record<string, number>): Record<string, number> {
+    const hash: Record<string, number> = {};
     for (const b of bindings) {
-      const bHash: {[id: string]: string} = {};
+      const bHash: Record<string, string> = {};
       for (const variable in b) {
         bHash[variable] = QueryResultBindings.serializeTerm(b[variable], blankNodeCounters);
       }
       const bString: string = JSON.stringify(bHash);
-      if (!hash[bString]) {
-        hash[bString] = 1;
-      } else {
+      if (hash[bString]) {
         hash[bString]++;
+      } else {
+        hash[bString] = 1;
       }
     }
     return hash;
@@ -95,9 +93,9 @@ export class QueryResultBindings implements IQueryResultBindings {
       // This is applicable for REDUCED.
       // The actual results can contain duplicates.
       // The expected results contains the upper limit of how many duplicates there can be. The lower limit is 1.
-      const countedBindingsExpected: {[hash: string]: number} = QueryResultBindings.hashBindingsCount(this.value, {});
-      const countedBindingsActual: {[hash: string]: number} = QueryResultBindings.hashBindingsCount(that.value, {});
-      if (Object.keys(countedBindingsExpected).sort().join() !== Object.keys(countedBindingsActual).sort().join()) {
+      const countedBindingsExpected: Record<string, number> = QueryResultBindings.hashBindingsCount(this.value, {});
+      const countedBindingsActual: Record<string, number> = QueryResultBindings.hashBindingsCount(that.value, {});
+      if (Object.keys(countedBindingsExpected).sort().join(',') !== Object.keys(countedBindingsActual).sort().join(',')) {
         // The fully distinct keys are not equal
         return false;
       }
@@ -111,10 +109,9 @@ export class QueryResultBindings implements IQueryResultBindings {
       }
 
       return true;
-    } else {
-      return QueryResultBindings.hashBindings(this.value, {}, this.checkOrder)
-        === QueryResultBindings.hashBindings(that.value, {}, that.checkOrder);
     }
+    return QueryResultBindings.hashBindings(this.value, {}, this.checkOrder) ===
+        QueryResultBindings.hashBindings(that.value, {}, that.checkOrder);
   }
 
   public toString(): string {
@@ -123,5 +120,4 @@ export class QueryResultBindings implements IQueryResultBindings {
     Bindings:  ${JSON.stringify(this.value, null, '  ')}
 ]`;
   }
-
 }

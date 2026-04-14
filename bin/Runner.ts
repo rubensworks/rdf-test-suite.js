@@ -1,11 +1,12 @@
 #!/usr/bin/env node
-import {existsSync, mkdirSync, writeFileSync} from "fs";
-import minimist = require("minimist");
-import {StreamWriter} from "n3";
-import * as Path from "path";
-import {ITestResult, ITestSuiteConfig, TestSuiteRunner} from "../lib/TestSuiteRunner";
+import { existsSync, mkdirSync, writeFileSync } from 'node:fs';
+import * as Path from 'node:path';
+import minimist = require('minimist');
+import { StreamWriter } from 'n3';
+import type { ITestResult, ITestSuiteConfig } from '../lib/TestSuiteRunner';
+import { TestSuiteRunner } from '../lib/TestSuiteRunner';
 
-// tslint:disable:no-console
+// Tslint:disable:no-console
 // tslint:disable:no-var-requires
 
 const args = minimist(process.argv.slice(2));
@@ -47,7 +48,7 @@ if (args.c) {
 }
 
 // Import the engine
-const engine = require(process.cwd() + '/' + args._[0]);
+const engine = require(`${process.cwd()}/${args._[0]}`);
 
 const defaultConfig = {
   exitWithStatusCode0: false,
@@ -58,15 +59,15 @@ const defaultConfig = {
 const config: ITestSuiteConfig = {
   cachePath,
   customEngingeOptions: args.i ? JSON.parse(args.i) : {},
-  exitWithStatusCode0: !!args.e || defaultConfig.exitWithStatusCode0,
+  exitWithStatusCode0: Boolean(args.e) || defaultConfig.exitWithStatusCode0,
   outputFormat: args.o || defaultConfig.outputFormat,
   specification: args.s,
   testRegex: new RegExp(args.t),
   skipRegex: args.skip ? new RegExp(args.skip) : undefined,
   timeOutDuration: args.d || defaultConfig.timeOutDuration,
   urlToFileMapping: args.m,
-  runRejected: !!args.r,
-  explicitApproval: !!args.a,
+  runRejected: Boolean(args.r),
+  explicitApproval: Boolean(args.a),
 };
 
 // Fetch the manifest, run the tests, and print them
@@ -74,31 +75,29 @@ const testSuiteRunner = new TestSuiteRunner();
 testSuiteRunner.runManifest(args._[1], engine, config)
   .then((testResults) => {
     switch (config.outputFormat) {
-    case 'earl':
-      if (!args.p) {
-        throw new Error(`EARL reporting requires the -p argument to point to an earl-meta.json file.`);
-      }
-      // Create properties file if it does not exist
-      if (!existsSync(Path.join(process.cwd(), args.p))) {
-        writeFileSync(Path.join(process.cwd(), args.p),
-          JSON.stringify(testSuiteRunner.packageJsonToEarlProperties(require(Path.join(process.cwd(), 'package.json'))),
-            null, '  '));
-      }
-      (<any> testSuiteRunner.resultsToEarl(testResults, require(Path.join(process.cwd(), args.p)), new Date()))
-        .pipe(new StreamWriter({ format: 'text/turtle', prefixes: require('../lib/prefixes.json') }))
-        .pipe(process.stdout)
-        .on('end', () => onEnd(testResults));
-      break;
-    case 'summary':
-      testSuiteRunner.resultsToText(process.stdout, testResults, true);
-      onEnd(testResults);
-      break;
-    default:
-      testSuiteRunner.resultsToText(process.stdout, testResults, false);
-      onEnd(testResults);
-      break;
+      case 'earl':
+        if (!args.p) {
+          throw new Error(`EARL reporting requires the -p argument to point to an earl-meta.json file.`);
+        }
+        // Create properties file if it does not exist
+        if (!existsSync(Path.join(process.cwd(), args.p))) {
+          writeFileSync(Path.join(process.cwd(), args.p), JSON.stringify(testSuiteRunner.packageJsonToEarlProperties(require(Path.join(process.cwd(), 'package.json'))), null, '  '));
+        }
+        (<any> testSuiteRunner.resultsToEarl(testResults, require(Path.join(process.cwd(), args.p)), new Date()))
+          .pipe(new StreamWriter({ format: 'text/turtle', prefixes: require('../lib/prefixes.json') }))
+          .pipe(process.stdout)
+          .on('end', () => onEnd(testResults));
+        break;
+      case 'summary':
+        testSuiteRunner.resultsToText(process.stdout, testResults, true);
+        onEnd(testResults);
+        break;
+      default:
+        testSuiteRunner.resultsToText(process.stdout, testResults, false);
+        onEnd(testResults);
+        break;
     }
-  }).catch(e => {
+  }).catch((e) => {
     console.error(e);
     process.exit(1);
   });

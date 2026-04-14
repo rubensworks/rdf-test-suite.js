@@ -1,17 +1,20 @@
-import { ITestSuiteConfig, TestSuiteRunner } from '../lib/TestSuiteRunner';
-import { testCaseToMediaMappings, QueryResultBindings, QueryResultBoolean, QueryResultQuads, ErrorSkipped } from '..';
+import * as fs from 'node:fs';
+import * as path from 'node:path';
+import { ProxyHandlerStatic } from '@comunica/actor-http-proxy';
 import { QueryEngine } from '@comunica/query-sparql';
+import { JsonLdParser } from 'jsonld-streaming-parser';
 import { Store as N3Store } from 'n3';
 import { rdfParser } from 'rdf-parse';
-import { JsonLdParser } from 'jsonld-streaming-parser';
-import { ProxyHandlerStatic } from '@comunica/actor-http-proxy';
-import * as path from 'path';
-import * as fs from 'fs';
+import { testCaseToMediaMappings, QueryResultBindings, QueryResultBoolean, QueryResultQuads, ErrorSkipped } from '..';
+import type { ITestSuiteConfig } from '../lib/TestSuiteRunner';
+import { TestSuiteRunner } from '../lib/TestSuiteRunner';
+
 const { KeysInitQuery } = require('@comunica/context-entries');
 const { ActionContext } = require('@comunica/core');
 
-if (!fs.existsSync(path.join(__dirname, 'cache')))
-  fs.mkdirSync(path.join(__dirname, 'cache'))
+if (!fs.existsSync(path.join(__dirname, 'cache'))) {
+  fs.mkdirSync(path.join(__dirname, 'cache'));
+}
 
 if (process.env.CI) {
   jest.retryTimes(3);
@@ -22,12 +25,12 @@ describe('e2e tests on the test suite runner', () => {
     // TODO: Use this rather than explicitly listing the included manifests
     // this requires supporting the RDF-MT and RDF/XML test suite
     // "https://w3c.github.io/rdf-tests/rdf/rdf11/manifest.ttl",
-    "https://w3c.github.io/rdf-tests/rdf/rdf11/rdf-n-triples/manifest.ttl": 56,
-    "https://w3c.github.io/rdf-tests/rdf/rdf11/rdf-n-quads/manifest.ttl": 72,
-    "https://w3c.github.io/rdf-tests/rdf/rdf11/rdf-turtle/manifest.ttl": 295,
-    "https://w3c.github.io/rdf-tests/rdf/rdf11/rdf-trig/manifest.ttl": 337,
-    "https://w3c.github.io/json-ld-api/tests/toRdf-manifest.jsonld": 464,
-    "https://w3c.github.io/json-ld-streaming/tests/stream-toRdf-manifest.jsonld": 480,
+    'https://w3c.github.io/rdf-tests/rdf/rdf11/rdf-n-triples/manifest.ttl': 56,
+    'https://w3c.github.io/rdf-tests/rdf/rdf11/rdf-n-quads/manifest.ttl': 72,
+    'https://w3c.github.io/rdf-tests/rdf/rdf11/rdf-turtle/manifest.ttl': 295,
+    'https://w3c.github.io/rdf-tests/rdf/rdf11/rdf-trig/manifest.ttl': 337,
+    'https://w3c.github.io/json-ld-api/tests/toRdf-manifest.jsonld': 464,
+    'https://w3c.github.io/json-ld-streaming/tests/stream-toRdf-manifest.jsonld': 480,
 
     // TODO: Enable these when the next version of n3.js is released
     // "http://w3c.github.io/N3/tests/manifest.ttl",
@@ -36,25 +39,25 @@ describe('e2e tests on the test suite runner', () => {
     // "https://w3c.github.io/rdf-star/tests/turtle/syntax/manifest.jsonld",
     // "https://w3c.github.io/rdf-star/tests/turtle/eval/manifest.jsonld",
     // "https://w3c.github.io/rdf-star/tests/nt/syntax/manifest.jsonld",
-  }
+  };
 
-  let _console = globalThis.console;
+  const _console = globalThis.console;
   let runner: TestSuiteRunner;
   let config: ITestSuiteConfig;
   beforeEach(() => {
-    // @ts-ignore
+    // @ts-expect-error
     globalThis.console = {
       log: jest.fn(),
       warn: jest.fn(),
-      error: jest.fn()
-    }
+      error: jest.fn(),
+    };
     runner = new TestSuiteRunner();
     config = {
       timeOutDuration: 180_000,
       exitWithStatusCode0: true,
       outputFormat: 'detailed',
       customEngingeOptions: {},
-      cachePath: path.join(__dirname, 'cache') + '/'
+      cachePath: `${path.join(__dirname, 'cache')}/`,
     };
   });
 
@@ -65,15 +68,13 @@ describe('e2e tests on the test suite runner', () => {
 
   describe('parsing', () => {
     for (const spec of Object.keys(parsingSpecs)) {
-      it(`it should correctly run [${spec}]`, async () => {
-
-
+      it(`it should correctly run [${spec}]`, async() => {
         const result = await runner.runManifest(spec, spec.includes('json-ld') ? jsonldParser : normalParser, {
           ...config,
           customEngingeOptions: {
             ...config.customEngingeOptions,
-            streamingProfile: spec.includes('stream')
-          }
+            streamingProfile: spec.includes('stream'),
+          },
         });
 
         expect(console.log).not.toHaveBeenCalled();
@@ -82,19 +83,20 @@ describe('e2e tests on the test suite runner', () => {
         expect(result.length).toBeGreaterThan(0);
 
         let skipped = 0;
-        result.forEach(r => {
-          if (r.skipped)
+        for (const r of result) {
+          if (r.skipped) {
             skipped++;
-        });
+          }
+        }
 
         if (spec.includes('json-ld')) {
           expect(skipped).toBeLessThanOrEqual(11);
           expect(skipped).toBeLessThan(result.length);
         } else {
-          expect(skipped).toEqual(0);
+          expect(skipped).toBe(0);
         }
 
-        // for (const r of result) {
+        // For (const r of result) {
         //   if (!(r.ok || r.skipped)) {
         //     // tslint:disable-next-line:no-console
         //     process.stderr.write('Failed on ' + r.test.name + ' (' + r.test.uri + ') with ' + r.error + '\n');
@@ -108,56 +110,55 @@ describe('e2e tests on the test suite runner', () => {
   });
 
   describe('query', () => {
-    for (const [ spec, minimumPassingCount]  of Object.entries({
-      "http://www.w3.org/TR/sparql11-query/": 301,
-      "http://www.w3.org/TR/sparql11-update/": 157,
-      "http://www.w3.org/TR/sparql11-results-csv-tsv/": 3,
-      "http://www.w3.org/TR/sparql11-results-json/": 4,
+    for (const [ spec, minimumPassingCount ] of Object.entries({
+      'http://www.w3.org/TR/sparql11-query/': 301,
+      'http://www.w3.org/TR/sparql11-update/': 157,
+      'http://www.w3.org/TR/sparql11-results-csv-tsv/': 3,
+      'http://www.w3.org/TR/sparql11-results-json/': 4,
       // Federated spec tries to do external queries
       // "http://www.w3.org/TR/sparql11-federated-query/",
-      "http://www.w3.org/TR/sparql11-service-description/": 3,
-      "http://www.w3.org/TR/sparql11-protocol/": 34,
-      "http://www.w3.org/TR/sparql11-http-rdf-update/": 19,
+      'http://www.w3.org/TR/sparql11-service-description/': 3,
+      'http://www.w3.org/TR/sparql11-protocol/': 34,
+      'http://www.w3.org/TR/sparql11-http-rdf-update/': 19,
     })) {
-
-      it(`should run correctly on [${spec}]`, async () => {
-        config.specification = spec
+      it(`should run correctly on [${spec}]`, async() => {
+        config.specification = spec;
         const result = await runner.runManifest('http://w3c.github.io/rdf-tests/sparql/sparql11/manifest-all.ttl', queryEngine(new QueryEngine()), config);
 
-        expect(result.length).toBeGreaterThan(0)
+        expect(result.length).toBeGreaterThan(0);
 
         let skipped = 0;
-        result.forEach(r => {
-          if (r.skipped)
+        for (const r of result) {
+          if (r.skipped) {
             skipped++;
-        });
+          }
+        }
 
         // Unsupported test can be skipped
-        if (!spec.includes('tsv') && !spec.includes('rdf-update') && !spec.includes('service-description') && !spec.includes('protocol'))
-          expect(skipped).toEqual(0);
+        if (!spec.includes('tsv') && !spec.includes('rdf-update') && !spec.includes('service-description') && !spec.includes('protocol')) {
+          expect(skipped).toBe(0);
+        }
 
-        // for (const r of result) {
+        // For (const r of result) {
         //   if (!(r.ok || r.skipped)) {
         //     process.stderr.write('Failed on ' + r.test.name + ' (' + r.test.uri + ') with ' + r.error + '\n');
         //   }
         // }
         expect(result.filter(r => r.ok || r.skipped).length).toBeGreaterThanOrEqual(minimumPassingCount);
-
       }, 190_000);
     }
-
   });
 });
 
 function queryEngine(engine) {
   return {
-    parse: function (query, options) {
+    parse(query, options) {
       return engine.actorInitQuery.mediatorQueryProcess.bus.actors[0].parse(query, new ActionContext({ [KeysInitQuery.baseIRI.name]: options.baseIRI }));
     },
-    query: function (data, queryString, options) {
+    query(data, queryString, options) {
       return this.queryLdf([{ type: 'rdfjs', value: source(data) }], null, queryString, options);
     },
-    queryLdf: async function (sources, proxyUrl, queryString, options) {
+    async queryLdf(sources, proxyUrl, queryString, options) {
       const result = await engine.query(queryString, {
         baseIRI: options.baseIRI,
         sources,
@@ -168,20 +169,20 @@ function queryEngine(engine) {
       });
       if (result.resultType === 'boolean') {
         return new QueryResultBoolean(await result.execute());
-      } else if (result.resultType === 'quads') {
+      } if (result.resultType === 'quads') {
         return new QueryResultQuads(await require('arrayify-stream').arrayifyStream(await result.execute()));
-      } else if (result.resultType === 'bindings') {
+      } if (result.resultType === 'bindings') {
         return new QueryResultBindings(
           (await result.metadata()).variables.map(variable => `?${variable.value}`),
           (await require('arrayify-stream').arrayifyStream(await result.execute()))
-            .map((binding) => Object.fromEntries([...binding]
-              .map(([key, value]) => [`?${key.value}`, value]))), false
+            .map(binding => Object.fromEntries([ ...binding ]
+              .map(([ key, value ]) => [ `?${key.value}`, value ]))),
+          false,
         );
-      } else {
-        throw new Error('Invalid query result type: ' + result.resultType);
       }
+      throw new Error(`Invalid query result type: ${result.resultType}`);
     },
-    update: async function (data, queryString, options) {
+    async update(data, queryString, options) {
       const store = await source(data);
       const result = await engine.query(queryString, {
         baseIRI: options.baseIRI,
@@ -189,7 +190,7 @@ function queryEngine(engine) {
         destination: store,
       });
       await result.execute();
-      return [...store];
+      return [ ...store ];
     },
   };
 };
@@ -203,27 +204,26 @@ function source(data) {
 const normalParser = {
   parse(data, baseIRI, _, test) {
     return require('arrayify-stream').arrayifyStream(rdfParser.parse(require('streamify-string')(data), {
-      // baseIRI,
-      contentType: test.types && testCaseToMediaMappings[test.types.find(type => type in testCaseToMediaMappings)]
+      // BaseIRI,
+      contentType: test.types && testCaseToMediaMappings[test.types.find(type => type in testCaseToMediaMappings)],
     }));
-  }
-}
+  },
+};
 
 const jsonldParser = {
-  parse: function (data, baseIRI, options, test) {
+  parse(data, baseIRI, options, test) {
     if (options.processingMode && (options.processingMode !== '1.0' && options.processingMode !== '1.1')) {
       return Promise.reject(
-        new ErrorSkipped(`Test with processing mode ${options.processingMode} was skipped, only 1.0 is supported.`));
+        new ErrorSkipped(`Test with processing mode ${options.processingMode} was skipped, only 1.0 is supported.`),
+      );
     }
     if (options.specVersion && options.specVersion !== '1.1' && options.specVersion !== 'star') {
       return Promise.reject(
-        new ErrorSkipped(`Test with spec version ${options.specVersion} was skipped, only 1.1 is supported.`));
+        new ErrorSkipped(`Test with spec version ${options.specVersion} was skipped, only 1.1 is supported.`),
+      );
     }
     return require('arrayify-stream').arrayifyStream(require('streamify-string')(data)
-      .pipe(new JsonLdParser(Object.assign({
-        baseIRI,
-        validateValueIndexes: true,
-        normalizeLanguageTags: true, // To simplify testing
-      }, options))));
+      .pipe(new JsonLdParser({ baseIRI, validateValueIndexes: true, normalizeLanguageTags: true, // To simplify testing
+        ...options })));
   },
-}
+};

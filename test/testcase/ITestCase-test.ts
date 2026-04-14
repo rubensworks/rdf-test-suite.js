@@ -1,8 +1,8 @@
-/* tslint:disable:no-console */
-import {DataFactory} from "rdf-data-factory";
-import {ContextParser} from "jsonld-context-parser";
-import {Resource} from "rdf-object";
-import {testCaseFromResource} from "../../lib/testcase/ITestCase";
+/* Tslint:disable:no-console */
+import { ContextParser } from 'jsonld-context-parser';
+import { DataFactory } from 'rdf-data-factory';
+import { Resource } from 'rdf-object';
+import { testCaseFromResource } from '../../lib/testcase/ITestCase';
 
 const DF = new DataFactory();
 
@@ -22,7 +22,6 @@ const handlers: any = {
 };
 
 describe('ITestCase', () => {
-
   let context;
   let pType;
   let pApproval;
@@ -33,28 +32,34 @@ describe('ITestCase', () => {
   const _console = globalThis.console;
 
   beforeEach((done) => {
-    // @ts-ignore
+    // @ts-expect-error
     globalThis.console = {
       log: jest.fn(),
       warn: jest.fn(),
-      error: jest.fn()
-    }
+      error: jest.fn(),
+    };
     new ContextParser().parse(require('../../lib/context-manifest.json'))
       .then((parsedContext) => {
         context = parsedContext;
 
         pType = new Resource(
-          { term: DF.namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'), context });
+          { term: DF.namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'), context },
+        );
         pApproval = new Resource(
-          { term: DF.namedNode('http://www.w3.org/2001/sw/DataAccess/tests/test-dawg#approval'), context });
+          { term: DF.namedNode('http://www.w3.org/2001/sw/DataAccess/tests/test-dawg#approval'), context },
+        );
         rApproval = new Resource(
-          { term: DF.namedNode('http://www.w3.org/ns/rdftest#approval'), context });
+          { term: DF.namedNode('http://www.w3.org/ns/rdftest#approval'), context },
+        );
         pApprovedBy = new Resource(
-          { term: DF.namedNode('http://www.w3.org/2001/sw/DataAccess/tests/test-dawg#approvedBy'), context });
+          { term: DF.namedNode('http://www.w3.org/2001/sw/DataAccess/tests/test-dawg#approvedBy'), context },
+        );
         pComment = new Resource(
-          { term: DF.namedNode('http://www.w3.org/2000/01/rdf-schema#comment'), context });
+          { term: DF.namedNode('http://www.w3.org/2000/01/rdf-schema#comment'), context },
+        );
         pName = new Resource(
-          { term: DF.namedNode('http://www.w3.org/2001/sw/DataAccess/tests/test-manifest#name'), context });
+          { term: DF.namedNode('http://www.w3.org/2001/sw/DataAccess/tests/test-manifest#name'), context },
+        );
 
         done();
       });
@@ -65,32 +70,31 @@ describe('ITestCase', () => {
     globalThis.console = _console;
   });
 
-
   describe('#testCaseFromResource', () => {
-    it('should return null on no test case types', async () => {
+    it('should return null on no test case types', async() => {
       const resource = new Resource({ term: DF.namedNode('http://example.org/test1') });
-      expect(await testCaseFromResource(handlers, null, resource)).toBe(null);
+      await expect(testCaseFromResource(handlers, null, resource)).resolves.toBeNull();
       expect(console.error).toHaveBeenCalledTimes(0);
     });
 
-    it('should return null on unknown test case types', async () => {
+    it('should return null on unknown test case types', async() => {
       const resource = new Resource({ term: DF.namedNode('http://example.org/test1'), context });
-      resource.addProperty(pType, new Resource({ term: DF.namedNode('unknown'), context}));
-      expect(await testCaseFromResource(handlers, null, resource)).toBe(null);
+      resource.addProperty(pType, new Resource({ term: DF.namedNode('unknown'), context }));
+      await expect(testCaseFromResource(handlers, null, resource)).resolves.toBeNull();
       expect(console.error).toHaveBeenCalledTimes(1);
     });
 
-    it('should return null on an erroring test case handler', async () => {
+    it('should return null on an erroring test case handler', async() => {
       const resource = new Resource({ term: DF.namedNode('http://example.org/test1'), context });
-      resource.addProperty(pType, new Resource({ term: DF.namedNode('error'), context}));
-      expect(await testCaseFromResource(handlers, null, resource)).toBe(null);
+      resource.addProperty(pType, new Resource({ term: DF.namedNode('error'), context }));
+      await expect(testCaseFromResource(handlers, null, resource)).resolves.toBeNull();
       expect(console.error).toHaveBeenCalledTimes(1);
     });
 
-    it('should return a test case for a valid type without optional properties', async () => {
+    it('should return a test case for a valid type without optional properties', async() => {
       const resource = new Resource({ term: DF.namedNode('http://example.org/test1'), context });
-      resource.addProperty(pType, new Resource({ term: DF.namedNode('abc'), context}));
-      expect(await testCaseFromResource(handlers, null, resource)).toEqual({
+      resource.addProperty(pType, new Resource({ term: DF.namedNode('abc'), context }));
+      await expect(testCaseFromResource(handlers, null, resource)).resolves.toEqual({
         approval: null,
         approvedBy: null,
         comment: null,
@@ -102,10 +106,10 @@ describe('ITestCase', () => {
       expect(console.error).toHaveBeenCalledTimes(0);
     });
 
-    it('should return a list of test cases when allowMultiple is enabled', async () => {
+    it('should return a list of test cases when allowMultiple is enabled', async() => {
       const resource = new Resource({ term: DF.namedNode('http://example.org/test1'), context });
-      resource.addProperty(pType, new Resource({ term: DF.namedNode('abc'), context}));
-      expect(await testCaseFromResource(handlers, null, resource, true)).toEqual([{
+      resource.addProperty(pType, new Resource({ term: DF.namedNode('abc'), context }));
+      await expect(testCaseFromResource(handlers, null, resource, true)).resolves.toEqual([{
         approval: null,
         approvedBy: null,
         comment: null,
@@ -117,17 +121,17 @@ describe('ITestCase', () => {
       expect(console.error).toHaveBeenCalledTimes(0);
     });
 
-    it('should return an empty list of multiple test cases when allowMultiple is enabled but no types are given', async () => {
+    it('should return an empty list of multiple test cases when allowMultiple is enabled but no types are given', async() => {
       const resource = new Resource({ term: DF.namedNode('http://example.org/test1'), context });
-      expect(await testCaseFromResource(handlers, null, resource, true)).toEqual([]);
+      await expect(testCaseFromResource(handlers, null, resource, true)).resolves.toEqual([]);
       expect(console.error).toHaveBeenCalledTimes(0);
     });
 
-    it('should return a list of multiple test cases when allowMultiple is enabled with multiple types', async () => {
+    it('should return a list of multiple test cases when allowMultiple is enabled with multiple types', async() => {
       const resource = new Resource({ term: DF.namedNode('http://example.org/test1'), context });
-      resource.addProperty(pType, new Resource({ term: DF.namedNode('abc'), context}));
-      resource.addProperty(pType, new Resource({ term: DF.namedNode('def'), context}));
-      expect(await testCaseFromResource(handlers, null, resource, true)).toEqual([{
+      resource.addProperty(pType, new Resource({ term: DF.namedNode('abc'), context }));
+      resource.addProperty(pType, new Resource({ term: DF.namedNode('def'), context }));
+      await expect(testCaseFromResource(handlers, null, resource, true)).resolves.toEqual([{
         approval: null,
         approvedBy: null,
         comment: null,
@@ -147,12 +151,12 @@ describe('ITestCase', () => {
       expect(console.error).toHaveBeenCalledTimes(0);
     });
 
-    it('should return a list of multiple test cases when allowMultiple is enabled with multiple types and include all types needed for each case', async () => {
+    it('should return a list of multiple test cases when allowMultiple is enabled with multiple types and include all types needed for each case', async() => {
       const resource = new Resource({ term: DF.namedNode('http://example.org/test1'), context });
-      resource.addProperty(pType, new Resource({ term: DF.namedNode('abc'), context}));
-      resource.addProperty(pType, new Resource({ term: DF.namedNode('p'), context}));
-      resource.addProperty(pType, new Resource({ term: DF.namedNode('q'), context}));
-      expect(await testCaseFromResource(handlers, null, resource, true)).toEqual([{
+      resource.addProperty(pType, new Resource({ term: DF.namedNode('abc'), context }));
+      resource.addProperty(pType, new Resource({ term: DF.namedNode('p'), context }));
+      resource.addProperty(pType, new Resource({ term: DF.namedNode('q'), context }));
+      await expect(testCaseFromResource(handlers, null, resource, true)).resolves.toEqual([{
         approval: null,
         approvedBy: null,
         comment: null,
@@ -172,14 +176,14 @@ describe('ITestCase', () => {
       expect(console.error).toHaveBeenCalledTimes(0);
     });
 
-    it('should return a test case for a valid type with optional properties', async () => {
+    it('should return a test case for a valid type with optional properties', async() => {
       const resource = new Resource({ term: DF.namedNode('http://example.org/test1'), context });
-      resource.addProperty(pType, new Resource({ term: DF.namedNode('abc'), context}));
-      resource.addProperty(pApproval, new Resource({ term: DF.literal('APPROVAL'), context}));
-      resource.addProperty(pApprovedBy, new Resource({ term: DF.literal('APPROVED_BY'), context}));
-      resource.addProperty(pComment, new Resource({ term: DF.literal('COMMENT'), context}));
-      resource.addProperty(pName, new Resource({ term: DF.literal('NAME'), context}));
-      expect(await testCaseFromResource(handlers, null, resource)).toEqual({
+      resource.addProperty(pType, new Resource({ term: DF.namedNode('abc'), context }));
+      resource.addProperty(pApproval, new Resource({ term: DF.literal('APPROVAL'), context }));
+      resource.addProperty(pApprovedBy, new Resource({ term: DF.literal('APPROVED_BY'), context }));
+      resource.addProperty(pComment, new Resource({ term: DF.literal('COMMENT'), context }));
+      resource.addProperty(pName, new Resource({ term: DF.literal('NAME'), context }));
+      await expect(testCaseFromResource(handlers, null, resource)).resolves.toEqual({
         approval: 'APPROVAL',
         approvedBy: 'APPROVED_BY',
         comment: 'COMMENT',
@@ -191,16 +195,15 @@ describe('ITestCase', () => {
       expect(console.error).toHaveBeenCalledTimes(0);
     });
 
-    it('should return a test case for a valid type with optional properties with dawg:approval and rdft:approval',
-    async () => {
+    it('should return a test case for a valid type with optional properties with dawg:approval and rdft:approval', async() => {
       const resource = new Resource({ term: DF.namedNode('http://example.org/test1'), context });
-      resource.addProperty(pType, new Resource({ term: DF.namedNode('abc'), context}));
-      resource.addProperty(pApproval, new Resource({ term: DF.literal('APPROVAL'), context}));
-      resource.addProperty(rApproval, new Resource({ term: DF.literal('R_APPROVAL'), context}));
-      resource.addProperty(pApprovedBy, new Resource({ term: DF.literal('APPROVED_BY'), context}));
-      resource.addProperty(pComment, new Resource({ term: DF.literal('COMMENT'), context}));
-      resource.addProperty(pName, new Resource({ term: DF.literal('NAME'), context}));
-      expect(await testCaseFromResource(handlers, null, resource)).toEqual({
+      resource.addProperty(pType, new Resource({ term: DF.namedNode('abc'), context }));
+      resource.addProperty(pApproval, new Resource({ term: DF.literal('APPROVAL'), context }));
+      resource.addProperty(rApproval, new Resource({ term: DF.literal('R_APPROVAL'), context }));
+      resource.addProperty(pApprovedBy, new Resource({ term: DF.literal('APPROVED_BY'), context }));
+      resource.addProperty(pComment, new Resource({ term: DF.literal('COMMENT'), context }));
+      resource.addProperty(pName, new Resource({ term: DF.literal('NAME'), context }));
+      await expect(testCaseFromResource(handlers, null, resource)).resolves.toEqual({
         approval: 'APPROVAL',
         approvedBy: 'APPROVED_BY',
         comment: 'COMMENT',
@@ -212,14 +215,14 @@ describe('ITestCase', () => {
       expect(console.error).toHaveBeenCalledTimes(0);
     });
 
-    it('should return a test case for a valid type with optional properties with rdft:apporval', async () => {
+    it('should return a test case for a valid type with optional properties with rdft:apporval', async() => {
       const resource = new Resource({ term: DF.namedNode('http://example.org/test1'), context });
-      resource.addProperty(pType, new Resource({ term: DF.namedNode('abc'), context}));
-      resource.addProperty(rApproval, new Resource({ term: DF.literal('R_APPROVAL'), context}));
-      resource.addProperty(pApprovedBy, new Resource({ term: DF.literal('APPROVED_BY'), context}));
-      resource.addProperty(pComment, new Resource({ term: DF.literal('COMMENT'), context}));
-      resource.addProperty(pName, new Resource({ term: DF.literal('NAME'), context}));
-      expect(await testCaseFromResource(handlers, null, resource)).toEqual({
+      resource.addProperty(pType, new Resource({ term: DF.namedNode('abc'), context }));
+      resource.addProperty(rApproval, new Resource({ term: DF.literal('R_APPROVAL'), context }));
+      resource.addProperty(pApprovedBy, new Resource({ term: DF.literal('APPROVED_BY'), context }));
+      resource.addProperty(pComment, new Resource({ term: DF.literal('COMMENT'), context }));
+      resource.addProperty(pName, new Resource({ term: DF.literal('NAME'), context }));
+      await expect(testCaseFromResource(handlers, null, resource)).resolves.toEqual({
         approval: 'R_APPROVAL',
         approvedBy: 'APPROVED_BY',
         comment: 'COMMENT',

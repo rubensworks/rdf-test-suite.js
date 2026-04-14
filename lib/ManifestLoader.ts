@@ -1,20 +1,23 @@
-import {RdfObjectLoader, Resource} from "rdf-object";
-import {termToString} from "rdf-string";
-import {IManifest, manifestFromResource} from "./IManifest";
-import {ITestCase} from "./testcase/ITestCase";
-import {ITestCaseHandler} from "./testcase/ITestCaseHandler";
-import {IFetchOptions, Util} from "./Util";
+import type { Resource } from 'rdf-object';
+import { RdfObjectLoader } from 'rdf-object';
+import { termToString } from 'rdf-string';
+import type { IManifest } from './IManifest';
+import { manifestFromResource } from './IManifest';
+import type { ITestCase } from './testcase/ITestCase';
+import type { ITestCaseHandler } from './testcase/ITestCaseHandler';
+import type { IFetchOptions } from './Util';
+import { Util } from './Util';
 
 /**
  * A ManifestLoader loads test suites from URLs.
  */
 export class ManifestLoader {
-
-  public static readonly DEFAULT_TEST_CASE_HANDLERS: {[uri: string]: ITestCaseHandler<ITestCase<any>>} =
+  public static readonly DEFAULT_TEST_CASE_HANDLERS: Record<string, ITestCaseHandler<ITestCase<any>>> =
     require('./testcase/TestCaseHandlers');
+
   public static readonly LOADER_CONTEXT = require('./context-manifest.json');
 
-  private readonly testCaseHandlers: {[uri: string]: ITestCaseHandler<ITestCase<any>>};
+  private readonly testCaseHandlers: Record<string, ITestCaseHandler<ITestCase<any>>>;
 
   constructor(args?: IManifestLoaderArgs) {
     if (!args) {
@@ -35,21 +38,20 @@ export class ManifestLoader {
     return manifestFromResource(this.testCaseHandlers, options, manifest, objectLoader);
   }
 
-  protected async import(objectLoader: RdfObjectLoader, urlInitial: string, options?: IFetchOptions)
-    : Promise<Resource> {
-    const [url, parsed] = await Util.fetchRdf(urlInitial, options);
+  protected async import(objectLoader: RdfObjectLoader, urlInitial: string, options?: IFetchOptions): Promise<Resource> {
+    const [ url, parsed ] = await Util.fetchRdf(urlInitial, options);
     // Dereference the URL and load it
     await objectLoader.import(parsed);
 
     // Import all sub-manifests
     let manifest: Resource =
       // First try the same URL as the document URL
-      objectLoader.resources[url]
+      objectLoader.resources[url] ??
       // Also try extension-less manifest URL (needed for RDFa test suite)
-      ?? objectLoader.resources[url.slice(0, url.lastIndexOf('.'))]
+      objectLoader.resources[url.slice(0, url.lastIndexOf('.'))] ??
       // Also try extension-less and with the last '/' replaced with a '#' (needed for RDFstar test suite)
       // @see https://github.com/w3c/rdf-star/issues/269
-      ?? objectLoader.resources[url.slice(0, url.lastIndexOf('.')).replace(/\/manifest$/, '#manifest')];
+      objectLoader.resources[url.slice(0, url.lastIndexOf('.')).replace(/\/manifest$/, '#manifest')];
 
     if (!manifest) {
       throw new Error(`Could not find a resource ${url} in the document at ${url}`);
@@ -68,18 +70,17 @@ export class ManifestLoader {
 
     manifest =
       // First try the same URL as the document URL
-      objectLoader.resources[url]
+      objectLoader.resources[url] ??
       // Also try extension-less manifest URL (needed for RDFa test suite)
-      ?? objectLoader.resources[url.slice(0, url.lastIndexOf('.'))]
+      objectLoader.resources[url.slice(0, url.lastIndexOf('.'))] ??
       // Also try extension-less and with the last '/' replaced with a '#' (needed for RDFstar test suite)
       // @see https://github.com/w3c/rdf-star/issues/269
-      ?? objectLoader.resources[url.slice(0, url.lastIndexOf('.')).replace(/\/manifest$/, '#manifest')];
+      objectLoader.resources[url.slice(0, url.lastIndexOf('.')).replace(/\/manifest$/, '#manifest')];
 
     return manifest;
   }
-
 }
 
 export interface IManifestLoaderArgs {
-  testCaseHandlers?: {[uri: string]: ITestCaseHandler<ITestCase<any>>};
+  testCaseHandlers?: Record<string, ITestCaseHandler<ITestCase<any>>>;
 }

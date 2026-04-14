@@ -1,12 +1,11 @@
-import { ErrorTest } from '../lib/ErrorTest';
-
 import 'jest-rdf';
+import { arrayifyStream } from 'arrayify-stream';
 import * as LogSymbols from 'log-symbols';
 import { PassThrough } from 'node:stream';
 import type { ITestSuiteConfig } from '../lib/TestSuiteRunner';
+import { ErrorTest } from '../lib/ErrorTest';
 import { TestSuiteRunner } from '../lib/TestSuiteRunner';
 import { Util } from '../lib/Util';
-import { arrayifyStream } from 'arrayify-stream';
 
 const mockTest1 = {
   name: 'Test1',
@@ -48,7 +47,7 @@ const mockTest6 = {
 const timeOutMockTest1 = {
   name: 'Timeout1',
   test: () => {
-    return new Promise<void>((resolve, reject) => setTimeout(() => resolve(), 500));
+    return new Promise<void>((resolve, _reject) => setTimeout(() => resolve(), 500));
   },
   uri: 'http://ex.org/timeout1',
 };
@@ -64,7 +63,7 @@ const defaultConfig: ITestSuiteConfig = {
 jest.mock<typeof import('../lib/ManifestLoader')>('../lib/ManifestLoader', () => ({
   ManifestLoader: function ManifestLoader() {
     return {
-      from: (manifestUrl: string, cachePath: string) => {
+      from: (manifestUrl: string, _cachePath: string) => {
         if (manifestUrl === 'valid') {
           return Promise.resolve({
             testEntries: [
@@ -76,7 +75,8 @@ jest.mock<typeof import('../lib/ManifestLoader')>('../lib/ManifestLoader', () =>
             ],
             uri: manifestUrl,
           });
-        } if (manifestUrl === 'validsub') {
+        }
+        if (manifestUrl === 'validsub') {
           return Promise.resolve({
             subManifests: [
               {
@@ -95,7 +95,8 @@ jest.mock<typeof import('../lib/ManifestLoader')>('../lib/ManifestLoader', () =>
             ],
             uri: manifestUrl,
           });
-        } if (manifestUrl === 'validspec') {
+        }
+        if (manifestUrl === 'validspec') {
           return Promise.resolve({
             specifications: {
               spec1: {
@@ -109,12 +110,14 @@ jest.mock<typeof import('../lib/ManifestLoader')>('../lib/ManifestLoader', () =>
             },
             uri: manifestUrl,
           });
-        } if (manifestUrl === 'timeout') {
+        }
+        if (manifestUrl === 'timeout') {
           return Promise.resolve({
             testEntries: [ timeOutMockTest1 ],
             uri: manifestUrl,
           });
-        } if (manifestUrl === 'override') {
+        }
+        if (manifestUrl === 'override') {
           return Promise.resolve({
             testEntries: [
               mockTest4,

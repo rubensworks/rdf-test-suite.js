@@ -29,6 +29,8 @@ module.exports = rubensworks([
       'ts/no-base-to-string': 'off',
       // Method signature style - property arrow function syntax breaks TypeScript variance in this codebase
       'ts/method-signature-style': 'off',
+      // Naming conventions - URI-based object property keys can't match camelCase
+      'ts/naming-convention': 'off',
       // Line length - many long lines in test data
       'max-len': 'off',
       // Inline comments are used throughout the codebase

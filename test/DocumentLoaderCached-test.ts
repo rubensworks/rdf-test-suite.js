@@ -6,7 +6,7 @@ import { DocumentLoaderCached } from '../lib/DocumentLoaderCached';
 const streamifyString = require('streamify-string');
 
 // Mock fetch
-(<any> global).fetch = (url: string) => {
+(<any> globalThis).fetch = (url: string) => {
   let body;
   switch (url) {
     case 'http://example.org/':

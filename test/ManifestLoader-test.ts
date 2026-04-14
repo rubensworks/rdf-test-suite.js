@@ -6,76 +6,76 @@ import { ManifestLoader } from '../lib/ManifestLoader';
 const streamifyString = require('streamify-string');
 
 // Mock fetch
-(<any> global).fetch = (url: string) => {
+(<any> globalThis).fetch = (url: string) => {
   let body;
   switch (url) {
     case 'http://valid1':
       body = streamifyString(`
 @prefix rdf:    <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
-@prefix rdfs:	<http://www.w3.org/2000/01/rdf-schema#> .
+@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix mf:     <http://www.w3.org/2001/sw/DataAccess/tests/test-manifest#> .
 @prefix qt:     <http://www.w3.org/2001/sw/DataAccess/tests/test-query#> .
 
 <> a mf:Manifest ;
-	rdfs:label "SPARQL 1.1 tests".
+  rdfs:label "SPARQL 1.1 tests".
 `);
       break;
     case 'http://valid1.txt':
       body = streamifyString(`
 @prefix rdf:    <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
-@prefix rdfs:	<http://www.w3.org/2000/01/rdf-schema#> .
+@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix mf:     <http://www.w3.org/2001/sw/DataAccess/tests/test-manifest#> .
 @prefix qt:     <http://www.w3.org/2001/sw/DataAccess/tests/test-query#> .
 
 <http://valid1> a mf:Manifest ;
-	rdfs:label "SPARQL 1.1 tests".
+  rdfs:label "SPARQL 1.1 tests".
 `);
       break;
     case 'http://valid1/with/slash/manifest.jsonld':
       body = streamifyString(`
 @prefix rdf:    <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
-@prefix rdfs:	<http://www.w3.org/2000/01/rdf-schema#> .
+@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix mf:     <http://www.w3.org/2001/sw/DataAccess/tests/test-manifest#> .
 @prefix qt:     <http://www.w3.org/2001/sw/DataAccess/tests/test-query#> .
 
 <http://valid1/with/slash#manifest> a mf:Manifest ;
-	rdfs:label "SPARQL 1.1 tests".
+  rdfs:label "SPARQL 1.1 tests".
 `);
       break;
     case 'http://validsub1':
       body = streamifyString(`
 @prefix rdf:    <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
-@prefix rdfs:	<http://www.w3.org/2000/01/rdf-schema#> .
+@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix mf:     <http://www.w3.org/2001/sw/DataAccess/tests/test-manifest#> .
 @prefix qt:     <http://www.w3.org/2001/sw/DataAccess/tests/test-query#> .
 
 <> a mf:Manifest ;
-	rdfs:label "SPARQL 1.1 tests";
-	mf:include (<http://valid1>).
+  rdfs:label "SPARQL 1.1 tests";
+  mf:include (<http://valid1>).
 `);
       break;
     case 'http://invalidroot':
       body = streamifyString(`
 @prefix rdf:    <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
-@prefix rdfs:	<http://www.w3.org/2000/01/rdf-schema#> .
+@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix mf:     <http://www.w3.org/2001/sw/DataAccess/tests/test-manifest#> .
 @prefix qt:     <http://www.w3.org/2001/sw/DataAccess/tests/test-query#> .
 
 <http://ex.org/abc> a mf:Manifest ;
-	rdfs:label "SPARQL 1.1 tests";
-	mf:include ("http://invalid1").
+  rdfs:label "SPARQL 1.1 tests";
+  mf:include ("http://invalid1").
 `);
       break;
     case 'http://invalidsub1':
       body = streamifyString(`
 @prefix rdf:    <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
-@prefix rdfs:	<http://www.w3.org/2000/01/rdf-schema#> .
+@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix mf:     <http://www.w3.org/2001/sw/DataAccess/tests/test-manifest#> .
 @prefix qt:     <http://www.w3.org/2001/sw/DataAccess/tests/test-query#> .
 
 <> a mf:Manifest ;
-	rdfs:label "SPARQL 1.1 tests";
-	mf:include ("http://invalid1").
+  rdfs:label "SPARQL 1.1 tests";
+  mf:include ("http://invalid1").
 `);
       break;
     case 'https://w3c.github.io/rdf-star/tests/manifest.jsonld':

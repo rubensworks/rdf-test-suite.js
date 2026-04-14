@@ -233,59 +233,59 @@ describe('TestCaseJsonLdFromRdfHandler', () => {
 });
 
 describe('objectsIsomorphic', () => {
-  it('should be true for empty objects', () => {
+  it('should be true for empty objects', () => {
     expect(objectsIsomorphic({}, {})).toBeTruthy();
   });
 
-  it('should be false when obj1 has more keys than obj2', () => {
+  it('should be false when obj1 has more keys than obj2', () => {
     expect(objectsIsomorphic({ a: 'b' }, {})).toBeFalsy();
   });
 
-  it('should be false when obj1 has less keys than obj2', () => {
+  it('should be false when obj1 has less keys than obj2', () => {
     expect(objectsIsomorphic({}, { a: 'b' })).toBeFalsy();
   });
 
-  it('should be false when obj1 also has less keys than obj2', () => {
+  it('should be false when obj1 also has less keys than obj2', () => {
     expect(objectsIsomorphic({ a: 'b' }, { a: 'b', x: 'z' })).toBeFalsy();
   });
 
-  it('should be true when obj1 and obj2 both have 1 equal key', () => {
+  it('should be true when obj1 and obj2 both have 1 equal key', () => {
     expect(objectsIsomorphic({ a: 'b' }, { a: 'b' })).toBeTruthy();
   });
 
-  it('should be false when obj1 and obj2 both have 1 equal key with different value', () => {
+  it('should be false when obj1 and obj2 both have 1 equal key with different value', () => {
     expect(objectsIsomorphic({ a: 'b' }, { a: 'c' })).toBeFalsy();
   });
 
-  it('should be true when obj1 and obj2 are equal nested', () => {
+  it('should be true when obj1 and obj2 are equal nested', () => {
     expect(objectsIsomorphic({ a: { x: 'b', y: 1 }}, { a: { x: 'b', y: 1 }})).toBeTruthy();
   });
 
-  it('should be false when obj1 and obj2 are non-equal nested', () => {
+  it('should be false when obj1 and obj2 are non-equal nested', () => {
     expect(objectsIsomorphic({ a: { x: 'b', y: 2 }}, { a: { x: 'b', y: 1 }})).toBeFalsy();
   });
 
-  it('should be true for identical blank nodes', () => {
+  it('should be true for identical blank nodes', () => {
     expect(objectsIsomorphic({ a: '_:b' }, { a: '_:b' })).toBeTruthy();
   });
 
-  it('should be true for non-identical blank nodes', () => {
+  it('should be true for non-identical blank nodes', () => {
     expect(objectsIsomorphic({ a: '_:b1' }, { a: '_:b2' })).toBeTruthy();
   });
 
-  it('should be true for identical blank nodes for strict bnodes', () => {
+  it('should be true for identical blank nodes for strict bnodes', () => {
     expect(objectsIsomorphic({ a: '_:b' }, { a: '_:b' }, { strictBlankNodes: true })).toBeTruthy();
   });
 
-  it('should be false for non-identical blank nodes for strict bnodes', () => {
+  it('should be false for non-identical blank nodes for strict bnodes', () => {
     expect(objectsIsomorphic({ a: '_:b1' }, { a: '_:b2' }, { strictBlankNodes: true })).toBeFalsy();
   });
 
-  it('should be true for unsorted arrays', () => {
+  it('should be true for unsorted arrays', () => {
     expect(objectsIsomorphic([{ a: '0' }, { b: '1' }], [{ b: '1' }, { a: '0' }])).toBeTruthy();
   });
 
-  it('should be true for unequal arrays', () => {
+  it('should be true for unequal arrays', () => {
     expect(objectsIsomorphic([{ a: '0' }, { b: '1' }], [{ b: '2' }, { a: '0' }])).toBeFalsy();
   });
 });

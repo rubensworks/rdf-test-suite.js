@@ -17,3 +17,4 @@ yarn-error.log
 test/cache
 coverage
 documentation
+*.rdf-test-cache*

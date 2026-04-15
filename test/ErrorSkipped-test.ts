@@ -1,7 +1,6 @@
-import {ErrorSkipped} from "../lib/ErrorSkipped";
+import { ErrorSkipped } from '../lib/ErrorSkipped';
 
 describe('ErrorSkipped', () => {
-
   it('should be constructable with arg', () => {
     return expect(new ErrorSkipped('abc')).toBeInstanceOf(Error);
   });
@@ -13,5 +12,4 @@ describe('ErrorSkipped', () => {
   it('should expose the skipped field', () => {
     return expect(new ErrorSkipped().skipped).toBe(true);
   });
-
 });

@@ -1,4 +1,4 @@
-import {IQueryResult, IQueryResultBoolean} from "./IQueryEngine";
+import type { IQueryResult, IQueryResultBoolean } from './IQueryEngine';
 
 /**
  * Holds a boolean query result.
@@ -18,5 +18,4 @@ export class QueryResultBoolean implements IQueryResultBoolean {
   public toString(): string {
     return `[QueryResultBoolean: ${this.value}]`;
   }
-
 }

@@ -1,5 +1,5 @@
-import {ITestCase} from "../ITestCase";
-import {IQueryEngine} from "./IQueryEngine";
+import type { ITestCase } from '../ITestCase';
+import type { IQueryEngine } from './IQueryEngine';
 
 /**
  * A SPARQL test case data holder.

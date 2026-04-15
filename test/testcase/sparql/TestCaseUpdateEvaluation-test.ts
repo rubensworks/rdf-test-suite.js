@@ -1,48 +1,47 @@
-import {TestCaseUpdateEvaluation,
-  TestCaseUpdateEvaluationHandler} from "../../../lib/testcase/sparql/TestCaseUpdateEvaluation";
-const quad = require("rdf-quad");
-import {DataFactory} from "rdf-data-factory";
-import "jest-rdf";
-import {ContextParser} from "jsonld-context-parser";
-import * as RDF from "@rdfjs/types";
-import {Resource} from "rdf-object";
-import { IUpdateEngine } from '../../../lib/testcase/sparql/IUpdateEngine';
+import type * as RDF from '@rdfjs/types';
+import { ContextParser } from 'jsonld-context-parser';
+import { DataFactory } from 'rdf-data-factory';
+import 'jest-rdf';
+import { Resource } from 'rdf-object';
+import type { IUpdateEngine } from '../../../lib/testcase/sparql/IUpdateEngine';
+import { TestCaseUpdateEvaluation, TestCaseUpdateEvaluationHandler } from '../../../lib/testcase/sparql/TestCaseUpdateEvaluation';
 
-// tslint:disable:no-var-requires
+const quad = require('rdf-quad');
+
 const streamifyString = require('streamify-string');
+
 const DF = new DataFactory();
 
 // Mock fetch
-(<any> global).fetch = (url: string) => {
+(<any> globalThis).fetch = (url: string) => {
   let body;
   let headers = new Headers({ a: 'b' });
   switch (url) {
-  case 'ACTION.ok':
-    body = streamifyString(`OK`);
-    break;
-  case 'ACTION.invalid':
-    body = streamifyString(`INVALID`);
-    break;
-  case 'RESULT1.ttl':
-    body = streamifyString(`<http://www.w3.org/TR/rdf-syntax-grammar> <http://purl.org/dc/elements/1.1/title> "A".`);
-    headers = new Headers({ 'Content-Type': 'text/turtle' });
-    break;
-  case 'RESULT2.ttl':
-    body = streamifyString(`<http://www.w3.org/TR/rdf-syntax-grammar> <http://purl.org/dc/elements/1.1/title> "B".`);
-    headers = new Headers({ 'Content-Type': 'text/turtle' });
-    break;
-  default:
-    return Promise.reject(new Error('Fetch error for ' + url));
-    break;
+    case 'ACTION.ok':
+      body = streamifyString(`OK`);
+      break;
+    case 'ACTION.invalid':
+      body = streamifyString(`INVALID`);
+      break;
+    case 'RESULT1.ttl':
+      body = streamifyString(`<http://www.w3.org/TR/rdf-syntax-grammar> <http://purl.org/dc/elements/1.1/title> "A".`);
+      headers = new Headers({ 'Content-Type': 'text/turtle' });
+      break;
+    case 'RESULT2.ttl':
+      body = streamifyString(`<http://www.w3.org/TR/rdf-syntax-grammar> <http://purl.org/dc/elements/1.1/title> "B".`);
+      headers = new Headers({ 'Content-Type': 'text/turtle' });
+      break;
+    default:
+      return Promise.reject(new Error(`Fetch error for ${url}`));
+      break;
   }
   return Promise.resolve(new Response(body, <any> { headers, status: 200 }));
 };
 
 describe('TestCaseUpdateEvaluationHandler', () => {
-
   const handler = new TestCaseUpdateEvaluationHandler();
   const engine: IUpdateEngine = <any> {
-    update: (data: RDF.Quad[], updateQueryString: string) => Promise.resolve([
+    update: (_data: RDF.Quad[], _updateQueryString: string) => Promise.resolve([
       quad('http://www.w3.org/TR/rdf-syntax-grammar', 'http://purl.org/dc/elements/1.1/title', '"B"'),
     ]),
   };
@@ -62,26 +61,33 @@ describe('TestCaseUpdateEvaluationHandler', () => {
         context = parsedContext;
 
         pAction = new Resource(
-          { term: DF.namedNode('http://www.w3.org/2001/sw/DataAccess/tests/test-manifest#action'), context });
+          { term: DF.namedNode('http://www.w3.org/2001/sw/DataAccess/tests/test-manifest#action'), context },
+        );
         pResult = new Resource(
-          { term: DF.namedNode('http://www.w3.org/2001/sw/DataAccess/tests/test-manifest#result'), context });
+          { term: DF.namedNode('http://www.w3.org/2001/sw/DataAccess/tests/test-manifest#result'), context },
+        );
         pUpdateQuery = new Resource(
-          { term: DF.namedNode('http://www.w3.org/2009/sparql/tests/test-update#request'), context });
+          { term: DF.namedNode('http://www.w3.org/2009/sparql/tests/test-update#request'), context },
+        );
         pData = new Resource(
-          { term: DF.namedNode('http://www.w3.org/2009/sparql/tests/test-update#data'), context });
+          { term: DF.namedNode('http://www.w3.org/2009/sparql/tests/test-update#data'), context },
+        );
         pGraphData = new Resource(
-          { term: DF.namedNode('http://www.w3.org/2009/sparql/tests/test-update#graphData'), context });
+          { term: DF.namedNode('http://www.w3.org/2009/sparql/tests/test-update#graphData'), context },
+        );
         pGraph = new Resource(
-          { term: DF.namedNode('http://www.w3.org/2009/sparql/tests/test-update#graph'), context });
+          { term: DF.namedNode('http://www.w3.org/2009/sparql/tests/test-update#graph'), context },
+        );
         pLabel = new Resource(
-          { term: DF.namedNode('http://www.w3.org/2000/01/rdf-schema#label'), context });
+          { term: DF.namedNode('http://www.w3.org/2000/01/rdf-schema#label'), context },
+        );
 
         done();
       });
   });
 
   describe('#resourceToTestCase', () => {
-    it('should produce a TestCaseUpdateEvaluation', async () => {
+    it('should produce a TestCaseUpdateEvaluation', async() => {
       const resource = new Resource({ term: DF.namedNode('http://ex.org/test'), context });
       const action = new Resource({ term: DF.namedNode('blabla'), context });
       action.addProperty(pUpdateQuery, new Resource({ term: DF.literal('ACTION.ok'), context }));
@@ -92,18 +98,18 @@ describe('TestCaseUpdateEvaluationHandler', () => {
       resource.addProperty(pResult, result);
       const testCase = await handler.resourceToTestCase(resource, <any> {});
       expect(testCase).toBeInstanceOf(TestCaseUpdateEvaluation);
-      expect(testCase.type).toEqual('sparql');
-      expect(testCase.updateQueryString).toEqual(`OK`);
+      expect(testCase.type).toBe('sparql');
+      expect(testCase.updateQueryString).toBe(`OK`);
       expect(testCase.dataInitial).toBeRdfIsomorphic([
         quad('http://www.w3.org/TR/rdf-syntax-grammar', 'http://purl.org/dc/elements/1.1/title', '"A"'),
       ]);
       expect(testCase.dataExpected).toBeRdfIsomorphic([
         quad('http://www.w3.org/TR/rdf-syntax-grammar', 'http://purl.org/dc/elements/1.1/title', '"B"'),
       ]);
-      await expect(testCase.test(engine, {})).resolves.toBe(undefined);
+      await expect(testCase.test(engine, {})).resolves.toBeUndefined();
     });
 
-    it('should produce a TestCaseUpdateEvaluation with raw graph data in action', async () => {
+    it('should produce a TestCaseUpdateEvaluation with raw graph data in action', async() => {
       const resource = new Resource({ term: DF.namedNode('http://ex.org/test'), context });
       const action = new Resource({ term: DF.namedNode('blabla'), context });
       action.addProperty(pUpdateQuery, new Resource({ term: DF.literal('ACTION.ok'), context }));
@@ -114,8 +120,8 @@ describe('TestCaseUpdateEvaluationHandler', () => {
       resource.addProperty(pResult, result);
       const testCase = await handler.resourceToTestCase(resource, <any> {});
       expect(testCase).toBeInstanceOf(TestCaseUpdateEvaluation);
-      expect(testCase.type).toEqual('sparql');
-      expect(testCase.updateQueryString).toEqual(`OK`);
+      expect(testCase.type).toBe('sparql');
+      expect(testCase.updateQueryString).toBe(`OK`);
       expect(testCase.dataInitial).toBeRdfIsomorphic([
         quad('http://www.w3.org/TR/rdf-syntax-grammar', 'http://purl.org/dc/elements/1.1/title', '"A"', 'RESULT1.ttl'),
       ]);
@@ -124,7 +130,7 @@ describe('TestCaseUpdateEvaluationHandler', () => {
       ]);
     });
 
-    it('should produce a TestCaseUpdateEvaluation with labelled graph data in action', async () => {
+    it('should produce a TestCaseUpdateEvaluation with labelled graph data in action', async() => {
       const resource = new Resource({ term: DF.namedNode('http://ex.org/test'), context });
       const action = new Resource({ term: DF.namedNode('blabla'), context });
       action.addProperty(pUpdateQuery, new Resource({ term: DF.literal('ACTION.ok'), context }));
@@ -138,8 +144,8 @@ describe('TestCaseUpdateEvaluationHandler', () => {
       resource.addProperty(pResult, result);
       const testCase = await handler.resourceToTestCase(resource, <any> {});
       expect(testCase).toBeInstanceOf(TestCaseUpdateEvaluation);
-      expect(testCase.type).toEqual('sparql');
-      expect(testCase.updateQueryString).toEqual(`OK`);
+      expect(testCase.type).toBe('sparql');
+      expect(testCase.updateQueryString).toBe(`OK`);
       expect(testCase.dataInitial).toBeRdfIsomorphic([
         quad('http://www.w3.org/TR/rdf-syntax-grammar', 'http://purl.org/dc/elements/1.1/title', '"A"', 'http://ex.org/graph'),
       ]);
@@ -148,7 +154,7 @@ describe('TestCaseUpdateEvaluationHandler', () => {
       ]);
     });
 
-    it('should produce a TestCaseUpdateEvaluation with multiple raw graph data in action', async () => {
+    it('should produce a TestCaseUpdateEvaluation with multiple raw graph data in action', async() => {
       const resource = new Resource({ term: DF.namedNode('http://ex.org/test'), context });
       const action = new Resource({ term: DF.namedNode('blabla'), context });
       action.addProperty(pUpdateQuery, new Resource({ term: DF.literal('ACTION.ok'), context }));
@@ -160,8 +166,8 @@ describe('TestCaseUpdateEvaluationHandler', () => {
       resource.addProperty(pResult, result);
       const testCase = await handler.resourceToTestCase(resource, <any> {});
       expect(testCase).toBeInstanceOf(TestCaseUpdateEvaluation);
-      expect(testCase.type).toEqual('sparql');
-      expect(testCase.updateQueryString).toEqual(`OK`);
+      expect(testCase.type).toBe('sparql');
+      expect(testCase.updateQueryString).toBe(`OK`);
       expect(testCase.dataInitial).toBeRdfIsomorphic([
         quad('http://www.w3.org/TR/rdf-syntax-grammar', 'http://purl.org/dc/elements/1.1/title', '"A"', 'RESULT1.ttl'),
         quad('http://www.w3.org/TR/rdf-syntax-grammar', 'http://purl.org/dc/elements/1.1/title', '"B"', 'RESULT2.ttl'),
@@ -194,7 +200,7 @@ describe('TestCaseUpdateEvaluationHandler', () => {
         .toThrow('Missing ut:request in mf:action of http://ex.org/test');
     });
 
-    it('should produce TestCaseUpdateEvaluation that tests true on equal results', async () => {
+    it('should produce TestCaseUpdateEvaluation that tests true on equal results', async() => {
       const resource = new Resource({ term: DF.namedNode('http://ex.org/test'), context });
       const action = new Resource({ term: DF.namedNode('blabla'), context });
       action.addProperty(pUpdateQuery, new Resource({ term: DF.literal('ACTION.ok'), context }));
@@ -205,10 +211,10 @@ describe('TestCaseUpdateEvaluationHandler', () => {
       resource.addProperty(pResult, result);
       const testCase = await handler.resourceToTestCase(resource, <any> {});
 
-      return expect(testCase.test(engine, {})).resolves.toBe(undefined);
+      return expect(testCase.test(engine, {})).resolves.toBeUndefined();
     });
 
-    it('should produce TestCaseUpdateEvaluation that tests false on non-equal results', async () => {
+    it('should produce TestCaseUpdateEvaluation that tests false on non-equal results', async() => {
       const resource = new Resource({ term: DF.namedNode('http://ex.org/test'), context });
       const action = new Resource({ term: DF.namedNode('blabla'), context });
       action.addProperty(pUpdateQuery, new Resource({ term: DF.literal('ACTION.ok'), context }));
@@ -222,5 +228,4 @@ describe('TestCaseUpdateEvaluationHandler', () => {
       return expect(testCase.test(engine, {})).rejects.toBeTruthy();
     });
   });
-
 });

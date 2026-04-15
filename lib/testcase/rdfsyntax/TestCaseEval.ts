@@ -1,41 +1,37 @@
-import {isomorphic} from "rdf-isomorphic";
-import * as RDF from "@rdfjs/types";
-import {Resource} from "rdf-object";
-import {quadToStringQuad} from "rdf-string";
-import {ErrorTest} from "../../ErrorTest";
-import {IFetchOptions, Util} from "../../Util";
-import {ITestCaseData} from "../ITestCase";
-import {ITestCaseHandler} from "../ITestCaseHandler";
-import {IParser} from "./IParser";
-import {ITestCaseRdfSyntax} from "./ITestCaseRdfSyntax";
-import { arrayifyStream } from "arrayify-stream";
+import type * as RDF from '@rdfjs/types';
+import { arrayifyStream } from 'arrayify-stream';
+import { isomorphic } from 'rdf-isomorphic';
+import type { Resource } from 'rdf-object';
+import { quadToStringQuad } from 'rdf-string';
+import { ErrorTest } from '../../ErrorTest';
+import type { IFetchOptions } from '../../Util';
+import { Util } from '../../Util';
+import type { ITestCaseData } from '../ITestCase';
+import type { ITestCaseHandler } from '../ITestCaseHandler';
+import type { IParser } from './IParser';
+import type { ITestCaseRdfSyntax } from './ITestCaseRdfSyntax';
 
-// tslint:disable:no-var-requires
+// eslint-disable-next-line ts/no-require-imports, ts/no-var-requires
 const stringifyStream = require('stream-to-string');
 
 /**
  * Test case handler for testing if two RDF serialization are isomorphic.
  */
 export class TestCaseEvalHandler implements ITestCaseHandler<TestCaseEval> {
-  private shouldNormalizeUrl: boolean;
+  private readonly shouldNormalizeUrl: boolean;
 
   constructor(options?: { normalizeUrl?: boolean }) {
-    this.shouldNormalizeUrl = options?.normalizeUrl === true;
+    this.shouldNormalizeUrl = options?.normalizeUrl;
   }
 
-  public async resourceToTestCase(resource: Resource, testCaseData: ITestCaseData,
-                                  options?: IFetchOptions): Promise<TestCaseEval> {
+  public async resourceToTestCase(resource: Resource, testCaseData: ITestCaseData, options?: IFetchOptions): Promise<TestCaseEval> {
     if (!resource.property.action) {
       throw new Error(`Missing mf:action in ${resource}`);
     }
     if (!resource.property.result) {
       throw new Error(`Missing mf:result in ${resource}`);
     }
-    return new TestCaseEval(testCaseData,
-      await stringifyStream((await Util.fetchCached(resource.property.action.value, options)).body),
-      await arrayifyStream(<any> (await Util.fetchRdf(resource.property.result.value,
-        {...options, normalizeUrl: this.shouldNormalizeUrl }))[1]),
-      this.normalizeUrl(resource.property.action.value));
+    return new TestCaseEval(testCaseData, await stringifyStream((await Util.fetchCached(resource.property.action.value, options)).body), await arrayifyStream(<any> (await Util.fetchRdf(resource.property.result.value, { ...options, normalizeUrl: this.shouldNormalizeUrl }))[1]), this.normalizeUrl(resource.property.action.value));
   }
 
   protected normalizeUrl(url: string) {
@@ -44,7 +40,7 @@ export class TestCaseEvalHandler implements ITestCaseHandler<TestCaseEval> {
 }
 
 export class TestCaseEval implements ITestCaseRdfSyntax {
-  public readonly type = "rdfsyntax";
+  public readonly type = 'rdfsyntax';
   public readonly approval: string;
   public readonly approvedBy: string;
   public readonly comment: string;
@@ -75,5 +71,4 @@ export class TestCaseEval implements ITestCaseRdfSyntax {
 `);
     }
   }
-
 }

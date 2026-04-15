@@ -1,18 +1,16 @@
-import {TestCaseJsonLdFromRdfHandler} from "./rdfsyntax/jsonld/TestCaseJsonLdFromRdf";
-import {TestCaseJsonLdFromRdfNegativeHandler} from "./rdfsyntax/jsonld/TestCaseJsonLdFromRdfNegative";
-import {TestCaseJsonLdSyntaxHandler} from "./rdfsyntax/jsonld/TestCaseJsonLdSyntax";
-import {TestCaseJsonLdToRdfHandler} from "./rdfsyntax/jsonld/TestCaseJsonLdToRdf";
-import {TestCaseJsonLdToRdfNegativeHandler} from "./rdfsyntax/jsonld/TestCaseJsonLdToRdfNegative";
-import {TestCaseEvalHandler} from "./rdfsyntax/TestCaseEval";
-import {TestCaseSyntaxHandler} from "./rdfsyntax/TestCaseSyntax";
-import {TestCaseNegativeSyntaxHandler} from "./sparql/TestCaseNegativeSyntax";
-import {TestCasePositiveSyntaxHandler} from "./sparql/TestCasePositiveSyntax";
-import {TestCaseQueryEvaluationHandler} from "./sparql/TestCaseQueryEvaluation";
-import {TestCaseUnsupportedHandler} from "./TestCaseUnsupported";
+import { TestCaseJsonLdFromRdfHandler } from './rdfsyntax/jsonld/TestCaseJsonLdFromRdf';
+import { TestCaseJsonLdFromRdfNegativeHandler } from './rdfsyntax/jsonld/TestCaseJsonLdFromRdfNegative';
+import { TestCaseJsonLdSyntaxHandler } from './rdfsyntax/jsonld/TestCaseJsonLdSyntax';
+import { TestCaseJsonLdToRdfHandler } from './rdfsyntax/jsonld/TestCaseJsonLdToRdf';
+import { TestCaseJsonLdToRdfNegativeHandler } from './rdfsyntax/jsonld/TestCaseJsonLdToRdfNegative';
+import { TestCaseEvalHandler } from './rdfsyntax/TestCaseEval';
+import { TestCaseSyntaxHandler } from './rdfsyntax/TestCaseSyntax';
+import { TestCaseNegativeSyntaxHandler } from './sparql/TestCaseNegativeSyntax';
+import { TestCasePositiveSyntaxHandler } from './sparql/TestCasePositiveSyntax';
+import { TestCaseQueryEvaluationHandler } from './sparql/TestCaseQueryEvaluation';
 import { TestCaseUpdateEvaluationHandler } from './sparql/TestCaseUpdateEvaluation';
+import { TestCaseUnsupportedHandler } from './TestCaseUnsupported';
 
-// tslint:disable:max-line-length
-// tslint:disable:object-literal-sort-keys
 module.exports = {
   // SPARQL 1.0, SPARQL 1.1 test suite
   'http://www.w3.org/2001/sw/DataAccess/tests/test-manifest#NegativeSyntaxTest':
@@ -117,5 +115,3 @@ module.exports = {
     new TestCaseEvalHandler(),
 
 };
-// tslint:enable:object-literal-sort-keys
-// tslint:enable:max-line-length

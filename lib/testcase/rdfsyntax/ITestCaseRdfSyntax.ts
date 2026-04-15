@@ -1,5 +1,5 @@
-import {ITestCase} from "../ITestCase";
-import {IParser} from "./IParser";
+import type { ITestCase } from '../ITestCase';
+import type { IParser } from './IParser';
 
 /**
  * An RDF syntax test case data holder.

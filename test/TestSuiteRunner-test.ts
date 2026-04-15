@@ -1,4 +1,11 @@
-import {ErrorTest} from "../lib/ErrorTest";
+import { PassThrough } from 'node:stream';
+import { arrayifyStream } from 'arrayify-stream';
+import * as LogSymbols from 'log-symbols';
+import 'jest-rdf';
+import { ErrorTest } from '../lib/ErrorTest';
+import type { ITestSuiteConfig } from '../lib/TestSuiteRunner';
+import { TestSuiteRunner } from '../lib/TestSuiteRunner';
+import { Util } from '../lib/Util';
 
 const mockTest1 = {
   name: 'Test1',
@@ -40,23 +47,23 @@ const mockTest6 = {
 const timeOutMockTest1 = {
   name: 'Timeout1',
   test: () => {
-    return new Promise<void>((resolve, reject) => setTimeout(() => resolve(), 500));
+    return new Promise<void>((resolve, _reject) => setTimeout(() => resolve(), 500));
   },
   uri: 'http://ex.org/timeout1',
 };
 
 const defaultConfig: ITestSuiteConfig = {
-  customEngingeOptions:  {},
+  customEngingeOptions: {},
   exitWithStatusCode0: false,
   outputFormat: 'detailed',
   timeOutDuration: 3000,
 };
 
 // Mock ManifestLoader
-jest.mock('../lib/ManifestLoader', () => ({
-  ManifestLoader: function ManifestLoader() {
+jest.mock<typeof import('../lib/ManifestLoader')>('../lib/ManifestLoader', () => ({
+  ManifestLoader: <any> function ManifestLoader() {
     return {
-      from: (manifestUrl: string, cachePath: string) => {
+      from: (manifestUrl: string, _cachePath: string) => {
         if (manifestUrl === 'valid') {
           return Promise.resolve({
             testEntries: [
@@ -68,7 +75,8 @@ jest.mock('../lib/ManifestLoader', () => ({
             ],
             uri: manifestUrl,
           });
-        } else if (manifestUrl === 'validsub') {
+        }
+        if (manifestUrl === 'validsub') {
           return Promise.resolve({
             subManifests: [
               {
@@ -87,7 +95,8 @@ jest.mock('../lib/ManifestLoader', () => ({
             ],
             uri: manifestUrl,
           });
-        } else if (manifestUrl === 'validspec') {
+        }
+        if (manifestUrl === 'validspec') {
           return Promise.resolve({
             specifications: {
               spec1: {
@@ -101,23 +110,24 @@ jest.mock('../lib/ManifestLoader', () => ({
             },
             uri: manifestUrl,
           });
-        } else if (manifestUrl === 'timeout') {
+        }
+        if (manifestUrl === 'timeout') {
           return Promise.resolve({
-            testEntries: [timeOutMockTest1],
+            testEntries: [ timeOutMockTest1 ],
             uri: manifestUrl,
           });
-        } else if (manifestUrl === 'override') {
+        }
+        if (manifestUrl === 'override') {
           return Promise.resolve({
             testEntries: [
               mockTest4,
             ],
             uri: manifestUrl,
           });
-        } else {
-          return Promise.resolve({
-            uri: manifestUrl,
-          });
         }
+        return Promise.resolve({
+          uri: manifestUrl,
+        });
       },
     };
   },
@@ -125,22 +135,13 @@ jest.mock('../lib/ManifestLoader', () => ({
 
 // Mock time measurements
 (<any> process).hrtime = () => {
-  return [1, 1];
+  return [ 1, 1 ];
 };
 
-import "jest-rdf";
-import * as LogSymbols from "log-symbols";
-import {PassThrough} from "stream";
-import {ITestSuiteConfig, TestSuiteRunner} from "../lib/TestSuiteRunner";
-import { Util } from '../lib/Util';
-import { arrayifyStream } from "arrayify-stream";
-
-// tslint:disable:no-var-requires
-const stringifyStream = require('stream-to-string');
 const quad = require('rdf-quad');
+const stringifyStream = require('stream-to-string');
 
 describe('TestSuiteRunner', () => {
-
   let runner;
   let handler;
 
@@ -156,9 +157,10 @@ describe('TestSuiteRunner', () => {
 
     it('should parse a valid string', () => {
       return expect(runner.fromUrlToMappingString(
-        'https://w3c.github.io/json-ld-api/~/my/path/to/file/')).toEqual([
-          { url: 'https://w3c.github.io/json-ld-api/', path: '/my/path/to/file/' },
-        ]);
+        'https://w3c.github.io/json-ld-api/~/my/path/to/file/',
+      )).toEqual([
+        { url: 'https://w3c.github.io/json-ld-api/', path: '/my/path/to/file/' },
+      ]);
     });
   });
 
@@ -249,7 +251,7 @@ describe('TestSuiteRunner', () => {
       runner.runManifest('timeout', handler, config)
         .then((results) => {
           expect(results).toEqual([{
-            error: new Error("Test case 'http://ex.org/timeout1' timed out"),
+            error: new Error('Test case \'http://ex.org/timeout1\' timed out'),
             ok: false,
             skipped: undefined,
             test: timeOutMockTest1,
@@ -263,12 +265,12 @@ describe('TestSuiteRunner', () => {
     });
 
     it('should produce results for a valid manifest with a non-matching test regex', () => {
-      const config: ITestSuiteConfig = { ...defaultConfig, testRegex: /abc/ };
+      const config: ITestSuiteConfig = { ...defaultConfig, testRegex: /abc/u };
       return expect(runner.runManifest('valid', handler, config)).resolves.toEqual([]);
     });
 
     it('should produce results for a valid manifest with a single-matching test regex', () => {
-      const config: ITestSuiteConfig = { ...defaultConfig, testRegex: /1/ };
+      const config: ITestSuiteConfig = { ...defaultConfig, testRegex: /1/u };
       return expect(runner.runManifest('valid', handler, config)).resolves.toEqual([
         {
           ok: true,
@@ -279,7 +281,7 @@ describe('TestSuiteRunner', () => {
     });
 
     it('should produce results for a valid manifest with a multiple-matching test regex', () => {
-      const config: ITestSuiteConfig = { ...defaultConfig, testRegex: /^.*test.*$/ };
+      const config: ITestSuiteConfig = { ...defaultConfig, testRegex: /^.*test.*$/u };
       return expect(runner.runManifest('valid', handler, config)).resolves.toEqual([
         {
           ok: true,
@@ -311,7 +313,7 @@ describe('TestSuiteRunner', () => {
     });
 
     it('should produce results for a valid manifest with a non-matching skip regex', () => {
-      const config: ITestSuiteConfig = { ...defaultConfig, skipRegex: /abc/ };
+      const config: ITestSuiteConfig = { ...defaultConfig, skipRegex: /abc/u };
       return expect(runner.runManifest('valid', handler, config)).resolves.toEqual([
         {
           ok: true,
@@ -343,7 +345,7 @@ describe('TestSuiteRunner', () => {
     });
 
     it('should produce results for a valid manifest with a single-matching skip regex', () => {
-      const config: ITestSuiteConfig = { ...defaultConfig, skipRegex: /1/ };
+      const config: ITestSuiteConfig = { ...defaultConfig, skipRegex: /1/u };
       return expect(runner.runManifest('valid', handler, config)).resolves.toEqual([
         {
           ok: true,
@@ -370,7 +372,7 @@ describe('TestSuiteRunner', () => {
     });
 
     it('should produce results for a valid manifest with a multiple-matching skip regex', () => {
-      const config: ITestSuiteConfig = { ...defaultConfig, skipRegex: /^.*test.*$/ };
+      const config: ITestSuiteConfig = { ...defaultConfig, skipRegex: /^.*test.*$/u };
 
       return expect(runner.runManifest('valid', handler, config)).resolves.toEqual([]);
     });
@@ -422,7 +424,6 @@ describe('TestSuiteRunner', () => {
   });
 
   describe('resultsToText', () => {
-
     const testResults = [
       {
         ok: true,
@@ -485,98 +486,93 @@ describe('TestSuiteRunner', () => {
         test: mockTest3,
       },
     ];
-    testResultsExternal[3].error.stack = "MYSTACK";
+    testResultsExternal[3].error.stack = 'MYSTACK';
 
-    it('should print an empty array of results', async () => {
+    it('should print an empty array of results', async() => {
       const stdout = new PassThrough();
       runner.resultsToText(stdout, [], false);
       stdout.end();
-      return expect(await stringifyStream(stdout)).toEqual(`${LogSymbols.success} 0 / 0 tests succeeded!
+      return await expect(stringifyStream(stdout)).resolves.toBe(`${LogSymbols.success} 0 / 0 tests succeeded!
 `);
     });
 
-    it('should print an empty array of results compactly', async () => {
+    it('should print an empty array of results compactly', async() => {
       const stdout = new PassThrough();
       runner.resultsToText(stdout, [], true);
       stdout.end();
-      return expect(await stringifyStream(stdout)).toEqual(`${LogSymbols.success} 0 / 0 tests succeeded!
+      return await expect(stringifyStream(stdout)).resolves.toBe(`${LogSymbols.success} 0 / 0 tests succeeded!
 `);
     });
 
-    it('should print a non-empty array of results', async () => {
+    it('should print a non-empty array of results', async() => {
       const stdout = new PassThrough();
       runner.resultsToText(stdout, testResults, false);
       stdout.end();
-      // tslint:disable:no-trailing-whitespace
-      return expect(await stringifyStream(stdout)).toEqual(`${LogSymbols.success} Test1 (http://ex.org/test1) ${Util.withColor('10ms', Util.COLOR_GRAY)}
-${LogSymbols.success} Test2 (http://ex.org/test2) ${Util.withColor('10ms', Util.COLOR_GRAY)}
+      return await expect(stringifyStream(stdout)).resolves.toBe(`${LogSymbols.success} Test1 (http://ex.org/test1) ${Util.withColor('10ms', Util.colorGray)}
+${LogSymbols.success} Test2 (http://ex.org/test2) ${Util.withColor('10ms', Util.colorGray)}
 ${LogSymbols.error} Test3 (http://ex.org/test3)
 
-${LogSymbols.error} ${Util.withColor('Test3', Util.COLOR_RED)}
+${LogSymbols.error} ${Util.withColor('Test3', Util.colorRed)}
   
   Error: Fail
-  ${Util.withColor('More info: http://ex.org/test3', Util.COLOR_BLUE)}
+  ${Util.withColor('More info: http://ex.org/test3', Util.colorBlue)}
 
 ${LogSymbols.error} 2 / 3 tests succeeded!
 `);
     });
 
-    it('should print a non-empty array of results with skips', async () => {
+    it('should print a non-empty array of results with skips', async() => {
       const stdout = new PassThrough();
       runner.resultsToText(stdout, testResultsSkips, false);
       stdout.end();
-      // tslint:disable:no-trailing-whitespace
-      return expect(await stringifyStream(stdout)).toEqual(`${LogSymbols.success} Test1 (http://ex.org/test1) ${Util.withColor('10ms', Util.COLOR_GRAY)}
+      return await expect(stringifyStream(stdout)).resolves.toBe(`${LogSymbols.success} Test1 (http://ex.org/test1) ${Util.withColor('10ms', Util.colorGray)}
 ${LogSymbols.info} Test2 (http://ex.org/test2)
 ${LogSymbols.info} Test3 (http://ex.org/test3)
 ${LogSymbols.error} Test3 (http://ex.org/test3)
 
-${LogSymbols.error} ${Util.withColor('Test3', Util.COLOR_RED)}
+${LogSymbols.error} ${Util.withColor('Test3', Util.colorRed)}
   
   Error: Fail
-  ${Util.withColor('More info: http://ex.org/test3', Util.COLOR_BLUE)}
+  ${Util.withColor('More info: http://ex.org/test3', Util.colorBlue)}
 
 ${LogSymbols.error} 3 / 4 tests succeeded! (skipped 2)
 `);
     });
 
-    it('should print a non-empty array of results with external errors', async () => {
+    it('should print a non-empty array of results with external errors', async() => {
       const stdout = new PassThrough();
       runner.resultsToText(stdout, testResultsExternal, false);
       stdout.end();
-      // tslint:disable:no-trailing-whitespace
-      return expect(await stringifyStream(stdout)).toEqual(`${LogSymbols.success} Test1 (http://ex.org/test1) ${Util.withColor('10ms', Util.COLOR_GRAY)}
+      return await expect(stringifyStream(stdout)).resolves.toBe(`${LogSymbols.success} Test1 (http://ex.org/test1) ${Util.withColor('10ms', Util.colorGray)}
 ${LogSymbols.info} Test2 (http://ex.org/test2)
 ${LogSymbols.info} Test3 (http://ex.org/test3)
 ${LogSymbols.error} Test3 (http://ex.org/test3)
 
-${LogSymbols.error} ${Util.withColor('Test3', Util.COLOR_RED)}
+${LogSymbols.error} ${Util.withColor('Test3', Util.colorRed)}
   
   MYSTACK
-  ${Util.withColor('More info: http://ex.org/test3', Util.COLOR_BLUE)}
+  ${Util.withColor('More info: http://ex.org/test3', Util.colorBlue)}
 
 ${LogSymbols.error} 3 / 4 tests succeeded! (skipped 2)
 `);
     });
 
-    it('should print a non-empty array of results compactly', async () => {
+    it('should print a non-empty array of results compactly', async() => {
       const stdout = new PassThrough();
       runner.resultsToText(stdout, testResults, true);
       stdout.end();
-      // tslint:disable:no-trailing-whitespace
-      return expect(await stringifyStream(stdout)).toEqual(`${LogSymbols.success} Test1 (http://ex.org/test1) ${Util.withColor('10ms', Util.COLOR_GRAY)}
-${LogSymbols.success} Test2 (http://ex.org/test2) ${Util.withColor('10ms', Util.COLOR_GRAY)}
+      return await expect(stringifyStream(stdout)).resolves.toBe(`${LogSymbols.success} Test1 (http://ex.org/test1) ${Util.withColor('10ms', Util.colorGray)}
+${LogSymbols.success} Test2 (http://ex.org/test2) ${Util.withColor('10ms', Util.colorGray)}
 ${LogSymbols.error} Test3 (http://ex.org/test3)
 ${LogSymbols.error} 2 / 3 tests succeeded!
 `);
     });
 
-    it('should print a non-empty array of results with skips compactly', async () => {
+    it('should print a non-empty array of results with skips compactly', async() => {
       const stdout = new PassThrough();
       runner.resultsToText(stdout, testResultsSkips, true);
       stdout.end();
-      // tslint:disable:no-trailing-whitespace
-      return expect(await stringifyStream(stdout)).toEqual(`${LogSymbols.success} Test1 (http://ex.org/test1) ${Util.withColor('10ms', Util.COLOR_GRAY)}
+      return await expect(stringifyStream(stdout)).resolves.toBe(`${LogSymbols.success} Test1 (http://ex.org/test1) ${Util.withColor('10ms', Util.colorGray)}
 ${LogSymbols.info} Test2 (http://ex.org/test2)
 ${LogSymbols.info} Test3 (http://ex.org/test3)
 ${LogSymbols.error} Test3 (http://ex.org/test3)
@@ -694,362 +690,358 @@ ${LogSymbols.error} 3 / 4 tests succeeded! (skipped 2)
     };
     const testDate = new Date();
 
-    it('without tests should produce triples for all requires properties', async () => {
+    it('without tests should produce triples for all requires properties', async() => {
       const p = require('../lib/prefixes.json');
-      return expect(await arrayifyStream(runner.resultsToEarl([], propertiesAll, testDate))).toBeRdfIsomorphic([
-        quad('http://ex.org/report', p.foaf + 'primaryTopic', 'http://ex.org/myApp'),
-        quad('http://ex.org/report', p.dc + 'issued', '"' + testDate.toISOString() + '"^^' + p.xsd + 'dateTime'),
-        quad('http://ex.org/report', p.foaf + 'maker', 'http://ex.org/myFoaf'),
+      return await expect(arrayifyStream(runner.resultsToEarl([], propertiesAll, testDate))).resolves.toBeRdfIsomorphic([
+        quad('http://ex.org/report', `${p.foaf}primaryTopic`, 'http://ex.org/myApp'),
+        quad('http://ex.org/report', `${p.dc}issued`, `"${testDate.toISOString()}"^^${p.xsd}dateTime`),
+        quad('http://ex.org/report', `${p.foaf}maker`, 'http://ex.org/myFoaf'),
 
-        quad('http://ex.org/myApp', p.rdf  + 'type', p.earl + 'Software'),
-        quad('http://ex.org/myApp', p.rdf  + 'type', p.earl + 'TestSubject'),
-        quad('http://ex.org/myApp', p.rdf  + 'type', p.doap + 'Project'),
-        quad('http://ex.org/myApp', p.doap + 'name', '"My Name"'),
-        quad('http://ex.org/myApp', p.dc   + 'title', '"My Name"'),
-        quad('http://ex.org/myApp', p.doap + 'release', '_:b_release'),
-        quad('_:b_release',         p.doap + 'revision', '"1.2.3"'),
-        quad('http://ex.org/myApp', p.doap + 'homepage', 'http://ex.org/myHomePage'),
-        quad('http://ex.org/myApp', p.doap + 'license', 'http://ex.org/myLicense'),
-        quad('http://ex.org/myApp', p.doap + 'programming-language', '"JavaScript"'),
-        quad('http://ex.org/myApp', p.doap + 'implements', 'http://ex.org/TheSpec'),
-        quad('http://ex.org/myApp', p.doap + 'category', 'http://dbpedia.org/resource/Resource_Description_Framework'),
-        quad('http://ex.org/myApp', p.doap + 'download-page', 'https://npmjs.org/package/MyName'),
-        quad('http://ex.org/myApp', p.doap + 'bug-database', 'http://ex.org/myBugs'),
-        quad('http://ex.org/myApp', p.doap + 'blog', 'http://ex.org/myBlog'),
-        quad('http://ex.org/myApp', p.doap + 'developer', 'http://ex.org/myFoaf'),
-        quad('http://ex.org/myApp', p.doap + 'maintainer', 'http://ex.org/myFoaf'),
-        quad('http://ex.org/myApp', p.doap + 'documenter', 'http://ex.org/myFoaf'),
-        quad('http://ex.org/myApp', p.doap + 'maker', 'http://ex.org/myFoaf'),
-        quad('http://ex.org/myApp', p.dc   + 'creator', 'http://ex.org/myFoaf'),
-        quad('http://ex.org/myApp', p.dc   + 'description', '"My Description"@en'),
-        quad('http://ex.org/myApp', p.doap + 'description', '"My Description"@en'),
+        quad('http://ex.org/myApp', `${p.rdf}type`, `${p.earl}Software`),
+        quad('http://ex.org/myApp', `${p.rdf}type`, `${p.earl}TestSubject`),
+        quad('http://ex.org/myApp', `${p.rdf}type`, `${p.doap}Project`),
+        quad('http://ex.org/myApp', `${p.doap}name`, '"My Name"'),
+        quad('http://ex.org/myApp', `${p.dc}title`, '"My Name"'),
+        quad('http://ex.org/myApp', `${p.doap}release`, '_:b_release'),
+        quad('_:b_release', `${p.doap}revision`, '"1.2.3"'),
+        quad('http://ex.org/myApp', `${p.doap}homepage`, 'http://ex.org/myHomePage'),
+        quad('http://ex.org/myApp', `${p.doap}license`, 'http://ex.org/myLicense'),
+        quad('http://ex.org/myApp', `${p.doap}programming-language`, '"JavaScript"'),
+        quad('http://ex.org/myApp', `${p.doap}implements`, 'http://ex.org/TheSpec'),
+        quad('http://ex.org/myApp', `${p.doap}category`, 'http://dbpedia.org/resource/Resource_Description_Framework'),
+        quad('http://ex.org/myApp', `${p.doap}download-page`, 'https://npmjs.org/package/MyName'),
+        quad('http://ex.org/myApp', `${p.doap}bug-database`, 'http://ex.org/myBugs'),
+        quad('http://ex.org/myApp', `${p.doap}blog`, 'http://ex.org/myBlog'),
+        quad('http://ex.org/myApp', `${p.doap}developer`, 'http://ex.org/myFoaf'),
+        quad('http://ex.org/myApp', `${p.doap}maintainer`, 'http://ex.org/myFoaf'),
+        quad('http://ex.org/myApp', `${p.doap}documenter`, 'http://ex.org/myFoaf'),
+        quad('http://ex.org/myApp', `${p.doap}maker`, 'http://ex.org/myFoaf'),
+        quad('http://ex.org/myApp', `${p.dc}creator`, 'http://ex.org/myFoaf'),
+        quad('http://ex.org/myApp', `${p.dc}description`, '"My Description"@en'),
+        quad('http://ex.org/myApp', `${p.doap}description`, '"My Description"@en'),
 
-        quad('http://ex.org/myFoaf', p.rdf  + 'type', 'http://xmlns.com/foaf/0.1/Person'),
-        quad('http://ex.org/myFoaf', p.rdf  + 'type', 'http://www.w3.org/ns/earl#Assertor'),
-        quad('http://ex.org/myFoaf', p.foaf + 'name', '"My Author Name"'),
-        quad('http://ex.org/myFoaf', p.foaf + 'homepage', 'http://ex.org/MyPersonalHomePage'),
-        quad('http://ex.org/myFoaf', p.foaf + 'primaryTopicOf', 'http://ex.org/MyPrimaryTopic'),
+        quad('http://ex.org/myFoaf', `${p.rdf}type`, 'http://xmlns.com/foaf/0.1/Person'),
+        quad('http://ex.org/myFoaf', `${p.rdf}type`, 'http://www.w3.org/ns/earl#Assertor'),
+        quad('http://ex.org/myFoaf', `${p.foaf}name`, '"My Author Name"'),
+        quad('http://ex.org/myFoaf', `${p.foaf}homepage`, 'http://ex.org/MyPersonalHomePage'),
+        quad('http://ex.org/myFoaf', `${p.foaf}primaryTopicOf`, 'http://ex.org/MyPrimaryTopic'),
       ]);
     });
 
-    it('without tests should produce triples for all requires properties without primary topic', async () => {
+    it('without tests should produce triples for all requires properties without primary topic', async() => {
       const p = require('../lib/prefixes.json');
-      return expect(await arrayifyStream(runner.resultsToEarl([], propertiesAllNoPTopic, testDate))).toBeRdfIsomorphic([
-        quad('http://ex.org/report', p.foaf + 'primaryTopic', 'http://ex.org/myApp'),
-        quad('http://ex.org/report', p.dc + 'issued', '"' + testDate.toISOString() + '"^^' + p.xsd + 'dateTime'),
-        quad('http://ex.org/report', p.foaf + 'maker', 'http://ex.org/myFoaf'),
+      return await expect(arrayifyStream(runner.resultsToEarl([], propertiesAllNoPTopic, testDate))).resolves.toBeRdfIsomorphic([
+        quad('http://ex.org/report', `${p.foaf}primaryTopic`, 'http://ex.org/myApp'),
+        quad('http://ex.org/report', `${p.dc}issued`, `"${testDate.toISOString()}"^^${p.xsd}dateTime`),
+        quad('http://ex.org/report', `${p.foaf}maker`, 'http://ex.org/myFoaf'),
 
-        quad('http://ex.org/myApp', p.rdf  + 'type', p.earl + 'Software'),
-        quad('http://ex.org/myApp', p.rdf  + 'type', p.earl + 'TestSubject'),
-        quad('http://ex.org/myApp', p.rdf  + 'type', p.doap + 'Project'),
-        quad('http://ex.org/myApp', p.doap + 'name', '"My Name"'),
-        quad('http://ex.org/myApp', p.dc   + 'title', '"My Name"'),
-        quad('http://ex.org/myApp', p.doap + 'release', '_:b_release'),
-        quad('_:b_release',         p.doap + 'revision', '"1.2.3"'),
-        quad('http://ex.org/myApp', p.doap + 'homepage', 'http://ex.org/myHomePage'),
-        quad('http://ex.org/myApp', p.doap + 'license', 'http://ex.org/myLicense'),
-        quad('http://ex.org/myApp', p.doap + 'programming-language', '"JavaScript"'),
-        quad('http://ex.org/myApp', p.doap + 'implements', 'http://ex.org/TheSpec'),
-        quad('http://ex.org/myApp', p.doap + 'category', 'http://dbpedia.org/resource/Resource_Description_Framework'),
-        quad('http://ex.org/myApp', p.doap + 'download-page', 'https://npmjs.org/package/MyName'),
-        quad('http://ex.org/myApp', p.doap + 'bug-database', 'http://ex.org/myBugs'),
-        quad('http://ex.org/myApp', p.doap + 'blog', 'http://ex.org/myBlog'),
-        quad('http://ex.org/myApp', p.doap + 'developer', 'http://ex.org/myFoaf'),
-        quad('http://ex.org/myApp', p.doap + 'maintainer', 'http://ex.org/myFoaf'),
-        quad('http://ex.org/myApp', p.doap + 'documenter', 'http://ex.org/myFoaf'),
-        quad('http://ex.org/myApp', p.doap + 'maker', 'http://ex.org/myFoaf'),
-        quad('http://ex.org/myApp', p.dc   + 'creator', 'http://ex.org/myFoaf'),
-        quad('http://ex.org/myApp', p.dc   + 'description', '"My Description"@en'),
-        quad('http://ex.org/myApp', p.doap + 'description', '"My Description"@en'),
+        quad('http://ex.org/myApp', `${p.rdf}type`, `${p.earl}Software`),
+        quad('http://ex.org/myApp', `${p.rdf}type`, `${p.earl}TestSubject`),
+        quad('http://ex.org/myApp', `${p.rdf}type`, `${p.doap}Project`),
+        quad('http://ex.org/myApp', `${p.doap}name`, '"My Name"'),
+        quad('http://ex.org/myApp', `${p.dc}title`, '"My Name"'),
+        quad('http://ex.org/myApp', `${p.doap}release`, '_:b_release'),
+        quad('_:b_release', `${p.doap}revision`, '"1.2.3"'),
+        quad('http://ex.org/myApp', `${p.doap}homepage`, 'http://ex.org/myHomePage'),
+        quad('http://ex.org/myApp', `${p.doap}license`, 'http://ex.org/myLicense'),
+        quad('http://ex.org/myApp', `${p.doap}programming-language`, '"JavaScript"'),
+        quad('http://ex.org/myApp', `${p.doap}implements`, 'http://ex.org/TheSpec'),
+        quad('http://ex.org/myApp', `${p.doap}category`, 'http://dbpedia.org/resource/Resource_Description_Framework'),
+        quad('http://ex.org/myApp', `${p.doap}download-page`, 'https://npmjs.org/package/MyName'),
+        quad('http://ex.org/myApp', `${p.doap}bug-database`, 'http://ex.org/myBugs'),
+        quad('http://ex.org/myApp', `${p.doap}blog`, 'http://ex.org/myBlog'),
+        quad('http://ex.org/myApp', `${p.doap}developer`, 'http://ex.org/myFoaf'),
+        quad('http://ex.org/myApp', `${p.doap}maintainer`, 'http://ex.org/myFoaf'),
+        quad('http://ex.org/myApp', `${p.doap}documenter`, 'http://ex.org/myFoaf'),
+        quad('http://ex.org/myApp', `${p.doap}maker`, 'http://ex.org/myFoaf'),
+        quad('http://ex.org/myApp', `${p.dc}creator`, 'http://ex.org/myFoaf'),
+        quad('http://ex.org/myApp', `${p.dc}description`, '"My Description"@en'),
+        quad('http://ex.org/myApp', `${p.doap}description`, '"My Description"@en'),
 
-        quad('http://ex.org/myFoaf', p.rdf  + 'type', 'http://xmlns.com/foaf/0.1/Person'),
-        quad('http://ex.org/myFoaf', p.rdf  + 'type', 'http://www.w3.org/ns/earl#Assertor'),
-        quad('http://ex.org/myFoaf', p.foaf + 'name', '"My Author Name"'),
-        quad('http://ex.org/myFoaf', p.foaf + 'homepage', 'http://ex.org/MyPersonalHomePage'),
+        quad('http://ex.org/myFoaf', `${p.rdf}type`, 'http://xmlns.com/foaf/0.1/Person'),
+        quad('http://ex.org/myFoaf', `${p.rdf}type`, 'http://www.w3.org/ns/earl#Assertor'),
+        quad('http://ex.org/myFoaf', `${p.foaf}name`, '"My Author Name"'),
+        quad('http://ex.org/myFoaf', `${p.foaf}homepage`, 'http://ex.org/MyPersonalHomePage'),
       ]);
     });
 
-    it('without tests should produce triples without requires properties', async () => {
+    it('without tests should produce triples without requires properties', async() => {
       const p = require('../lib/prefixes.json');
-      return expect(await arrayifyStream(runner.resultsToEarl([], propertiesMinimal, testDate))).toBeRdfIsomorphic([
-        quad('', p.foaf + 'primaryTopic', 'http://ex.org/myApp'),
-        quad('', p.dc + 'issued', '"' + testDate.toISOString() + '"^^' + p.xsd + 'dateTime'),
+      return await expect(arrayifyStream(runner.resultsToEarl([], propertiesMinimal, testDate))).resolves.toBeRdfIsomorphic([
+        quad('', `${p.foaf}primaryTopic`, 'http://ex.org/myApp'),
+        quad('', `${p.dc}issued`, `"${testDate.toISOString()}"^^${p.xsd}dateTime`),
 
-        quad('http://ex.org/myApp', p.rdf  + 'type', p.earl + 'Software'),
-        quad('http://ex.org/myApp', p.rdf  + 'type', p.earl + 'TestSubject'),
-        quad('http://ex.org/myApp', p.rdf  + 'type', p.doap + 'Project'),
-        quad('http://ex.org/myApp', p.doap + 'name', '"My Name"'),
-        quad('http://ex.org/myApp', p.dc   + 'title', '"My Name"'),
-        quad('http://ex.org/myApp', p.doap + 'homepage', 'http://ex.org/myHomePage'),
-        quad('http://ex.org/myApp', p.doap + 'license', 'http://ex.org/myLicense'),
-        quad('http://ex.org/myApp', p.doap + 'programming-language', '"JavaScript"'),
-        quad('http://ex.org/myApp', p.doap + 'implements', 'http://ex.org/TheSpec'),
-        quad('http://ex.org/myApp', p.doap + 'category', 'http://dbpedia.org/resource/Resource_Description_Framework'),
-        quad('http://ex.org/myApp', p.doap + 'download-page', 'https://npmjs.org/package/MyName'),
-        quad('http://ex.org/myApp', p.dc   + 'description', '"My Description"@en'),
-        quad('http://ex.org/myApp', p.doap + 'description', '"My Description"@en'),
+        quad('http://ex.org/myApp', `${p.rdf}type`, `${p.earl}Software`),
+        quad('http://ex.org/myApp', `${p.rdf}type`, `${p.earl}TestSubject`),
+        quad('http://ex.org/myApp', `${p.rdf}type`, `${p.doap}Project`),
+        quad('http://ex.org/myApp', `${p.doap}name`, '"My Name"'),
+        quad('http://ex.org/myApp', `${p.dc}title`, '"My Name"'),
+        quad('http://ex.org/myApp', `${p.doap}homepage`, 'http://ex.org/myHomePage'),
+        quad('http://ex.org/myApp', `${p.doap}license`, 'http://ex.org/myLicense'),
+        quad('http://ex.org/myApp', `${p.doap}programming-language`, '"JavaScript"'),
+        quad('http://ex.org/myApp', `${p.doap}implements`, 'http://ex.org/TheSpec'),
+        quad('http://ex.org/myApp', `${p.doap}category`, 'http://dbpedia.org/resource/Resource_Description_Framework'),
+        quad('http://ex.org/myApp', `${p.doap}download-page`, 'https://npmjs.org/package/MyName'),
+        quad('http://ex.org/myApp', `${p.dc}description`, '"My Description"@en'),
+        quad('http://ex.org/myApp', `${p.doap}description`, '"My Description"@en'),
       ]);
     });
 
-    it('without tests should produce triples without requires author properties', async () => {
+    it('without tests should produce triples without requires author properties', async() => {
       const p = require('../lib/prefixes.json');
-      return expect(await arrayifyStream(runner.resultsToEarl([], propertiesMinimalAuthor, testDate)))
+      return await expect(arrayifyStream(runner.resultsToEarl([], propertiesMinimalAuthor, testDate))).resolves
         .toBeRdfIsomorphic([
-          quad('', p.foaf + 'primaryTopic', 'http://ex.org/myApp'),
-          quad('', p.dc + 'issued', '"' + testDate.toISOString() + '"^^' + p.xsd + 'dateTime'),
-          quad('', p.foaf + 'maker', 'http://ex.org/myFoaf'),
+          quad('', `${p.foaf}primaryTopic`, 'http://ex.org/myApp'),
+          quad('', `${p.dc}issued`, `"${testDate.toISOString()}"^^${p.xsd}dateTime`),
+          quad('', `${p.foaf}maker`, 'http://ex.org/myFoaf'),
 
-          quad('http://ex.org/myApp', p.rdf  + 'type', p.earl + 'Software'),
-          quad('http://ex.org/myApp', p.rdf  + 'type', p.earl + 'TestSubject'),
-          quad('http://ex.org/myApp', p.rdf  + 'type', p.doap + 'Project'),
-          quad('http://ex.org/myApp', p.doap + 'name', '"My Name"'),
-          quad('http://ex.org/myApp', p.dc   + 'title', '"My Name"'),
-          quad('http://ex.org/myApp', p.doap + 'homepage', 'http://ex.org/myHomePage'),
-          quad('http://ex.org/myApp', p.doap + 'license', 'http://ex.org/myLicense'),
-          quad('http://ex.org/myApp', p.doap + 'programming-language', '"JavaScript"'),
-          quad('http://ex.org/myApp', p.doap + 'implements', 'http://ex.org/TheSpec'),
-          quad('http://ex.org/myApp', p.doap + 'category',
-            'http://dbpedia.org/resource/Resource_Description_Framework'),
-          quad('http://ex.org/myApp', p.doap + 'download-page', 'https://npmjs.org/package/MyName'),
-          quad('http://ex.org/myApp', p.doap + 'developer', 'http://ex.org/myFoaf'),
-          quad('http://ex.org/myApp', p.doap + 'maintainer', 'http://ex.org/myFoaf'),
-          quad('http://ex.org/myApp', p.doap + 'documenter', 'http://ex.org/myFoaf'),
-          quad('http://ex.org/myApp', p.doap + 'maker', 'http://ex.org/myFoaf'),
-          quad('http://ex.org/myApp', p.dc   + 'creator', 'http://ex.org/myFoaf'),
-          quad('http://ex.org/myApp', p.dc   + 'description', '"My Description"@en'),
-          quad('http://ex.org/myApp', p.doap + 'description', '"My Description"@en'),
+          quad('http://ex.org/myApp', `${p.rdf}type`, `${p.earl}Software`),
+          quad('http://ex.org/myApp', `${p.rdf}type`, `${p.earl}TestSubject`),
+          quad('http://ex.org/myApp', `${p.rdf}type`, `${p.doap}Project`),
+          quad('http://ex.org/myApp', `${p.doap}name`, '"My Name"'),
+          quad('http://ex.org/myApp', `${p.dc}title`, '"My Name"'),
+          quad('http://ex.org/myApp', `${p.doap}homepage`, 'http://ex.org/myHomePage'),
+          quad('http://ex.org/myApp', `${p.doap}license`, 'http://ex.org/myLicense'),
+          quad('http://ex.org/myApp', `${p.doap}programming-language`, '"JavaScript"'),
+          quad('http://ex.org/myApp', `${p.doap}implements`, 'http://ex.org/TheSpec'),
+          quad('http://ex.org/myApp', `${p.doap}category`, 'http://dbpedia.org/resource/Resource_Description_Framework'),
+          quad('http://ex.org/myApp', `${p.doap}download-page`, 'https://npmjs.org/package/MyName'),
+          quad('http://ex.org/myApp', `${p.doap}developer`, 'http://ex.org/myFoaf'),
+          quad('http://ex.org/myApp', `${p.doap}maintainer`, 'http://ex.org/myFoaf'),
+          quad('http://ex.org/myApp', `${p.doap}documenter`, 'http://ex.org/myFoaf'),
+          quad('http://ex.org/myApp', `${p.doap}maker`, 'http://ex.org/myFoaf'),
+          quad('http://ex.org/myApp', `${p.dc}creator`, 'http://ex.org/myFoaf'),
+          quad('http://ex.org/myApp', `${p.dc}description`, '"My Description"@en'),
+          quad('http://ex.org/myApp', `${p.doap}description`, '"My Description"@en'),
 
-          quad('http://ex.org/myFoaf', p.rdf  + 'type', 'http://xmlns.com/foaf/0.1/Person'),
-          quad('http://ex.org/myFoaf', p.rdf  + 'type', 'http://www.w3.org/ns/earl#Assertor'),
+          quad('http://ex.org/myFoaf', `${p.rdf}type`, 'http://xmlns.com/foaf/0.1/Person'),
+          quad('http://ex.org/myFoaf', `${p.rdf}type`, 'http://www.w3.org/ns/earl#Assertor'),
         ]);
     });
 
-    it('with tests should produce triples for all requires properties', async () => {
+    it('with tests should produce triples for all requires properties', async() => {
       const p = require('../lib/prefixes.json');
-      return expect(await arrayifyStream(runner.resultsToEarl(testResults, propertiesAll, testDate)))
+      return await expect(arrayifyStream(runner.resultsToEarl(testResults, propertiesAll, testDate))).resolves
         .toBeRdfIsomorphic([
-          quad('http://ex.org/report', p.foaf + 'primaryTopic', 'http://ex.org/myApp'),
-          quad('http://ex.org/report', p.dc + 'issued', '"' + testDate.toISOString() + '"^^' + p.xsd + 'dateTime'),
-          quad('http://ex.org/report', p.foaf + 'maker', 'http://ex.org/myFoaf'),
+          quad('http://ex.org/report', `${p.foaf}primaryTopic`, 'http://ex.org/myApp'),
+          quad('http://ex.org/report', `${p.dc}issued`, `"${testDate.toISOString()}"^^${p.xsd}dateTime`),
+          quad('http://ex.org/report', `${p.foaf}maker`, 'http://ex.org/myFoaf'),
 
-          quad('http://ex.org/myApp', p.rdf  + 'type', p.earl + 'Software'),
-          quad('http://ex.org/myApp', p.rdf  + 'type', p.earl + 'TestSubject'),
-          quad('http://ex.org/myApp', p.rdf  + 'type', p.doap + 'Project'),
-          quad('http://ex.org/myApp', p.doap + 'name', '"My Name"'),
-          quad('http://ex.org/myApp', p.dc   + 'title', '"My Name"'),
-          quad('http://ex.org/myApp', p.doap + 'release', '_:b_release'),
-          quad('_:b_release',         p.doap + 'revision', '"1.2.3"'),
-          quad('http://ex.org/myApp', p.doap + 'homepage', 'http://ex.org/myHomePage'),
-          quad('http://ex.org/myApp', p.doap + 'license', 'http://ex.org/myLicense'),
-          quad('http://ex.org/myApp', p.doap + 'programming-language', '"JavaScript"'),
-          quad('http://ex.org/myApp', p.doap + 'implements', 'http://ex.org/TheSpec'),
-          quad('http://ex.org/myApp', p.doap + 'category',
-            'http://dbpedia.org/resource/Resource_Description_Framework'),
-          quad('http://ex.org/myApp', p.doap + 'download-page', 'https://npmjs.org/package/MyName'),
-          quad('http://ex.org/myApp', p.doap + 'bug-database', 'http://ex.org/myBugs'),
-          quad('http://ex.org/myApp', p.doap + 'blog', 'http://ex.org/myBlog'),
-          quad('http://ex.org/myApp', p.doap + 'developer', 'http://ex.org/myFoaf'),
-          quad('http://ex.org/myApp', p.doap + 'maintainer', 'http://ex.org/myFoaf'),
-          quad('http://ex.org/myApp', p.doap + 'documenter', 'http://ex.org/myFoaf'),
-          quad('http://ex.org/myApp', p.doap + 'maker', 'http://ex.org/myFoaf'),
-          quad('http://ex.org/myApp', p.dc   + 'creator', 'http://ex.org/myFoaf'),
-          quad('http://ex.org/myApp', p.dc   + 'description', '"My Description"@en'),
-          quad('http://ex.org/myApp', p.doap + 'description', '"My Description"@en'),
+          quad('http://ex.org/myApp', `${p.rdf}type`, `${p.earl}Software`),
+          quad('http://ex.org/myApp', `${p.rdf}type`, `${p.earl}TestSubject`),
+          quad('http://ex.org/myApp', `${p.rdf}type`, `${p.doap}Project`),
+          quad('http://ex.org/myApp', `${p.doap}name`, '"My Name"'),
+          quad('http://ex.org/myApp', `${p.dc}title`, '"My Name"'),
+          quad('http://ex.org/myApp', `${p.doap}release`, '_:b_release'),
+          quad('_:b_release', `${p.doap}revision`, '"1.2.3"'),
+          quad('http://ex.org/myApp', `${p.doap}homepage`, 'http://ex.org/myHomePage'),
+          quad('http://ex.org/myApp', `${p.doap}license`, 'http://ex.org/myLicense'),
+          quad('http://ex.org/myApp', `${p.doap}programming-language`, '"JavaScript"'),
+          quad('http://ex.org/myApp', `${p.doap}implements`, 'http://ex.org/TheSpec'),
+          quad('http://ex.org/myApp', `${p.doap}category`, 'http://dbpedia.org/resource/Resource_Description_Framework'),
+          quad('http://ex.org/myApp', `${p.doap}download-page`, 'https://npmjs.org/package/MyName'),
+          quad('http://ex.org/myApp', `${p.doap}bug-database`, 'http://ex.org/myBugs'),
+          quad('http://ex.org/myApp', `${p.doap}blog`, 'http://ex.org/myBlog'),
+          quad('http://ex.org/myApp', `${p.doap}developer`, 'http://ex.org/myFoaf'),
+          quad('http://ex.org/myApp', `${p.doap}maintainer`, 'http://ex.org/myFoaf'),
+          quad('http://ex.org/myApp', `${p.doap}documenter`, 'http://ex.org/myFoaf'),
+          quad('http://ex.org/myApp', `${p.doap}maker`, 'http://ex.org/myFoaf'),
+          quad('http://ex.org/myApp', `${p.dc}creator`, 'http://ex.org/myFoaf'),
+          quad('http://ex.org/myApp', `${p.dc}description`, '"My Description"@en'),
+          quad('http://ex.org/myApp', `${p.doap}description`, '"My Description"@en'),
 
-          quad('http://ex.org/myFoaf', p.rdf  + 'type', 'http://xmlns.com/foaf/0.1/Person'),
-          quad('http://ex.org/myFoaf', p.rdf  + 'type', 'http://www.w3.org/ns/earl#Assertor'),
-          quad('http://ex.org/myFoaf', p.foaf + 'name', '"My Author Name"'),
-          quad('http://ex.org/myFoaf', p.foaf + 'homepage', 'http://ex.org/MyPersonalHomePage'),
-          quad('http://ex.org/myFoaf', p.foaf + 'primaryTopicOf', 'http://ex.org/MyPrimaryTopic'),
+          quad('http://ex.org/myFoaf', `${p.rdf}type`, 'http://xmlns.com/foaf/0.1/Person'),
+          quad('http://ex.org/myFoaf', `${p.rdf}type`, 'http://www.w3.org/ns/earl#Assertor'),
+          quad('http://ex.org/myFoaf', `${p.foaf}name`, '"My Author Name"'),
+          quad('http://ex.org/myFoaf', `${p.foaf}homepage`, 'http://ex.org/MyPersonalHomePage'),
+          quad('http://ex.org/myFoaf', `${p.foaf}primaryTopicOf`, 'http://ex.org/MyPrimaryTopic'),
 
-          quad('http://ex.org/test1', p.rdf  + 'type', p.earl + 'TestCriterion'),
-          quad('http://ex.org/test1', p.rdf  + 'type', p.earl + 'TestCase'),
-          quad('http://ex.org/test1', p.dc   + 'title', '"Test1"'),
-          quad('http://ex.org/test1', p.earl + 'assertions', '_:assertions0'),
-          quad('_:assertions0', p.rdf + 'first', '_:assertion0'),
-          quad('_:assertions0', p.rdf + 'rest', p.rdf + 'nil'),
-          quad('_:assertion0', p.rdf  + 'type', 'http://www.w3.org/ns/earl#Assertion'),
-          quad('_:assertion0', p.earl + 'assertedBy', 'http://ex.org/myFoaf'),
-          quad('_:assertion0', p.earl + 'test', 'http://ex.org/test1'),
-          quad('_:assertion0', p.earl + 'subject', 'http://ex.org/myApp'),
-          quad('_:assertion0', p.earl + 'mode', p.earl + 'automatic'),
-          quad('_:assertion0', p.earl + 'result', '_:result0'),
-          quad('_:result0', p.rdf + 'type', p.earl + 'TestResult'),
-          quad('_:result0', p.earl + 'outcome', p.earl + 'passed'),
-          quad('_:result0', p.dc + 'date', '"' + testDate.toISOString() + '"^^' + p.xsd + 'dateTime'),
+          quad('http://ex.org/test1', `${p.rdf}type`, `${p.earl}TestCriterion`),
+          quad('http://ex.org/test1', `${p.rdf}type`, `${p.earl}TestCase`),
+          quad('http://ex.org/test1', `${p.dc}title`, '"Test1"'),
+          quad('http://ex.org/test1', `${p.earl}assertions`, '_:assertions0'),
+          quad('_:assertions0', `${p.rdf}first`, '_:assertion0'),
+          quad('_:assertions0', `${p.rdf}rest`, `${p.rdf}nil`),
+          quad('_:assertion0', `${p.rdf}type`, 'http://www.w3.org/ns/earl#Assertion'),
+          quad('_:assertion0', `${p.earl}assertedBy`, 'http://ex.org/myFoaf'),
+          quad('_:assertion0', `${p.earl}test`, 'http://ex.org/test1'),
+          quad('_:assertion0', `${p.earl}subject`, 'http://ex.org/myApp'),
+          quad('_:assertion0', `${p.earl}mode`, `${p.earl}automatic`),
+          quad('_:assertion0', `${p.earl}result`, '_:result0'),
+          quad('_:result0', `${p.rdf}type`, `${p.earl}TestResult`),
+          quad('_:result0', `${p.earl}outcome`, `${p.earl}passed`),
+          quad('_:result0', `${p.dc}date`, `"${testDate.toISOString()}"^^${p.xsd}dateTime`),
 
-          quad('http://ex.org/test2', p.rdf  + 'type', p.earl + 'TestCriterion'),
-          quad('http://ex.org/test2', p.rdf  + 'type', p.earl + 'TestCase'),
-          quad('http://ex.org/test2', p.dc   + 'title', '"Test2"'),
-          quad('http://ex.org/test2', p.dc   + 'description', '"Test2 comment"'),
-          quad('http://ex.org/test2', p.earl + 'assertions', '_:assertions1'),
-          quad('_:assertions1', p.rdf + 'first', '_:assertion1'),
-          quad('_:assertions1', p.rdf + 'rest', p.rdf + 'nil'),
-          quad('_:assertion1', p.rdf  + 'type', 'http://www.w3.org/ns/earl#Assertion'),
-          quad('_:assertion1', p.earl + 'assertedBy', 'http://ex.org/myFoaf'),
-          quad('_:assertion1', p.earl + 'test', 'http://ex.org/test2'),
-          quad('_:assertion1', p.earl + 'subject', 'http://ex.org/myApp'),
-          quad('_:assertion1', p.earl + 'mode', p.earl + 'automatic'),
-          quad('_:assertion1', p.earl + 'result', '_:result1'),
-          quad('_:result1', p.rdf + 'type', p.earl + 'TestResult'),
-          quad('_:result1', p.earl + 'outcome', p.earl + 'passed'),
-          quad('_:result1', p.dc + 'date', '"' + testDate.toISOString() + '"^^' + p.xsd + 'dateTime'),
+          quad('http://ex.org/test2', `${p.rdf}type`, `${p.earl}TestCriterion`),
+          quad('http://ex.org/test2', `${p.rdf}type`, `${p.earl}TestCase`),
+          quad('http://ex.org/test2', `${p.dc}title`, '"Test2"'),
+          quad('http://ex.org/test2', `${p.dc}description`, '"Test2 comment"'),
+          quad('http://ex.org/test2', `${p.earl}assertions`, '_:assertions1'),
+          quad('_:assertions1', `${p.rdf}first`, '_:assertion1'),
+          quad('_:assertions1', `${p.rdf}rest`, `${p.rdf}nil`),
+          quad('_:assertion1', `${p.rdf}type`, 'http://www.w3.org/ns/earl#Assertion'),
+          quad('_:assertion1', `${p.earl}assertedBy`, 'http://ex.org/myFoaf'),
+          quad('_:assertion1', `${p.earl}test`, 'http://ex.org/test2'),
+          quad('_:assertion1', `${p.earl}subject`, 'http://ex.org/myApp'),
+          quad('_:assertion1', `${p.earl}mode`, `${p.earl}automatic`),
+          quad('_:assertion1', `${p.earl}result`, '_:result1'),
+          quad('_:result1', `${p.rdf}type`, `${p.earl}TestResult`),
+          quad('_:result1', `${p.earl}outcome`, `${p.earl}passed`),
+          quad('_:result1', `${p.dc}date`, `"${testDate.toISOString()}"^^${p.xsd}dateTime`),
 
-          quad('http://ex.org/test3', p.rdf  + 'type', p.earl + 'TestCriterion'),
-          quad('http://ex.org/test3', p.rdf  + 'type', p.earl + 'TestCase'),
-          quad('http://ex.org/test3', p.dc   + 'title', '"Test3"'),
-          quad('http://ex.org/test3', p.earl + 'assertions', '_:assertions2'),
-          quad('_:assertions2', p.rdf + 'first', '_:assertion2'),
-          quad('_:assertions2', p.rdf + 'rest', p.rdf + 'nil'),
-          quad('_:assertion2', p.rdf  + 'type', 'http://www.w3.org/ns/earl#Assertion'),
-          quad('_:assertion2', p.earl + 'assertedBy', 'http://ex.org/myFoaf'),
-          quad('_:assertion2', p.earl + 'test', 'http://ex.org/test3'),
-          quad('_:assertion2', p.earl + 'subject', 'http://ex.org/myApp'),
-          quad('_:assertion2', p.earl + 'mode', p.earl + 'automatic'),
-          quad('_:assertion2', p.earl + 'result', '_:result2'),
-          quad('_:result2', p.rdf + 'type', p.earl + 'TestResult'),
-          quad('_:result2', p.earl + 'outcome', p.earl + 'failed'),
-          quad('_:result2', p.dc + 'date', '"' + testDate.toISOString() + '"^^' + p.xsd + 'dateTime'),
+          quad('http://ex.org/test3', `${p.rdf}type`, `${p.earl}TestCriterion`),
+          quad('http://ex.org/test3', `${p.rdf}type`, `${p.earl}TestCase`),
+          quad('http://ex.org/test3', `${p.dc}title`, '"Test3"'),
+          quad('http://ex.org/test3', `${p.earl}assertions`, '_:assertions2'),
+          quad('_:assertions2', `${p.rdf}first`, '_:assertion2'),
+          quad('_:assertions2', `${p.rdf}rest`, `${p.rdf}nil`),
+          quad('_:assertion2', `${p.rdf}type`, 'http://www.w3.org/ns/earl#Assertion'),
+          quad('_:assertion2', `${p.earl}assertedBy`, 'http://ex.org/myFoaf'),
+          quad('_:assertion2', `${p.earl}test`, 'http://ex.org/test3'),
+          quad('_:assertion2', `${p.earl}subject`, 'http://ex.org/myApp'),
+          quad('_:assertion2', `${p.earl}mode`, `${p.earl}automatic`),
+          quad('_:assertion2', `${p.earl}result`, '_:result2'),
+          quad('_:result2', `${p.rdf}type`, `${p.earl}TestResult`),
+          quad('_:result2', `${p.earl}outcome`, `${p.earl}failed`),
+          quad('_:result2', `${p.dc}date`, `"${testDate.toISOString()}"^^${p.xsd}dateTime`),
         ]);
     });
 
-    it('with tests should produce triples without requires properties', async () => {
+    it('with tests should produce triples without requires properties', async() => {
       const p = require('../lib/prefixes.json');
-      return expect(await arrayifyStream(runner.resultsToEarl(testResults, propertiesMinimal, testDate)))
+      return await expect(arrayifyStream(runner.resultsToEarl(testResults, propertiesMinimal, testDate))).resolves
         .toBeRdfIsomorphic([
-          quad('', p.foaf + 'primaryTopic', 'http://ex.org/myApp'),
-          quad('', p.dc + 'issued', '"' + testDate.toISOString() + '"^^' + p.xsd + 'dateTime'),
+          quad('', `${p.foaf}primaryTopic`, 'http://ex.org/myApp'),
+          quad('', `${p.dc}issued`, `"${testDate.toISOString()}"^^${p.xsd}dateTime`),
 
-          quad('http://ex.org/myApp', p.rdf  + 'type', p.earl + 'Software'),
-          quad('http://ex.org/myApp', p.rdf  + 'type', p.earl + 'TestSubject'),
-          quad('http://ex.org/myApp', p.rdf  + 'type', p.doap + 'Project'),
-          quad('http://ex.org/myApp', p.doap + 'name', '"My Name"'),
-          quad('http://ex.org/myApp', p.dc   + 'title', '"My Name"'),
-          quad('http://ex.org/myApp', p.doap + 'homepage', 'http://ex.org/myHomePage'),
-          quad('http://ex.org/myApp', p.doap + 'license', 'http://ex.org/myLicense'),
-          quad('http://ex.org/myApp', p.doap + 'programming-language', '"JavaScript"'),
-          quad('http://ex.org/myApp', p.doap + 'implements', 'http://ex.org/TheSpec'),
-          quad('http://ex.org/myApp', p.doap + 'category',
-            'http://dbpedia.org/resource/Resource_Description_Framework'),
-          quad('http://ex.org/myApp', p.doap + 'download-page', 'https://npmjs.org/package/MyName'),
-          quad('http://ex.org/myApp', p.dc   + 'description', '"My Description"@en'),
-          quad('http://ex.org/myApp', p.doap + 'description', '"My Description"@en'),
+          quad('http://ex.org/myApp', `${p.rdf}type`, `${p.earl}Software`),
+          quad('http://ex.org/myApp', `${p.rdf}type`, `${p.earl}TestSubject`),
+          quad('http://ex.org/myApp', `${p.rdf}type`, `${p.doap}Project`),
+          quad('http://ex.org/myApp', `${p.doap}name`, '"My Name"'),
+          quad('http://ex.org/myApp', `${p.dc}title`, '"My Name"'),
+          quad('http://ex.org/myApp', `${p.doap}homepage`, 'http://ex.org/myHomePage'),
+          quad('http://ex.org/myApp', `${p.doap}license`, 'http://ex.org/myLicense'),
+          quad('http://ex.org/myApp', `${p.doap}programming-language`, '"JavaScript"'),
+          quad('http://ex.org/myApp', `${p.doap}implements`, 'http://ex.org/TheSpec'),
+          quad('http://ex.org/myApp', `${p.doap}category`, 'http://dbpedia.org/resource/Resource_Description_Framework'),
+          quad('http://ex.org/myApp', `${p.doap}download-page`, 'https://npmjs.org/package/MyName'),
+          quad('http://ex.org/myApp', `${p.dc}description`, '"My Description"@en'),
+          quad('http://ex.org/myApp', `${p.doap}description`, '"My Description"@en'),
 
-          quad('http://ex.org/test1', p.rdf  + 'type', p.earl + 'TestCriterion'),
-          quad('http://ex.org/test1', p.rdf  + 'type', p.earl + 'TestCase'),
-          quad('http://ex.org/test1', p.dc   + 'title', '"Test1"'),
-          quad('http://ex.org/test1', p.earl + 'assertions', '_:assertions0'),
-          quad('_:assertions0', p.rdf + 'first', '_:assertion0'),
-          quad('_:assertions0', p.rdf + 'rest', p.rdf + 'nil'),
-          quad('_:assertion0', p.rdf  + 'type', 'http://www.w3.org/ns/earl#Assertion'),
-          quad('_:assertion0', p.earl + 'test', 'http://ex.org/test1'),
-          quad('_:assertion0', p.earl + 'subject', 'http://ex.org/myApp'),
-          quad('_:assertion0', p.earl + 'mode', p.earl + 'automatic'),
-          quad('_:assertion0', p.earl + 'result', '_:result0'),
-          quad('_:result0', p.rdf + 'type', p.earl + 'TestResult'),
-          quad('_:result0', p.earl + 'outcome', p.earl + 'passed'),
-          quad('_:result0', p.dc + 'date', '"' + testDate.toISOString() + '"^^' + p.xsd + 'dateTime'),
+          quad('http://ex.org/test1', `${p.rdf}type`, `${p.earl}TestCriterion`),
+          quad('http://ex.org/test1', `${p.rdf}type`, `${p.earl}TestCase`),
+          quad('http://ex.org/test1', `${p.dc}title`, '"Test1"'),
+          quad('http://ex.org/test1', `${p.earl}assertions`, '_:assertions0'),
+          quad('_:assertions0', `${p.rdf}first`, '_:assertion0'),
+          quad('_:assertions0', `${p.rdf}rest`, `${p.rdf}nil`),
+          quad('_:assertion0', `${p.rdf}type`, 'http://www.w3.org/ns/earl#Assertion'),
+          quad('_:assertion0', `${p.earl}test`, 'http://ex.org/test1'),
+          quad('_:assertion0', `${p.earl}subject`, 'http://ex.org/myApp'),
+          quad('_:assertion0', `${p.earl}mode`, `${p.earl}automatic`),
+          quad('_:assertion0', `${p.earl}result`, '_:result0'),
+          quad('_:result0', `${p.rdf}type`, `${p.earl}TestResult`),
+          quad('_:result0', `${p.earl}outcome`, `${p.earl}passed`),
+          quad('_:result0', `${p.dc}date`, `"${testDate.toISOString()}"^^${p.xsd}dateTime`),
 
-          quad('http://ex.org/test2', p.rdf  + 'type', p.earl + 'TestCriterion'),
-          quad('http://ex.org/test2', p.rdf  + 'type', p.earl + 'TestCase'),
-          quad('http://ex.org/test2', p.dc   + 'title', '"Test2"'),
-          quad('http://ex.org/test2', p.dc   + 'description', '"Test2 comment"'),
-          quad('http://ex.org/test2', p.earl + 'assertions', '_:assertions1'),
-          quad('_:assertions1', p.rdf + 'first', '_:assertion1'),
-          quad('_:assertions1', p.rdf + 'rest', p.rdf + 'nil'),
-          quad('_:assertion1', p.rdf  + 'type', 'http://www.w3.org/ns/earl#Assertion'),
-          quad('_:assertion1', p.earl + 'test', 'http://ex.org/test2'),
-          quad('_:assertion1', p.earl + 'subject', 'http://ex.org/myApp'),
-          quad('_:assertion1', p.earl + 'mode', p.earl + 'automatic'),
-          quad('_:assertion1', p.earl + 'result', '_:result1'),
-          quad('_:result1', p.rdf + 'type', p.earl + 'TestResult'),
-          quad('_:result1', p.earl + 'outcome', p.earl + 'passed'),
-          quad('_:result1', p.dc + 'date', '"' + testDate.toISOString() + '"^^' + p.xsd + 'dateTime'),
+          quad('http://ex.org/test2', `${p.rdf}type`, `${p.earl}TestCriterion`),
+          quad('http://ex.org/test2', `${p.rdf}type`, `${p.earl}TestCase`),
+          quad('http://ex.org/test2', `${p.dc}title`, '"Test2"'),
+          quad('http://ex.org/test2', `${p.dc}description`, '"Test2 comment"'),
+          quad('http://ex.org/test2', `${p.earl}assertions`, '_:assertions1'),
+          quad('_:assertions1', `${p.rdf}first`, '_:assertion1'),
+          quad('_:assertions1', `${p.rdf}rest`, `${p.rdf}nil`),
+          quad('_:assertion1', `${p.rdf}type`, 'http://www.w3.org/ns/earl#Assertion'),
+          quad('_:assertion1', `${p.earl}test`, 'http://ex.org/test2'),
+          quad('_:assertion1', `${p.earl}subject`, 'http://ex.org/myApp'),
+          quad('_:assertion1', `${p.earl}mode`, `${p.earl}automatic`),
+          quad('_:assertion1', `${p.earl}result`, '_:result1'),
+          quad('_:result1', `${p.rdf}type`, `${p.earl}TestResult`),
+          quad('_:result1', `${p.earl}outcome`, `${p.earl}passed`),
+          quad('_:result1', `${p.dc}date`, `"${testDate.toISOString()}"^^${p.xsd}dateTime`),
 
-          quad('http://ex.org/test3', p.rdf  + 'type', p.earl + 'TestCriterion'),
-          quad('http://ex.org/test3', p.rdf  + 'type', p.earl + 'TestCase'),
-          quad('http://ex.org/test3', p.dc   + 'title', '"Test3"'),
-          quad('http://ex.org/test3', p.earl + 'assertions', '_:assertions2'),
-          quad('_:assertions2', p.rdf + 'first', '_:assertion2'),
-          quad('_:assertions2', p.rdf + 'rest', p.rdf + 'nil'),
-          quad('_:assertion2', p.rdf  + 'type', 'http://www.w3.org/ns/earl#Assertion'),
-          quad('_:assertion2', p.earl + 'test', 'http://ex.org/test3'),
-          quad('_:assertion2', p.earl + 'subject', 'http://ex.org/myApp'),
-          quad('_:assertion2', p.earl + 'mode', p.earl + 'automatic'),
-          quad('_:assertion2', p.earl + 'result', '_:result2'),
-          quad('_:result2', p.rdf + 'type', p.earl + 'TestResult'),
-          quad('_:result2', p.earl + 'outcome', p.earl + 'failed'),
-          quad('_:result2', p.dc + 'date', '"' + testDate.toISOString() + '"^^' + p.xsd + 'dateTime'),
+          quad('http://ex.org/test3', `${p.rdf}type`, `${p.earl}TestCriterion`),
+          quad('http://ex.org/test3', `${p.rdf}type`, `${p.earl}TestCase`),
+          quad('http://ex.org/test3', `${p.dc}title`, '"Test3"'),
+          quad('http://ex.org/test3', `${p.earl}assertions`, '_:assertions2'),
+          quad('_:assertions2', `${p.rdf}first`, '_:assertion2'),
+          quad('_:assertions2', `${p.rdf}rest`, `${p.rdf}nil`),
+          quad('_:assertion2', `${p.rdf}type`, 'http://www.w3.org/ns/earl#Assertion'),
+          quad('_:assertion2', `${p.earl}test`, 'http://ex.org/test3'),
+          quad('_:assertion2', `${p.earl}subject`, 'http://ex.org/myApp'),
+          quad('_:assertion2', `${p.earl}mode`, `${p.earl}automatic`),
+          quad('_:assertion2', `${p.earl}result`, '_:result2'),
+          quad('_:result2', `${p.rdf}type`, `${p.earl}TestResult`),
+          quad('_:result2', `${p.earl}outcome`, `${p.earl}failed`),
+          quad('_:result2', `${p.dc}date`, `"${testDate.toISOString()}"^^${p.xsd}dateTime`),
         ]);
     });
 
-    it('with tests should produce triples without requires properties, with skipped tests', async () => {
+    it('with tests should produce triples without requires properties, with skipped tests', async() => {
       const p = require('../lib/prefixes.json');
-      return expect(await arrayifyStream(runner.resultsToEarl(testResultsSkips, propertiesMinimal, testDate)))
+      return await expect(arrayifyStream(runner.resultsToEarl(testResultsSkips, propertiesMinimal, testDate))).resolves
         .toBeRdfIsomorphic([
-          quad('', p.foaf + 'primaryTopic', 'http://ex.org/myApp'),
-          quad('', p.dc + 'issued', '"' + testDate.toISOString() + '"^^' + p.xsd + 'dateTime'),
+          quad('', `${p.foaf}primaryTopic`, 'http://ex.org/myApp'),
+          quad('', `${p.dc}issued`, `"${testDate.toISOString()}"^^${p.xsd}dateTime`),
 
-          quad('http://ex.org/myApp', p.rdf  + 'type', p.earl + 'Software'),
-          quad('http://ex.org/myApp', p.rdf  + 'type', p.earl + 'TestSubject'),
-          quad('http://ex.org/myApp', p.rdf  + 'type', p.doap + 'Project'),
-          quad('http://ex.org/myApp', p.doap + 'name', '"My Name"'),
-          quad('http://ex.org/myApp', p.dc   + 'title', '"My Name"'),
-          quad('http://ex.org/myApp', p.doap + 'homepage', 'http://ex.org/myHomePage'),
-          quad('http://ex.org/myApp', p.doap + 'license', 'http://ex.org/myLicense'),
-          quad('http://ex.org/myApp', p.doap + 'programming-language', '"JavaScript"'),
-          quad('http://ex.org/myApp', p.doap + 'implements', 'http://ex.org/TheSpec'),
-          quad('http://ex.org/myApp', p.doap + 'category',
-            'http://dbpedia.org/resource/Resource_Description_Framework'),
-          quad('http://ex.org/myApp', p.doap + 'download-page', 'https://npmjs.org/package/MyName'),
-          quad('http://ex.org/myApp', p.dc   + 'description', '"My Description"@en'),
-          quad('http://ex.org/myApp', p.doap + 'description', '"My Description"@en'),
+          quad('http://ex.org/myApp', `${p.rdf}type`, `${p.earl}Software`),
+          quad('http://ex.org/myApp', `${p.rdf}type`, `${p.earl}TestSubject`),
+          quad('http://ex.org/myApp', `${p.rdf}type`, `${p.doap}Project`),
+          quad('http://ex.org/myApp', `${p.doap}name`, '"My Name"'),
+          quad('http://ex.org/myApp', `${p.dc}title`, '"My Name"'),
+          quad('http://ex.org/myApp', `${p.doap}homepage`, 'http://ex.org/myHomePage'),
+          quad('http://ex.org/myApp', `${p.doap}license`, 'http://ex.org/myLicense'),
+          quad('http://ex.org/myApp', `${p.doap}programming-language`, '"JavaScript"'),
+          quad('http://ex.org/myApp', `${p.doap}implements`, 'http://ex.org/TheSpec'),
+          quad('http://ex.org/myApp', `${p.doap}category`, 'http://dbpedia.org/resource/Resource_Description_Framework'),
+          quad('http://ex.org/myApp', `${p.doap}download-page`, 'https://npmjs.org/package/MyName'),
+          quad('http://ex.org/myApp', `${p.dc}description`, '"My Description"@en'),
+          quad('http://ex.org/myApp', `${p.doap}description`, '"My Description"@en'),
 
-          quad('http://ex.org/test1', p.rdf  + 'type', p.earl + 'TestCriterion'),
-          quad('http://ex.org/test1', p.rdf  + 'type', p.earl + 'TestCase'),
-          quad('http://ex.org/test1', p.dc   + 'title', '"Test1"'),
-          quad('http://ex.org/test1', p.earl + 'assertions', '_:assertions0'),
-          quad('_:assertions0', p.rdf + 'first', '_:assertion0'),
-          quad('_:assertions0', p.rdf + 'rest', p.rdf + 'nil'),
-          quad('_:assertion0', p.rdf  + 'type', 'http://www.w3.org/ns/earl#Assertion'),
-          quad('_:assertion0', p.earl + 'test', 'http://ex.org/test1'),
-          quad('_:assertion0', p.earl + 'subject', 'http://ex.org/myApp'),
-          quad('_:assertion0', p.earl + 'mode', p.earl + 'automatic'),
-          quad('_:assertion0', p.earl + 'result', '_:result0'),
-          quad('_:result0', p.rdf + 'type', p.earl + 'TestResult'),
-          quad('_:result0', p.earl + 'outcome', p.earl + 'passed'),
-          quad('_:result0', p.dc + 'date', '"' + testDate.toISOString() + '"^^' + p.xsd + 'dateTime'),
+          quad('http://ex.org/test1', `${p.rdf}type`, `${p.earl}TestCriterion`),
+          quad('http://ex.org/test1', `${p.rdf}type`, `${p.earl}TestCase`),
+          quad('http://ex.org/test1', `${p.dc}title`, '"Test1"'),
+          quad('http://ex.org/test1', `${p.earl}assertions`, '_:assertions0'),
+          quad('_:assertions0', `${p.rdf}first`, '_:assertion0'),
+          quad('_:assertions0', `${p.rdf}rest`, `${p.rdf}nil`),
+          quad('_:assertion0', `${p.rdf}type`, 'http://www.w3.org/ns/earl#Assertion'),
+          quad('_:assertion0', `${p.earl}test`, 'http://ex.org/test1'),
+          quad('_:assertion0', `${p.earl}subject`, 'http://ex.org/myApp'),
+          quad('_:assertion0', `${p.earl}mode`, `${p.earl}automatic`),
+          quad('_:assertion0', `${p.earl}result`, '_:result0'),
+          quad('_:result0', `${p.rdf}type`, `${p.earl}TestResult`),
+          quad('_:result0', `${p.earl}outcome`, `${p.earl}passed`),
+          quad('_:result0', `${p.dc}date`, `"${testDate.toISOString()}"^^${p.xsd}dateTime`),
 
-          quad('http://ex.org/test2', p.rdf  + 'type', p.earl + 'TestCriterion'),
-          quad('http://ex.org/test2', p.rdf  + 'type', p.earl + 'TestCase'),
-          quad('http://ex.org/test2', p.dc   + 'title', '"Test2"'),
-          quad('http://ex.org/test2', p.dc   + 'description', '"Test2 comment"'),
-          quad('http://ex.org/test2', p.earl + 'assertions', '_:assertions1'),
-          quad('_:assertions1', p.rdf + 'first', '_:assertion1'),
-          quad('_:assertions1', p.rdf + 'rest', p.rdf + 'nil'),
-          quad('_:assertion1', p.rdf  + 'type', 'http://www.w3.org/ns/earl#Assertion'),
-          quad('_:assertion1', p.earl + 'test', 'http://ex.org/test2'),
-          quad('_:assertion1', p.earl + 'subject', 'http://ex.org/myApp'),
-          quad('_:assertion1', p.earl + 'mode', p.earl + 'automatic'),
-          quad('_:assertion1', p.earl + 'result', '_:result1'),
-          quad('_:result1', p.rdf + 'type', p.earl + 'TestResult'),
-          quad('_:result1', p.earl + 'outcome', p.earl + 'inapplicable'),
-          quad('_:result1', p.dc + 'date', '"' + testDate.toISOString() + '"^^' + p.xsd + 'dateTime'),
+          quad('http://ex.org/test2', `${p.rdf}type`, `${p.earl}TestCriterion`),
+          quad('http://ex.org/test2', `${p.rdf}type`, `${p.earl}TestCase`),
+          quad('http://ex.org/test2', `${p.dc}title`, '"Test2"'),
+          quad('http://ex.org/test2', `${p.dc}description`, '"Test2 comment"'),
+          quad('http://ex.org/test2', `${p.earl}assertions`, '_:assertions1'),
+          quad('_:assertions1', `${p.rdf}first`, '_:assertion1'),
+          quad('_:assertions1', `${p.rdf}rest`, `${p.rdf}nil`),
+          quad('_:assertion1', `${p.rdf}type`, 'http://www.w3.org/ns/earl#Assertion'),
+          quad('_:assertion1', `${p.earl}test`, 'http://ex.org/test2'),
+          quad('_:assertion1', `${p.earl}subject`, 'http://ex.org/myApp'),
+          quad('_:assertion1', `${p.earl}mode`, `${p.earl}automatic`),
+          quad('_:assertion1', `${p.earl}result`, '_:result1'),
+          quad('_:result1', `${p.rdf}type`, `${p.earl}TestResult`),
+          quad('_:result1', `${p.earl}outcome`, `${p.earl}inapplicable`),
+          quad('_:result1', `${p.dc}date`, `"${testDate.toISOString()}"^^${p.xsd}dateTime`),
 
-          quad('http://ex.org/test3', p.rdf  + 'type', p.earl + 'TestCriterion'),
-          quad('http://ex.org/test3', p.rdf  + 'type', p.earl + 'TestCase'),
-          quad('http://ex.org/test3', p.dc   + 'title', '"Test3"'),
-          quad('http://ex.org/test3', p.earl + 'assertions', '_:assertions2'),
-          quad('_:assertions2', p.rdf + 'first', '_:assertion2'),
-          quad('_:assertions2', p.rdf + 'rest', p.rdf + 'nil'),
-          quad('_:assertion2', p.rdf  + 'type', 'http://www.w3.org/ns/earl#Assertion'),
-          quad('_:assertion2', p.earl + 'test', 'http://ex.org/test3'),
-          quad('_:assertion2', p.earl + 'subject', 'http://ex.org/myApp'),
-          quad('_:assertion2', p.earl + 'mode', p.earl + 'automatic'),
-          quad('_:assertion2', p.earl + 'result', '_:result2'),
-          quad('_:result2', p.rdf + 'type', p.earl + 'TestResult'),
-          quad('_:result2', p.earl + 'outcome', p.earl + 'failed'),
-          quad('_:result2', p.dc + 'date', '"' + testDate.toISOString() + '"^^' + p.xsd + 'dateTime'),
+          quad('http://ex.org/test3', `${p.rdf}type`, `${p.earl}TestCriterion`),
+          quad('http://ex.org/test3', `${p.rdf}type`, `${p.earl}TestCase`),
+          quad('http://ex.org/test3', `${p.dc}title`, '"Test3"'),
+          quad('http://ex.org/test3', `${p.earl}assertions`, '_:assertions2'),
+          quad('_:assertions2', `${p.rdf}first`, '_:assertion2'),
+          quad('_:assertions2', `${p.rdf}rest`, `${p.rdf}nil`),
+          quad('_:assertion2', `${p.rdf}type`, 'http://www.w3.org/ns/earl#Assertion'),
+          quad('_:assertion2', `${p.earl}test`, 'http://ex.org/test3'),
+          quad('_:assertion2', `${p.earl}subject`, 'http://ex.org/myApp'),
+          quad('_:assertion2', `${p.earl}mode`, `${p.earl}automatic`),
+          quad('_:assertion2', `${p.earl}result`, '_:result2'),
+          quad('_:result2', `${p.rdf}type`, `${p.earl}TestResult`),
+          quad('_:result2', `${p.earl}outcome`, `${p.earl}failed`),
+          quad('_:result2', `${p.dc}date`, `"${testDate.toISOString()}"^^${p.xsd}dateTime`),
         ]);
     });
   });

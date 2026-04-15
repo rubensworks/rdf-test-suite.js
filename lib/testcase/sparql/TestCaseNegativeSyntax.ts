@@ -1,31 +1,29 @@
-import {Resource} from "rdf-object";
-import {ErrorTest} from "../../ErrorTest";
-import {IFetchOptions, Util} from "../../Util";
-import {ITestCaseData} from "../ITestCase";
-import {ITestCaseHandler} from "../ITestCaseHandler";
-import {IQueryEngine} from "./IQueryEngine";
-import {ITestCaseSparql} from "./ITestCaseSparql";
-// tslint:disable:no-var-requires
+import type { Resource } from 'rdf-object';
+import { ErrorTest } from '../../ErrorTest';
+import type { IFetchOptions } from '../../Util';
+import { Util } from '../../Util';
+import type { ITestCaseData } from '../ITestCase';
+import type { ITestCaseHandler } from '../ITestCaseHandler';
+import type { IQueryEngine } from './IQueryEngine';
+import type { ITestCaseSparql } from './ITestCaseSparql';
+
+// eslint-disable-next-line ts/no-require-imports, ts/no-var-requires
 const stringifyStream = require('stream-to-string');
 
 /**
  * Test case handler for http://www.w3.org/2001/sw/DataAccess/tests/test-manifest#NegativeSyntaxTest.
  */
 export class TestCaseNegativeSyntaxHandler implements ITestCaseHandler<TestCaseNegativeSyntax> {
-  public async resourceToTestCase(resource: Resource, testCaseData: ITestCaseData,
-                                  options?: IFetchOptions): Promise<TestCaseNegativeSyntax> {
+  public async resourceToTestCase(resource: Resource, testCaseData: ITestCaseData, options?: IFetchOptions): Promise<TestCaseNegativeSyntax> {
     if (!resource.property.action) {
       throw new Error(`Missing mf:action in ${resource}`);
     }
-    return new TestCaseNegativeSyntax(testCaseData,
-      await stringifyStream((await Util.fetchCached(resource.property.action.value, options)).body),
-      Util.normalizeBaseUrl(resource.property.action.value));
+    return new TestCaseNegativeSyntax(testCaseData, await stringifyStream((await Util.fetchCached(resource.property.action.value, options)).body), Util.normalizeBaseUrl(resource.property.action.value));
   }
-
 }
 
 export class TestCaseNegativeSyntax implements ITestCaseSparql {
-  public readonly type = "sparql";
+  public readonly type = 'sparql';
   public readonly approval: string;
   public readonly approvedBy: string;
   public readonly comment: string;
@@ -45,12 +43,11 @@ export class TestCaseNegativeSyntax implements ITestCaseSparql {
   public async test(engine: IQueryEngine, injectArguments: any): Promise<void> {
     try {
       await engine.parse(this.queryString, { baseIRI: this.baseIRI, ...injectArguments });
-    } catch (e) {
+    } catch {
       return;
     }
     throw new ErrorTest(`Expected ${this.queryString} to throw an error when parsing.
   Input: ${this.queryString}
 `);
   }
-
 }

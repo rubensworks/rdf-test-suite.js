@@ -1,8 +1,8 @@
-import {QueryResultQuads} from "../../../lib/testcase/sparql/QueryResultQuads";
-const quad = require("rdf-quad");
+import { QueryResultQuads } from '../../../lib/testcase/sparql/QueryResultQuads';
+
+const quad = require('rdf-quad');
 
 describe('QueryResultQuads', () => {
-
   let quadsA;
   let quadsAvar;
   let quadsB;
@@ -28,7 +28,7 @@ describe('QueryResultQuads', () => {
     });
 
     it('should be of type quads', () => {
-      return expect(quadsA.type).toEqual('quads');
+      return expect(quadsA.type).toBe('quads');
     });
 
     it('should have the correct value', () => {
@@ -59,7 +59,7 @@ describe('QueryResultQuads', () => {
 
   describe('#toString', () => {
     it('should stringify the quads', () => {
-      return expect(quadsA.toString()).toEqual(`[QueryResultQuads: [
+      return expect(quadsA.toString()).toBe(`[QueryResultQuads: [
   {
     "subject": "s1",
     "predicate": "p1",
@@ -75,5 +75,4 @@ describe('QueryResultQuads', () => {
 ]]`);
     });
   });
-
 });

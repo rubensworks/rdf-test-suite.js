@@ -1,7 +1,7 @@
-import {DataFactory} from "rdf-data-factory";
-import {ContextParser} from "jsonld-context-parser";
-import {Resource} from "rdf-object";
-import {manifestFromResource} from "../lib/IManifest";
+import { ContextParser } from 'jsonld-context-parser';
+import { DataFactory } from 'rdf-data-factory';
+import { Resource } from 'rdf-object';
+import { manifestFromResource } from '../lib/IManifest';
 
 const DF = new DataFactory();
 
@@ -15,7 +15,6 @@ const handlers: any = {
 };
 
 describe('IManifest', () => {
-
   let context;
   let pType;
   let pInclude;
@@ -31,34 +30,41 @@ describe('IManifest', () => {
         context = parsedContext;
 
         pType = new Resource(
-          { term: DF.namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'), context });
+          { term: DF.namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'), context },
+        );
         pInclude = new Resource(
-          { term: DF.namedNode('http://www.w3.org/2001/sw/DataAccess/tests/test-manifest#include'), context });
+          { term: DF.namedNode('http://www.w3.org/2001/sw/DataAccess/tests/test-manifest#include'), context },
+        );
         pIncludeSpec = new Resource(
           {
             context,
             term: DF.namedNode('http://www.w3.org/2001/sw/DataAccess/tests/test-manifest#includedSpecifications'),
-          });
+          },
+        );
         pConformance = new Resource(
           {
             context,
             term: DF.namedNode('http://www.w3.org/2001/sw/DataAccess/tests/test-manifest#conformanceRequirement'),
-          });
+          },
+        );
         pComment = new Resource(
-          { term: DF.namedNode('http://www.w3.org/2000/01/rdf-schema#comment'), context });
+          { term: DF.namedNode('http://www.w3.org/2000/01/rdf-schema#comment'), context },
+        );
         pLabel = new Resource(
-          { term: DF.namedNode('http://www.w3.org/2000/01/rdf-schema#label'), context });
+          { term: DF.namedNode('http://www.w3.org/2000/01/rdf-schema#label'), context },
+        );
         pEntries = new Resource(
-          { term: DF.namedNode('http://www.w3.org/2001/sw/DataAccess/tests/test-manifest#entries'), context });
+          { term: DF.namedNode('http://www.w3.org/2001/sw/DataAccess/tests/test-manifest#entries'), context },
+        );
 
         done();
       });
   });
 
   describe('#manifestFromResource', () => {
-    it('should return a manifest without optional properties', async () => {
+    it('should return a manifest without optional properties', async() => {
       const resource = new Resource({ term: DF.namedNode('http://example.org/m1'), context });
-      return expect(await manifestFromResource(handlers, {}, resource, { resource: { [resource.value]: resource } } as any)).toEqual({
+      return await expect(manifestFromResource(handlers, {}, resource, { resource: { [resource.value]: resource }} as any)).resolves.toEqual({
         comment: null,
         label: null,
         specifications: null,
@@ -68,10 +74,10 @@ describe('IManifest', () => {
       });
     });
 
-    it('should return a manifest with sub manifests', async () => {
+    it('should return a manifest with sub manifests', async() => {
       const resource = new Resource({ term: DF.namedNode('http://example.org/m1'), context });
-      resource.addProperty(pComment, new Resource({ term: DF.literal('COMMENT'), context}));
-      resource.addProperty(pLabel, new Resource({ term: DF.literal('LABEL'), context}));
+      resource.addProperty(pComment, new Resource({ term: DF.literal('COMMENT'), context }));
+      resource.addProperty(pLabel, new Resource({ term: DF.literal('LABEL'), context }));
 
       const resourceIncludeList = new Resource({ term: DF.namedNode('resourceIncludeList'), context });
       resourceIncludeList.list = [
@@ -80,7 +86,7 @@ describe('IManifest', () => {
       ];
       resource.addProperty(pInclude, resourceIncludeList);
 
-      return expect(await manifestFromResource(handlers, {}, resource, { resource: { [resource.value]: resource } } as any)).toEqual({
+      return await expect(manifestFromResource(handlers, {}, resource, { resource: { [resource.value]: resource }} as any)).resolves.toEqual({
         comment: 'COMMENT',
         label: 'LABEL',
         specifications: null,
@@ -107,10 +113,10 @@ describe('IManifest', () => {
       });
     });
 
-    it('should return a manifest with empty specifications without optional fields', async () => {
+    it('should return a manifest with empty specifications without optional fields', async() => {
       const resource = new Resource({ term: DF.namedNode('http://example.org/m1'), context });
-      resource.addProperty(pComment, new Resource({ term: DF.literal('COMMENT'), context}));
-      resource.addProperty(pLabel, new Resource({ term: DF.literal('LABEL'), context}));
+      resource.addProperty(pComment, new Resource({ term: DF.literal('COMMENT'), context }));
+      resource.addProperty(pLabel, new Resource({ term: DF.literal('LABEL'), context }));
 
       const spec1 = new Resource({ term: DF.namedNode('http://example.org/spec1'), context });
       const spec2 = new Resource({ term: DF.namedNode('http://example.org/spec2'), context });
@@ -121,7 +127,7 @@ describe('IManifest', () => {
       ];
       resource.addProperty(pIncludeSpec, resourceIncludeSpecList);
 
-      return expect(await manifestFromResource(handlers, {}, resource, { resource: { [resource.value]: resource } } as any)).toEqual({
+      return await expect(manifestFromResource(handlers, {}, resource, { resource: { [resource.value]: resource }} as any)).resolves.toEqual({
         comment: 'COMMENT',
         label: 'LABEL',
         specifications: {
@@ -142,17 +148,17 @@ describe('IManifest', () => {
       });
     });
 
-    it('should return a manifest with empty specifications with optional fields', async () => {
+    it('should return a manifest with empty specifications with optional fields', async() => {
       const resource = new Resource({ term: DF.namedNode('http://example.org/m1'), context });
-      resource.addProperty(pComment, new Resource({ term: DF.literal('COMMENT'), context}));
-      resource.addProperty(pLabel, new Resource({ term: DF.literal('LABEL'), context}));
+      resource.addProperty(pComment, new Resource({ term: DF.literal('COMMENT'), context }));
+      resource.addProperty(pLabel, new Resource({ term: DF.literal('LABEL'), context }));
 
       const spec1 = new Resource({ term: DF.namedNode('http://example.org/spec1'), context });
       const spec2 = new Resource({ term: DF.namedNode('http://example.org/spec2'), context });
-      spec1.addProperty(pComment, new Resource({ term: DF.literal('COMMENT'), context}));
-      spec1.addProperty(pLabel, new Resource({ term: DF.literal('LABEL'), context}));
-      spec2.addProperty(pComment, new Resource({ term: DF.literal('COMMENT'), context}));
-      spec2.addProperty(pLabel, new Resource({ term: DF.literal('LABEL'), context}));
+      spec1.addProperty(pComment, new Resource({ term: DF.literal('COMMENT'), context }));
+      spec1.addProperty(pLabel, new Resource({ term: DF.literal('LABEL'), context }));
+      spec2.addProperty(pComment, new Resource({ term: DF.literal('COMMENT'), context }));
+      spec2.addProperty(pLabel, new Resource({ term: DF.literal('LABEL'), context }));
       const resourceIncludeSpecList = new Resource({ term: DF.namedNode('resourceIncludeList'), context });
       resourceIncludeSpecList.list = [
         spec1,
@@ -160,7 +166,7 @@ describe('IManifest', () => {
       ];
       resource.addProperty(pIncludeSpec, resourceIncludeSpecList);
 
-      return expect(await manifestFromResource(handlers, {}, resource, { resource: { [resource.value]: resource } } as any)).toEqual({
+      return await expect(manifestFromResource(handlers, {}, resource, { resource: { [resource.value]: resource }} as any)).resolves.toEqual({
         comment: 'COMMENT',
         label: 'LABEL',
         specifications: {
@@ -181,10 +187,10 @@ describe('IManifest', () => {
       });
     });
 
-    it('should return a manifest with non-empty specifications without optional fields', async () => {
+    it('should return a manifest with non-empty specifications without optional fields', async() => {
       const resource = new Resource({ term: DF.namedNode('http://example.org/m1'), context });
-      resource.addProperty(pComment, new Resource({ term: DF.literal('COMMENT'), context}));
-      resource.addProperty(pLabel, new Resource({ term: DF.literal('LABEL'), context}));
+      resource.addProperty(pComment, new Resource({ term: DF.literal('COMMENT'), context }));
+      resource.addProperty(pLabel, new Resource({ term: DF.literal('LABEL'), context }));
 
       const spec1 = new Resource({ term: DF.namedNode('http://example.org/spec1'), context });
       const spec1Sub = new Resource({ term: DF.namedNode('http://example.org/spec1sub'), context });
@@ -207,7 +213,7 @@ describe('IManifest', () => {
       ];
       resource.addProperty(pIncludeSpec, resourceIncludeSpecList);
 
-      return expect(await manifestFromResource(handlers, {}, resource, { resource: { [resource.value]: resource } } as any)).toEqual({
+      return await expect(manifestFromResource(handlers, {}, resource, { resource: { [resource.value]: resource }} as any)).resolves.toEqual({
         comment: 'COMMENT',
         label: 'LABEL',
         specifications: {
@@ -264,23 +270,23 @@ describe('IManifest', () => {
       });
     });
 
-    it('should return a manifest with non-empty specifications with optional fields', async () => {
+    it('should return a manifest with non-empty specifications with optional fields', async() => {
       const resource = new Resource({ term: DF.namedNode('http://example.org/m1'), context });
-      resource.addProperty(pComment, new Resource({ term: DF.literal('COMMENT'), context}));
-      resource.addProperty(pLabel, new Resource({ term: DF.literal('LABEL'), context}));
+      resource.addProperty(pComment, new Resource({ term: DF.literal('COMMENT'), context }));
+      resource.addProperty(pLabel, new Resource({ term: DF.literal('LABEL'), context }));
 
       const spec1 = new Resource({ term: DF.namedNode('http://example.org/spec1'), context });
       const spec1Sub = new Resource({ term: DF.namedNode('http://example.org/spec1sub'), context });
-      spec1.addProperty(pComment, new Resource({ term: DF.literal('COMMENT'), context}));
-      spec1.addProperty(pLabel, new Resource({ term: DF.literal('LABEL'), context}));
+      spec1.addProperty(pComment, new Resource({ term: DF.literal('COMMENT'), context }));
+      spec1.addProperty(pLabel, new Resource({ term: DF.literal('LABEL'), context }));
       spec1Sub.list = [
         new Resource({ term: DF.namedNode('http://example.org/spec1m1'), context }),
         new Resource({ term: DF.namedNode('http://example.org/spec1m2'), context }),
       ];
       spec1.addProperty(pConformance, spec1Sub);
       const spec2 = new Resource({ term: DF.namedNode('http://example.org/spec2'), context });
-      spec2.addProperty(pComment, new Resource({ term: DF.literal('COMMENT'), context}));
-      spec2.addProperty(pLabel, new Resource({ term: DF.literal('LABEL'), context}));
+      spec2.addProperty(pComment, new Resource({ term: DF.literal('COMMENT'), context }));
+      spec2.addProperty(pLabel, new Resource({ term: DF.literal('LABEL'), context }));
       const spec2Sub = new Resource({ term: DF.namedNode('http://example.org/spec2sub'), context });
       spec2Sub.list = [
         new Resource({ term: DF.namedNode('http://example.org/spec2m1'), context }),
@@ -294,7 +300,7 @@ describe('IManifest', () => {
       ];
       resource.addProperty(pIncludeSpec, resourceIncludeSpecList);
 
-      return expect(await manifestFromResource(handlers, {}, resource, { resource: { [resource.value]: resource } } as any)).toEqual({
+      return await expect(manifestFromResource(handlers, {}, resource, { resource: { [resource.value]: resource }} as any)).resolves.toEqual({
         comment: 'COMMENT',
         label: 'LABEL',
         specifications: {
@@ -351,15 +357,15 @@ describe('IManifest', () => {
       });
     });
 
-    it('should return a manifest with tests', async () => {
+    it('should return a manifest with tests', async() => {
       const resource = new Resource({ term: DF.namedNode('http://example.org/m1'), context });
-      resource.addProperty(pComment, new Resource({ term: DF.literal('COMMENT'), context}));
-      resource.addProperty(pLabel, new Resource({ term: DF.literal('LABEL'), context}));
+      resource.addProperty(pComment, new Resource({ term: DF.literal('COMMENT'), context }));
+      resource.addProperty(pLabel, new Resource({ term: DF.literal('LABEL'), context }));
 
       const test1 = new Resource({ term: DF.namedNode('http://example.org/test1'), context });
-      test1.addProperty(pType, new Resource({ term: DF.namedNode('abc'), context}));
+      test1.addProperty(pType, new Resource({ term: DF.namedNode('abc'), context }));
       const test2 = new Resource({ term: DF.namedNode('http://example.org/test2'), context });
-      test2.addProperty(pType, new Resource({ term: DF.namedNode('abc'), context}));
+      test2.addProperty(pType, new Resource({ term: DF.namedNode('abc'), context }));
 
       const testList = new Resource({ term: DF.namedNode('testList'), context });
       testList.list = [
@@ -368,7 +374,7 @@ describe('IManifest', () => {
       ];
       resource.addProperty(pEntries, testList);
 
-      return expect(await manifestFromResource(handlers, {}, resource, { resource: { [resource.value]: resource } } as any)).toEqual({
+      return await expect(manifestFromResource(handlers, {}, resource, { resource: { [resource.value]: resource }} as any)).resolves.toEqual({
         comment: 'COMMENT',
         label: 'LABEL',
         specifications: null,
@@ -391,26 +397,26 @@ describe('IManifest', () => {
             test: true,
             types: [ 'abc' ],
             uri: 'http://example.org/test2',
-          }
+          },
         ],
         uri: 'http://example.org/m1',
       });
     });
 
-    it('should return a manifest with tests not in list-form', async () => {
+    it('should return a manifest with tests not in list-form', async() => {
       const resource = new Resource({ term: DF.namedNode('http://example.org/m1'), context });
-      resource.addProperty(pComment, new Resource({ term: DF.literal('COMMENT'), context}));
-      resource.addProperty(pLabel, new Resource({ term: DF.literal('LABEL'), context}));
+      resource.addProperty(pComment, new Resource({ term: DF.literal('COMMENT'), context }));
+      resource.addProperty(pLabel, new Resource({ term: DF.literal('LABEL'), context }));
 
       const test1 = new Resource({ term: DF.namedNode('http://example.org/test1'), context });
-      test1.addProperty(pType, new Resource({ term: DF.namedNode('abc'), context}));
+      test1.addProperty(pType, new Resource({ term: DF.namedNode('abc'), context }));
       const test2 = new Resource({ term: DF.namedNode('http://example.org/test2'), context });
-      test2.addProperty(pType, new Resource({ term: DF.namedNode('abc'), context}));
+      test2.addProperty(pType, new Resource({ term: DF.namedNode('abc'), context }));
 
       resource.addProperty(pEntries, test1);
       resource.addProperty(pEntries, test2);
 
-      return expect(await manifestFromResource(handlers, {}, resource, { resource: { [resource.value]: resource } } as any)).toEqual({
+      return await expect(manifestFromResource(handlers, {}, resource, { resource: { [resource.value]: resource }} as any)).resolves.toEqual({
         comment: 'COMMENT',
         label: 'LABEL',
         specifications: null,
@@ -433,7 +439,7 @@ describe('IManifest', () => {
             test: true,
             types: [ 'abc' ],
             uri: 'http://example.org/test2',
-          }
+          },
         ],
         uri: 'http://example.org/m1',
       });

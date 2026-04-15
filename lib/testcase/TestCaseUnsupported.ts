@@ -1,13 +1,12 @@
-import {Resource} from "rdf-object";
-import {ErrorSkipped} from "../ErrorSkipped";
-import {ITestCase, ITestCaseData} from "./ITestCase";
-import {ITestCaseHandler} from "./ITestCaseHandler";
+import type { Resource } from 'rdf-object';
+import { ErrorSkipped } from '../ErrorSkipped';
+import type { ITestCase, ITestCaseData } from './ITestCase';
+import type { ITestCaseHandler } from './ITestCaseHandler';
 
 /**
  * A fallback test case handler that constructs unsupported test cases.
  */
 export class TestCaseUnsupportedHandler implements ITestCaseHandler<TestCaseUnsupported> {
-
   private readonly name: string;
 
   constructor(name: string) {
@@ -20,7 +19,7 @@ export class TestCaseUnsupportedHandler implements ITestCaseHandler<TestCaseUnsu
 }
 
 export class TestCaseUnsupported implements ITestCase<any> {
-  public readonly type = "unsupported";
+  public readonly type = 'unsupported';
   public readonly approval: string;
   public readonly approvedBy: string;
   public readonly comment: string;
@@ -35,8 +34,7 @@ export class TestCaseUnsupported implements ITestCase<any> {
     Object.assign(this, testCaseData);
   }
 
-  public async test(engine: any): Promise<void> {
+  public async test(_engine: any): Promise<void> {
     throw new ErrorSkipped(`Unsupported test case ${this.testCaseName}`);
   }
-
 }

@@ -1,13 +1,13 @@
 {
   "compilerOptions": {
-    "module": "commonjs",
-    "types": ["node", "jest"],
+    "target": "es6",
     "lib": [
       "es6",
       "dom"
     ],
-    "noImplicitAny": false,
-    "target": "es6",
-    "strictNullChecks": false
+    "module": "commonjs",
+    "types": ["node", "jest"],
+    "strictNullChecks": false,
+    "noImplicitAny": false
   }
 }

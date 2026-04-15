@@ -1,11 +1,11 @@
-import * as RDF from "@rdfjs/types";
+import type * as RDF from '@rdfjs/types';
 
 /**
  * A query engine handler.
  */
 export interface IQueryEngine {
-  parse(queryString: string, options: {[key: string]: any}): Promise<void>;
-  query(data: RDF.Quad[], queryString: string, options: {[key: string]: any}): Promise<IQueryResult>;
+  parse: (queryString: string, options: Record<string, any>) => Promise<void>;
+  query: (data: RDF.Quad[], queryString: string, options: Record<string, any>) => Promise<IQueryResult>;
 }
 
 /**
@@ -19,8 +19,8 @@ export type IQueryResult = IQueryResultBoolean | IQueryResultQuads | IQueryResul
 export interface IQueryResultBoolean {
   type: 'boolean';
   value: boolean;
-  equals(that: IQueryResult, laxCardinality?: boolean): boolean;
-  toString(): string;
+  equals: (that: IQueryResult, laxCardinality?: boolean) => boolean;
+  toString: () => string;
 }
 
 /**
@@ -29,8 +29,8 @@ export interface IQueryResultBoolean {
 export interface IQueryResultQuads {
   type: 'quads';
   value: RDF.Quad[];
-  equals(that: IQueryResult, laxCardinality?: boolean): boolean;
-  toString(): string;
+  equals: (that: IQueryResult, laxCardinality?: boolean) => boolean;
+  toString: () => string;
 }
 
 /**
@@ -39,8 +39,8 @@ export interface IQueryResultQuads {
 export interface IQueryResultBindings {
   type: 'bindings';
   variables: string[];
-  value: {[variable: string]: RDF.Term}[];
+  value: Record<string, RDF.Term>[];
   checkOrder: boolean;
-  equals(that: IQueryResult, laxCardinality?: boolean): boolean;
-  toString(): string;
+  equals: (that: IQueryResult, laxCardinality?: boolean) => boolean;
+  toString: () => string;
 }

@@ -1,56 +1,56 @@
-import {TestCaseJsonLdToRdfHandler} from "../../../../lib/testcase/rdfsyntax/jsonld/TestCaseJsonLdToRdf";
-const quad = require("rdf-quad");
-import {DataFactory} from "rdf-data-factory";
-import "jest-rdf";
-import {ContextParser} from "jsonld-context-parser";
-import {JsonLdParser} from "jsonld-streaming-parser";
-import {Resource} from "rdf-object";
-import {TestCaseEval} from "../../../../lib/testcase/rdfsyntax/TestCaseEval";
-import { arrayifyStream } from "arrayify-stream";
+import { arrayifyStream } from 'arrayify-stream';
+import { ContextParser } from 'jsonld-context-parser';
+import { JsonLdParser } from 'jsonld-streaming-parser';
+import { DataFactory } from 'rdf-data-factory';
+import 'jest-rdf';
+import { Resource } from 'rdf-object';
+import { TestCaseJsonLdToRdfHandler } from '../../../../lib/testcase/rdfsyntax/jsonld/TestCaseJsonLdToRdf';
+import { TestCaseEval } from '../../../../lib/testcase/rdfsyntax/TestCaseEval';
 
-// tslint:disable:no-var-requires
+const quad = require('rdf-quad');
+
 const streamifyString = require('streamify-string');
+
 const DF = new DataFactory();
 
 // Mock fetch
-(<any> global).fetch = (url: string) => {
+(<any> globalThis).fetch = (url: string) => {
   let body;
   switch (url) {
-  case 'http://ex.org/action.ttl':
-  case 'ACTION':
-    body = streamifyString(`{
+    case 'http://ex.org/action.ttl':
+    case 'ACTION':
+      body = streamifyString(`{
   "@id": "http://www.w3.org/TR/rdf-syntax-grammar",
   "http://purl.org/dc/elements/1.1/title": [
     "RDF1.1 XML Syntax 1",
     "RDF1.1 XML Syntax 2"
   ]
 }`);
-    break;
-  case 'RESULT.ttl':
-    body = streamifyString(`<http://www.w3.org/TR/rdf-syntax-grammar> <http://purl.org/dc/elements/1.1/title>
+      break;
+    case 'RESULT.ttl':
+      body = streamifyString(`<http://www.w3.org/TR/rdf-syntax-grammar> <http://purl.org/dc/elements/1.1/title>
     "RDF1.1 XML Syntax 1", "RDF1.1 XML Syntax 2".`);
-    break;
-  case 'RESULT_OTHER.ttl':
-    body = streamifyString(`<http://www.w3.org/TR/rdf-syntax-grammar_ABC> <http://purl.org/dc/elements/1.1/title>
+      break;
+    case 'RESULT_OTHER.ttl':
+      body = streamifyString(`<http://www.w3.org/TR/rdf-syntax-grammar_ABC> <http://purl.org/dc/elements/1.1/title>
     "RDF1.1 XML Syntax 1", "RDF1.1 XML Syntax 2".`);
-    break;
-  case 'CONTEXT':
-    body = streamifyString(`{ "@context": { "@base": "http://www.w3.org/TR/" } }`);
-    break;
-  case 'http://ex.org/CONTEXT':
-    body = streamifyString(`{ "@context": { "@base": "http://www.w3.org/TR/BASED/" } }`);
-    break;
-  default:
-    return Promise.reject(new Error('Fetch error'));
+      break;
+    case 'CONTEXT':
+      body = streamifyString(`{ "@context": { "@base": "http://www.w3.org/TR/" } }`);
+      break;
+    case 'http://ex.org/CONTEXT':
+      body = streamifyString(`{ "@context": { "@base": "http://www.w3.org/TR/BASED/" } }`);
+      break;
+    default:
+      return Promise.reject(new Error('Fetch error'));
   }
   return Promise.resolve(new Response(body, <any> { headers: new Headers({ a: 'b' }), status: 200 }));
 };
 
 describe('TestCaseJsonLdToRdfHandler', () => {
-
   const handler = new TestCaseJsonLdToRdfHandler();
   const parser = {
-    parse: (data: string, baseIRI: string, injectArguments: any) => Promise.resolve(arrayifyStream(streamifyString(data)
+    parse: (data: string, baseIRI: string, _injectArguments: any) => Promise.resolve(arrayifyStream(streamifyString(data)
       .pipe(new JsonLdParser({ baseIRI })))),
   };
 
@@ -75,31 +75,44 @@ describe('TestCaseJsonLdToRdfHandler', () => {
         context = parsedContext;
 
         pAction = new Resource(
-          { term: DF.namedNode('http://www.w3.org/2001/sw/DataAccess/tests/test-manifest#action'), context });
+          { term: DF.namedNode('http://www.w3.org/2001/sw/DataAccess/tests/test-manifest#action'), context },
+        );
         pResult = new Resource(
-          { term: DF.namedNode('http://www.w3.org/2001/sw/DataAccess/tests/test-manifest#result'), context });
+          { term: DF.namedNode('http://www.w3.org/2001/sw/DataAccess/tests/test-manifest#result'), context },
+        );
         pContext = new Resource(
-          { term: DF.namedNode('https://w3c.github.io/json-ld-api/tests/vocab#context'), context });
+          { term: DF.namedNode('https://w3c.github.io/json-ld-api/tests/vocab#context'), context },
+        );
         pOption = new Resource(
-          { term: DF.namedNode('https://w3c.github.io/json-ld-api/tests/vocab#option'), context });
+          { term: DF.namedNode('https://w3c.github.io/json-ld-api/tests/vocab#option'), context },
+        );
         pJsonLdProduceGeneralizedRdf = new Resource(
-          { term: DF.namedNode('https://w3c.github.io/json-ld-api/tests/vocab#produceGeneralizedRdf'), context });
+          { term: DF.namedNode('https://w3c.github.io/json-ld-api/tests/vocab#produceGeneralizedRdf'), context },
+        );
         pJsonLdBase = new Resource(
-          { term: DF.namedNode('https://w3c.github.io/json-ld-api/tests/vocab#base'), context });
+          { term: DF.namedNode('https://w3c.github.io/json-ld-api/tests/vocab#base'), context },
+        );
         pJsonLdExpandContext = new Resource(
-          { term: DF.namedNode('https://w3c.github.io/json-ld-api/tests/vocab#expandContext'), context });
+          { term: DF.namedNode('https://w3c.github.io/json-ld-api/tests/vocab#expandContext'), context },
+        );
         pProcessingMode = new Resource(
-          { term: DF.namedNode('https://w3c.github.io/json-ld-api/tests/vocab#processingMode'), context });
+          { term: DF.namedNode('https://w3c.github.io/json-ld-api/tests/vocab#processingMode'), context },
+        );
         pSpecVersion = new Resource(
-          { term: DF.namedNode('https://w3c.github.io/json-ld-api/tests/vocab#specVersion'), context });
+          { term: DF.namedNode('https://w3c.github.io/json-ld-api/tests/vocab#specVersion'), context },
+        );
         pRdfstar = new Resource(
-          { term: DF.namedNode('https://w3c.github.io/json-ld-api/tests/vocab#rdfstar'), context });
+          { term: DF.namedNode('https://w3c.github.io/json-ld-api/tests/vocab#rdfstar'), context },
+        );
         pRdfDirection = new Resource(
-          { term: DF.namedNode('https://w3c.github.io/json-ld-api/tests/vocab#rdfDirection'), context });
+          { term: DF.namedNode('https://w3c.github.io/json-ld-api/tests/vocab#rdfDirection'), context },
+        );
         pExtractAllScripts = new Resource(
-          { term: DF.namedNode('https://w3c.github.io/json-ld-api/tests/vocab#extractAllScripts'), context });
+          { term: DF.namedNode('https://w3c.github.io/json-ld-api/tests/vocab#extractAllScripts'), context },
+        );
         pContentType = new Resource(
-          { term: DF.namedNode('https://w3c.github.io/json-ld-api/tests/vocab#contentType'), context });
+          { term: DF.namedNode('https://w3c.github.io/json-ld-api/tests/vocab#contentType'), context },
+        );
 
         done();
       });
@@ -107,14 +120,14 @@ describe('TestCaseJsonLdToRdfHandler', () => {
   });
 
   describe('#resourceToTestCase', () => {
-    it('should produce a TestCaseEval', async () => {
+    it('should produce a TestCaseEval', async() => {
       const resource = new Resource({ term: DF.namedNode('http://ex.org/test'), context });
       resource.addProperty(pAction, new Resource({ term: DF.literal('ACTION'), context }));
       resource.addProperty(pResult, new Resource({ term: DF.literal('RESULT.ttl'), context }));
       const testCase = await handler.resourceToTestCase(resource, <any> {});
       expect(testCase).toBeInstanceOf(TestCaseEval);
-      expect(testCase.type).toEqual('rdfsyntax');
-      expect(testCase.data).toEqual(`{
+      expect(testCase.type).toBe('rdfsyntax');
+      expect(testCase.data).toBe(`{
   "@id": "http://www.w3.org/TR/rdf-syntax-grammar",
   "http://purl.org/dc/elements/1.1/title": [
     "RDF1.1 XML Syntax 1",
@@ -122,12 +135,10 @@ describe('TestCaseJsonLdToRdfHandler', () => {
   ]
 }`);
       expect(testCase.expected).toEqualRdfQuadArray([
-        quad('http://www.w3.org/TR/rdf-syntax-grammar', 'http://purl.org/dc/elements/1.1/title',
-          '"RDF1.1 XML Syntax 1"'),
-        quad('http://www.w3.org/TR/rdf-syntax-grammar', 'http://purl.org/dc/elements/1.1/title',
-          '"RDF1.1 XML Syntax 2"'),
+        quad('http://www.w3.org/TR/rdf-syntax-grammar', 'http://purl.org/dc/elements/1.1/title', '"RDF1.1 XML Syntax 1"'),
+        quad('http://www.w3.org/TR/rdf-syntax-grammar', 'http://purl.org/dc/elements/1.1/title', '"RDF1.1 XML Syntax 2"'),
       ]);
-      expect(testCase.baseIRI).toEqual('ACTION');
+      expect(testCase.baseIRI).toBe('ACTION');
       const spy = jest.spyOn(parser, 'parse');
       testCase.test(parser, {});
       return expect(spy).toHaveBeenCalledWith(`{
@@ -136,13 +147,12 @@ describe('TestCaseJsonLdToRdfHandler', () => {
     "RDF1.1 XML Syntax 1",
     "RDF1.1 XML Syntax 2"
   ]
-}`, "ACTION",
-        {
-          produceGeneralizedRdf: false,
-        }, testCase);
+}`, 'ACTION', {
+        produceGeneralizedRdf: false,
+      }, testCase);
     });
 
-    it('should produce a TestCaseEval with all optional data', async () => {
+    it('should produce a TestCaseEval with all optional data', async() => {
       const resource = new Resource({ term: DF.namedNode('http://ex.org/test'), context });
       resource.addProperty(pAction, new Resource({ term: DF.literal('ACTION'), context }));
       resource.addProperty(pResult, new Resource({ term: DF.literal('RESULT.ttl'), context }));
@@ -176,26 +186,24 @@ describe('TestCaseJsonLdToRdfHandler', () => {
     "RDF1.1 XML Syntax 1",
     "RDF1.1 XML Syntax 2"
   ]
-}`, "ACTION",
-        {
-          baseIRI: "http://base.org/",
-          context: { "@context": {"@base": "http://www.w3.org/TR/"} },
-          processingMode: "1.1",
-          produceGeneralizedRdf: true,
-          specVersion: "1.1",
-          rdfstar: true,
-          rdfDirection: "compound-DF.literal(",
-        }, testCase);
+}`, 'ACTION', {
+        baseIRI: 'http://base.org/',
+        context: { '@context': { '@base': 'http://www.w3.org/TR/' }},
+        processingMode: '1.1',
+        produceGeneralizedRdf: true,
+        specVersion: '1.1',
+        rdfstar: true,
+        rdfDirection: 'compound-DF.literal(',
+      }, testCase);
     });
 
-    it('should produce a TestCaseEval with an expand context', async () => {
+    it('should produce a TestCaseEval with an expand context', async() => {
       const resource = new Resource({ term: DF.namedNode('http://ex.org/test'), context });
       resource.addProperty(pAction, new Resource({ term: DF.literal('http://ex.org/action.ttl'), context }));
       resource.addProperty(pResult, new Resource({ term: DF.literal('RESULT.ttl'), context }));
 
       const optionExpandContext = new Resource({ term: DF.namedNode('http://ex.org/o1'), context });
-      optionExpandContext.addProperty(pJsonLdExpandContext,
-        new Resource({ term: DF.literal('CONTEXT'), context }));
+      optionExpandContext.addProperty(pJsonLdExpandContext, new Resource({ term: DF.literal('CONTEXT'), context }));
 
       resource.addProperty(pOption, optionExpandContext);
       const testCase = await handler.resourceToTestCase(resource, <any> {});
@@ -207,11 +215,10 @@ describe('TestCaseJsonLdToRdfHandler', () => {
     "RDF1.1 XML Syntax 1",
     "RDF1.1 XML Syntax 2"
   ]
-}`, "http://ex.org/action.ttl",
-        {
-          context: { "@context": {"@base": "http://www.w3.org/TR/BASED/"} },
-          produceGeneralizedRdf: false,
-        }, testCase);
+}`, 'http://ex.org/action.ttl', {
+        context: { '@context': { '@base': 'http://www.w3.org/TR/BASED/' }},
+        produceGeneralizedRdf: false,
+      }, testCase);
     });
 
     it('should error on a resource without action', () => {
@@ -226,15 +233,15 @@ describe('TestCaseJsonLdToRdfHandler', () => {
       return expect(handler.resourceToTestCase(resource, <any> {})).rejects.toBeTruthy();
     });
 
-    it('should produce TestCaseEval that tests true on isomorphic data', async () => {
+    it('should produce TestCaseEval that tests true on isomorphic data', async() => {
       const resource = new Resource({ term: DF.namedNode('http://ex.org/test'), context });
       resource.addProperty(pAction, new Resource({ term: DF.literal('ACTION'), context }));
       resource.addProperty(pResult, new Resource({ term: DF.literal('RESULT.ttl'), context }));
       const testCase = await handler.resourceToTestCase(resource, <any> {});
-      return expect(testCase.test(parser, {})).resolves.toBe(undefined);
+      return expect(testCase.test(parser, {})).resolves.toBeUndefined();
     });
 
-    it('should produce TestCaseEval that tests false on non-isomorphic data', async () => {
+    it('should produce TestCaseEval that tests false on non-isomorphic data', async() => {
       const resource = new Resource({ term: DF.namedNode('http://ex.org/test'), context });
       resource.addProperty(pAction, new Resource({ term: DF.literal('ACTION'), context }));
       resource.addProperty(pResult, new Resource({ term: DF.literal('RESULT_OTHER.ttl'), context }));
@@ -242,17 +249,18 @@ describe('TestCaseJsonLdToRdfHandler', () => {
       return expect(testCase.test(parser, {})).rejects.toBeTruthy();
     });
 
-    it('should produce a TestCaseEval when HTML', async () => {
+    it('should produce a TestCaseEval when HTML', async() => {
       const resource = new Resource({ term: DF.namedNode('http://ex.org/test'), context });
       resource.addProperty(
         new Resource({ term: DF.namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'), context }),
-        new Resource({ term: DF.namedNode('https://w3c.github.io/json-ld-api/tests/vocab#HtmlTest'), context }));
+        new Resource({ term: DF.namedNode('https://w3c.github.io/json-ld-api/tests/vocab#HtmlTest'), context }),
+      );
       resource.addProperty(pAction, new Resource({ term: DF.literal('ACTION'), context }));
       resource.addProperty(pResult, new Resource({ term: DF.literal('RESULT.ttl'), context }));
       const testCase = await handler.resourceToTestCase(resource, <any> {});
       expect(testCase).toBeInstanceOf(TestCaseEval);
-      expect(testCase.type).toEqual('rdfsyntax');
-      expect(testCase.data).toEqual(`{
+      expect(testCase.type).toBe('rdfsyntax');
+      expect(testCase.data).toBe(`{
   "@id": "http://www.w3.org/TR/rdf-syntax-grammar",
   "http://purl.org/dc/elements/1.1/title": [
     "RDF1.1 XML Syntax 1",
@@ -260,12 +268,10 @@ describe('TestCaseJsonLdToRdfHandler', () => {
   ]
 }`);
       expect(testCase.expected).toEqualRdfQuadArray([
-        quad('http://www.w3.org/TR/rdf-syntax-grammar', 'http://purl.org/dc/elements/1.1/title',
-          '"RDF1.1 XML Syntax 1"'),
-        quad('http://www.w3.org/TR/rdf-syntax-grammar', 'http://purl.org/dc/elements/1.1/title',
-          '"RDF1.1 XML Syntax 2"'),
+        quad('http://www.w3.org/TR/rdf-syntax-grammar', 'http://purl.org/dc/elements/1.1/title', '"RDF1.1 XML Syntax 1"'),
+        quad('http://www.w3.org/TR/rdf-syntax-grammar', 'http://purl.org/dc/elements/1.1/title', '"RDF1.1 XML Syntax 2"'),
       ]);
-      expect(testCase.baseIRI).toEqual('ACTION');
+      expect(testCase.baseIRI).toBe('ACTION');
       const spy = jest.spyOn(parser, 'parse');
       await testCase.test(parser, {});
       return expect(spy).toHaveBeenCalledWith(`{
@@ -274,18 +280,18 @@ describe('TestCaseJsonLdToRdfHandler', () => {
     "RDF1.1 XML Syntax 1",
     "RDF1.1 XML Syntax 2"
   ]
-}`, "ACTION",
-        {
-          produceGeneralizedRdf: false,
-          contentType: 'text/html',
-        }, testCase);
+}`, 'ACTION', {
+        produceGeneralizedRdf: false,
+        contentType: 'text/html',
+      }, testCase);
     });
 
-    it('should produce a TestCaseEval with all optional data when HTML', async () => {
+    it('should produce a TestCaseEval with all optional data when HTML', async() => {
       const resource = new Resource({ term: DF.namedNode('http://ex.org/test'), context });
       resource.addProperty(
         new Resource({ term: DF.namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'), context }),
-        new Resource({ term: DF.namedNode('https://w3c.github.io/json-ld-api/tests/vocab#HtmlTest'), context }));
+        new Resource({ term: DF.namedNode('https://w3c.github.io/json-ld-api/tests/vocab#HtmlTest'), context }),
+      );
       resource.addProperty(pAction, new Resource({ term: DF.literal('ACTION'), context }));
       resource.addProperty(pResult, new Resource({ term: DF.literal('RESULT.ttl'), context }));
       resource.addProperty(pContext, new Resource({ term: DF.literal('CONTEXT'), context }));
@@ -321,18 +327,16 @@ describe('TestCaseJsonLdToRdfHandler', () => {
     "RDF1.1 XML Syntax 1",
     "RDF1.1 XML Syntax 2"
   ]
-}`, "ACTION",
-        {
-          baseIRI: "http://base.org/",
-          context: { "@context": {"@base": "http://www.w3.org/TR/"} },
-          processingMode: "1.1",
-          produceGeneralizedRdf: true,
-          specVersion: "1.1",
-          rdfDirection: "compound-DF.literal(",
-          extractAllScripts: false,
-          contentType: 'CT',
-        }, testCase);
+}`, 'ACTION', {
+        baseIRI: 'http://base.org/',
+        context: { '@context': { '@base': 'http://www.w3.org/TR/' }},
+        processingMode: '1.1',
+        produceGeneralizedRdf: true,
+        specVersion: '1.1',
+        rdfDirection: 'compound-DF.literal(',
+        extractAllScripts: false,
+        contentType: 'CT',
+      }, testCase);
     });
   });
-
 });

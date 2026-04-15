@@ -1,9 +1,8 @@
-import {Parser} from "n3";
-import {Transform} from "stream";
+import { Transform } from 'node:stream';
+import { Parser } from 'n3';
 
 // Temporarily set format to text/n3 to allow blank node predicates (needed by JSON-LD tests)
 const readPredicateOld = (<any> Parser.prototype)._readPredicate;
-// tslint:disable-next-line:only-arrow-functions
 (<any> Parser.prototype)._readPredicate = function(token: any) {
   if (this.allowBlankNodePredicates) {
     this._n3Mode = true;
@@ -18,7 +17,6 @@ const readPredicateOld = (<any> Parser.prototype)._readPredicate;
 };
 
 export class GeneralizedN3StreamParser extends Transform {
-
   constructor(options: any) {
     super({ decodeStrings: true });
 
@@ -38,19 +36,31 @@ export class GeneralizedN3StreamParser extends Transform {
       {
         on: (event: any, callback: any) => {
           switch (event) {
-          case 'data': onData = callback; break;
-          case 'end':   onEnd = callback; break;
+            case 'data':
+              onData = callback;
+              break;
+            case 'end':
+              onEnd = callback;
+              break;
           }
         },
       },
       // Handle quads by pushing them down the pipeline
-      (error: any, quad: any) => error && this.emit('error', error) || quad && this.push(quad),
+      (error: any, quad: any) => (error && this.emit('error', error)) || (quad && this.push(quad)),
       // Emit prefixes through the `prefix` event
-      (prefix: any, uri: any) => { this.emit('prefix', prefix, uri); });
+      (prefix: any, uri: any) => {
+        this.emit('prefix', prefix, uri);
+      },
+    );
 
     // Implement Transform methods through parser callbacks
-    this._transform = (chunk, encoding, done) => { onData(chunk); done(); };
-    this._flush = (done) => { onEnd(); done(); };
+    this._transform = (chunk, encoding, done) => {
+      onData(chunk);
+      done();
+    };
+    this._flush = (done) => {
+      onEnd();
+      done();
+    };
   }
-
 }

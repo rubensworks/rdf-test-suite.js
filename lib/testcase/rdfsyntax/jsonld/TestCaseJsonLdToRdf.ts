@@ -1,9 +1,12 @@
-import {Resource} from "rdf-object";
-import {resolve} from "relative-to-absolute-iri";
-import {IFetchOptions, Util} from "../../../Util";
-import {ITestCase, ITestCaseData} from "../../ITestCase";
-import {TestCaseEval, TestCaseEvalHandler} from "../TestCaseEval";
-import {DataFactory} from "rdf-data-factory";
+import { DataFactory } from 'rdf-data-factory';
+import type { Resource } from 'rdf-object';
+import { resolve } from 'relative-to-absolute-iri';
+import type { IFetchOptions } from '../../../Util';
+import { Util } from '../../../Util';
+import type { ITestCase, ITestCaseData } from '../../ITestCase';
+import type { TestCaseEval } from '../TestCaseEval';
+import { TestCaseEvalHandler } from '../TestCaseEval';
+
 const DF = new DataFactory();
 
 /**
@@ -12,9 +15,7 @@ const DF = new DataFactory();
  * * https://w3c.github.io/json-ld-api/tests/vocab#PositiveEvaluationTest
  */
 export class TestCaseJsonLdToRdfHandler extends TestCaseEvalHandler {
-
-  public static async getOptions(resource: Resource, options?: IFetchOptions)
-    : Promise<{ injectArguments: any, testProperties: any }> {
+  public static async getOptions(resource: Resource, options?: IFetchOptions): Promise<{ injectArguments: any; testProperties: any }> {
     const injectArguments: any = {
       produceGeneralizedRdf: false,
     };
@@ -40,8 +41,8 @@ export class TestCaseJsonLdToRdfHandler extends TestCaseEvalHandler {
 
       // Override the default base IRI
       if (option.property.jsonLdExpandContext) {
-        const expandContextUrl = resolve(option.property.jsonLdExpandContext.term.value,
-          resource.property.action.value);
+        const expandContextUrl = resolve(option.property.jsonLdExpandContext.term.value, resource.property.action.value);
+        // eslint-disable-next-line ts/no-require-imports, ts/no-var-requires
         injectArguments.context = JSON.parse(await require('stream-to-string')((
           await Util.fetchCached(expandContextUrl, options)).body));
       }
@@ -51,13 +52,13 @@ export class TestCaseJsonLdToRdfHandler extends TestCaseEvalHandler {
       // otherwise, only processors explicitly supporting that mode should run the test.
       if (option.property.processingMode) {
         // Remove the 'json-ld-' prefix from the string
-        injectArguments.processingMode = option.property.processingMode.term.value.substr(8);
+        injectArguments.processingMode = option.property.processingMode.term.value.slice(8);
       }
 
       // The spec for which this test was defined.
       if (option.property.specVersion) {
         // Remove the 'json-ld-' prefix from the string
-        injectArguments.specVersion = option.property.specVersion.term.value.substr(8);
+        injectArguments.specVersion = option.property.specVersion.term.value.slice(8);
       }
 
       // If RDF-star processing is enabled
@@ -94,6 +95,7 @@ export class TestCaseJsonLdToRdfHandler extends TestCaseEvalHandler {
 
     // An optional root context.
     if (resource.property.context) {
+      // eslint-disable-next-line ts/no-require-imports, ts/no-var-requires
       injectArguments.context = JSON.parse(await require('stream-to-string')((
         await Util.fetchCached(resource.property.context.term.value, options)).body));
     }
@@ -106,10 +108,7 @@ export class TestCaseJsonLdToRdfHandler extends TestCaseEvalHandler {
     return { injectArguments, testProperties };
   }
 
-  public static async wrap<H, T extends ITestCase<H>>(superHandler: (resource: Resource, testCaseData: ITestCaseData,
-                                                                     options?: IFetchOptions) => Promise<T>,
-                                                      resource: Resource, testCaseData: ITestCaseData,
-                                                      options?: IFetchOptions): Promise<T> {
+  public static async wrap<H, T extends ITestCase<H>>(superHandler: (resource: Resource, testCaseData: ITestCaseData, options?: IFetchOptions) => Promise<T>, resource: Resource, testCaseData: ITestCaseData, options?: IFetchOptions): Promise<T> {
     const { injectArguments: injectArgumentsAdditional, testProperties } = await TestCaseJsonLdToRdfHandler
       .getOptions(resource, options);
 
@@ -120,20 +119,18 @@ export class TestCaseJsonLdToRdfHandler extends TestCaseEvalHandler {
     const testCaseEval = await superHandler(resource, testCaseData, options);
 
     // Add additional inject arguments
+    // eslint-disable-next-line ts/unbound-method
     const testOld = testCaseEval.test;
-    testCaseEval.test = (handler: H, injectArguments: any) => testOld.bind(testCaseEval)(handler,
-      { ...injectArgumentsAdditional, ...injectArguments });
+    testCaseEval.test = (handler: H, injectArguments: any) => testOld.bind(testCaseEval)(handler, { ...injectArgumentsAdditional, ...injectArguments });
 
     return testCaseEval;
   }
 
-  public resourceToTestCase(resource: Resource, testCaseData: ITestCaseData,
-                            options?: IFetchOptions): Promise<TestCaseEval> {
+  public resourceToTestCase(resource: Resource, testCaseData: ITestCaseData, options?: IFetchOptions): Promise<TestCaseEval> {
     return TestCaseJsonLdToRdfHandler.wrap(super.resourceToTestCase.bind(this), resource, testCaseData, options);
   }
 
   protected normalizeUrl(url: string) {
     return url;
   }
-
 }

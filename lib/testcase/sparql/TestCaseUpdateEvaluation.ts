@@ -1,24 +1,27 @@
-import { ITestCaseSparql } from './ITestCaseSparql';
-import * as RDF from '@rdfjs/types';
-import { ITestCaseData } from '../ITestCase';
-import { ErrorTest } from '../../ErrorTest';
-import { IUpdateEngine } from './IUpdateEngine';
-import { isomorphic } from 'rdf-isomorphic';
-import { IQueryDataLink, TestCaseQueryEvaluation, TestCaseQueryEvaluationHandler } from './TestCaseQueryEvaluation';
-import { IFetchOptions, Util } from '../../Util';
-import { quadToStringQuad } from 'rdf-string';
-import { ITestCaseHandler } from '../ITestCaseHandler';
-import { Resource } from 'rdf-object';
+import type * as RDF from '@rdfjs/types';
 import { DataFactory } from 'rdf-data-factory';
-// tslint:disable:no-var-requires
+import { isomorphic } from 'rdf-isomorphic';
+import type { Resource } from 'rdf-object';
+import { quadToStringQuad } from 'rdf-string';
+import { ErrorTest } from '../../ErrorTest';
+import type { IFetchOptions } from '../../Util';
+import { Util } from '../../Util';
+import type { ITestCaseData } from '../ITestCase';
+import type { ITestCaseHandler } from '../ITestCaseHandler';
+import type { ITestCaseSparql } from './ITestCaseSparql';
+import type { IUpdateEngine } from './IUpdateEngine';
+import type { IQueryDataLink } from './TestCaseQueryEvaluation';
+import { TestCaseQueryEvaluation, TestCaseQueryEvaluationHandler } from './TestCaseQueryEvaluation';
+
+// eslint-disable-next-line ts/no-require-imports, ts/no-var-requires
 const stringifyStream = require('stream-to-string');
+
 const DF = new DataFactory();
 
 /**
  * Test case handler for http://www.w3.org/2001/sw/DataAccess/tests/test-manifest#UpdateEvaluationTest.
  */
 export class TestCaseUpdateEvaluationHandler implements ITestCaseHandler<TestCaseUpdateEvaluation> {
-
   /**
    * Obtain all data links for the given update test action.
    * @param action A query test action.
@@ -28,7 +31,7 @@ export class TestCaseUpdateEvaluationHandler implements ITestCaseHandler<TestCas
     if (action.property.updateData) {
       queryDataLinks.push({
         dataUri: action.property.updateData.value,
-      })
+      });
     }
     for (const updateGraphData of action.properties.updateGraphData) {
       if (updateGraphData.property.updateGraph) {
@@ -46,8 +49,7 @@ export class TestCaseUpdateEvaluationHandler implements ITestCaseHandler<TestCas
     return queryDataLinks;
   }
 
-  public async resourceToTestCase(resource: Resource, testCaseData: ITestCaseData,
-                                  options?: IFetchOptions): Promise<TestCaseUpdateEvaluation> {
+  public async resourceToTestCase(resource: Resource, testCaseData: ITestCaseData, options?: IFetchOptions): Promise<TestCaseUpdateEvaluation> {
     if (!resource.property.action) {
       throw new Error(`Missing mf:action in ${resource}`);
     }
@@ -79,7 +81,8 @@ export class TestCaseUpdateEvaluationHandler implements ITestCaseHandler<TestCas
         dataInitialLinks,
         dataExpectedLinks,
         updateQueryString: await stringifyStream((await Util.fetchCached(action.property.updateQuery.value, options)).body),
-      });
+      },
+    );
   }
 }
 
@@ -93,7 +96,7 @@ export interface ITestCaseUpdateEvaluationProps {
 }
 
 export class TestCaseUpdateEvaluation implements ITestCaseSparql {
-  public readonly type = "sparql";
+  public readonly type = 'sparql';
   public readonly approval: string;
   public readonly approvedBy: string;
   public readonly comment: string;
@@ -114,8 +117,7 @@ export class TestCaseUpdateEvaluation implements ITestCaseSparql {
   }
 
   public async test(engine: IUpdateEngine, injectArguments: any): Promise<void> {
-    const dataResult: RDF.Quad[] = await engine.update(this.dataInitial, this.updateQueryString,
-      { baseIRI: this.baseIRI, ...injectArguments });
+    const dataResult: RDF.Quad[] = await engine.update(this.dataInitial, this.updateQueryString, { baseIRI: this.baseIRI, ...injectArguments });
     if (!isomorphic(this.dataExpected, dataResult)) {
       throw new ErrorTest(`Invalid update query evaluation
 

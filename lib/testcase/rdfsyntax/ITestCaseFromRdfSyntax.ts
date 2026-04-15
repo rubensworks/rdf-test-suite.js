@@ -1,6 +1,5 @@
-import {ITestCase} from "../ITestCase";
-import {IParser} from "./IParser";
-import {ISerializer} from "./ISerializer";
+import type { ITestCase } from '../ITestCase';
+import type { ISerializer } from './ISerializer';
 
 /**
  * An test case data holder for serializations from RDF syntax.

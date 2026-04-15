@@ -1,30 +1,33 @@
-import {DataFactory} from "rdf-data-factory";
-import * as RDF from "@rdfjs/types";
-import {RdfObjectLoader, Resource} from "rdf-object";
-import {stringToTerm} from "rdf-string";
-import {mapTerms, QuadTermName} from "rdf-terms";
-import {SparqlJsonParser} from "sparqljson-parse";
-import {SparqlXmlParser} from "sparqlxml-parse";
-import {ErrorTest} from "../../ErrorTest";
-import {IFetchOptions, IFetchResponse, Util} from "../../Util";
-import {ITestCaseData} from "../ITestCase";
-import {ITestCaseHandler} from "../ITestCaseHandler";
-import {IQueryEngine, IQueryResult, IQueryResultBindings} from "./IQueryEngine";
-import {ITestCaseSparql} from "./ITestCaseSparql";
-import {QueryResultBindings} from "./QueryResultBindings";
-import {QueryResultBoolean} from "./QueryResultBoolean";
-import {QueryResultQuads} from "./QueryResultQuads";
-import { arrayifyStream } from "arrayify-stream";
+import type * as RDF from '@rdfjs/types';
+import { arrayifyStream } from 'arrayify-stream';
+import { DataFactory } from 'rdf-data-factory';
+import type { Resource } from 'rdf-object';
+import { RdfObjectLoader } from 'rdf-object';
+import { stringToTerm } from 'rdf-string';
+import type { QuadTermName } from 'rdf-terms';
+import { mapTerms } from 'rdf-terms';
+import { SparqlJsonParser } from 'sparqljson-parse';
+import { SparqlXmlParser } from 'sparqlxml-parse';
+import { ErrorTest } from '../../ErrorTest';
+import type { IFetchOptions, IFetchResponse } from '../../Util';
+import { Util } from '../../Util';
+import type { ITestCaseData } from '../ITestCase';
+import type { ITestCaseHandler } from '../ITestCaseHandler';
+import type { IQueryEngine, IQueryResult, IQueryResultBindings } from './IQueryEngine';
+import type { ITestCaseSparql } from './ITestCaseSparql';
+import { QueryResultBindings } from './QueryResultBindings';
+import { QueryResultBoolean } from './QueryResultBoolean';
+import { QueryResultQuads } from './QueryResultQuads';
 
-// tslint:disable:no-var-requires
+// eslint-disable-next-line ts/no-require-imports, ts/no-var-requires
 const stringifyStream = require('stream-to-string');
+
 const DF = new DataFactory();
 
 /**
  * Test case handler for http://www.w3.org/2001/sw/DataAccess/tests/test-manifest#QueryEvaluationTest.
  */
 export class TestCaseQueryEvaluationHandler implements ITestCaseHandler<TestCaseQueryEvaluation> {
-
   /**
    * Parse SPARQL query results in any of the following content types:
    * * application/sparql-results+xml (bindings/ask)
@@ -39,20 +42,19 @@ export class TestCaseQueryEvaluationHandler implements ITestCaseHandler<TestCase
    * @param {NodeJS.ReadableStream} data The data stream to parse.
    * @return {Promise<IQueryResult>} A promise resolving to a SPARQL query result.
    */
-  public static async parseQueryResult(contentType: string, url: string,
-                                       data: NodeJS.ReadableStream): Promise<IQueryResult> {
+  public static async parseQueryResult(contentType: string, url: string, data: NodeJS.ReadableStream): Promise<IQueryResult> {
     let queryResult: IQueryResult;
     try {
       const rdfStream: RDF.Stream = Util.parseRdfRaw(contentType, url, data);
       queryResult = new QueryResultQuads(await arrayifyStream(rdfStream));
-    } catch (e) {
+    } catch {
       // Fallthrough to the next cases
     }
-    if (contentType.indexOf('application/sparql-results+xml') >= 0 || url.endsWith('.srx')) {
+    if (contentType.includes('application/sparql-results+xml') || url.endsWith('.srx')) {
       contentType = 'application/sparql-results+xml';
       queryResult = await TestCaseQueryEvaluationHandler.parseSparqlResults('xml', data);
     }
-    if (contentType.indexOf('application/sparql-results+json') >= 0) {
+    if (contentType.includes('application/sparql-results+json')) {
       queryResult = await TestCaseQueryEvaluationHandler.parseSparqlResults('json', data);
     }
 
@@ -61,9 +63,9 @@ export class TestCaseQueryEvaluationHandler implements ITestCaseHandler<TestCase
     }
 
     // Discover DAWG result sets
-    if (queryResult.type === 'quads' && queryResult.value.length > 0
-      && queryResult.value[0].predicate.value === 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type'
-      && queryResult.value[0].object.value === 'http://www.w3.org/2001/sw/DataAccess/tests/result-set#ResultSet') {
+    if (queryResult.type === 'quads' && queryResult.value.length > 0 &&
+      queryResult.value[0].predicate.value === 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type' &&
+      queryResult.value[0].object.value === 'http://www.w3.org/2001/sw/DataAccess/tests/result-set#ResultSet') {
       return await TestCaseQueryEvaluationHandler.parseDawgResultSet(queryResult.value);
     }
 
@@ -88,11 +90,11 @@ export class TestCaseQueryEvaluationHandler implements ITestCaseHandler<TestCase
       booleanPromise = parser.parseXmlBooleanStream(data);
       bindingsStream = parser.parseXmlResultsStream(data);
     }
-    const bindingsPromise: Promise<[RDF.Variable[], { [variable: string]: RDF.Term }[]]> = Promise.all([
+    const bindingsPromise: Promise<[RDF.Variable[], Record<string, RDF.Term>[]]> = Promise.all([
       new Promise<RDF.Variable[]>((resolve) => {
         bindingsStream
-            .on('variables', resolve)
-            .on('end', _ => resolve([]))
+          .on('variables', resolve)
+          .on('end', _ => resolve([]));
       }),
       arrayifyStream(bindingsStream),
     ]);
@@ -113,13 +115,12 @@ export class TestCaseQueryEvaluationHandler implements ITestCaseHandler<TestCase
 
     if (!booleanError) {
       return new QueryResultBoolean(parsingResults[0]);
-    } else if (!bindingsError) {
-      return new QueryResultBindings(parsingResults[1][0].map((variable: RDF.Variable) => '?' + variable.value),
-          parsingResults[1][1], false);
-    } else {
-      throw new Error('Found no valid ASK or SELECT query.\n'
-          + bindingsError.message + '\n' + booleanError.message);
     }
+    if (!bindingsError) {
+      return new QueryResultBindings(parsingResults[1][0].map((variable: RDF.Variable) => `?${variable.value}`), parsingResults[1][1], false);
+    }
+    throw new Error(`Found no valid ASK or SELECT query.\n${
+           bindingsError.message}\n${booleanError.message}`);
   }
 
   /**
@@ -130,7 +131,6 @@ export class TestCaseQueryEvaluationHandler implements ITestCaseHandler<TestCase
    */
   public static async parseDawgResultSet(quads: RDF.Quad[]): Promise<IQueryResultBindings> {
     // Construct resources for easier interpretation of the bindings
-    // tslint:disable:object-literal-sort-keys
     const objectLoader = new RdfObjectLoader({
       context: {
         result: 'http://www.w3.org/2001/sw/DataAccess/tests/result-set#',
@@ -142,7 +142,6 @@ export class TestCaseQueryEvaluationHandler implements ITestCaseHandler<TestCase
         variable: 'result:variable',
       },
     });
-    // tslint:enable:object-literal-sort-keys
     await objectLoader.importArray(quads);
     let resultSet: Resource = null;
     for (const resourceName in objectLoader.resources) {
@@ -154,15 +153,15 @@ export class TestCaseQueryEvaluationHandler implements ITestCaseHandler<TestCase
     }
 
     if (!resultSet) {
-      throw new Error('No valid DAWG result set was found in ' + quads);
+      throw new Error(`No valid DAWG result set was found in ${quads}`);
     }
 
     // Get the variable names
     const variables: string[] = resultSet.properties.resultVariables
-      .map((resource: Resource) => '?' + resource.value);
+      .map((resource: Resource) => `?${resource.value}`);
 
-    // check if any binding has .index
-    let checkOrder: boolean = false;
+    // Check if any binding has .index
+    let checkOrder = false;
     const s = resultSet.properties.solutions;
     for (const solution of s) {
       if (solution.property.index) {
@@ -174,18 +173,14 @@ export class TestCaseQueryEvaluationHandler implements ITestCaseHandler<TestCase
     // Ensure that the solutions are sorted by index
     const solutions = resultSet.properties.solutions;
     if (checkOrder) {
-      solutions.sort((solution1: Resource, solution2: Resource) => {
-        return parseInt(solution1.property.index.value, 10) - parseInt(solution2.property.index.value, 10);
-      });
+      solutions.sort((solution1: Resource, solution2: Resource) => Number.parseInt(solution1.property.index.value, 10) - Number.parseInt(solution2.property.index.value, 10));
     }
 
     // Collect the bindings as object
-    const value: {[variable: string]: RDF.Term}[] = solutions.map((solution: Resource) => {
-      return solution.properties.bindings.reduce((bindings: any, binding: Resource) => {
-        bindings['?' + binding.property.variable.value] = binding.property.value.term;
-        return bindings;
-      }, {});
-    });
+    const value: Record<string, RDF.Term>[] = solutions.map((solution: Resource) => solution.properties.bindings.reduce((bindings: any, binding: Resource) => {
+      bindings[`?${binding.property.variable.value}`] = binding.property.value.term;
+      return bindings;
+    }, {}));
 
     return new QueryResultBindings(variables, value, checkOrder);
   }
@@ -199,7 +194,7 @@ export class TestCaseQueryEvaluationHandler implements ITestCaseHandler<TestCase
     if (action.property.data) {
       queryDataLinks.push({
         dataUri: action.property.data.value,
-      })
+      });
     }
     for (const graphData of action.properties.graphData) {
       if (graphData.property.graph) {
@@ -225,19 +220,16 @@ export class TestCaseQueryEvaluationHandler implements ITestCaseHandler<TestCase
   public static async resolveQueryDataLinks(queryDataLinks: IQueryDataLink[], options?: IFetchOptions): Promise<RDF.Quad[]> {
     let queryData: RDF.Quad[] = [];
     for (const queryDataLink of queryDataLinks) {
-      let queryDataThis: RDF.Quad[] = await arrayifyStream((await Util.fetchRdf(queryDataLink.dataUri,
-        {...options, normalizeUrl: true}))[1]);
+      let queryDataThis: RDF.Quad[] = await arrayifyStream((await Util.fetchRdf(queryDataLink.dataUri, { ...options, normalizeUrl: true }))[1]);
       if (queryDataLink.dataGraph) {
-        queryDataThis = queryDataThis.map((quad) => mapTerms(quad,
-          (value: RDF.Term, key: QuadTermName) => key === 'graph' ? queryDataLink.dataGraph : value));
+        queryDataThis = queryDataThis.map(quad => mapTerms(quad, (value: RDF.Term, key: QuadTermName) => key === 'graph' ? queryDataLink.dataGraph : value));
       }
       queryData = [ ...queryData, ...queryDataThis ];
     }
     return queryData;
   }
 
-  public async resourceToTestCase(resource: Resource, testCaseData: ITestCaseData,
-                                  options?: IFetchOptions): Promise<TestCaseQueryEvaluation> {
+  public async resourceToTestCase(resource: Resource, testCaseData: ITestCaseData, options?: IFetchOptions): Promise<TestCaseQueryEvaluation> {
     if (!resource.property.action) {
       throw new Error(`Missing mf:action in ${resource}`);
     }
@@ -253,9 +245,9 @@ export class TestCaseQueryEvaluationHandler implements ITestCaseHandler<TestCase
     const queryDataLinks: IQueryDataLink[] = TestCaseQueryEvaluationHandler.getQueryDataLinks(action);
 
     // Check for lax cardinality property
-    let laxCardinality: boolean = false;
-    if (resource.property.resultCardinality && resource.property.resultCardinality.value
-      === 'http://www.w3.org/2001/sw/DataAccess/tests/test-manifest#LaxCardinality') {
+    let laxCardinality = false;
+    if (resource.property.resultCardinality && resource.property.resultCardinality.value ===
+      'http://www.w3.org/2001/sw/DataAccess/tests/test-manifest#LaxCardinality') {
       laxCardinality = true;
     }
 
@@ -272,12 +264,14 @@ export class TestCaseQueryEvaluationHandler implements ITestCaseHandler<TestCase
         queryData,
         queryResult: await TestCaseQueryEvaluationHandler.parseQueryResult(
           Util.identifyContentType(queryResponse.url, queryResponse.headers),
-          queryResponse.url, queryResponse.body),
+          queryResponse.url,
+          queryResponse.body,
+        ),
         queryString: await stringifyStream((await Util.fetchCached(action.property.query.value, options)).body),
         resultSource: queryResponse,
-      });
+      },
+    );
   }
-
 }
 
 export interface ITestCaseQueryEvaluationProps {
@@ -296,7 +290,7 @@ export interface IQueryDataLink {
 }
 
 export class TestCaseQueryEvaluation implements ITestCaseSparql {
-  public readonly type = "sparql";
+  public readonly type = 'sparql';
   public readonly approval: string;
   public readonly approvedBy: string;
   public readonly comment: string;
@@ -318,13 +312,12 @@ export class TestCaseQueryEvaluation implements ITestCaseSparql {
   }
 
   public static queryDataLinksToString(queryDataLinks: IQueryDataLink[]): string {
-    return queryDataLinks.map((queryDataLink) => queryDataLink.dataUri + (queryDataLink.dataGraph ? ` (named graph: ${queryDataLink.dataGraph.value})` : '')).join(',\n    ');
+    return queryDataLinks.map(queryDataLink => queryDataLink.dataUri + (queryDataLink.dataGraph ? ` (named graph: ${queryDataLink.dataGraph.value})` : '')).join(',\n    ');
   }
 
   public async test(engine: IQueryEngine, injectArguments: any): Promise<void> {
-    const result: IQueryResult = await engine.query(this.queryData, this.queryString,
-      { baseIRI: this.baseIRI, ...injectArguments });
-    if (!await this.queryResult.equals(result, this.laxCardinality)) {
+    const result: IQueryResult = await engine.query(this.queryData, this.queryString, { baseIRI: this.baseIRI, ...injectArguments });
+    if (!this.queryResult.equals(result, this.laxCardinality)) {
       throw new ErrorTest(`Invalid query evaluation
 
   Query:\n\n${this.queryString}
@@ -339,5 +332,4 @@ export class TestCaseQueryEvaluation implements ITestCaseSparql {
 `);
     }
   }
-
 }

@@ -1,8 +1,8 @@
-import * as RDF from "@rdfjs/types";
+import type * as RDF from '@rdfjs/types';
 
 /**
  * A serializer handler.
  */
 export interface ISerializer {
-  serialize(data: RDF.Quad[], baseIRI: string, options: {[key: string]: any}): Promise<string>;
+  serialize: (data: RDF.Quad[], baseIRI: string, options: Record<string, any>) => Promise<string>;
 }

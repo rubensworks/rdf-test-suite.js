@@ -1,46 +1,45 @@
-import {DataFactory} from "rdf-data-factory";
-import "jest-rdf";
-import {ContextParser} from "jsonld-context-parser";
-import {Resource} from "rdf-object";
-import {TestCaseJsonLdToRdfNegativeHandler,
-} from "../../../../lib/testcase/rdfsyntax/jsonld/TestCaseJsonLdToRdfNegative";
-import {TestCaseSyntax} from "../../../../lib/testcase/rdfsyntax/TestCaseSyntax";
+import { ContextParser } from 'jsonld-context-parser';
+import { DataFactory } from 'rdf-data-factory';
+import 'jest-rdf';
+import { Resource } from 'rdf-object';
+import { TestCaseJsonLdToRdfNegativeHandler,
+} from '../../../../lib/testcase/rdfsyntax/jsonld/TestCaseJsonLdToRdfNegative';
+import { TestCaseSyntax } from '../../../../lib/testcase/rdfsyntax/TestCaseSyntax';
 
-// tslint:disable:no-var-requires
 const streamifyString = require('streamify-string');
+
 const DF = new DataFactory();
 
 // Mock fetch
-(<any> global).fetch = (url: string) => {
+(<any> globalThis).fetch = (url: string) => {
   let body;
   switch (url) {
-  case 'http://ex.org/action.ttl':
-  case 'ACTION':
-    body = streamifyString(`{
+    case 'http://ex.org/action.ttl':
+    case 'ACTION':
+      body = streamifyString(`{
   "@id": "http://www.w3.org/TR/rdf-syntax-grammar",
   "http://purl.org/dc/elements/1.1/title": [
     "RDF1.1 XML Syntax 1",
     "RDF1.1 XML Syntax 2"
   ]
 }`);
-    break;
-  case 'ERROR':
-    body = streamifyString('ERROR');
-    break;
-  case 'ERRORCODE':
-    body = streamifyString('ERRORCODE');
-    break;
-  default:
-    return Promise.reject(new Error('Fetch error'));
+      break;
+    case 'ERROR':
+      body = streamifyString('ERROR');
+      break;
+    case 'ERRORCODE':
+      body = streamifyString('ERRORCODE');
+      break;
+    default:
+      return Promise.reject(new Error('Fetch error'));
   }
   return Promise.resolve(new Response(body, <any> { headers: new Headers({ a: 'b' }), status: 200 }));
 };
 
 describe('TestCaseJsonLdToRdfNegativeHandler', () => {
-
   const handler = new TestCaseJsonLdToRdfNegativeHandler();
   const parser = {
-    parse: async (data: string, baseIRI: string, injectArguments: any) => {
+    parse: async(data: string, _baseIRI: string, _injectArguments: any) => {
       if (data === 'ERROR') {
         throw new Error('ERROR');
       } else if (data === 'ERRORCODE') {
@@ -62,9 +61,11 @@ describe('TestCaseJsonLdToRdfNegativeHandler', () => {
         context = parsedContext;
 
         pAction = new Resource(
-          { term: DF.namedNode('http://www.w3.org/2001/sw/DataAccess/tests/test-manifest#action'), context });
+          { term: DF.namedNode('http://www.w3.org/2001/sw/DataAccess/tests/test-manifest#action'), context },
+        );
         pResult = new Resource(
-          { term: DF.namedNode('http://www.w3.org/2001/sw/DataAccess/tests/test-manifest#result'), context });
+          { term: DF.namedNode('http://www.w3.org/2001/sw/DataAccess/tests/test-manifest#result'), context },
+        );
 
         done();
       });
@@ -72,25 +73,25 @@ describe('TestCaseJsonLdToRdfNegativeHandler', () => {
   });
 
   describe('#resourceToTestCase', () => {
-    it('should produce a TestCaseEval', async () => {
+    it('should produce a TestCaseEval', async() => {
       const resource = new Resource({ term: DF.namedNode('http://ex.org/test'), context });
       resource.addProperty(pAction, new Resource({ term: DF.literal('ACTION'), context }));
       resource.addProperty(pResult, new Resource({ term: DF.literal('CODE'), context }));
       const testCase: any = await handler.resourceToTestCase(resource, <any> {});
       expect(testCase).toBeInstanceOf(TestCaseSyntax);
-      expect(testCase.type).toEqual('rdfsyntax');
-      expect(testCase.data).toEqual(`{
+      expect(testCase.type).toBe('rdfsyntax');
+      expect(testCase.data).toBe(`{
   "@id": "http://www.w3.org/TR/rdf-syntax-grammar",
   "http://purl.org/dc/elements/1.1/title": [
     "RDF1.1 XML Syntax 1",
     "RDF1.1 XML Syntax 2"
   ]
 }`);
-      expect(testCase.expectErrorCode).toEqual('CODE');
+      expect(testCase.expectErrorCode).toBe('CODE');
       const spy = jest.spyOn(parser, 'parse');
       try {
         await testCase.test(parser, {});
-      } catch (e) {
+      } catch {
         // Ignore error
       }
       return expect(spy).toHaveBeenCalledWith(`{
@@ -99,10 +100,9 @@ describe('TestCaseJsonLdToRdfNegativeHandler', () => {
     "RDF1.1 XML Syntax 1",
     "RDF1.1 XML Syntax 2"
   ]
-}`, "ACTION",
-        {
-          produceGeneralizedRdf: false,
-        }, testCase);
+}`, 'ACTION', {
+        produceGeneralizedRdf: false,
+      }, testCase);
     });
 
     it('should error on a resource without action', () => {
@@ -117,15 +117,15 @@ describe('TestCaseJsonLdToRdfNegativeHandler', () => {
       return expect(handler.resourceToTestCase(resource, <any> {})).rejects.toBeTruthy();
     });
 
-    it('should produce TestCaseEval that tests true when the expected error code is thrown', async () => {
+    it('should produce TestCaseEval that tests true when the expected error code is thrown', async() => {
       const resource = new Resource({ term: DF.namedNode('http://ex.org/test'), context });
       resource.addProperty(pAction, new Resource({ term: DF.literal('ERRORCODE'), context }));
       resource.addProperty(pResult, new Resource({ term: DF.literal('CODE'), context }));
       const testCase = await handler.resourceToTestCase(resource, <any> {});
-      return expect(testCase.test(parser, {})).resolves.toBe(undefined);
+      return expect(testCase.test(parser, {})).resolves.toBeUndefined();
     });
 
-    it('should produce TestCaseEval that tests false when no error is thrown', async () => {
+    it('should produce TestCaseEval that tests false when no error is thrown', async() => {
       const resource = new Resource({ term: DF.namedNode('http://ex.org/test'), context });
       resource.addProperty(pAction, new Resource({ term: DF.literal('ACTION'), context }));
       resource.addProperty(pResult, new Resource({ term: DF.literal('CODE'), context }));
@@ -142,7 +142,7 @@ describe('TestCaseJsonLdToRdfNegativeHandler', () => {
 `));
     });
 
-    it('should produce TestCaseEval that tests false when an error with different error code is thrown', async () => {
+    it('should produce TestCaseEval that tests false when an error with different error code is thrown', async() => {
       const resource = new Resource({ term: DF.namedNode('http://ex.org/test'), context });
       resource.addProperty(pAction, new Resource({ term: DF.literal('ERROR'), context }));
       resource.addProperty(pResult, new Resource({ term: DF.literal('CODE'), context }));
@@ -151,5 +151,4 @@ describe('TestCaseJsonLdToRdfNegativeHandler', () => {
         .toThrow(new Error('Received invalid error code, expected CODE, but got undefined (ERROR)'));
     });
   });
-
 });

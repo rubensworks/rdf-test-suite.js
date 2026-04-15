@@ -4,7 +4,6 @@ import 'jest-rdf';
 import { Resource } from 'rdf-object';
 import { TestCasePositiveSyntax, TestCasePositiveSyntaxHandler } from '../../../lib/testcase/sparql/TestCasePositiveSyntax';
 
-// Tslint:disable:no-var-requires
 const streamifyString = require('streamify-string');
 
 const DF = new DataFactory();

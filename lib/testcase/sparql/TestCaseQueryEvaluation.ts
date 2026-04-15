@@ -131,7 +131,6 @@ export class TestCaseQueryEvaluationHandler implements ITestCaseHandler<TestCase
    */
   public static async parseDawgResultSet(quads: RDF.Quad[]): Promise<IQueryResultBindings> {
     // Construct resources for easier interpretation of the bindings
-    // tslint:disable:object-literal-sort-keys
     const objectLoader = new RdfObjectLoader({
       context: {
         result: 'http://www.w3.org/2001/sw/DataAccess/tests/result-set#',
@@ -143,7 +142,6 @@ export class TestCaseQueryEvaluationHandler implements ITestCaseHandler<TestCase
         variable: 'result:variable',
       },
     });
-    // Tslint:enable:object-literal-sort-keys
     await objectLoader.importArray(quads);
     let resultSet: Resource = null;
     for (const resourceName in objectLoader.resources) {

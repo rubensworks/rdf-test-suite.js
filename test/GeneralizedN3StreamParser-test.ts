@@ -3,7 +3,6 @@ import { arrayifyStream } from 'arrayify-stream';
 import { StreamParser } from 'n3';
 import { GeneralizedN3StreamParser } from '../lib/GeneralizedN3StreamParser';
 
-// Tslint:disable:no-var-requires
 const quad = require('rdf-quad');
 const streamifyString = require('streamify-string');
 

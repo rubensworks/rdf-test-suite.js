@@ -9,7 +9,6 @@ import { TestCaseEval } from '../../../../lib/testcase/rdfsyntax/TestCaseEval';
 
 const quad = require('rdf-quad');
 
-// Tslint:disable:no-var-requires
 const streamifyString = require('streamify-string');
 
 const DF = new DataFactory();

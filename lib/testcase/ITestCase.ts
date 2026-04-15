@@ -56,7 +56,6 @@ export async function testCaseFromResource(testCaseHandlers: Record<string, ITes
   }
 
   if (handlers.length === 0) {
-    // Tslint:disable-next-line:no-console
     // eslint-disable-next-line no-console
     console.error(new Error(
       `Could not find a test case handler for ${resource.value} with types ${baseTestCase.types}`,
@@ -71,7 +70,6 @@ export async function testCaseFromResource(testCaseHandlers: Record<string, ITes
     }, options)))).filter(Boolean);
     return allowMultiple ? res : res[0];
   } catch (e) {
-    // Tslint:disable-next-line:no-console
     // eslint-disable-next-line no-console
     console.error(e.toString());
     return empty;

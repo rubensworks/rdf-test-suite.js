@@ -2,7 +2,6 @@ import 'cross-fetch/polyfill';
 import 'jest-rdf';
 import { DocumentLoaderCached } from '../lib/DocumentLoaderCached';
 
-// Tslint:disable:no-var-requires
 const streamifyString = require('streamify-string');
 
 // Mock fetch

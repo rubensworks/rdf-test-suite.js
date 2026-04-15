@@ -6,7 +6,6 @@ import { TestCaseJsonLdToRdfNegativeHandler,
 } from '../../../../lib/testcase/rdfsyntax/jsonld/TestCaseJsonLdToRdfNegative';
 import { TestCaseSyntax } from '../../../../lib/testcase/rdfsyntax/TestCaseSyntax';
 
-// Tslint:disable:no-var-requires
 const streamifyString = require('streamify-string');
 
 const DF = new DataFactory();

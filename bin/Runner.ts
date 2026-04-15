@@ -8,9 +8,6 @@ import { StreamWriter } from 'n3';
 import type { ITestResult, ITestSuiteConfig } from '../lib/TestSuiteRunner';
 import { TestSuiteRunner } from '../lib/TestSuiteRunner';
 
-// Tslint:disable:no-console
-// tslint:disable:no-var-requires
-
 const args = minimist(process.argv.slice(2));
 
 if (args._.length < 2) {

@@ -3,7 +3,6 @@ import { Parser } from 'n3';
 
 // Temporarily set format to text/n3 to allow blank node predicates (needed by JSON-LD tests)
 const readPredicateOld = (<any> Parser.prototype)._readPredicate;
-// Tslint:disable-next-line:only-arrow-functions
 (<any> Parser.prototype)._readPredicate = function(token: any) {
   if (this.allowBlankNodePredicates) {
     this._n3Mode = true;

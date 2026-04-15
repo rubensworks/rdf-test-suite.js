@@ -16,7 +16,6 @@ jest.mock<typeof import('fs')>('fs', () => {
   };
 });
 
-// Tslint:disable:no-var-requires
 const stringifyStream = require('stream-to-string');
 const streamifyString = require('streamify-string');
 

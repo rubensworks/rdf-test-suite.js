@@ -2,7 +2,6 @@ import * as fs from 'node:fs';
 import * as path from 'node:path';
 import { ManifestLoader } from '../lib/ManifestLoader';
 
-// Tslint:disable:no-var-requires
 const streamifyString = require('streamify-string');
 
 // Mock fetch

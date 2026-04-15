@@ -11,8 +11,6 @@ import { TestCaseQueryEvaluationHandler } from './sparql/TestCaseQueryEvaluation
 import { TestCaseUpdateEvaluationHandler } from './sparql/TestCaseUpdateEvaluation';
 import { TestCaseUnsupportedHandler } from './TestCaseUnsupported';
 
-// Tslint:disable:max-line-length
-// tslint:disable:object-literal-sort-keys
 module.exports = {
   // SPARQL 1.0, SPARQL 1.1 test suite
   'http://www.w3.org/2001/sw/DataAccess/tests/test-manifest#NegativeSyntaxTest':
@@ -117,5 +115,3 @@ module.exports = {
     new TestCaseEvalHandler(),
 
 };
-// Tslint:enable:object-literal-sort-keys
-// tslint:enable:max-line-length

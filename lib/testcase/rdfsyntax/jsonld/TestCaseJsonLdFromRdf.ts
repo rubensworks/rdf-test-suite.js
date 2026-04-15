@@ -73,7 +73,6 @@ export class TestCaseJsonLdFromRdf implements ITestCaseFromRdfSyntax {
   }
 }
 
-// Tslint:disable:align
 // eslint-disable-next-line unicorn/no-object-as-default-parameter
 export function objectsIsomorphic(obj1: any, obj2: any, options: IObjectsIsomorphicOptions = {
   ordered: false,

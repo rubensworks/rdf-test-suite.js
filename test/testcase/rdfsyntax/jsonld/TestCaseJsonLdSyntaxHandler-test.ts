@@ -10,7 +10,6 @@ import {
 } from '../../../../lib/testcase/rdfsyntax/jsonld/TestCaseJsonLdSyntax';
 import { TestCaseSyntax } from '../../../../lib/testcase/rdfsyntax/TestCaseSyntax';
 
-// Tslint:disable:no-var-requires
 const streamifyString = require('streamify-string');
 
 const DF = new DataFactory();

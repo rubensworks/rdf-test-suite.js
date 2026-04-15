@@ -7,7 +7,6 @@ import 'jest-rdf';
 import { ErrorSkipped } from '../../../lib/ErrorSkipped';
 import { TestCaseSyntax, TestCaseSyntaxHandler } from '../../../lib/testcase/rdfsyntax/TestCaseSyntax';
 
-// Tslint:disable:no-var-requires
 const streamifyString = require('streamify-string');
 
 const DF = new DataFactory();

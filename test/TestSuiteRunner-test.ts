@@ -138,7 +138,6 @@ jest.mock<typeof import('../lib/ManifestLoader')>('../lib/ManifestLoader', () =>
   return [ 1, 1 ];
 };
 
-// Tslint:disable:no-var-requires
 const quad = require('rdf-quad');
 const stringifyStream = require('stream-to-string');
 
@@ -509,7 +508,6 @@ describe('TestSuiteRunner', () => {
       const stdout = new PassThrough();
       runner.resultsToText(stdout, testResults, false);
       stdout.end();
-      // Tslint:disable:no-trailing-whitespace
       return await expect(stringifyStream(stdout)).resolves.toBe(`${LogSymbols.success} Test1 (http://ex.org/test1) ${Util.withColor('10ms', Util.colorGray)}
 ${LogSymbols.success} Test2 (http://ex.org/test2) ${Util.withColor('10ms', Util.colorGray)}
 ${LogSymbols.error} Test3 (http://ex.org/test3)
@@ -527,7 +525,6 @@ ${LogSymbols.error} 2 / 3 tests succeeded!
       const stdout = new PassThrough();
       runner.resultsToText(stdout, testResultsSkips, false);
       stdout.end();
-      // Tslint:disable:no-trailing-whitespace
       return await expect(stringifyStream(stdout)).resolves.toBe(`${LogSymbols.success} Test1 (http://ex.org/test1) ${Util.withColor('10ms', Util.colorGray)}
 ${LogSymbols.info} Test2 (http://ex.org/test2)
 ${LogSymbols.info} Test3 (http://ex.org/test3)
@@ -546,7 +543,6 @@ ${LogSymbols.error} 3 / 4 tests succeeded! (skipped 2)
       const stdout = new PassThrough();
       runner.resultsToText(stdout, testResultsExternal, false);
       stdout.end();
-      // Tslint:disable:no-trailing-whitespace
       return await expect(stringifyStream(stdout)).resolves.toBe(`${LogSymbols.success} Test1 (http://ex.org/test1) ${Util.withColor('10ms', Util.colorGray)}
 ${LogSymbols.info} Test2 (http://ex.org/test2)
 ${LogSymbols.info} Test3 (http://ex.org/test3)
@@ -565,7 +561,6 @@ ${LogSymbols.error} 3 / 4 tests succeeded! (skipped 2)
       const stdout = new PassThrough();
       runner.resultsToText(stdout, testResults, true);
       stdout.end();
-      // Tslint:disable:no-trailing-whitespace
       return await expect(stringifyStream(stdout)).resolves.toBe(`${LogSymbols.success} Test1 (http://ex.org/test1) ${Util.withColor('10ms', Util.colorGray)}
 ${LogSymbols.success} Test2 (http://ex.org/test2) ${Util.withColor('10ms', Util.colorGray)}
 ${LogSymbols.error} Test3 (http://ex.org/test3)
@@ -577,7 +572,6 @@ ${LogSymbols.error} 2 / 3 tests succeeded!
       const stdout = new PassThrough();
       runner.resultsToText(stdout, testResultsSkips, true);
       stdout.end();
-      // Tslint:disable:no-trailing-whitespace
       return await expect(stringifyStream(stdout)).resolves.toBe(`${LogSymbols.success} Test1 (http://ex.org/test1) ${Util.withColor('10ms', Util.colorGray)}
 ${LogSymbols.info} Test2 (http://ex.org/test2)
 ${LogSymbols.info} Test3 (http://ex.org/test3)

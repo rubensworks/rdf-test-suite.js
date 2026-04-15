@@ -98,7 +98,6 @@ describe('e2e tests on the test suite runner', () => {
 
         // For (const r of result) {
         //   if (!(r.ok || r.skipped)) {
-        //     // tslint:disable-next-line:no-console
         //     process.stderr.write('Failed on ' + r.test.name + ' (' + r.test.uri + ') with ' + r.error + '\n');
         //   }
         // }

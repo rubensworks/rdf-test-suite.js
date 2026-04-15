@@ -1,4 +1,3 @@
-/* Tslint:disable:no-console */
 import { ContextParser } from 'jsonld-context-parser';
 import { DataFactory } from 'rdf-data-factory';
 import { Resource } from 'rdf-object';

@@ -78,7 +78,7 @@
     "test": "jest ${1}",
     "test-watch": "jest ${1} --watch",
     "coveralls": "jest --coverage && cat ./coverage/lcov.info | coveralls",
-    "lint": "ESLINT_USE_FLAT_CONFIG=true eslint .",
+    "lint": "ESLINT_USE_FLAT_CONFIG=true eslint . --cache",
     "build": "tsc",
     "build-watch": "tsc --watch",
     "validate": "npm ls",

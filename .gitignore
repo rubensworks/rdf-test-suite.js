@@ -18,3 +18,4 @@ test/cache
 coverage
 documentation
 *.rdf-test-cache*
+.eslintcache

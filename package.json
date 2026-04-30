@@ -124,7 +124,7 @@
     "jest-rdf": "^2.0.0",
     "manual-git-changelog": "^1.0.1",
     "pre-commit": "^2.0.0",
-    "rdf-parse": "^4.0.0",
+    "rdf-parse": "^5.0.0",
     "rimraf": "^6.0.0",
     "streamify-array": "^2.0.0",
     "ts-jest": "^29.0.0",

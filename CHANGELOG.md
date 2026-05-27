@@ -1,6 +1,12 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+<a name="v2.1.6"></a>
+## [v2.1.6](https://github.com/rubensworks/rdf-test-suite.js/compare/v2.1.5...v2.1.6) - 2026-05-27
+
+### Fixed
+* [Normalize Microdata eval base URLs for W3C suite (#127)](https://github.com/rubensworks/rdf-test-suite.js/commit/0486aef76eed429bb36fd639a47c70ab80798213)
+
 <a name="v2.1.5"></a>
 ## [v2.1.5](https://github.com/rubensworks/rdf-test-suite.js/compare/v2.1.4...v2.1.5) - 2026-03-26
 

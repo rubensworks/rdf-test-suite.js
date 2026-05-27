@@ -102,7 +102,7 @@ module.exports = {
 
   // Microdata-RDF test suite
   'http://www.w3.org/ns/rdftest#TestMicrodataEval':
-    new TestCaseEvalHandler(),
+    new TestCaseEvalHandler({ normalizeUrl: true }),
   'http://www.w3.org/ns/rdftest#TestMicrodataNegativeSyntax':
     new TestCaseSyntaxHandler(true), // Microdata-RDF test suite never expect errors, just empty documents
 

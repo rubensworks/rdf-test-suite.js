@@ -8848,10 +8848,10 @@ n3@^1.0.0, n3@^1.16.3, n3@^1.17.0:
     queue-microtask "^1.1.2"
     readable-stream "^4.0.0"
 
-n3@^2.0.0:
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/n3/-/n3-2.0.0.tgz#990ff360886a101608145b83efeebe29eed11a80"
-  integrity sha512-U16wgzeUvnP92QSw9q3CWpYcIMB7egm1krI79+a89HoIFf/5Qwvh1RGAV51+W9Dlwr9+1hb60JZlfPfUyzdHtw==
+n3@^2.0.3:
+  version "2.0.3"
+  resolved "https://registry.yarnpkg.com/n3/-/n3-2.0.3.tgz#2ddee66c10f8baa9e12b67da7a7542a6c3dfeeb7"
+  integrity sha512-um/toGVENTarHBYIK2TdH6ByBhW75WpdKpv8iTYt9wF2QfBk8s8a16iaWZFUAAC1BKfGdb99kfgx6pltdDwfKA==
   dependencies:
     buffer "^6.0.3"
     readable-stream "^4.0.0"
@@ -9547,10 +9547,10 @@ rdf-string@^1.0.0, rdf-string@^1.5.0, rdf-string@^1.6.0, rdf-string@^1.6.1, rdf-
     "@rdfjs/types" "*"
     rdf-data-factory "^1.1.0"
 
-rdf-string@^2.0.0:
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/rdf-string/-/rdf-string-2.0.0.tgz#4b459c0efa37cb7621a400c315540d7359911937"
-  integrity sha512-qxhoVZahUlRuWw1XPwwkT6W1syFNhtoexZDy139FaEyMDEJSiOMaffCe3pgEyBYapnOGDvHjL/zR1D+I8a9vAg==
+rdf-string@^2.0.0, rdf-string@^2.0.1:
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/rdf-string/-/rdf-string-2.0.1.tgz#9beff12486a653d6fb0f229a5e0e5f3cc2e962c6"
+  integrity sha512-SMW4ponnKNrsP9kYpOLyICeM4UJmEXIeS3zri7kPK9gzLFsHD88oiza8LnokNYxd76zW4JoYWD+v4x0g8rJBjw==
   dependencies:
     rdf-data-factory "^2.0.0"
 

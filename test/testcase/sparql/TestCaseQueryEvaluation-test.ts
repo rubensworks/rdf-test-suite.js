@@ -198,6 +198,27 @@ describe('TestCaseQueryEvaluationHandler', () => {
           variables: [],
         });
     });
+
+    it('should resolve on TSV via content type', async() => {
+      return expect(TestCaseQueryEvaluationHandler.parseQueryResult('text/tab-separated-values', 'a', streamifyString(`?book\n<http://example.org/book/book1>\n<http://example.org/book/book2>`))).resolves
+        .toEqual({
+          checkOrder: false,
+          type: 'bindings',
+          value: [
+            { '?book': DF.namedNode('http://example.org/book/book1') },
+            { '?book': DF.namedNode('http://example.org/book/book2') },
+          ],
+          variables: [ '?book' ],
+        });
+    });
+
+    it('should resolve on TSV via file extension fallback', async() => {
+      return expect(TestCaseQueryEvaluationHandler.parseQueryResult('unknown', 'http://example.org/results.tsv', streamifyString(`true`))).resolves
+        .toEqual({
+          type: 'boolean',
+          value: true,
+        });
+    });
   });
 
   describe('#parseSparqlResults', () => {
@@ -429,6 +450,157 @@ describe('TestCaseQueryEvaluationHandler', () => {
         ],
         variables: [ '?v1', '?v2', '?v3' ],
       });
+    });
+  });
+
+  describe('#parseSparqlTsvResults', () => {
+    it('should parse a single-line true boolean', async() => {
+      return expect(TestCaseQueryEvaluationHandler.parseSparqlTsvResults(streamifyString(`true\n`))).resolves
+        .toEqual({ type: 'boolean', value: true });
+    });
+
+    it('should parse a single-line false boolean', async() => {
+      return expect(TestCaseQueryEvaluationHandler.parseSparqlTsvResults(streamifyString(`False`))).resolves
+        .toEqual({ type: 'boolean', value: false });
+    });
+
+    it('should parse a single-line result that is not a boolean', async() => {
+      const tsv = `?x`;
+      return expect(TestCaseQueryEvaluationHandler.parseSparqlTsvResults(streamifyString(tsv))).resolves
+        .toEqual({
+          checkOrder: false,
+          type: 'bindings',
+          variables: [ '?x' ],
+          value: [],
+        });
+    });
+
+    it('should parse standard TSV bindings with missing/empty fields', async() => {
+      const tsv = `?x\t?y\t?z\n<http://example.org/a>\t"str"\t123\n<http://example.org/b>\t\t45.6`;
+      return expect(TestCaseQueryEvaluationHandler.parseSparqlTsvResults(streamifyString(tsv))).resolves
+        .toEqual({
+          checkOrder: false,
+          type: 'bindings',
+          variables: [ '?x', '?y', '?z' ],
+          value: [
+            {
+              '?x': DF.namedNode('http://example.org/a'),
+              '?y': DF.literal('str'),
+              '?z': DF.literal('123', DF.namedNode('http://www.w3.org/2001/XMLSchema#integer')),
+            },
+            {
+              '?x': DF.namedNode('http://example.org/b'),
+              '?z': DF.literal('45.6', DF.namedNode('http://www.w3.org/2001/XMLSchema#decimal')),
+            },
+          ],
+        });
+    });
+
+    it('should parse a zero-variable result row', async() => {
+      const tsv = `\n\n\n`;
+      return expect(TestCaseQueryEvaluationHandler.parseSparqlTsvResults(streamifyString(tsv))).resolves
+        .toEqual({
+          checkOrder: false,
+          type: 'bindings',
+          variables: [],
+          value: [{}, {}],
+        });
+    });
+
+    it('should reject on an empty column in the header', async() => {
+      const tsv = `?x\t\t?z\n<ex:a>\t<ex:b>\t<ex:c>`;
+      return expect(TestCaseQueryEvaluationHandler.parseSparqlTsvResults(streamifyString(tsv))).rejects
+        .toThrow('Invalid TSV result: Empty column on the first row.');
+    });
+
+    it('should reject on invalid variable formats', async() => {
+      return expect(TestCaseQueryEvaluationHandler.parseSparqlTsvResults(streamifyString(`x\t?y\n<ex:a>\t<ex:b>`))).rejects
+        .toThrow('Invalid TSV variable: x');
+    });
+
+    it('should reject on duplicate variables', async() => {
+      return expect(TestCaseQueryEvaluationHandler.parseSparqlTsvResults(streamifyString(`?x\t?x\n<ex:a>\t<ex:a>`))).rejects
+        .toThrow('Invalid TSV result: The variable ?x is declared twice.');
+    });
+
+    it('should reject on mismatched column count in rows', async() => {
+      const tsv = `?x\t?y\n<http://example.org/a>`;
+      return expect(TestCaseQueryEvaluationHandler.parseSparqlTsvResults(streamifyString(tsv))).rejects
+        .toThrow('Invalid TSV row (Line 2): expected 2 fields but found 1.');
+    });
+
+    it('should reject on invalid Turtle syntax in a cell', async() => {
+      const tsv = `?x\nbad_unquoted_term`;
+      return expect(TestCaseQueryEvaluationHandler.parseSparqlTsvResults(streamifyString(tsv))).rejects
+        .toThrow(/Failed to parse TSV value on Line 2, Column '\?x'/u);
+    });
+  });
+
+  describe('#parseTsvTerm', () => {
+    it('should parse integers', () => {
+      expect(TestCaseQueryEvaluationHandler.parseTsvTerm('123')).toEqual(
+        DF.literal('123', DF.namedNode('http://www.w3.org/2001/XMLSchema#integer')),
+      );
+      expect(TestCaseQueryEvaluationHandler.parseTsvTerm('-42')).toEqual(
+        DF.literal('-42', DF.namedNode('http://www.w3.org/2001/XMLSchema#integer')),
+      );
+      expect(TestCaseQueryEvaluationHandler.parseTsvTerm('+7')).toEqual(
+        DF.literal('+7', DF.namedNode('http://www.w3.org/2001/XMLSchema#integer')),
+      );
+    });
+
+    it('should parse decimals', () => {
+      expect(TestCaseQueryEvaluationHandler.parseTsvTerm('12.34')).toEqual(
+        DF.literal('12.34', DF.namedNode('http://www.w3.org/2001/XMLSchema#decimal')),
+      );
+      expect(TestCaseQueryEvaluationHandler.parseTsvTerm('.5')).toEqual(
+        DF.literal('.5', DF.namedNode('http://www.w3.org/2001/XMLSchema#decimal')),
+      );
+      expect(TestCaseQueryEvaluationHandler.parseTsvTerm('-0.99')).toEqual(
+        DF.literal('-0.99', DF.namedNode('http://www.w3.org/2001/XMLSchema#decimal')),
+      );
+    });
+
+    it('should parse doubles', () => {
+      expect(TestCaseQueryEvaluationHandler.parseTsvTerm('1.2e3')).toEqual(
+        DF.literal('1.2e3', DF.namedNode('http://www.w3.org/2001/XMLSchema#double')),
+      );
+      expect(TestCaseQueryEvaluationHandler.parseTsvTerm('-5E-4')).toEqual(
+        DF.literal('-5E-4', DF.namedNode('http://www.w3.org/2001/XMLSchema#double')),
+      );
+    });
+
+    it('should parse booleans', () => {
+      expect(TestCaseQueryEvaluationHandler.parseTsvTerm('true')).toEqual(
+        DF.literal('true', DF.namedNode('http://www.w3.org/2001/XMLSchema#boolean')),
+      );
+      expect(TestCaseQueryEvaluationHandler.parseTsvTerm('false')).toEqual(
+        DF.literal('false', DF.namedNode('http://www.w3.org/2001/XMLSchema#boolean')),
+      );
+    });
+
+    it('should fallback to stringToTtlTerm for URIs', () => {
+      expect(TestCaseQueryEvaluationHandler.parseTsvTerm('<http://example.org/>')).toEqual(
+        DF.namedNode('http://example.org/'),
+      );
+    });
+
+    it('should fallback to stringToTtlTerm for plain literals', () => {
+      expect(TestCaseQueryEvaluationHandler.parseTsvTerm('"hello"')).toEqual(
+        DF.literal('hello'),
+      );
+    });
+
+    it('should fallback to stringToTtlTerm for language tagged literals', () => {
+      expect(TestCaseQueryEvaluationHandler.parseTsvTerm('"hello"@en')).toEqual(
+        DF.literal('hello', 'en'),
+      );
+    });
+
+    it('should fallback to stringToTtlTerm for typed literals', () => {
+      expect(TestCaseQueryEvaluationHandler.parseTsvTerm('"xyz"^^<http://example.org/type>')).toEqual(
+        DF.literal('xyz', DF.namedNode('http://example.org/type')),
+      );
     });
   });
 

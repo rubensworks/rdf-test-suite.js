@@ -30,6 +30,7 @@ export class Util {
     nt: 'application/n-triples',
     srj: 'application/sparql-results+json',
     srx: 'application/sparql-results+xml',
+    tsv: 'text/tab-separated-values',
     ttl: 'text/turtle',
   };
 

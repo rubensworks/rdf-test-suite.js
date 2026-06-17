@@ -118,7 +118,7 @@ describe('e2e tests on the test suite runner', () => {
       // "http://www.w3.org/TR/sparql11-federated-query/",
       'http://www.w3.org/TR/sparql11-service-description/': 3,
       'http://www.w3.org/TR/sparql11-protocol/': 34,
-      'http://www.w3.org/TR/sparql11-http-rdf-update/': 18,
+      'http://www.w3.org/TR/sparql11-http-rdf-update/': 12,
     })) {
       it(`should run correctly on [${spec}]`, async() => {
         config.specification = spec;

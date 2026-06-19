@@ -1,6 +1,12 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+<a name="v2.2.0"></a>
+## [v2.2.0](https://github.com/rubensworks/rdf-test-suite.js/compare/v2.1.6...v2.2.0) - 2026-06-19
+
+### Added
+* [Add TSV Parsing and CSV Result-Format Support (#128)](https://github.com/rubensworks/rdf-test-suite.js/commit/9cb24d6596ceef994ca351225903aff511d50ac1)
+
 <a name="v2.1.6"></a>
 ## [v2.1.6](https://github.com/rubensworks/rdf-test-suite.js/compare/v2.1.5...v2.1.6) - 2026-05-27
 

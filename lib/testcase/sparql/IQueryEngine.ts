@@ -6,6 +6,7 @@ import type * as RDF from '@rdfjs/types';
 export interface IQueryEngine {
   parse: (queryString: string, options: Record<string, any>) => Promise<void>;
   query: (data: RDF.Quad[], queryString: string, options: Record<string, any>) => Promise<IQueryResult>;
+  queryResultFormat?: (data: RDF.Quad[], queryString: string, mediaType: string, options: Record<string, any>) => Promise<NodeJS.ReadableStream>;
 }
 
 /**

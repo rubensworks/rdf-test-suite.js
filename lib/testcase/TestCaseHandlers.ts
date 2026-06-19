@@ -5,6 +5,7 @@ import { TestCaseJsonLdToRdfHandler } from './rdfsyntax/jsonld/TestCaseJsonLdToR
 import { TestCaseJsonLdToRdfNegativeHandler } from './rdfsyntax/jsonld/TestCaseJsonLdToRdfNegative';
 import { TestCaseEvalHandler } from './rdfsyntax/TestCaseEval';
 import { TestCaseSyntaxHandler } from './rdfsyntax/TestCaseSyntax';
+import { TestCaseCsvResultFormatHandler } from './sparql/TestCaseCsvResultFormat';
 import { TestCaseNegativeSyntaxHandler } from './sparql/TestCaseNegativeSyntax';
 import { TestCasePositiveSyntaxHandler } from './sparql/TestCasePositiveSyntax';
 import { TestCaseQueryEvaluationHandler } from './sparql/TestCaseQueryEvaluation';
@@ -36,7 +37,7 @@ module.exports = {
   'http://www.w3.org/2001/sw/DataAccess/tests/test-manifest#UpdateEvaluationTest':
     new TestCaseUpdateEvaluationHandler(),
   'http://www.w3.org/2001/sw/DataAccess/tests/test-manifest#CSVResultFormatTest':
-    new TestCaseUnsupportedHandler('sparql:CSVResultFormatTest'), // TODO: implement
+    new TestCaseCsvResultFormatHandler(),
   'http://www.w3.org/2001/sw/DataAccess/tests/test-manifest#ServiceDescriptionTest':
     new TestCaseUnsupportedHandler('sparql:ServiceDescriptionTest'), // TODO: implement
   'http://www.w3.org/2001/sw/DataAccess/tests/test-manifest#ProtocolTest':

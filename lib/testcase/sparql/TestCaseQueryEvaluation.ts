@@ -4,6 +4,7 @@ import { DataFactory } from 'rdf-data-factory';
 import type { Resource } from 'rdf-object';
 import { RdfObjectLoader } from 'rdf-object';
 import { stringToTerm } from 'rdf-string';
+import { stringToTerm as stringToTtlTerm } from 'rdf-string-ttl';
 import type { QuadTermName } from 'rdf-terms';
 import { mapTerms } from 'rdf-terms';
 import { SparqlJsonParser } from 'sparqljson-parse';
@@ -56,6 +57,9 @@ export class TestCaseQueryEvaluationHandler implements ITestCaseHandler<TestCase
     }
     if (contentType.includes('application/sparql-results+json')) {
       queryResult = await TestCaseQueryEvaluationHandler.parseSparqlResults('json', data);
+    }
+    if (contentType.includes('text/tab-separated-values') || url.endsWith('.tsv')) {
+      queryResult = await TestCaseQueryEvaluationHandler.parseSparqlTsvResults(data);
     }
 
     if (!queryResult) {
@@ -183,6 +187,104 @@ export class TestCaseQueryEvaluationHandler implements ITestCaseHandler<TestCase
     }, {}));
 
     return new QueryResultBindings(variables, value, checkOrder);
+  }
+
+  /**
+   * Parses query results from a SPARQL TSV stream.
+   * @param {NodeJS.ReadableStream} data The data stream to parse.
+   * @return {Promise<IQueryResult>} A promise resolving to a SPARQL query result.
+   */
+  public static async parseSparqlTsvResults(data: NodeJS.ReadableStream): Promise<IQueryResult> {
+    const text: string = await stringifyStream(data);
+    const lines = text.replace(/\r?\n$/u, '').split(/\r?\n/u);
+
+    if (lines.length === 1) {
+      const singleLine = lines[0].trim().toLowerCase();
+      if (singleLine === 'true') {
+        return new QueryResultBoolean(true);
+      }
+      if (singleLine === 'false') {
+        return new QueryResultBoolean(false);
+      }
+    }
+
+    const variables: string[] = [];
+
+    if (lines[0].trim() !== '') {
+      const rawVariables = lines[0].split('\t');
+
+      for (const raw of rawVariables) {
+        const variable = raw.trim();
+
+        if (variable === '') {
+          throw new Error('Invalid TSV result: Empty column on the first row.');
+        }
+
+        if ((!variable.startsWith('?') && !variable.startsWith('$')) || variable.length < 2) {
+          throw new Error(`Invalid TSV variable: ${variable}`);
+        }
+
+        if (variables.includes(variable)) {
+          throw new Error(`Invalid TSV result: The variable ${variable} is declared twice.`);
+        }
+
+        variables.push(variable);
+      }
+    }
+
+    const value: Record<string, RDF.Term>[] = [];
+
+    for (let i = 1; i < lines.length; i++) {
+      const fields = lines[i].split('\t');
+
+      const isZeroVariableResultRow = variables.length === 0 && fields.length === 1 && fields[0] === '';
+
+      if (fields.length !== variables.length && !isZeroVariableResultRow) {
+        throw new Error(`Invalid TSV row (Line ${i + 1}): expected ${variables.length} fields but found ${fields.length}.`);
+      }
+
+      const binding: Record<string, RDF.Term> = {};
+
+      for (const [ j, variable ] of variables.entries()) {
+        const field = fields[j].trim();
+
+        if (field.length > 0) {
+          try {
+            binding[variable] = TestCaseQueryEvaluationHandler.parseTsvTerm(field);
+          } catch (error: any) {
+            throw new Error(
+          `Failed to parse TSV value on Line ${i + 1}, Column '${variable}': ` +
+          `Invalid Turtle syntax in "${field}".\nOriginal error: ${error.message}`,
+            );
+          }
+        }
+      }
+      value.push(binding);
+    }
+
+    return new QueryResultBindings(variables, value, false);
+  }
+
+  /**
+   * Parse a single field from a SPARQL TSV result into an RDF term.
+   * @param {string} term The TSV field value.
+   * @return {RDF.Term} The corresponding RDF term.
+   */
+  public static parseTsvTerm(term: string): RDF.Term {
+    if (/^[+-]?[0-9]+$/u.test(term)) {
+      return DF.literal(term, DF.namedNode('http://www.w3.org/2001/XMLSchema#integer'));
+    }
+    if (/^[+-]?([0-9]+\.[0-9]*|\.[0-9]+)$/u.test(term)) {
+      return DF.literal(term, DF.namedNode('http://www.w3.org/2001/XMLSchema#decimal'));
+    }
+    if (/^[+-]?([0-9]+\.[0-9]*|\.[0-9]+|[0-9]+)[eE][+-]?[0-9]+$/u.test(term)) {
+      return DF.literal(term, DF.namedNode('http://www.w3.org/2001/XMLSchema#double'));
+    }
+    if (term === 'true' || term === 'false') {
+      return DF.literal(term, DF.namedNode('http://www.w3.org/2001/XMLSchema#boolean'));
+    }
+
+    return stringToTtlTerm(term);
   }
 
   /**

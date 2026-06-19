@@ -25,6 +25,7 @@ export class Util {
   public static colorGray = '\x1B[90m';
 
   protected static readonly extensionToContentType: Record<string, string> = {
+    csv: 'text/csv',
     jsonld: 'application/ld+json',
     nq: 'application/n-quads',
     nt: 'application/n-triples',

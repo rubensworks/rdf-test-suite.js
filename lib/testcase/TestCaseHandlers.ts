@@ -9,6 +9,7 @@ import { TestCaseCsvResultFormatHandler } from './sparql/TestCaseCsvResultFormat
 import { TestCaseNegativeSyntaxHandler } from './sparql/TestCaseNegativeSyntax';
 import { TestCasePositiveSyntaxHandler } from './sparql/TestCasePositiveSyntax';
 import { TestCaseQueryEvaluationHandler } from './sparql/TestCaseQueryEvaluation';
+import { TestCaseServiceDescriptionHandler } from './sparql/TestCaseServiceDescription';
 import { TestCaseUpdateEvaluationHandler } from './sparql/TestCaseUpdateEvaluation';
 import { TestCaseUnsupportedHandler } from './TestCaseUnsupported';
 
@@ -39,7 +40,7 @@ module.exports = {
   'http://www.w3.org/2001/sw/DataAccess/tests/test-manifest#CSVResultFormatTest':
     new TestCaseCsvResultFormatHandler(),
   'http://www.w3.org/2001/sw/DataAccess/tests/test-manifest#ServiceDescriptionTest':
-    new TestCaseUnsupportedHandler('sparql:ServiceDescriptionTest'), // TODO: implement
+    new TestCaseServiceDescriptionHandler(),
   'http://www.w3.org/2001/sw/DataAccess/tests/test-manifest#ProtocolTest':
     new TestCaseUnsupportedHandler('sparql:ProtocolTest'), // TODO: implement
   'http://www.w3.org/2001/sw/DataAccess/tests/test-manifest#GraphStoreProtocolTest':

@@ -5,7 +5,13 @@ import { ManifestLoader } from '../lib/ManifestLoader';
 const streamifyString = require('streamify-string');
 
 // Mock fetch
-(<any> globalThis).fetch = (url: string) => {
+(<any> globalThis).fetch = (urlRequested: string) => {
+  // Real fetch() implementations never send fragments to the server, and report the
+  // fragment-less URL as `response.url`.
+  // Emulate that here so fragment-aware lookups (as passed by the caller) can be tested.
+  const hashPos = urlRequested.indexOf('#');
+  const url = hashPos >= 0 ? urlRequested.slice(0, hashPos) : urlRequested;
+
   let body;
   switch (url) {
     case 'http://valid1':
@@ -77,6 +83,17 @@ const streamifyString = require('streamify-string');
   mf:include ("http://invalid1").
 `);
       break;
+    case 'https://example.org/jena/Lateral/manifest.ttl':
+      body = streamifyString(`
+@prefix rdf:    <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix mf:     <http://www.w3.org/2001/sw/DataAccess/tests/test-manifest#> .
+@prefix qt:     <http://www.w3.org/2001/sw/DataAccess/tests/test-query#> .
+
+<#manifest> a mf:Manifest ;
+  rdfs:label "Jena Lateral tests".
+`);
+      break;
     case 'https://w3c.github.io/rdf-star/tests/manifest.jsonld':
       body = streamifyString(`
       ## [1] https://www.w3.org/Consortium/Legal/2008/04-testsuite-license
@@ -126,7 +143,9 @@ const streamifyString = require('streamify-string');
     }
   }
   const headers = new Headers({ 'Content-Type': 'text/turtle' });
-  return Promise.resolve(new Response(body, <any> { headers, status: 200 }));
+  const response = new Response(body, { headers, status: 200 });
+  Object.defineProperty(response, 'url', { value: url });
+  return Promise.resolve(response);
 };
 
 describe('ManifestLoader', () => {
@@ -203,6 +222,17 @@ describe('ManifestLoader', () => {
         subManifests: [],
         testEntries: [],
         uri: 'http://valid1/with/slash#manifest',
+      });
+    });
+
+    it('should honor an explicit fragment IRI (Jena-style <#manifest>)', () => {
+      return expect(loader.from('https://example.org/jena/Lateral/manifest.ttl#manifest')).resolves.toEqual({
+        comment: null,
+        label: 'Jena Lateral tests',
+        specifications: null,
+        subManifests: [],
+        testEntries: [],
+        uri: 'https://example.org/jena/Lateral/manifest.ttl#manifest',
       });
     });
 

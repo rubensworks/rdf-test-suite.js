@@ -55,7 +55,7 @@ export class TestCaseQueryEvaluationHandler implements ITestCaseHandler<TestCase
       contentType = 'application/sparql-results+xml';
       queryResult = await TestCaseQueryEvaluationHandler.parseSparqlResults('xml', data);
     }
-    if (contentType.includes('application/sparql-results+json')) {
+    if (contentType.includes('application/sparql-results+json') || url.endsWith('.srj')) {
       queryResult = await TestCaseQueryEvaluationHandler.parseSparqlResults('json', data);
     }
     if (contentType.includes('text/tab-separated-values') || url.endsWith('.tsv')) {

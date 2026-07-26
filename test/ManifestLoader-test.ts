@@ -6,11 +6,12 @@ const streamifyString = require('streamify-string');
 
 // Mock fetch
 (<any> globalThis).fetch = (urlRequested: string) => {
-  // Real fetch() implementations never send fragments to the server, and report the
-  // fragment-less URL as `response.url` (which may also differ from the requested URL
-  // entirely in case of a redirect). Emulate both here: `url` is what was actually
-  // fetched/reported, defaulting to the (fragment-stripped) requested URL, but overridable
-  // per case below to simulate a redirect to a different URL.
+  // Real fetch() implementations never send fragments to the server.
+  // Instead, the report the fragment-less URL as `response.url`
+  // (which may also differ from the requested URL entirely in case of a redirect).
+  // We emulate both here: `url` is what was actually fetched/reported,
+  // defaulting to the (fragment-stripped) requested URL,
+  // but overridable per case below to simulate a redirect to a different URL.
   const hashPos = urlRequested.indexOf('#');
   let url = hashPos >= 0 ? urlRequested.slice(0, hashPos) : urlRequested;
 
@@ -235,9 +236,10 @@ describe('ManifestLoader', () => {
     });
 
     it('should honor an explicit fragment IRI (Jena-style <#manifest>), resolved against the final (redirected) URL', () => {
-      // The document lives at https://cdn.example.org/... (see the mock above), not at the
-      // originally-requested https://example.org/... URL. This can only resolve correctly if
-      // the fragment is resolved against the URL that was *actually* fetched.
+      // The document lives at https://cdn.example.org/... (see the mock above),
+      // not at the originally-requested https://example.org/... URL.
+      // This can only resolve correctly if the fragment is resolved against
+      // the URL that was *actually* fetched (where it lives).
       return expect(loader.from('https://example.org/jena/Lateral/manifest.ttl#manifest')).resolves.toEqual({
         comment: null,
         label: 'Jena Lateral tests',

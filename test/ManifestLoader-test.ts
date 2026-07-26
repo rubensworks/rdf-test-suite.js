@@ -7,10 +7,12 @@ const streamifyString = require('streamify-string');
 // Mock fetch
 (<any> globalThis).fetch = (urlRequested: string) => {
   // Real fetch() implementations never send fragments to the server, and report the
-  // fragment-less URL as `response.url`.
-  // Emulate that here so fragment-aware lookups (as passed by the caller) can be tested.
+  // fragment-less URL as `response.url` (which may also differ from the requested URL
+  // entirely in case of a redirect). Emulate both here: `url` is what was actually
+  // fetched/reported, defaulting to the (fragment-stripped) requested URL, but overridable
+  // per case below to simulate a redirect to a different URL.
   const hashPos = urlRequested.indexOf('#');
-  const url = hashPos >= 0 ? urlRequested.slice(0, hashPos) : urlRequested;
+  let url = hashPos >= 0 ? urlRequested.slice(0, hashPos) : urlRequested;
 
   let body;
   switch (url) {
@@ -84,13 +86,20 @@ const streamifyString = require('streamify-string');
 `);
       break;
     case 'https://example.org/jena/Lateral/manifest.ttl':
+      // Simulate an HTTP redirect: the requested URL is on one domain, but the document is
+      // actually served from (and reports response.url as) a different one. The manifest
+      // resource is declared with an absolute IRI on the *redirected-to* domain, so it can
+      // only be found by resolving the caller's fragment against the truly-fetched URL — not
+      // against the originally-requested URL, and not by accident via the pre-existing
+      // "same as document URL" heuristic (which has no fragment at all).
+      url = 'https://cdn.example.org/real/Lateral/manifest.ttl';
       body = streamifyString(`
 @prefix rdf:    <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix mf:     <http://www.w3.org/2001/sw/DataAccess/tests/test-manifest#> .
 @prefix qt:     <http://www.w3.org/2001/sw/DataAccess/tests/test-query#> .
 
-<#manifest> a mf:Manifest ;
+<https://cdn.example.org/real/Lateral/manifest.ttl#manifest> a mf:Manifest ;
   rdfs:label "Jena Lateral tests".
 `);
       break;
@@ -225,14 +234,17 @@ describe('ManifestLoader', () => {
       });
     });
 
-    it('should honor an explicit fragment IRI (Jena-style <#manifest>)', () => {
+    it('should honor an explicit fragment IRI (Jena-style <#manifest>), resolved against the final (redirected) URL', () => {
+      // The document lives at https://cdn.example.org/... (see the mock above), not at the
+      // originally-requested https://example.org/... URL. This can only resolve correctly if
+      // the fragment is resolved against the URL that was *actually* fetched.
       return expect(loader.from('https://example.org/jena/Lateral/manifest.ttl#manifest')).resolves.toEqual({
         comment: null,
         label: 'Jena Lateral tests',
         specifications: null,
         subManifests: [],
         testEntries: [],
-        uri: 'https://example.org/jena/Lateral/manifest.ttl#manifest',
+        uri: 'https://cdn.example.org/real/Lateral/manifest.ttl#manifest',
       });
     });
 

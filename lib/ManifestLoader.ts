@@ -50,18 +50,19 @@ export class ManifestLoader {
 
     function findManifest(): Resource {
       const extLess = url.slice(0, url.lastIndexOf('.'));
-      return (
-        // Highest priority: the resource the caller explicitly named via a fragment,
-        // resolved against the fetched (fragment-less) document URL.
-        (requestedFragment ? objectLoader.resources[`${url}#${requestedFragment}`] : undefined) ??
-        // Second try the same URL as the document URL
-        objectLoader.resources[url] ??
-        // Also try extension-less manifest URL (needed for RDFa test suite)
-        objectLoader.resources[extLess] ??
-        // Also try extension-less and with the last '/' replaced with a '#' (needed for RDFstar test suite)
-        // @see https://github.com/w3c/rdf-star/issues/269
-        objectLoader.resources[extLess.replace(/\/manifest$/u, '#manifest')]
-      );
+      let result: Resource | undefined;
+      // Highest priority: the resource the caller explicitly named via a fragment,
+      // resolved against the fetched (fragment-less) document URL.
+      if (requestedFragment) {
+        result = objectLoader.resources[`${url}#${requestedFragment}`];
+      }
+      // Second try the same URL as the document URL
+      result ??= objectLoader.resources[url];
+      // Also try extension-less manifest URL (needed for RDFa test suite)
+      result ??= objectLoader.resources[extLess];
+      // Also try extension-less and with the last '/' replaced with a '#' (needed for RDFstar test suite)
+      // @see https://github.com/w3c/rdf-star/issues/269
+      return result ?? objectLoader.resources[extLess.replace(/\/manifest$/u, '#manifest')];
     }
 
     // Import all sub-manifests

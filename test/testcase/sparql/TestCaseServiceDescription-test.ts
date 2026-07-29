@@ -49,7 +49,7 @@ describe('TestCaseServiceDescriptionHandler', () => {
   describe('#test', () => {
     it('should require an endpoint', async() => {
       const testCase = await handler.resourceToTestCase(<any> {}, testCaseData('GET on endpoint returns RDF'));
-      await expect(testCase.test(<any> {}, {})).rejects.toThrow('require the serviceDescriptionEndpoint option');
+      await expect(testCase.test(<any> {}, {})).rejects.toThrow('require an endpoint from startServiceDescriptionEndpoint');
     });
 
     it('should reject an endpoint with query parameters', async() => {

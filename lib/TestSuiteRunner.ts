@@ -4,6 +4,7 @@ import { DataFactory } from 'rdf-data-factory';
 import type { IManifest } from './IManifest';
 import { ManifestLoader } from './ManifestLoader';
 import type { ITestCase } from './testcase/ITestCase';
+import type { IQueryEngine } from './testcase/sparql/IQueryEngine';
 import { Util } from './Util';
 import WriteStream = NodeJS.WriteStream;
 import Timeout = NodeJS.Timeout;
@@ -14,6 +15,7 @@ const quad = require('rdf-quad');
 const streamifyArray = require('streamify-array').streamifyArray;
 
 const DF = new DataFactory();
+const SERVICE_DESCRIPTION_SPECIFICATION = 'http://www.w3.org/TR/sparql11-service-description/';
 
 export interface ITestSuiteConfig {
   exitWithStatusCode0: boolean;
@@ -65,12 +67,48 @@ export class TestSuiteRunner {
       if (!manifest.specifications || !manifest.specifications[specification]) {
         return [];
       }
-      await this.runManifestConcrete(manifest.specifications[specification], handler, config, results);
+      await this.runManifestWithEndpoint(manifest.specifications[specification], handler, config, results);
       return results;
     }
 
-    await this.runManifestConcrete(manifest, handler, config, results);
+    await this.runManifestWithEndpoint(manifest, handler, config, results);
     return results;
+  }
+
+  /**
+   * Run a manifest, starting an endpoint if the selected specification requires one.
+   * @param {string} manifest A manifest.
+   * @param handler The handler to run the tests with.
+   * @param config The test suite configuration.
+   * @param {ITestResult[]} results An array to append the test results to.
+   * @return {Promise<void>} A promise resolving when the tests are finished.
+   */
+  private async runManifestWithEndpoint(
+    manifest: IManifest,
+    handler: any,
+    config: ITestSuiteConfig,
+    results: ITestResult[],
+  ): Promise<void> {
+    const engine = <IQueryEngine> handler;
+    const customEngineOptions = <Record<string, unknown>> config.customEngingeOptions;
+    if (config.specification === SERVICE_DESCRIPTION_SPECIFICATION &&
+      !customEngineOptions.serviceDescriptionEndpoint && engine.startServiceDescriptionEndpoint) {
+      const serviceDescription = await engine.startServiceDescriptionEndpoint();
+      try {
+        await this.runManifestConcrete(manifest, handler, {
+          ...config,
+          customEngingeOptions: {
+            ...customEngineOptions,
+            serviceDescriptionEndpoint: serviceDescription.endpoint,
+          },
+        }, results);
+      } finally {
+        await serviceDescription.close();
+      }
+      return;
+    }
+
+    await this.runManifestConcrete(manifest, handler, config, results);
   }
 
   /**

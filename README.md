@@ -241,7 +241,11 @@ $ rdf-test-suite myengine.js http://w3c.github.io/rdf-tests/sparql/sparql11/mani
   -i '{ "myProperty": "myValue" }'
 ```
 
-The SPARQL 1.1 Service Description tests require the endpoint under test:
+For the SPARQL 1.1 Service Description tests, the runner will call the optional
+`startServiceDescriptionEndpoint` method on an `IQueryEngine`, use the returned
+endpoint URL, and invoke its `close` method after the manifest completes. An explicitly
+configured `serviceDescriptionEndpoint` takes precedence,
+which allows testing an endpoint that is already running:
 
 ```bash
 $ rdf-test-suite myengine.js http://w3c.github.io/rdf-tests/sparql/sparql11/manifest-all.ttl \

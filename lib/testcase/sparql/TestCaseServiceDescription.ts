@@ -66,7 +66,7 @@ export class TestCaseServiceDescription implements ITestCaseSparql {
   private static getEndpoint(injectArguments: IServiceDescriptionTestOptions): string {
     const endpoint = injectArguments && injectArguments.serviceDescriptionEndpoint;
     if (!endpoint) {
-      throw new ErrorTest('Service-description tests require the serviceDescriptionEndpoint option.');
+      throw new ErrorTest('Service-description tests require an endpoint from startServiceDescriptionEndpoint or the serviceDescriptionEndpoint option.');
     }
     try {
       const url = new URL(endpoint);

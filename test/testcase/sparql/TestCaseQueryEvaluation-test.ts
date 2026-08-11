@@ -45,6 +45,10 @@ const DF = new DataFactory();
     "RDF1.1 XML Syntax 1", "RDF1.1 XML Syntax 2".`);
       headers = new Headers({ 'Content-Type': 'text/turtle' });
       break;
+    case 'ENDPOINT.ttl':
+      body = streamifyString(`<http://example.org/s> <http://example.org/p> <http://example.org/o>.`);
+      headers = new Headers({ 'Content-Type': 'text/turtle' });
+      break;
     default:
       return Promise.reject(new Error(`Fetch error for ${url}`));
   }
@@ -72,6 +76,8 @@ describe('TestCaseQueryEvaluationHandler', () => {
   let pGraphData;
   let pGraph;
   let pLabel;
+  let pServiceData;
+  let pEndpoint;
 
   beforeEach((done) => {
     new ContextParser().parse(require('../../../lib/context-manifest.json'))
@@ -101,6 +107,12 @@ describe('TestCaseQueryEvaluationHandler', () => {
         );
         pLabel = new Resource(
           { term: DF.namedNode('http://www.w3.org/2000/01/rdf-schema#label'), context },
+        );
+        pServiceData = new Resource(
+          { term: DF.namedNode('http://www.w3.org/2001/sw/DataAccess/tests/test-query#serviceData'), context },
+        );
+        pEndpoint = new Resource(
+          { term: DF.namedNode('http://www.w3.org/2001/sw/DataAccess/tests/test-query#endpoint'), context },
         );
 
         done();
@@ -618,6 +630,44 @@ describe('TestCaseQueryEvaluationHandler', () => {
     });
   });
 
+  describe('#getServiceDataLinks', () => {
+    it('should return service data links from an action', () => {
+      const action = new Resource({ term: DF.namedNode('action'), context });
+      const serviceData = new Resource({ term: DF.namedNode('sd1'), context });
+
+      serviceData.addProperty(pEndpoint, new Resource({ term: DF.namedNode('http://example.org/sparql'), context }));
+      serviceData.addProperty(pData, new Resource({ term: DF.namedNode('ENDPOINT.ttl'), context }));
+      action.addProperty(pServiceData, serviceData);
+
+      expect(TestCaseQueryEvaluationHandler.getServiceDataLinks(action)).toEqual([
+        { endpoint: 'http://example.org/sparql', dataUri: 'ENDPOINT.ttl' },
+      ]);
+    });
+  });
+
+  describe('#resolveServiceDataLinks', () => {
+    it('should fetch and map service data quads by endpoint', async() => {
+      const links = [{ endpoint: 'http://example.org/sparql', dataUri: 'ENDPOINT.ttl' }];
+      const resolved = await TestCaseQueryEvaluationHandler.resolveServiceDataLinks(links);
+
+      expect(resolved['http://example.org/sparql']).toBeRdfIsomorphic([
+        quad('http://example.org/s', 'http://example.org/p', 'http://example.org/o'),
+      ]);
+    });
+  });
+
+  describe('#serviceDataLinksToString', () => {
+    it('should handle the empty array', () => {
+      expect(TestCaseQueryEvaluation.serviceDataLinksToString([])).toBe('None');
+    });
+
+    it('should handle a non-empty array', () => {
+      expect(TestCaseQueryEvaluation.serviceDataLinksToString([
+        { endpoint: 'http://example.org/sparql', dataUri: 'ENDPOINT.ttl' },
+      ])).toBe(`http://example.org/sparql (data: ENDPOINT.ttl)`);
+    });
+  });
+
   describe('#resourceToTestCase', () => {
     it('should produce a TestCaseQueryEvaluation', async() => {
       const resource = new Resource({ term: DF.namedNode('http://ex.org/test'), context });
@@ -834,6 +884,33 @@ describe('TestCaseQueryEvaluationHandler', () => {
       resource.addProperty(pResult, new Resource({ term: DF.literal('RESULT_OTHER.ttl'), context }));
       const testCase = await handler.resourceToTestCase(resource, <any> {});
       return expect(testCase.test(engine, {})).rejects.toBeTruthy();
+    });
+
+    it('should produce a TestCaseQueryEvaluation with service data for federated queries', async() => {
+      const resource = new Resource({ term: DF.namedNode('http://ex.org/test'), context });
+      const action = new Resource({ term: DF.namedNode('blabla'), context });
+      action.addProperty(pQuery, new Resource({ term: DF.literal('ACTION.ok'), context }));
+
+      const serviceData = new Resource({ term: DF.namedNode('sd1'), context });
+      serviceData.addProperty(pEndpoint, new Resource({ term: DF.namedNode('http://example.org/sparql'), context }));
+      serviceData.addProperty(pData, new Resource({ term: DF.namedNode('ENDPOINT.ttl'), context }));
+      action.addProperty(pServiceData, serviceData);
+
+      resource.addProperty(pAction, action);
+      resource.addProperty(pResult, new Resource({ term: DF.literal('RESULT.ttl'), context }));
+
+      const testCase = await handler.resourceToTestCase(resource, <any> {});
+
+      expect(testCase).toBeInstanceOf(TestCaseQueryEvaluation);
+      expect(testCase.type).toBe('sparql');
+      expect(testCase.serviceDataLinks).toEqual([
+        { endpoint: 'http://example.org/sparql', dataUri: 'ENDPOINT.ttl' },
+      ]);
+      expect(testCase.serviceData['http://example.org/sparql']).toBeRdfIsomorphic([
+        quad('http://example.org/s', 'http://example.org/p', 'http://example.org/o'),
+      ]);
+
+      await expect(testCase.test(engine, {})).resolves.toBeUndefined();
     });
   });
 });

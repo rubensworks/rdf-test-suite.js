@@ -29,6 +29,8 @@
   "graph": "q:graph",
   "graphData": "q:graphData",
   "query": "q:query",
+  "serviceData": "q:serviceData",
+  "endpoint": "q:endpoint",
 
   "ut": "http://www.w3.org/2009/sparql/tests/test-update#",
   "updateQuery": "ut:request",

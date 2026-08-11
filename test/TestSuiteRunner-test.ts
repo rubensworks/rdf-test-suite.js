@@ -51,6 +51,16 @@ const timeOutMockTest1 = {
   },
   uri: 'http://ex.org/timeout1',
 };
+const serviceDescriptionSpecification = 'http://www.w3.org/TR/sparql11-service-description/';
+let serviceDescriptionOptions: Record<string, unknown> | undefined;
+const serviceDescriptionMockTest = {
+  name: 'Service description',
+  test: (_handler: unknown, options: Record<string, unknown>) => {
+    serviceDescriptionOptions = options;
+    return Promise.resolve();
+  },
+  uri: 'http://ex.org/service-description',
+};
 
 const defaultConfig: ITestSuiteConfig = {
   customEngingeOptions: {},
@@ -111,6 +121,17 @@ jest.mock<typeof import('../lib/ManifestLoader')>('../lib/ManifestLoader', () =>
             uri: manifestUrl,
           });
         }
+        if (manifestUrl === 'validservicedescription') {
+          return Promise.resolve({
+            specifications: {
+              [serviceDescriptionSpecification]: {
+                testEntries: [ serviceDescriptionMockTest ],
+                uri: manifestUrl,
+              },
+            },
+            uri: manifestUrl,
+          });
+        }
         if (manifestUrl === 'timeout') {
           return Promise.resolve({
             testEntries: [ timeOutMockTest1 ],
@@ -148,6 +169,7 @@ describe('TestSuiteRunner', () => {
   beforeEach(() => {
     runner = new TestSuiteRunner();
     handler = () => true;
+    serviceDescriptionOptions = undefined;
   });
 
   describe('fromUrlToMappingString', () => {
@@ -244,6 +266,40 @@ describe('TestSuiteRunner', () => {
           test: mockTest3,
         },
       ]);
+    });
+
+    it('should start and close an endpoint for the service-description specification', async() => {
+      const serviceDescriptionEndpoint = {
+        close: jest.fn().mockResolvedValue(undefined),
+        endpoint: 'http://example.org/sparql',
+      };
+      handler = {
+        startServiceDescriptionEndpoint: jest.fn().mockResolvedValue(serviceDescriptionEndpoint),
+      };
+      const config: ITestSuiteConfig = { ...defaultConfig, specification: serviceDescriptionSpecification };
+
+      await expect(runner.runManifest('validservicedescription', handler, config)).resolves.toHaveLength(1);
+      expect(handler.startServiceDescriptionEndpoint).toHaveBeenCalledTimes(1);
+      expect(serviceDescriptionEndpoint.close).toHaveBeenCalledTimes(1);
+      expect(serviceDescriptionOptions).toEqual({ serviceDescriptionEndpoint: 'http://example.org/sparql' });
+    });
+
+    it('should use a configured service-description endpoint without starting one', async() => {
+      handler = {
+        startServiceDescriptionEndpoint: jest.fn().mockResolvedValue({
+          close: jest.fn().mockResolvedValue(undefined),
+          endpoint: 'http://example.org/started',
+        }),
+      };
+      const config: ITestSuiteConfig = {
+        ...defaultConfig,
+        customEngingeOptions: { serviceDescriptionEndpoint: 'http://example.org/configured' },
+        specification: serviceDescriptionSpecification,
+      };
+
+      await expect(runner.runManifest('validservicedescription', handler, config)).resolves.toHaveLength(1);
+      expect(handler.startServiceDescriptionEndpoint).not.toHaveBeenCalled();
+      expect(serviceDescriptionOptions).toEqual({ serviceDescriptionEndpoint: 'http://example.org/configured' });
     });
 
     it('should handle testcases that time out', (next) => {

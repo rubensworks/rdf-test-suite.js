@@ -418,7 +418,17 @@ export class TestCaseQueryEvaluation implements ITestCaseSparql {
   }
 
   public async test(engine: IQueryEngine, injectArguments: any): Promise<void> {
-    const result: IQueryResult = await engine.query(this.queryData, this.queryString, { baseIRI: this.baseIRI, ...injectArguments });
+    const result: IQueryResult = await engine.query(
+      this.queryData,
+      this.queryString,
+      {
+        baseIRI: this.baseIRI,
+        checkOrder: this.queryResult.type === 'bindings' ?
+          this.queryResult.checkOrder :
+          false,
+        ...injectArguments,
+      },
+    );
     if (!this.queryResult.equals(result, this.laxCardinality)) {
       throw new ErrorTest(`Invalid query evaluation
 

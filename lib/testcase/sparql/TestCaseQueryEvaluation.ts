@@ -302,12 +302,12 @@ export class TestCaseQueryEvaluationHandler implements ITestCaseHandler<TestCase
       if (graphData.property.graph) {
         queryDataLinks.push({
           dataUri: graphData.property.graph.value,
-          dataGraph: DF.namedNode(Util.normalizeBaseUrl(graphData.property.label.value)),
+          dataGraph: DF.namedNode(graphData.property.label.value),
         });
       } else {
         queryDataLinks.push({
           dataUri: graphData.value,
-          dataGraph: DF.namedNode(Util.normalizeBaseUrl(graphData.value)),
+          dataGraph: DF.namedNode(graphData.value),
         });
       }
     }
@@ -322,7 +322,7 @@ export class TestCaseQueryEvaluationHandler implements ITestCaseHandler<TestCase
   public static async resolveQueryDataLinks(queryDataLinks: IQueryDataLink[], options?: IFetchOptions): Promise<RDF.Quad[]> {
     let queryData: RDF.Quad[] = [];
     for (const queryDataLink of queryDataLinks) {
-      let queryDataThis: RDF.Quad[] = await arrayifyStream((await Util.fetchRdf(queryDataLink.dataUri, { ...options, normalizeUrl: true }))[1]);
+      let queryDataThis: RDF.Quad[] = await arrayifyStream((await Util.fetchRdf(queryDataLink.dataUri, options))[1]);
       if (queryDataLink.dataGraph) {
         queryDataThis = queryDataThis.map(quad => mapTerms(quad, (value: RDF.Term, key: QuadTermName) => key === 'graph' ? queryDataLink.dataGraph : value));
       }

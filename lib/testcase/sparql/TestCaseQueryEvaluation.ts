@@ -14,7 +14,7 @@ import type { IFetchOptions, IFetchResponse } from '../../Util';
 import { Util } from '../../Util';
 import type { ITestCaseData } from '../ITestCase';
 import type { ITestCaseHandler } from '../ITestCaseHandler';
-import type { IQueryEngine, IQueryResult, IQueryResultBindings } from './IQueryEngine';
+import type { IQueryEngine, IQueryResult, IQueryResultBindings, IQueryResultBoolean } from './IQueryEngine';
 import type { ITestCaseSparql } from './ITestCaseSparql';
 import { QueryResultBindings } from './QueryResultBindings';
 import { QueryResultBoolean } from './QueryResultBoolean';
@@ -131,9 +131,14 @@ export class TestCaseQueryEvaluationHandler implements ITestCaseHandler<TestCase
    * Parses query results in the DAWG vocabulary.
    * https://www.w3.org/2001/sw/DataAccess/tests/test-dawg.n3
    * @param {Quad[]} quads An array of quads.
-   * @return {Promise<IQueryResultBindings>} A promise resolving to a bindings results object.
+   * @return {Promise<IQueryResultBindings | IQueryResultBoolean>} A promise resolving to a bindings or boolean results object.
    */
-  public static async parseDawgResultSet(quads: RDF.Quad[]): Promise<IQueryResultBindings> {
+  public static async parseDawgResultSet(quads: RDF.Quad[]): Promise<IQueryResultBindings | IQueryResultBoolean> {
+    // Check for a boolean result (ASK query)
+    if (quads[1] && quads[1].predicate.value === 'http://www.w3.org/2001/sw/DataAccess/tests/result-set#boolean') {
+      return new QueryResultBoolean(quads[1].object.value === 'true');
+    }
+
     // Construct resources for easier interpretation of the bindings
     const objectLoader = new RdfObjectLoader({
       context: {

@@ -69,7 +69,7 @@ export class QueryResultBindings implements IQueryResultBindings {
     const hash: Record<string, number> = {};
     for (const b of bindings) {
       const bHash: Record<string, string> = {};
-      for (const variable in b) {
+      for (const variable of Object.keys(b).sort()) {
         bHash[variable] = QueryResultBindings.serializeTerm(b[variable], blankNodeCounters);
       }
       const bString: string = JSON.stringify(bHash);

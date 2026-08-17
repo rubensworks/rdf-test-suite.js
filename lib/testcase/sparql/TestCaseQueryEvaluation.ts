@@ -365,7 +365,7 @@ export class TestCaseQueryEvaluationHandler implements ITestCaseHandler<TestCase
     return new TestCaseQueryEvaluation(
       testCaseData,
       {
-        baseIRI: Util.normalizeBaseUrl(action.property.query.value),
+        baseIRI: action.property.query.value,
         queryDataLinks,
         laxCardinality,
         queryData,

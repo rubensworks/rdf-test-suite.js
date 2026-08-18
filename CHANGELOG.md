@@ -1,6 +1,12 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+<a name="v2.3.1"></a>
+## [v2.3.1](https://github.com/rubensworks/rdf-test-suite.js/compare/v2.3.0...v2.3.1) - 2026-08-18
+
+### Fixed
+* [Unnormalize baseIRI for dataset graphs (#140)](https://github.com/rubensworks/rdf-test-suite.js/commit/b3e443632221cf45c996ff5699fd9414785216dc)
+
 <a name="v2.3.0"></a>
 ## [v2.3.0](https://github.com/rubensworks/rdf-test-suite.js/compare/v2.2.0...v2.3.0) - 2026-08-17
 

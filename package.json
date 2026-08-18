@@ -132,6 +132,6 @@
     "rimraf": "^6.0.0",
     "streamify-array": "^2.0.0",
     "ts-jest": "^29.0.0",
-    "typescript": "^6.0.0"
+    "typescript": "^7.0.0"
   }
 }

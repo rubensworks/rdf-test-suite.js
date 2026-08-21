@@ -1,6 +1,25 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+<a name="v2.3.1"></a>
+## [v2.3.1](https://github.com/rubensworks/rdf-test-suite.js/compare/v2.3.0...v2.3.1) - 2026-08-18
+
+### Fixed
+* [Unnormalize baseIRI for dataset graphs (#140)](https://github.com/rubensworks/rdf-test-suite.js/commit/b3e443632221cf45c996ff5699fd9414785216dc)
+
+<a name="v2.3.0"></a>
+## [v2.3.0](https://github.com/rubensworks/rdf-test-suite.js/compare/v2.2.0...v2.3.0) - 2026-08-17
+
+### Added
+* [Add support for ASK queries in dawg tests (#138)](https://github.com/rubensworks/rdf-test-suite.js/commit/9bbde9a05eae7306fdbb30a21f1eefcff6a135ba)
+
+### Changed
+* [Pass checkOrder to engine.query (#136)](https://github.com/rubensworks/rdf-test-suite.js/commit/c173a836a7b0f1d54dcdd40271286222322582dc)
+* [Remove normalizeBaseUrl from the data graph links (#137)](https://github.com/rubensworks/rdf-test-suite.js/commit/43c948a7757c52473e7a155ff8a4339e734066c7)
+
+### Fixed
+* [Fixed a bug where a REDUCED test would fail even though the result is correct (#139)](https://github.com/rubensworks/rdf-test-suite.js/commit/6031e8fd4f80529c4706d8df9840fe5201278787)
+
 <a name="v2.2.0"></a>
 ## [v2.2.0](https://github.com/rubensworks/rdf-test-suite.js/compare/v2.1.6...v2.2.0) - 2026-06-19
 

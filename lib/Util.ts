@@ -48,6 +48,7 @@ export class Util {
       'unknown';
   }
 
+  // TODO: remove in the next major release
   /**
    * Convert https to http
    * @param {string} url A URL.

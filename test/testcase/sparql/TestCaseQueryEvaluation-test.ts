@@ -387,6 +387,16 @@ describe('TestCaseQueryEvaluationHandler', () => {
       });
     });
 
+    it('should resolve on an array with a boolean result', async() => {
+      return expect(TestCaseQueryEvaluationHandler.parseDawgResultSet([
+        quad('_:b', 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type', 'http://www.w3.org/2001/sw/DataAccess/tests/result-set#ResultSet'),
+        quad('_:b', 'http://www.w3.org/2001/sw/DataAccess/tests/result-set#boolean', '"true"'),
+      ])).resolves.toEqual({
+        type: 'boolean',
+        value: true,
+      });
+    });
+
     it('should resolve on an array with a non-empty result set with variables', async() => {
       return expect(TestCaseQueryEvaluationHandler.parseDawgResultSet([
         quad('_:b', 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type', 'http://www.w3.org/2001/sw/DataAccess/tests/result-set#ResultSet'),

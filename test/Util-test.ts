@@ -52,6 +52,11 @@ describe('Util', () => {
         .toBe('application/n-triples');
     });
 
+    it('should return text/n3 for an N3 extension', () => {
+      return expect(Util.identifyContentType('http://example.org/abc.n3', new Headers()))
+        .toBe('text/n3');
+    });
+
     it('should return a content type for valid headers and an unknown prefix', () => {
       return expect(Util.identifyContentType('http://example.org/abc.xyz', new Headers(
         { 'Content-Type': 'application/n-triples' },
@@ -216,6 +221,13 @@ describe('Util', () => {
         ]);
     });
 
+    it('should workaround an unknown content type with an N3 url extension', async() => {
+      await expect(arrayifyStream(Util.parseRdfRaw('unknown', 'http://example.org/apples.n3', streamifyString('"s"^^<t> <p> "o".')))).resolves
+        .toEqualRdfQuadArray([
+          DF.quad(DF.literal('s', DF.namedNode('http://example.org/t')), DF.namedNode('http://example.org/p'), DF.literal('o')),
+        ]);
+    });
+
     it('should parse application/x-turtle streams', async() => {
       await expect(arrayifyStream(Util.parseRdfRaw('application/x-turtle', 'http://example.org/', streamifyString('<a> <b> <c>.')))).resolves
         .toEqualRdfQuadArray([
@@ -234,6 +246,14 @@ describe('Util', () => {
       await expect(arrayifyStream(Util.parseRdfRaw('text/turtle', 'http://example.org/', streamifyString('<a> _:b <c>.')))).resolves
         .toEqualRdfQuadArray([
           DF.quad(DF.namedNode('http://example.org/a'), DF.blankNode('b'), DF.namedNode('http://example.org/c')),
+        ]);
+    });
+
+    it('should parse text/n3 streams with literal subjects', async() => {
+      await expect(arrayifyStream(Util.parseRdfRaw('text/n3', 'http://example.org/', streamifyString('"s"@en <p> "o". "t"^^<type> <p> "u".')))).resolves
+        .toEqualRdfQuadArray([
+          DF.quad(DF.literal('s', 'en'), DF.namedNode('http://example.org/p'), DF.literal('o')),
+          DF.quad(DF.literal('t', DF.namedNode('http://example.org/type')), DF.namedNode('http://example.org/p'), DF.literal('u')),
         ]);
     });
 

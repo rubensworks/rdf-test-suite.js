@@ -1,19 +1,22 @@
 import { Transform } from 'node:stream';
 import { Parser } from 'n3';
 
-// Temporarily set format to text/n3 to allow blank node predicates (needed by JSON-LD tests)
+// Temporarily enable N3 mode to allow blank node predicates (needed by JSON-LD tests)
 const readPredicateOld = (<any> Parser.prototype)._readPredicate;
 (<any> Parser.prototype)._readPredicate = function(token: any) {
-  if (this.allowBlankNodePredicates) {
-    this._n3Mode = true;
-    this._quantified = {};
+  if (!this.allowBlankNodePredicates || this._n3Mode) {
+    return readPredicateOld.call(this, token);
   }
-  const ret = readPredicateOld.call(this, token);
-  if (this.allowBlankNodePredicates) {
+
+  const quantified = this._quantified;
+  this._n3Mode = true;
+  this._quantified = {};
+  try {
+    return readPredicateOld.call(this, token);
+  } finally {
     this._n3Mode = false;
-    delete this._quantified;
+    this._quantified = quantified;
   }
-  return ret;
 };
 
 export class GeneralizedN3StreamParser extends Transform {

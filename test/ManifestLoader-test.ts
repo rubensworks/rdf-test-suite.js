@@ -7,11 +7,6 @@ const streamifyString = require('streamify-string');
 // Mock fetch
 (<any> globalThis).fetch = (urlRequested: string) => {
   // Real fetch() implementations never send fragments to the server.
-  // Instead, the report the fragment-less URL as `response.url`
-  // (which may also differ from the requested URL entirely in case of a redirect).
-  // We emulate both here: `url` is what was actually fetched/reported,
-  // defaulting to the (fragment-stripped) requested URL,
-  // but overridable per case below to simulate a redirect to a different URL.
   const hashPos = urlRequested.indexOf('#');
   let url = hashPos >= 0 ? urlRequested.slice(0, hashPos) : urlRequested;
 

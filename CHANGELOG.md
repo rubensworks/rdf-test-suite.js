@@ -1,6 +1,12 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+<a name="v2.4.0"></a>
+## [v2.4.0](https://github.com/rubensworks/rdf-test-suite.js/compare/v2.3.3...v2.4.0) - 2026-08-25
+
+### Added
+* [Pass laxComparison on mf:requires mf:StringSimpleLiteralCmp (#144)](https://github.com/rubensworks/rdf-test-suite.js/commit/746b9f51fe9cc141634f1ca735c7f1102f7fda70)
+
 <a name="v2.3.3"></a>
 ## [v2.3.3](https://github.com/rubensworks/rdf-test-suite.js/compare/v2.3.2...v2.3.3) - 2026-08-25
 

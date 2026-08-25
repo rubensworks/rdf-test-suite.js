@@ -1,6 +1,13 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+<a name="v2.3.2"></a>
+## [v2.3.2](https://github.com/rubensworks/rdf-test-suite.js/compare/v2.3.1...v2.3.2) - 2026-08-25
+
+### Fixed
+* [Fix streamify-array not being marked as actual dependency](https://github.com/rubensworks/rdf-test-suite.js/commit/256498f07528c76054bb8d501b3bf1440d8320d2)
+* [Declare jsonld-context-parser as an explicit dependency](https://github.com/rubensworks/rdf-test-suite.js/commit/9a9ce8c06c32b240433f2f360c7b823417d0db74)
+
 <a name="v2.3.1"></a>
 ## [v2.3.1](https://github.com/rubensworks/rdf-test-suite.js/compare/v2.3.0...v2.3.1) - 2026-08-18
 

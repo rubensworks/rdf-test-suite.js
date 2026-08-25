@@ -23,6 +23,7 @@
   "name": "mf:name",
   "result": "mf:result",
   "resultCardinality": "mf:resultCardinality",
+  "requires": "mf:requires",
 
   "q": "http://www.w3.org/2001/sw/DataAccess/tests/test-query#",
   "data": "q:data",

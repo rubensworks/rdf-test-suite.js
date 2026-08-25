@@ -351,11 +351,18 @@ export class TestCaseQueryEvaluationHandler implements ITestCaseHandler<TestCase
     // Determine links to data
     const queryDataLinks: IQueryDataLink[] = TestCaseQueryEvaluationHandler.getQueryDataLinks(action);
 
+    const mf = 'http://www.w3.org/2001/sw/DataAccess/tests/test-manifest#';
+
     // Check for lax cardinality property
     let laxCardinality = false;
-    if (resource.property.resultCardinality && resource.property.resultCardinality.value ===
-      'http://www.w3.org/2001/sw/DataAccess/tests/test-manifest#LaxCardinality') {
+    if (resource.property.resultCardinality && resource.property.resultCardinality.value === `${mf}LaxCardinality`) {
       laxCardinality = true;
+    }
+
+    // Check for mf:requires mf:StringSimpleLiteralCmp
+    let laxComparison = false;
+    if (resource.property.requires && resource.properties.requires.map(r => r.term.value).includes(`${mf}StringSimpleLiteralCmp`)) {
+      laxComparison = true;
     }
 
     // Collect all query data
@@ -376,6 +383,7 @@ export class TestCaseQueryEvaluationHandler implements ITestCaseHandler<TestCase
         ),
         queryString: await stringifyStream((await Util.fetchCached(action.property.query.value, options)).body),
         resultSource: queryResponse,
+        laxComparison,
       },
     );
   }
@@ -387,6 +395,7 @@ export interface ITestCaseQueryEvaluationProps {
   queryData: RDF.Quad[];
   queryResult: IQueryResult;
   laxCardinality: boolean;
+  laxComparison: boolean;
   resultSource: IFetchResponse;
   queryDataLinks: IQueryDataLink[];
 }
@@ -410,6 +419,7 @@ export class TestCaseQueryEvaluation implements ITestCaseSparql {
   public readonly queryData: RDF.Quad[];
   public readonly queryResult: IQueryResult;
   public readonly laxCardinality: boolean;
+  public readonly laxComparison: boolean;
   public readonly queryDataLinks: IQueryDataLink[];
   public readonly resultSource: IFetchResponse;
 
@@ -431,6 +441,8 @@ export class TestCaseQueryEvaluation implements ITestCaseSparql {
         checkOrder: this.queryResult.type === 'bindings' ?
           this.queryResult.checkOrder :
           false,
+        nonLexicalComparison: this.laxComparison,
+        fullTermComparison: this.laxComparison,
         ...injectArguments,
       },
     );

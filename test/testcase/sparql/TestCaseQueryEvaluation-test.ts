@@ -68,6 +68,7 @@ describe('TestCaseQueryEvaluationHandler', () => {
   let pResult;
   let pQuery;
   let pCardinality;
+  let pRequires;
   let pData;
   let pGraphData;
   let pGraph;
@@ -89,6 +90,9 @@ describe('TestCaseQueryEvaluationHandler', () => {
         );
         pCardinality = new Resource(
           { term: DF.namedNode('http://www.w3.org/2001/sw/DataAccess/tests/test-manifest#resultCardinality'), context },
+        );
+        pRequires = new Resource(
+          { term: DF.namedNode('http://www.w3.org/2001/sw/DataAccess/tests/test-manifest#requires'), context },
         );
         pData = new Resource(
           { term: DF.namedNode('http://www.w3.org/2001/sw/DataAccess/tests/test-query#data'), context },
@@ -699,6 +703,28 @@ describe('TestCaseQueryEvaluationHandler', () => {
         quad('http://www.w3.org/TR/rdf-syntax-grammar', 'http://purl.org/dc/elements/1.1/title', '"RDF1.1 XML Syntax 2"'),
       ]);
       expect(testCase.laxCardinality).toBe(true);
+    });
+
+    it('should produce a TestCaseQueryEvaluation with lax comparison', async() => {
+      const resource = new Resource({ term: DF.namedNode('http://ex.org/test'), context });
+      const action = new Resource({ term: DF.namedNode('blabla'), context });
+      action.addProperty(pQuery, new Resource({ term: DF.literal('ACTION.ok'), context }));
+      resource.addProperty(pAction, action);
+      resource.addProperty(pResult, new Resource({ term: DF.literal('RESULT.ttl'), context }));
+      resource.addProperty(pRequires, new Resource({ context, term: DF.namedNode(
+        'http://www.w3.org/2001/sw/DataAccess/tests/test-manifest#StringSimpleLiteralCmp',
+      ) }));
+      const testCase = await handler.resourceToTestCase(resource, <any> {});
+      expect(testCase).toBeInstanceOf(TestCaseQueryEvaluation);
+      expect(testCase.type).toBe('sparql');
+      expect(testCase.queryString).toBe(`OK`);
+      expect(testCase.queryData).toEqualRdfQuadArray([]);
+      expect(testCase.queryResult.type).toBe('quads');
+      expect(testCase.queryResult.value).toBeRdfIsomorphic([
+        quad('http://www.w3.org/TR/rdf-syntax-grammar', 'http://purl.org/dc/elements/1.1/title', '"RDF1.1 XML Syntax 1"'),
+        quad('http://www.w3.org/TR/rdf-syntax-grammar', 'http://purl.org/dc/elements/1.1/title', '"RDF1.1 XML Syntax 2"'),
+      ]);
+      expect(testCase.laxComparison).toBe(true);
     });
 
     it('should produce a TestCaseQueryEvaluation with data in action', async() => {

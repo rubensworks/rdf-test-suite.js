@@ -1,6 +1,12 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+<a name="v2.3.3"></a>
+## [v2.3.3](https://github.com/rubensworks/rdf-test-suite.js/compare/v2.3.2...v2.3.3) - 2026-08-25
+
+### Fixed
+* [Honor explicit fragment IRI when locating the manifest resource (#134)](https://github.com/rubensworks/rdf-test-suite.js/commit/403318ea1c8d885f290ed2e85f0221d5d965e2fc)
+
 <a name="v2.3.2"></a>
 ## [v2.3.2](https://github.com/rubensworks/rdf-test-suite.js/compare/v2.3.1...v2.3.2) - 2026-08-25
 

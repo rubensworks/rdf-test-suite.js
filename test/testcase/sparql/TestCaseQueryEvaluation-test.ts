@@ -179,6 +179,37 @@ describe('TestCaseQueryEvaluationHandler', () => {
         });
     });
 
+    it('should resolve on SPARQL/JSON via file extension fallback', async() => {
+      return expect(TestCaseQueryEvaluationHandler.parseQueryResult('unknown', 'http://example.org/results.srj', streamifyString(`
+{
+  "head": {
+    "vars": [
+      "book"
+      ]
+  },
+  "results": {
+    "bindings": [
+      { "book": { "type": "uri", "value": "http://example.org/book/book1" } },
+      { "book": { "type": "uri", "value": "http://example.org/book/book2" } }
+    ]
+  }
+}
+`))).resolves
+        .toEqual({
+          checkOrder: false,
+          type: 'bindings',
+          value: [
+            {
+              '?book': DF.namedNode('http://example.org/book/book1'),
+            },
+            {
+              '?book': DF.namedNode('http://example.org/book/book2'),
+            },
+          ],
+          variables: [ '?book' ],
+        });
+    });
+
     it('should resolve on turtle', async() => {
       return expect((await TestCaseQueryEvaluationHandler.parseQueryResult('text/turtle', 'a', streamifyString(`
 <a> <b> <c>.

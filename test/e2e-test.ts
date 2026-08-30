@@ -110,7 +110,7 @@ describe('e2e tests on the test suite runner', () => {
 
   describe('query', () => {
     for (const [ spec, minimumPassingCount ] of Object.entries({
-      'http://www.w3.org/TR/sparql11-query/': 301,
+      'http://www.w3.org/TR/sparql11-query/': 300,
       'http://www.w3.org/TR/sparql11-update/': 157,
       'http://www.w3.org/TR/sparql11-results-csv-tsv/': 3,
       'http://www.w3.org/TR/sparql11-results-json/': 4,

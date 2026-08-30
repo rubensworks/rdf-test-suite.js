@@ -1,8 +1,8 @@
 import { QueryResultBoolean } from '../../../lib/testcase/sparql/QueryResultBoolean';
 
 describe('QueryResultBoolean', () => {
-  let booleanTrue;
-  let booleanFalse;
+  let booleanTrue: QueryResultBoolean;
+  let booleanFalse: QueryResultBoolean;
 
   beforeEach(() => {
     booleanTrue = new QueryResultBoolean(true);

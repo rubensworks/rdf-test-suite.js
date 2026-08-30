@@ -72,6 +72,7 @@ describe('TestCaseQueryEvaluationHandler', () => {
   let pResult;
   let pQuery;
   let pCardinality;
+  let pRequires;
   let pData;
   let pGraphData;
   let pGraph;
@@ -95,6 +96,9 @@ describe('TestCaseQueryEvaluationHandler', () => {
         );
         pCardinality = new Resource(
           { term: DF.namedNode('http://www.w3.org/2001/sw/DataAccess/tests/test-manifest#resultCardinality'), context },
+        );
+        pRequires = new Resource(
+          { term: DF.namedNode('http://www.w3.org/2001/sw/DataAccess/tests/test-manifest#requires'), context },
         );
         pData = new Resource(
           { term: DF.namedNode('http://www.w3.org/2001/sw/DataAccess/tests/test-query#data'), context },
@@ -162,6 +166,37 @@ describe('TestCaseQueryEvaluationHandler', () => {
 
     it('should resolve on SPARQL/JSON', async() => {
       return expect(TestCaseQueryEvaluationHandler.parseQueryResult('application/sparql-results+json', 'a', streamifyString(`
+{
+  "head": {
+    "vars": [
+      "book"
+      ]
+  },
+  "results": {
+    "bindings": [
+      { "book": { "type": "uri", "value": "http://example.org/book/book1" } },
+      { "book": { "type": "uri", "value": "http://example.org/book/book2" } }
+    ]
+  }
+}
+`))).resolves
+        .toEqual({
+          checkOrder: false,
+          type: 'bindings',
+          value: [
+            {
+              '?book': DF.namedNode('http://example.org/book/book1'),
+            },
+            {
+              '?book': DF.namedNode('http://example.org/book/book2'),
+            },
+          ],
+          variables: [ '?book' ],
+        });
+    });
+
+    it('should resolve on SPARQL/JSON via file extension fallback', async() => {
+      return expect(TestCaseQueryEvaluationHandler.parseQueryResult('unknown', 'http://example.org/results.srj', streamifyString(`
 {
   "head": {
     "vars": [
@@ -365,6 +400,16 @@ describe('TestCaseQueryEvaluationHandler', () => {
         type: 'bindings',
         value: [],
         variables: [ '?v1', '?v2', '?v3' ],
+      });
+    });
+
+    it('should resolve on an array with a boolean result', async() => {
+      return expect(TestCaseQueryEvaluationHandler.parseDawgResultSet([
+        quad('_:b', 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type', 'http://www.w3.org/2001/sw/DataAccess/tests/result-set#ResultSet'),
+        quad('_:b', 'http://www.w3.org/2001/sw/DataAccess/tests/result-set#boolean', '"true"'),
+      ])).resolves.toEqual({
+        type: 'boolean',
+        value: true,
       });
     });
 
@@ -708,6 +753,28 @@ describe('TestCaseQueryEvaluationHandler', () => {
         quad('http://www.w3.org/TR/rdf-syntax-grammar', 'http://purl.org/dc/elements/1.1/title', '"RDF1.1 XML Syntax 2"'),
       ]);
       expect(testCase.laxCardinality).toBe(true);
+    });
+
+    it('should produce a TestCaseQueryEvaluation with lax comparison', async() => {
+      const resource = new Resource({ term: DF.namedNode('http://ex.org/test'), context });
+      const action = new Resource({ term: DF.namedNode('blabla'), context });
+      action.addProperty(pQuery, new Resource({ term: DF.literal('ACTION.ok'), context }));
+      resource.addProperty(pAction, action);
+      resource.addProperty(pResult, new Resource({ term: DF.literal('RESULT.ttl'), context }));
+      resource.addProperty(pRequires, new Resource({ context, term: DF.namedNode(
+        'http://www.w3.org/2001/sw/DataAccess/tests/test-manifest#StringSimpleLiteralCmp',
+      ) }));
+      const testCase = await handler.resourceToTestCase(resource, <any> {});
+      expect(testCase).toBeInstanceOf(TestCaseQueryEvaluation);
+      expect(testCase.type).toBe('sparql');
+      expect(testCase.queryString).toBe(`OK`);
+      expect(testCase.queryData).toEqualRdfQuadArray([]);
+      expect(testCase.queryResult.type).toBe('quads');
+      expect(testCase.queryResult.value).toBeRdfIsomorphic([
+        quad('http://www.w3.org/TR/rdf-syntax-grammar', 'http://purl.org/dc/elements/1.1/title', '"RDF1.1 XML Syntax 1"'),
+        quad('http://www.w3.org/TR/rdf-syntax-grammar', 'http://purl.org/dc/elements/1.1/title', '"RDF1.1 XML Syntax 2"'),
+      ]);
+      expect(testCase.laxComparison).toBe(true);
     });
 
     it('should produce a TestCaseQueryEvaluation with data in action', async() => {

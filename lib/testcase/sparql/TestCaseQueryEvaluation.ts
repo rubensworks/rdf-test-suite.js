@@ -14,7 +14,7 @@ import type { IFetchOptions, IFetchResponse } from '../../Util';
 import { Util } from '../../Util';
 import type { ITestCaseData } from '../ITestCase';
 import type { ITestCaseHandler } from '../ITestCaseHandler';
-import type { IQueryEngine, IQueryResult, IQueryResultBindings } from './IQueryEngine';
+import type { IQueryEngine, IQueryResult, IQueryResultBindings, IQueryResultBoolean } from './IQueryEngine';
 import type { ITestCaseSparql } from './ITestCaseSparql';
 import { QueryResultBindings } from './QueryResultBindings';
 import { QueryResultBoolean } from './QueryResultBoolean';
@@ -55,7 +55,7 @@ export class TestCaseQueryEvaluationHandler implements ITestCaseHandler<TestCase
       contentType = 'application/sparql-results+xml';
       queryResult = await TestCaseQueryEvaluationHandler.parseSparqlResults('xml', data);
     }
-    if (contentType.includes('application/sparql-results+json')) {
+    if (contentType.includes('application/sparql-results+json') || url.endsWith('.srj')) {
       queryResult = await TestCaseQueryEvaluationHandler.parseSparqlResults('json', data);
     }
     if (contentType.includes('text/tab-separated-values') || url.endsWith('.tsv')) {
@@ -131,9 +131,14 @@ export class TestCaseQueryEvaluationHandler implements ITestCaseHandler<TestCase
    * Parses query results in the DAWG vocabulary.
    * https://www.w3.org/2001/sw/DataAccess/tests/test-dawg.n3
    * @param {Quad[]} quads An array of quads.
-   * @return {Promise<IQueryResultBindings>} A promise resolving to a bindings results object.
+   * @return {Promise<IQueryResultBindings | IQueryResultBoolean>} A promise resolving to a bindings or boolean results object.
    */
-  public static async parseDawgResultSet(quads: RDF.Quad[]): Promise<IQueryResultBindings> {
+  public static async parseDawgResultSet(quads: RDF.Quad[]): Promise<IQueryResultBindings | IQueryResultBoolean> {
+    // Check for a boolean result (ASK query)
+    if (quads[1] && quads[1].predicate.value === 'http://www.w3.org/2001/sw/DataAccess/tests/result-set#boolean') {
+      return new QueryResultBoolean(quads[1].object.value === 'true');
+    }
+
     // Construct resources for easier interpretation of the bindings
     const objectLoader = new RdfObjectLoader({
       context: {
@@ -302,12 +307,12 @@ export class TestCaseQueryEvaluationHandler implements ITestCaseHandler<TestCase
       if (graphData.property.graph) {
         queryDataLinks.push({
           dataUri: graphData.property.graph.value,
-          dataGraph: DF.namedNode(Util.normalizeBaseUrl(graphData.property.label.value)),
+          dataGraph: DF.namedNode(graphData.property.label.value),
         });
       } else {
         queryDataLinks.push({
           dataUri: graphData.value,
-          dataGraph: DF.namedNode(Util.normalizeBaseUrl(graphData.value)),
+          dataGraph: DF.namedNode(graphData.value),
         });
       }
     }
@@ -322,7 +327,7 @@ export class TestCaseQueryEvaluationHandler implements ITestCaseHandler<TestCase
   public static async resolveQueryDataLinks(queryDataLinks: IQueryDataLink[], options?: IFetchOptions): Promise<RDF.Quad[]> {
     let queryData: RDF.Quad[] = [];
     for (const queryDataLink of queryDataLinks) {
-      let queryDataThis: RDF.Quad[] = await arrayifyStream((await Util.fetchRdf(queryDataLink.dataUri, { ...options, normalizeUrl: true }))[1]);
+      let queryDataThis: RDF.Quad[] = await arrayifyStream((await Util.fetchRdf(queryDataLink.dataUri, options))[1]);
       if (queryDataLink.dataGraph) {
         queryDataThis = queryDataThis.map(quad => mapTerms(quad, (value: RDF.Term, key: QuadTermName) => key === 'graph' ? queryDataLink.dataGraph : value));
       }
@@ -376,12 +381,19 @@ export class TestCaseQueryEvaluationHandler implements ITestCaseHandler<TestCase
 
     // Determine links to service data (for federated query tests)
     const serviceDataLinks: IServiceDataLink[] = TestCaseQueryEvaluationHandler.getServiceDataLinks(action);
+    
+    const mf = 'http://www.w3.org/2001/sw/DataAccess/tests/test-manifest#';
 
     // Check for lax cardinality property
     let laxCardinality = false;
-    if (resource.property.resultCardinality && resource.property.resultCardinality.value ===
-      'http://www.w3.org/2001/sw/DataAccess/tests/test-manifest#LaxCardinality') {
+    if (resource.property.resultCardinality && resource.property.resultCardinality.value === `${mf}LaxCardinality`) {
       laxCardinality = true;
+    }
+
+    // Check for mf:requires mf:StringSimpleLiteralCmp
+    let laxComparison = false;
+    if (resource.property.requires && resource.properties.requires.map(r => r.term.value).includes(`${mf}StringSimpleLiteralCmp`)) {
+      laxComparison = true;
     }
 
     // Collect all query data
@@ -394,7 +406,7 @@ export class TestCaseQueryEvaluationHandler implements ITestCaseHandler<TestCase
     return new TestCaseQueryEvaluation(
       testCaseData,
       {
-        baseIRI: Util.normalizeBaseUrl(action.property.query.value),
+        baseIRI: action.property.query.value,
         queryDataLinks,
         serviceDataLinks,
         laxCardinality,
@@ -407,6 +419,7 @@ export class TestCaseQueryEvaluationHandler implements ITestCaseHandler<TestCase
         ),
         queryString: await stringifyStream((await Util.fetchCached(action.property.query.value, options)).body),
         resultSource: queryResponse,
+        laxComparison,
       },
     );
   }
@@ -419,6 +432,7 @@ export interface ITestCaseQueryEvaluationProps {
   serviceData: Record<string, RDF.Quad[]>;
   queryResult: IQueryResult;
   laxCardinality: boolean;
+  laxComparison: boolean;
   resultSource: IFetchResponse;
   queryDataLinks: IQueryDataLink[];
   serviceDataLinks: IServiceDataLink[];
@@ -449,6 +463,7 @@ export class TestCaseQueryEvaluation implements ITestCaseSparql {
   public readonly serviceData: Record<string, RDF.Quad[]>;
   public readonly queryResult: IQueryResult;
   public readonly laxCardinality: boolean;
+  public readonly laxComparison: boolean;
   public readonly queryDataLinks: IQueryDataLink[];
   public readonly serviceDataLinks: IServiceDataLink[];
   public readonly resultSource: IFetchResponse;
@@ -470,7 +485,16 @@ export class TestCaseQueryEvaluation implements ITestCaseSparql {
   }
 
   public async test(engine: IQueryEngine, injectArguments: any): Promise<void> {
-    const options: Record<string, any> = { baseIRI: this.baseIRI, ...injectArguments };
+    const options: Record<string, any> = {
+      baseIRI: this.baseIRI,
+      checkOrder:
+        this.queryResult.type === "bindings"
+          ? this.queryResult.checkOrder
+          : false,
+      nonLexicalComparison: this.laxComparison,
+      fullTermComparison: this.laxComparison,
+      ...injectArguments,
+    };
     if (Object.keys(this.serviceData).length > 0) {
       options.serviceData = this.serviceData;
     }

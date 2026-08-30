@@ -40,19 +40,33 @@ export class ManifestLoader {
   }
 
   protected async import(objectLoader: RdfObjectLoader, urlInitial: string, options?: IFetchOptions): Promise<Resource> {
+    // Fragment of the URL the caller asked for (e.g. 'manifest'), if any.
+    const hashIndex = urlInitial.indexOf('#');
+    const requestedFragment = hashIndex >= 0 ? urlInitial.slice(hashIndex + 1) : undefined;
+
     const [ url, parsed ] = await Util.fetchRdf(urlInitial, options);
     // Dereference the URL and load it
     await objectLoader.import(parsed);
 
-    // Import all sub-manifests
-    let manifest: Resource =
-      // First try the same URL as the document URL
-      objectLoader.resources[url] ??
+    function findManifest(): Resource {
+      const extLess = url.slice(0, url.lastIndexOf('.'));
+      let result: Resource | undefined;
+      // Highest priority: the resource the caller explicitly named via a fragment,
+      // resolved against the fetched (fragment-less) document URL.
+      if (requestedFragment) {
+        result = objectLoader.resources[`${url}#${requestedFragment}`];
+      }
+      // Second try the same URL as the document URL
+      result ??= objectLoader.resources[url];
       // Also try extension-less manifest URL (needed for RDFa test suite)
-      objectLoader.resources[url.slice(0, url.lastIndexOf('.'))] ??
+      result ??= objectLoader.resources[extLess];
       // Also try extension-less and with the last '/' replaced with a '#' (needed for RDFstar test suite)
       // @see https://github.com/w3c/rdf-star/issues/269
-      objectLoader.resources[url.slice(0, url.lastIndexOf('.')).replace(/\/manifest$/u, '#manifest')];
+      return result ?? objectLoader.resources[extLess.replace(/\/manifest$/u, '#manifest')];
+    }
+
+    // Import all sub-manifests
+    let manifest: Resource = findManifest();
 
     if (!manifest) {
       throw new Error(`Could not find a resource ${url} in the document at ${url}`);
@@ -69,14 +83,8 @@ export class ManifestLoader {
 
     await Promise.all(includeJobs);
 
-    manifest =
-      // First try the same URL as the document URL
-      objectLoader.resources[url] ??
-      // Also try extension-less manifest URL (needed for RDFa test suite)
-      objectLoader.resources[url.slice(0, url.lastIndexOf('.'))] ??
-      // Also try extension-less and with the last '/' replaced with a '#' (needed for RDFstar test suite)
-      // @see https://github.com/w3c/rdf-star/issues/269
-      objectLoader.resources[url.slice(0, url.lastIndexOf('.')).replace(/\/manifest$/u, '#manifest')];
+    // Re-resolve, as sub-manifest imports may have extended the manifest resource
+    manifest = findManifest();
 
     return manifest;
   }

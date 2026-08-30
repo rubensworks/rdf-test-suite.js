@@ -381,7 +381,7 @@ export class TestCaseQueryEvaluationHandler implements ITestCaseHandler<TestCase
 
     // Determine links to service data (for federated query tests)
     const serviceDataLinks: IServiceDataLink[] = TestCaseQueryEvaluationHandler.getServiceDataLinks(action);
-    
+
     const mf = 'http://www.w3.org/2001/sw/DataAccess/tests/test-manifest#';
 
     // Check for lax cardinality property
@@ -487,10 +487,9 @@ export class TestCaseQueryEvaluation implements ITestCaseSparql {
   public async test(engine: IQueryEngine, injectArguments: any): Promise<void> {
     const options: Record<string, any> = {
       baseIRI: this.baseIRI,
-      checkOrder:
-        this.queryResult.type === "bindings"
-          ? this.queryResult.checkOrder
-          : false,
+      checkOrder: this.queryResult.type === 'bindings' ?
+        this.queryResult.checkOrder :
+        false,
       nonLexicalComparison: this.laxComparison,
       fullTermComparison: this.laxComparison,
       ...injectArguments,

@@ -1,6 +1,12 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+<a name="v2.5.0"></a>
+## [v2.5.0](https://github.com/rubensworks/rdf-test-suite.js/compare/v2.4.0...v2.5.0) - 2026-09-01
+
+### Added
+* [Support serviceData for federated query tests (#130)](https://github.com/rubensworks/rdf-test-suite.js/commit/f9af4201c643900d33a50ace1c1111fc926b17ce)
+
 <a name="v2.4.0"></a>
 ## [v2.4.0](https://github.com/rubensworks/rdf-test-suite.js/compare/v2.3.3...v2.4.0) - 2026-08-25
 

@@ -336,6 +336,34 @@ export class TestCaseQueryEvaluationHandler implements ITestCaseHandler<TestCase
     return queryData;
   }
 
+  /**
+   * Obtain all service data links for the given query test action.
+   * @param action A query test action.
+   */
+  public static getServiceDataLinks(action: Resource): IServiceDataLink[] {
+    const serviceDataLinks: IServiceDataLink[] = [];
+    for (const serviceData of action.properties.serviceData) {
+      serviceDataLinks.push({
+        endpoint: serviceData.property.endpoint.value,
+        dataUri: serviceData.property.data.value,
+      });
+    }
+    return serviceDataLinks;
+  }
+
+  /**
+   * Resolve service data links to a mapping of endpoint URIs to their quads.
+   * @param serviceDataLinks Links to service data.
+   * @param options Fetch options.
+   */
+  public static async resolveServiceDataLinks(serviceDataLinks: IServiceDataLink[], options?: IFetchOptions): Promise<Record<string, RDF.Quad[]>> {
+    const serviceData: Record<string, RDF.Quad[]> = {};
+    for (const link of serviceDataLinks) {
+      serviceData[link.endpoint] = await arrayifyStream((await Util.fetchRdf(link.dataUri, { ...options, normalizeUrl: true }))[1]);
+    }
+    return serviceData;
+  }
+
   public async resourceToTestCase(resource: Resource, testCaseData: ITestCaseData, options?: IFetchOptions): Promise<TestCaseQueryEvaluation> {
     if (!resource.property.action) {
       throw new Error(`Missing mf:action in ${resource}`);
@@ -350,6 +378,9 @@ export class TestCaseQueryEvaluationHandler implements ITestCaseHandler<TestCase
 
     // Determine links to data
     const queryDataLinks: IQueryDataLink[] = TestCaseQueryEvaluationHandler.getQueryDataLinks(action);
+
+    // Determine links to service data (for federated query tests)
+    const serviceDataLinks: IServiceDataLink[] = TestCaseQueryEvaluationHandler.getServiceDataLinks(action);
 
     const mf = 'http://www.w3.org/2001/sw/DataAccess/tests/test-manifest#';
 
@@ -368,14 +399,19 @@ export class TestCaseQueryEvaluationHandler implements ITestCaseHandler<TestCase
     // Collect all query data
     const queryData: RDF.Quad[] = await TestCaseQueryEvaluationHandler.resolveQueryDataLinks(queryDataLinks, options);
 
+    // Resolve service data for federated queries
+    const serviceData: Record<string, RDF.Quad[]> = await TestCaseQueryEvaluationHandler.resolveServiceDataLinks(serviceDataLinks, options);
+
     const queryResponse = await Util.fetchCached(resource.property.result.value, options);
     return new TestCaseQueryEvaluation(
       testCaseData,
       {
         baseIRI: action.property.query.value,
         queryDataLinks,
+        serviceDataLinks,
         laxCardinality,
         queryData,
+        serviceData,
         queryResult: await TestCaseQueryEvaluationHandler.parseQueryResult(
           Util.identifyContentType(queryResponse.url, queryResponse.headers),
           queryResponse.url,
@@ -393,16 +429,23 @@ export interface ITestCaseQueryEvaluationProps {
   baseIRI: string;
   queryString: string;
   queryData: RDF.Quad[];
+  serviceData: Record<string, RDF.Quad[]>;
   queryResult: IQueryResult;
   laxCardinality: boolean;
   laxComparison: boolean;
   resultSource: IFetchResponse;
   queryDataLinks: IQueryDataLink[];
+  serviceDataLinks: IServiceDataLink[];
 }
 
 export interface IQueryDataLink {
   dataUri: string;
   dataGraph?: RDF.NamedNode;
+}
+
+export interface IServiceDataLink {
+  endpoint: string;
+  dataUri: string;
 }
 
 export class TestCaseQueryEvaluation implements ITestCaseSparql {
@@ -417,10 +460,12 @@ export class TestCaseQueryEvaluation implements ITestCaseSparql {
   public readonly baseIRI: string;
   public readonly queryString: string;
   public readonly queryData: RDF.Quad[];
+  public readonly serviceData: Record<string, RDF.Quad[]>;
   public readonly queryResult: IQueryResult;
   public readonly laxCardinality: boolean;
   public readonly laxComparison: boolean;
   public readonly queryDataLinks: IQueryDataLink[];
+  public readonly serviceDataLinks: IServiceDataLink[];
   public readonly resultSource: IFetchResponse;
 
   constructor(testCaseData: ITestCaseData, props: ITestCaseQueryEvaluationProps) {
@@ -432,26 +477,35 @@ export class TestCaseQueryEvaluation implements ITestCaseSparql {
     return queryDataLinks.map(queryDataLink => queryDataLink.dataUri + (queryDataLink.dataGraph ? ` (named graph: ${queryDataLink.dataGraph.value})` : '')).join(',\n    ');
   }
 
+  public static serviceDataLinksToString(serviceDataLinks: IServiceDataLink[]): string {
+    if (serviceDataLinks.length === 0) {
+      return 'None';
+    }
+    return serviceDataLinks.map(link => `${link.endpoint} (data: ${link.dataUri})`).join(',\n    ');
+  }
+
   public async test(engine: IQueryEngine, injectArguments: any): Promise<void> {
-    const result: IQueryResult = await engine.query(
-      this.queryData,
-      this.queryString,
-      {
-        baseIRI: this.baseIRI,
-        checkOrder: this.queryResult.type === 'bindings' ?
-          this.queryResult.checkOrder :
-          false,
-        nonLexicalComparison: this.laxComparison,
-        fullTermComparison: this.laxComparison,
-        ...injectArguments,
-      },
-    );
+    const options: Record<string, any> = {
+      baseIRI: this.baseIRI,
+      checkOrder: this.queryResult.type === 'bindings' ?
+        this.queryResult.checkOrder :
+        false,
+      nonLexicalComparison: this.laxComparison,
+      fullTermComparison: this.laxComparison,
+      ...injectArguments,
+    };
+    if (Object.keys(this.serviceData).length > 0) {
+      options.serviceData = this.serviceData;
+    }
+    const result: IQueryResult = await engine.query(this.queryData, this.queryString, options);
     if (!this.queryResult.equals(result, this.laxCardinality)) {
       throw new ErrorTest(`Invalid query evaluation
 
   Query:\n\n${this.queryString}
 
   Data links: ${TestCaseQueryEvaluation.queryDataLinksToString(this.queryDataLinks)}
+
+  Service links: ${TestCaseQueryEvaluation.serviceDataLinksToString(this.serviceDataLinks)}
 
   Result Source: ${this.resultSource.url}
 

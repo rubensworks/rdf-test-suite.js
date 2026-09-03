@@ -45,6 +45,10 @@ const DF = new DataFactory();
     "RDF1.1 XML Syntax 1", "RDF1.1 XML Syntax 2".`);
       headers = new Headers({ 'Content-Type': 'text/turtle' });
       break;
+    case 'ENDPOINT.ttl':
+      body = streamifyString(`<http://example.org/s> <http://example.org/p> <http://example.org/o>.`);
+      headers = new Headers({ 'Content-Type': 'text/turtle' });
+      break;
     default:
       return Promise.reject(new Error(`Fetch error for ${url}`));
   }
@@ -68,10 +72,13 @@ describe('TestCaseQueryEvaluationHandler', () => {
   let pResult;
   let pQuery;
   let pCardinality;
+  let pRequires;
   let pData;
   let pGraphData;
   let pGraph;
   let pLabel;
+  let pServiceData;
+  let pEndpoint;
 
   beforeEach((done) => {
     new ContextParser().parse(require('../../../lib/context-manifest.json'))
@@ -90,6 +97,9 @@ describe('TestCaseQueryEvaluationHandler', () => {
         pCardinality = new Resource(
           { term: DF.namedNode('http://www.w3.org/2001/sw/DataAccess/tests/test-manifest#resultCardinality'), context },
         );
+        pRequires = new Resource(
+          { term: DF.namedNode('http://www.w3.org/2001/sw/DataAccess/tests/test-manifest#requires'), context },
+        );
         pData = new Resource(
           { term: DF.namedNode('http://www.w3.org/2001/sw/DataAccess/tests/test-query#data'), context },
         );
@@ -101,6 +111,12 @@ describe('TestCaseQueryEvaluationHandler', () => {
         );
         pLabel = new Resource(
           { term: DF.namedNode('http://www.w3.org/2000/01/rdf-schema#label'), context },
+        );
+        pServiceData = new Resource(
+          { term: DF.namedNode('http://www.w3.org/2001/sw/DataAccess/tests/test-query#serviceData'), context },
+        );
+        pEndpoint = new Resource(
+          { term: DF.namedNode('http://www.w3.org/2001/sw/DataAccess/tests/test-query#endpoint'), context },
         );
 
         done();
@@ -150,6 +166,37 @@ describe('TestCaseQueryEvaluationHandler', () => {
 
     it('should resolve on SPARQL/JSON', async() => {
       return expect(TestCaseQueryEvaluationHandler.parseQueryResult('application/sparql-results+json', 'a', streamifyString(`
+{
+  "head": {
+    "vars": [
+      "book"
+      ]
+  },
+  "results": {
+    "bindings": [
+      { "book": { "type": "uri", "value": "http://example.org/book/book1" } },
+      { "book": { "type": "uri", "value": "http://example.org/book/book2" } }
+    ]
+  }
+}
+`))).resolves
+        .toEqual({
+          checkOrder: false,
+          type: 'bindings',
+          value: [
+            {
+              '?book': DF.namedNode('http://example.org/book/book1'),
+            },
+            {
+              '?book': DF.namedNode('http://example.org/book/book2'),
+            },
+          ],
+          variables: [ '?book' ],
+        });
+    });
+
+    it('should resolve on SPARQL/JSON via file extension fallback', async() => {
+      return expect(TestCaseQueryEvaluationHandler.parseQueryResult('unknown', 'http://example.org/results.srj', streamifyString(`
 {
   "head": {
     "vars": [
@@ -353,6 +400,16 @@ describe('TestCaseQueryEvaluationHandler', () => {
         type: 'bindings',
         value: [],
         variables: [ '?v1', '?v2', '?v3' ],
+      });
+    });
+
+    it('should resolve on an array with a boolean result', async() => {
+      return expect(TestCaseQueryEvaluationHandler.parseDawgResultSet([
+        quad('_:b', 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type', 'http://www.w3.org/2001/sw/DataAccess/tests/result-set#ResultSet'),
+        quad('_:b', 'http://www.w3.org/2001/sw/DataAccess/tests/result-set#boolean', '"true"'),
+      ])).resolves.toEqual({
+        type: 'boolean',
+        value: true,
       });
     });
 
@@ -618,6 +675,44 @@ describe('TestCaseQueryEvaluationHandler', () => {
     });
   });
 
+  describe('#getServiceDataLinks', () => {
+    it('should return service data links from an action', () => {
+      const action = new Resource({ term: DF.namedNode('action'), context });
+      const serviceData = new Resource({ term: DF.namedNode('sd1'), context });
+
+      serviceData.addProperty(pEndpoint, new Resource({ term: DF.namedNode('http://example.org/sparql'), context }));
+      serviceData.addProperty(pData, new Resource({ term: DF.namedNode('ENDPOINT.ttl'), context }));
+      action.addProperty(pServiceData, serviceData);
+
+      expect(TestCaseQueryEvaluationHandler.getServiceDataLinks(action)).toEqual([
+        { endpoint: 'http://example.org/sparql', dataUri: 'ENDPOINT.ttl' },
+      ]);
+    });
+  });
+
+  describe('#resolveServiceDataLinks', () => {
+    it('should fetch and map service data quads by endpoint', async() => {
+      const links = [{ endpoint: 'http://example.org/sparql', dataUri: 'ENDPOINT.ttl' }];
+      const resolved = await TestCaseQueryEvaluationHandler.resolveServiceDataLinks(links);
+
+      expect(resolved['http://example.org/sparql']).toBeRdfIsomorphic([
+        quad('http://example.org/s', 'http://example.org/p', 'http://example.org/o'),
+      ]);
+    });
+  });
+
+  describe('#serviceDataLinksToString', () => {
+    it('should handle the empty array', () => {
+      expect(TestCaseQueryEvaluation.serviceDataLinksToString([])).toBe('None');
+    });
+
+    it('should handle a non-empty array', () => {
+      expect(TestCaseQueryEvaluation.serviceDataLinksToString([
+        { endpoint: 'http://example.org/sparql', dataUri: 'ENDPOINT.ttl' },
+      ])).toBe(`http://example.org/sparql (data: ENDPOINT.ttl)`);
+    });
+  });
+
   describe('#resourceToTestCase', () => {
     it('should produce a TestCaseQueryEvaluation', async() => {
       const resource = new Resource({ term: DF.namedNode('http://ex.org/test'), context });
@@ -658,6 +753,28 @@ describe('TestCaseQueryEvaluationHandler', () => {
         quad('http://www.w3.org/TR/rdf-syntax-grammar', 'http://purl.org/dc/elements/1.1/title', '"RDF1.1 XML Syntax 2"'),
       ]);
       expect(testCase.laxCardinality).toBe(true);
+    });
+
+    it('should produce a TestCaseQueryEvaluation with lax comparison', async() => {
+      const resource = new Resource({ term: DF.namedNode('http://ex.org/test'), context });
+      const action = new Resource({ term: DF.namedNode('blabla'), context });
+      action.addProperty(pQuery, new Resource({ term: DF.literal('ACTION.ok'), context }));
+      resource.addProperty(pAction, action);
+      resource.addProperty(pResult, new Resource({ term: DF.literal('RESULT.ttl'), context }));
+      resource.addProperty(pRequires, new Resource({ context, term: DF.namedNode(
+        'http://www.w3.org/2001/sw/DataAccess/tests/test-manifest#StringSimpleLiteralCmp',
+      ) }));
+      const testCase = await handler.resourceToTestCase(resource, <any> {});
+      expect(testCase).toBeInstanceOf(TestCaseQueryEvaluation);
+      expect(testCase.type).toBe('sparql');
+      expect(testCase.queryString).toBe(`OK`);
+      expect(testCase.queryData).toEqualRdfQuadArray([]);
+      expect(testCase.queryResult.type).toBe('quads');
+      expect(testCase.queryResult.value).toBeRdfIsomorphic([
+        quad('http://www.w3.org/TR/rdf-syntax-grammar', 'http://purl.org/dc/elements/1.1/title', '"RDF1.1 XML Syntax 1"'),
+        quad('http://www.w3.org/TR/rdf-syntax-grammar', 'http://purl.org/dc/elements/1.1/title', '"RDF1.1 XML Syntax 2"'),
+      ]);
+      expect(testCase.laxComparison).toBe(true);
     });
 
     it('should produce a TestCaseQueryEvaluation with data in action', async() => {
@@ -834,6 +951,33 @@ describe('TestCaseQueryEvaluationHandler', () => {
       resource.addProperty(pResult, new Resource({ term: DF.literal('RESULT_OTHER.ttl'), context }));
       const testCase = await handler.resourceToTestCase(resource, <any> {});
       return expect(testCase.test(engine, {})).rejects.toBeTruthy();
+    });
+
+    it('should produce a TestCaseQueryEvaluation with service data for federated queries', async() => {
+      const resource = new Resource({ term: DF.namedNode('http://ex.org/test'), context });
+      const action = new Resource({ term: DF.namedNode('blabla'), context });
+      action.addProperty(pQuery, new Resource({ term: DF.literal('ACTION.ok'), context }));
+
+      const serviceData = new Resource({ term: DF.namedNode('sd1'), context });
+      serviceData.addProperty(pEndpoint, new Resource({ term: DF.namedNode('http://example.org/sparql'), context }));
+      serviceData.addProperty(pData, new Resource({ term: DF.namedNode('ENDPOINT.ttl'), context }));
+      action.addProperty(pServiceData, serviceData);
+
+      resource.addProperty(pAction, action);
+      resource.addProperty(pResult, new Resource({ term: DF.literal('RESULT.ttl'), context }));
+
+      const testCase = await handler.resourceToTestCase(resource, <any> {});
+
+      expect(testCase).toBeInstanceOf(TestCaseQueryEvaluation);
+      expect(testCase.type).toBe('sparql');
+      expect(testCase.serviceDataLinks).toEqual([
+        { endpoint: 'http://example.org/sparql', dataUri: 'ENDPOINT.ttl' },
+      ]);
+      expect(testCase.serviceData['http://example.org/sparql']).toBeRdfIsomorphic([
+        quad('http://example.org/s', 'http://example.org/p', 'http://example.org/o'),
+      ]);
+
+      await expect(testCase.test(engine, {})).resolves.toBeUndefined();
     });
   });
 });

@@ -1,6 +1,12 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+<a name="v2.7.0"></a>
+## [v2.7.0](https://github.com/rubensworks/rdf-test-suite.js/compare/v2.6.0...v2.7.0) - 2026-09-04
+
+### Added
+* [Support SPARQL 1.1 Protocol Tests (#145)](https://github.com/rubensworks/rdf-test-suite.js/commit/fef197c746da41bf42ba752ff086db6b2b4bd9d5)
+
 <a name="v2.6.0"></a>
 ## [v2.6.0](https://github.com/rubensworks/rdf-test-suite.js/compare/v2.5.0...v2.6.0) - 2026-09-03
 

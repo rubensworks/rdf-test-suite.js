@@ -24,6 +24,9 @@
   "result": "mf:result",
   "resultCardinality": "mf:resultCardinality",
   "requires": "mf:requires",
+  "expectedStatus": "mf:expectedStatus",
+  "expectedFormat": "mf:expectedFormat",
+  "expectedBoolean": "mf:expectedBoolean",
 
   "q": "http://www.w3.org/2001/sw/DataAccess/tests/test-query#",
   "data": "q:data",
@@ -38,6 +41,20 @@
   "updateData": "ut:data",
   "updateGraph": "ut:graph",
   "updateGraphData": "ut:graphData",
+
+  "ht": "http://www.w3.org/2011/http#",
+  "httpRequests": "ht:requests",
+  "httpAbsolutePath": "ht:absolutePath",
+  "httpMethodName": "ht:methodName",
+  "httpHeaders": "ht:headers",
+  "httpFieldName": "ht:fieldName",
+  "httpFieldValue": "ht:fieldValue",
+  "httpBody": "ht:body",
+  "httpResponse": "ht:resp",
+
+  "cnt": "http://www.w3.org/2011/content#",
+  "contentChars": "cnt:chars",
+  "contentCharacterEncoding": "cnt:characterEncoding",
 
   "jld": "https://w3c.github.io/json-ld-api/tests/vocab#",
   "jsonLdOptions": "jld:option",

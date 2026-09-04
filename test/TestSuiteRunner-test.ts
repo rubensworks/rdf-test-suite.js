@@ -62,6 +62,17 @@ const serviceDescriptionMockTest = {
   uri: 'http://ex.org/service-description',
 };
 
+const protocolSpecification = 'http://www.w3.org/TR/sparql11-protocol/';
+let protocolOptions: Record<string, unknown> | undefined;
+const protocolMockTest = {
+  name: 'Protocol',
+  test: (_handler: unknown, options: Record<string, unknown>) => {
+    protocolOptions = options;
+    return Promise.resolve();
+  },
+  uri: 'http://ex.org/protocol',
+};
+
 const defaultConfig: ITestSuiteConfig = {
   customEngingeOptions: {},
   exitWithStatusCode0: false,
@@ -132,6 +143,17 @@ jest.mock<typeof import('../lib/ManifestLoader')>('../lib/ManifestLoader', () =>
             uri: manifestUrl,
           });
         }
+        if (manifestUrl === 'validprotocol') {
+          return Promise.resolve({
+            specifications: {
+              [protocolSpecification]: {
+                testEntries: [ protocolMockTest ],
+                uri: manifestUrl,
+              },
+            },
+            uri: manifestUrl,
+          });
+        }
         if (manifestUrl === 'timeout') {
           return Promise.resolve({
             testEntries: [ timeOutMockTest1 ],
@@ -170,6 +192,7 @@ describe('TestSuiteRunner', () => {
     runner = new TestSuiteRunner();
     handler = () => true;
     serviceDescriptionOptions = undefined;
+    protocolOptions = undefined;
   });
 
   describe('fromUrlToMappingString', () => {
@@ -300,6 +323,36 @@ describe('TestSuiteRunner', () => {
       await expect(runner.runManifest('validservicedescription', handler, config)).resolves.toHaveLength(1);
       expect(handler.startServiceDescriptionEndpoint).not.toHaveBeenCalled();
       expect(serviceDescriptionOptions).toEqual({ serviceDescriptionEndpoint: 'http://example.org/configured' });
+    });
+
+    it('should run the service-description specification without an endpoint if the engine can not start one', async() => {
+      const config: ITestSuiteConfig = { ...defaultConfig, specification: serviceDescriptionSpecification };
+
+      await expect(runner.runManifest('validservicedescription', handler, config)).resolves.toHaveLength(1);
+      expect(serviceDescriptionOptions).toEqual({});
+    });
+
+    it('should start and close an endpoint for the protocol specification', async() => {
+      const protocolEndpoint = {
+        close: jest.fn().mockResolvedValue(undefined),
+        endpoint: 'http://example.org/sparql',
+      };
+      handler = {
+        startProtocolEndpoint: jest.fn().mockResolvedValue(protocolEndpoint),
+      };
+      const config: ITestSuiteConfig = { ...defaultConfig, specification: protocolSpecification };
+
+      await expect(runner.runManifest('validprotocol', handler, config)).resolves.toHaveLength(1);
+      expect(handler.startProtocolEndpoint).toHaveBeenCalledTimes(1);
+      expect(protocolEndpoint.close).toHaveBeenCalledTimes(1);
+      expect(protocolOptions).toEqual({ protocolEndpoint: 'http://example.org/sparql' });
+    });
+
+    it('should run the protocol specification without an endpoint if the engine can not start one', async() => {
+      const config: ITestSuiteConfig = { ...defaultConfig, specification: protocolSpecification };
+
+      await expect(runner.runManifest('validprotocol', handler, config)).resolves.toHaveLength(1);
+      expect(protocolOptions).toEqual({});
     });
 
     it('should handle testcases that time out', (next) => {

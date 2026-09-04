@@ -8,6 +8,7 @@ import { TestCaseSyntaxHandler } from './rdfsyntax/TestCaseSyntax';
 import { TestCaseCsvResultFormatHandler } from './sparql/TestCaseCsvResultFormat';
 import { TestCaseNegativeSyntaxHandler } from './sparql/TestCaseNegativeSyntax';
 import { TestCasePositiveSyntaxHandler } from './sparql/TestCasePositiveSyntax';
+import { TestCaseProtocolHandler } from './sparql/TestCaseProtocol';
 import { TestCaseQueryEvaluationHandler } from './sparql/TestCaseQueryEvaluation';
 import { TestCaseServiceDescriptionHandler } from './sparql/TestCaseServiceDescription';
 import { TestCaseUpdateEvaluationHandler } from './sparql/TestCaseUpdateEvaluation';
@@ -42,7 +43,7 @@ module.exports = {
   'http://www.w3.org/2001/sw/DataAccess/tests/test-manifest#ServiceDescriptionTest':
     new TestCaseServiceDescriptionHandler(),
   'http://www.w3.org/2001/sw/DataAccess/tests/test-manifest#ProtocolTest':
-    new TestCaseUnsupportedHandler('sparql:ProtocolTest'), // TODO: implement
+    new TestCaseProtocolHandler(),
   'http://www.w3.org/2001/sw/DataAccess/tests/test-manifest#GraphStoreProtocolTest':
     new TestCaseUnsupportedHandler('sparql:GraphStoreProtocolTest'), // TODO: implement
 

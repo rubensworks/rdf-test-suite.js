@@ -17,6 +17,7 @@ export * from './lib/testcase/sparql/QueryResultQuads';
 export * from './lib/testcase/sparql/TestCaseCsvResultFormat';
 export * from './lib/testcase/sparql/TestCaseNegativeSyntax';
 export * from './lib/testcase/sparql/TestCasePositiveSyntax';
+export * from './lib/testcase/sparql/TestCaseProtocol';
 export * from './lib/testcase/sparql/TestCaseQueryEvaluation';
 export * from './lib/testcase/sparql/TestCaseServiceDescription';
 export * from './lib/testcase/sparql/TestCaseUpdateEvaluation';

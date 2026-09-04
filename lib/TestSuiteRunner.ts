@@ -4,7 +4,7 @@ import { DataFactory } from 'rdf-data-factory';
 import type { IManifest } from './IManifest';
 import { ManifestLoader } from './ManifestLoader';
 import type { ITestCase } from './testcase/ITestCase';
-import type { IQueryEngine } from './testcase/sparql/IQueryEngine';
+import type { IQueryEngine, ISparqlEndpoint } from './testcase/sparql/IQueryEngine';
 import { Util } from './Util';
 import WriteStream = NodeJS.WriteStream;
 import Timeout = NodeJS.Timeout;
@@ -15,7 +15,28 @@ const quad = require('rdf-quad');
 const streamifyArray = require('streamify-array').streamifyArray;
 
 const DF = new DataFactory();
-const SERVICE_DESCRIPTION_SPECIFICATION = 'http://www.w3.org/TR/sparql11-service-description/';
+
+/**
+ * The specifications that are tested against a running endpoint,
+ * together with the engine method that starts it,
+ * and the custom engine option that its URL is passed to.
+ */
+const ENDPOINT_SPECIFICATIONS: {
+  specification: string;
+  option: string;
+  start: (engine: IQueryEngine) => Promise<ISparqlEndpoint> | undefined;
+}[] = [
+  {
+    specification: 'http://www.w3.org/TR/sparql11-service-description/',
+    option: 'serviceDescriptionEndpoint',
+    start: engine => engine.startServiceDescriptionEndpoint?.(),
+  },
+  {
+    specification: 'http://www.w3.org/TR/sparql11-protocol/',
+    option: 'protocolEndpoint',
+    start: engine => engine.startProtocolEndpoint?.(),
+  },
+];
 
 export interface ITestSuiteConfig {
   exitWithStatusCode0: boolean;
@@ -89,26 +110,27 @@ export class TestSuiteRunner {
     config: ITestSuiteConfig,
     results: ITestResult[],
   ): Promise<void> {
-    const engine = <IQueryEngine> handler;
     const customEngineOptions = <Record<string, unknown>> config.customEngingeOptions;
-    if (config.specification === SERVICE_DESCRIPTION_SPECIFICATION &&
-      !customEngineOptions.serviceDescriptionEndpoint && engine.startServiceDescriptionEndpoint) {
-      const serviceDescription = await engine.startServiceDescriptionEndpoint();
-      try {
-        await this.runManifestConcrete(manifest, handler, {
-          ...config,
-          customEngingeOptions: {
-            ...customEngineOptions,
-            serviceDescriptionEndpoint: serviceDescription.endpoint,
-          },
-        }, results);
-      } finally {
-        await serviceDescription.close();
-      }
+    const endpointSpecification = ENDPOINT_SPECIFICATIONS
+      .find(entry => entry.specification === config.specification && !customEngineOptions[entry.option]);
+    const endpoint = endpointSpecification ? await endpointSpecification.start(<IQueryEngine> handler) : undefined;
+
+    if (!endpoint) {
+      await this.runManifestConcrete(manifest, handler, config, results);
       return;
     }
 
-    await this.runManifestConcrete(manifest, handler, config, results);
+    try {
+      await this.runManifestConcrete(manifest, handler, {
+        ...config,
+        customEngingeOptions: {
+          ...customEngineOptions,
+          [endpointSpecification.option]: endpoint.endpoint,
+        },
+      }, results);
+    } finally {
+      await endpoint.close();
+    }
   }
 
   /**

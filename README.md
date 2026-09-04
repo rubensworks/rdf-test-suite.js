@@ -253,6 +253,15 @@ $ rdf-test-suite myengine.js http://w3c.github.io/rdf-tests/sparql/sparql11/mani
   -i '{ "serviceDescriptionEndpoint": "http://localhost:3000/sparql" }'
 ```
 
+The SPARQL 1.1 Protocol tests work in the same way, through the optional
+`startProtocolEndpoint` method and the `protocolEndpoint` option.
+
+```bash
+$ rdf-test-suite myengine.js http://w3c.github.io/rdf-tests/sparql/sparql11/manifest-all.ttl \
+  -s http://www.w3.org/TR/sparql11-protocol/ \
+  -i '{ "protocolEndpoint": "http://localhost:3000/sparql" }'
+```
+
 ### Test timeouts
 
 By default, all tests are allowed to run 3000 ms.
@@ -314,7 +323,7 @@ $ rdf-test-suite myengine.js https://w3c.github.io/rdf-tests/sparql/sparql11/man
 | [SPARQL 1.1 tests](https://w3c.github.io/rdf-tests/sparql/sparql11/) | [SPARQL 1.1 Federated Query](http://www.w3.org/TR/sparql11-federated-query/) | ✖ | http://w3c.github.io/rdf-tests/sparql/sparql11/manifest-all.ttl |
 | [SPARQL 1.1 tests](https://w3c.github.io/rdf-tests/sparql/sparql11/) | [SPARQL 1.1 Entailment](http://www.w3.org/TR/sparql11-entailment/) | ✖ | http://w3c.github.io/rdf-tests/sparql/sparql11/manifest-all.ttl |
 | [SPARQL 1.1 tests](https://w3c.github.io/rdf-tests/sparql/sparql11/) | [SPARQL 1.1 Service Description](http://www.w3.org/TR/sparql11-service-description/) | ✔ | http://w3c.github.io/rdf-tests/sparql/sparql11/manifest-all.ttl |
-| [SPARQL 1.1 tests](https://w3c.github.io/rdf-tests/sparql/sparql11/) | [SPARQL 1.1 Protocol](http://www.w3.org/TR/sparql11-protocol/) | ✖ | http://w3c.github.io/rdf-tests/sparql/sparql11/manifest-all.ttl |
+| [SPARQL 1.1 tests](https://w3c.github.io/rdf-tests/sparql/sparql11/) | [SPARQL 1.1 Protocol](http://www.w3.org/TR/sparql11-protocol/) | ✔ | http://w3c.github.io/rdf-tests/sparql/sparql11/manifest-all.ttl |
 | [SPARQL 1.1 tests](https://w3c.github.io/rdf-tests/sparql/sparql11/) | [SPARQL 1.1 HTTP RDF Update](http://www.w3.org/TR/sparql11-http-rdf-update/) | ✖ | http://w3c.github.io/rdf-tests/sparql/sparql11/manifest-all.ttl |
 | [RDF/XML Syntax Tests](https://w3c.github.io/rdf-tests/rdf/rdf11/rdf-xml/) | [RDF 1.1 XML Syntax](https://www.w3.org/TR/rdf-syntax-grammar/) | [`IParser`](https://github.com/rubensworks/rdf-test-suite.js/blob/master/lib/testcase/rdfsyntax/IParser.ts) | https://w3c.github.io/rdf-tests/rdf/rdf11/rdf-xml/manifest.ttl |
 | [N-Triples Tests](https://w3c.github.io/rdf-tests/rdf/rdf11/rdf-n-triples//) | [RDF 1.1 N-Triples](https://www.w3.org/TR/n-triples/) | [`IParser`](https://github.com/rubensworks/rdf-test-suite.js/blob/master/lib/testcase/rdfsyntax/IParser.ts) | https://w3c.github.io/rdf-tests/rdf/rdf11/rdf-n-triples/manifest.ttl |

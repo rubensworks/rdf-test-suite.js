@@ -1,12 +1,22 @@
 import type * as RDF from '@rdfjs/types';
 
 /**
- * A running endpoint for Service Description conformance tests.
+ * A running SPARQL endpoint that conformance tests are executed against.
  */
-export interface IServiceDescriptionEndpoint {
+export interface ISparqlEndpoint {
   endpoint: string;
   close: () => Promise<void>;
 }
+
+/**
+ * A running endpoint for Service Description conformance tests.
+ */
+export interface IServiceDescriptionEndpoint extends ISparqlEndpoint {}
+
+/**
+ * A running endpoint for SPARQL Protocol conformance tests.
+ */
+export interface IProtocolEndpoint extends ISparqlEndpoint {}
 
 /**
  * A query engine handler.
@@ -16,6 +26,7 @@ export interface IQueryEngine {
   query: (data: RDF.Quad[], queryString: string, options: Record<string, any>) => Promise<IQueryResult>;
   queryResultFormat?: (data: RDF.Quad[], queryString: string, mediaType: string, options: Record<string, any>) => Promise<NodeJS.ReadableStream>;
   startServiceDescriptionEndpoint?: () => Promise<IServiceDescriptionEndpoint>;
+  startProtocolEndpoint?: () => Promise<IProtocolEndpoint>;
 }
 
 /**

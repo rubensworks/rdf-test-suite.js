@@ -116,10 +116,10 @@ describe('e2e tests on the test suite runner', () => {
       'http://www.w3.org/TR/sparql11-results-json/': 4,
       // Federated spec tries to do external queries
       // "http://www.w3.org/TR/sparql11-federated-query/",
-      // Service-description and protocol tests require a separately configured HTTP endpoint
+      // Service-description, protocol and graph store tests require a separately configured HTTP endpoint
       // "http://www.w3.org/TR/sparql11-service-description/",
       // "http://www.w3.org/TR/sparql11-protocol/",
-      'http://www.w3.org/TR/sparql11-http-rdf-update/': 12,
+      // "http://www.w3.org/TR/sparql11-http-rdf-update/",
     })) {
       it(`should run correctly on [${spec}]`, async() => {
         config.specification = spec;
@@ -134,10 +134,7 @@ describe('e2e tests on the test suite runner', () => {
           }
         }
 
-        // Unsupported test can be skipped
-        if (!spec.includes('rdf-update')) {
-          expect(skipped).toBe(0);
-        }
+        expect(skipped).toBe(0);
 
         // For (const r of result) {
         //   if (!(r.ok || r.skipped)) {

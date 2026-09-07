@@ -6,13 +6,13 @@ import { TestCaseJsonLdToRdfNegativeHandler } from './rdfsyntax/jsonld/TestCaseJ
 import { TestCaseEvalHandler } from './rdfsyntax/TestCaseEval';
 import { TestCaseSyntaxHandler } from './rdfsyntax/TestCaseSyntax';
 import { TestCaseCsvResultFormatHandler } from './sparql/TestCaseCsvResultFormat';
+import { TestCaseGraphStoreProtocolHandler } from './sparql/TestCaseGraphStoreProtocol';
 import { TestCaseNegativeSyntaxHandler } from './sparql/TestCaseNegativeSyntax';
 import { TestCasePositiveSyntaxHandler } from './sparql/TestCasePositiveSyntax';
 import { TestCaseProtocolHandler } from './sparql/TestCaseProtocol';
 import { TestCaseQueryEvaluationHandler } from './sparql/TestCaseQueryEvaluation';
 import { TestCaseServiceDescriptionHandler } from './sparql/TestCaseServiceDescription';
 import { TestCaseUpdateEvaluationHandler } from './sparql/TestCaseUpdateEvaluation';
-import { TestCaseUnsupportedHandler } from './TestCaseUnsupported';
 
 module.exports = {
   // SPARQL 1.0, SPARQL 1.1 test suite
@@ -45,7 +45,7 @@ module.exports = {
   'http://www.w3.org/2001/sw/DataAccess/tests/test-manifest#ProtocolTest':
     new TestCaseProtocolHandler(),
   'http://www.w3.org/2001/sw/DataAccess/tests/test-manifest#GraphStoreProtocolTest':
-    new TestCaseUnsupportedHandler('sparql:GraphStoreProtocolTest'), // TODO: implement
+    new TestCaseGraphStoreProtocolHandler(),
 
   // RDF/XML test suite
   'http://www.w3.org/ns/rdftest#TestXMLEval':

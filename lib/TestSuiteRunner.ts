@@ -36,6 +36,11 @@ const ENDPOINT_SPECIFICATIONS: {
     option: 'protocolEndpoint',
     start: engine => engine.startProtocolEndpoint?.(),
   },
+  {
+    specification: 'http://www.w3.org/TR/sparql11-http-rdf-update/',
+    option: 'graphStoreEndpoint',
+    start: engine => engine.startGraphStoreEndpoint?.(),
+  },
 ];
 
 export interface ITestSuiteConfig {

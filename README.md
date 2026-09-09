@@ -15,6 +15,7 @@ or it can output machine-readable reports in the
 Currently, the following test suites are supported:
 * [SPARQL 1.0](https://w3c.github.io/rdf-tests/sparql/sparql10/)
 * [SPARQL 1.1](https://w3c.github.io/rdf-tests/sparql/sparql11/)
+* [SPARQL 1.2](https://w3c.github.io/rdf-tests/sparql/sparql12/)
 * [RDF/XML](https://w3c.github.io/rdf-tests/rdf/rdf11/rdf-xml/)
 * [N-Triples](https://w3c.github.io/rdf-tests/rdf/rdf11/rdf-n-triples/)
 * [N-Quads](https://w3c.github.io/rdf-tests/rdf/rdf11/rdf-n-quads/)
@@ -32,7 +33,6 @@ However, this package is fully _modular_,
 so that support for different test cases can be implemented easily.
 
 Planned support:
-* [SPARQL 1.1](http://w3c.github.io/rdf-tests/sparql/sparql11/) (_other specifications_)
 * [RDF Schema and Semantics](https://w3c.github.io/rdf-tests/rdf-mt/reports/)
 * [JSON-LD](https://w3c.github.io/json-ld-api/tests/) (_other test suites_)
 
@@ -329,7 +329,7 @@ $ rdf-test-suite myengine.js https://w3c.github.io/rdf-tests/sparql/sparql11/man
 | [SPARQL 1.1 tests](https://w3c.github.io/rdf-tests/sparql/sparql11/) | [SPARQL 1.1 Update](http://www.w3.org/TR/sparql11-update/) | [`IUpdateEngine`](https://github.com/rubensworks/rdf-test-suite.js/blob/master/lib/testcase/sparql/IUpdateEngine.ts) | http://w3c.github.io/rdf-tests/sparql/sparql11/manifest-all.ttl |
 | [SPARQL 1.1 tests](https://w3c.github.io/rdf-tests/sparql/sparql11/) | [SPARQL 1.1 Results CSV/TSV](http://www.w3.org/TR/sparql11-results-csv-tsv/) | [`IQueryEngine`](https://github.com/rubensworks/rdf-test-suite.js/blob/master/lib/testcase/sparql/IQueryEngine.ts) | http://w3c.github.io/rdf-tests/sparql/sparql11/manifest-all.ttl |
 | [SPARQL 1.1 tests](https://w3c.github.io/rdf-tests/sparql/sparql11/) | [SPARQL 1.1 Results JSON](http://www.w3.org/TR/sparql11-results-json/) | [`IQueryEngine`](https://github.com/rubensworks/rdf-test-suite.js/blob/master/lib/testcase/sparql/IQueryEngine.ts) | http://w3c.github.io/rdf-tests/sparql/sparql11/manifest-all.ttl |
-| [SPARQL 1.1 tests](https://w3c.github.io/rdf-tests/sparql/sparql11/) | [SPARQL 1.1 Federated Query](http://www.w3.org/TR/sparql11-federated-query/) | ✖ | http://w3c.github.io/rdf-tests/sparql/sparql11/manifest-all.ttl |
+| [SPARQL 1.1 tests](https://w3c.github.io/rdf-tests/sparql/sparql11/) | [SPARQL 1.1 Federated Query](http://www.w3.org/TR/sparql11-federated-query/) | [`IQueryEngine`](https://github.com/rubensworks/rdf-test-suite.js/blob/master/lib/testcase/sparql/IQueryEngine.ts) | http://w3c.github.io/rdf-tests/sparql/sparql11/manifest-all.ttl |
 | [SPARQL 1.1 tests](https://w3c.github.io/rdf-tests/sparql/sparql11/) | [SPARQL 1.1 Entailment](http://www.w3.org/TR/sparql11-entailment/) | ✖ | http://w3c.github.io/rdf-tests/sparql/sparql11/manifest-all.ttl |
 | [SPARQL 1.1 tests](https://w3c.github.io/rdf-tests/sparql/sparql11/) | [SPARQL 1.1 Service Description](http://www.w3.org/TR/sparql11-service-description/) | ✔ | http://w3c.github.io/rdf-tests/sparql/sparql11/manifest-all.ttl |
 | [SPARQL 1.1 tests](https://w3c.github.io/rdf-tests/sparql/sparql11/) | [SPARQL 1.1 Protocol](http://www.w3.org/TR/sparql11-protocol/) | ✔ | http://w3c.github.io/rdf-tests/sparql/sparql11/manifest-all.ttl |

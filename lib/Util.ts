@@ -28,6 +28,7 @@ export class Util {
     csv: 'text/csv',
     jsonld: 'application/ld+json',
     nq: 'application/n-quads',
+    n3: 'text/n3',
     nt: 'application/n-triples',
     srj: 'application/sparql-results+json',
     srx: 'application/sparql-results+xml',
@@ -90,6 +91,7 @@ export class Util {
   ): RDF.Stream {
     if (contentType.includes('application/x-turtle') ||
       contentType.includes('text/turtle') ||
+      contentType.includes('text/n3') ||
       contentType.includes('application/n-triples') ||
       contentType.includes('application/n-quads') ||
       contentType.includes('application/trig')) {
@@ -107,6 +109,9 @@ export class Util {
     }
     if (baseIRI.endsWith('.trig')) {
       return data.pipe(new GeneralizedN3StreamParser({ baseIRI, format: 'application/trig' }));
+    }
+    if (baseIRI.endsWith('.n3')) {
+      return data.pipe(new GeneralizedN3StreamParser({ baseIRI, format: 'text/n3' }));
     }
 
     throw new Error(`Could not parse the RDF serialization ${contentType} on ${baseIRI}`);

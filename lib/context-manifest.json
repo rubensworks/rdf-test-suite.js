@@ -25,6 +25,7 @@
   "resultCardinality": "mf:resultCardinality",
   "requires": "mf:requires",
   "expectedStatus": "mf:expectedStatus",
+  "expectedLocation": "mf:expectedLocation",
   "expectedFormat": "mf:expectedFormat",
   "expectedBoolean": "mf:expectedBoolean",
 
@@ -44,6 +45,7 @@
 
   "ht": "http://www.w3.org/2011/http#",
   "httpRequests": "ht:requests",
+  "httpConnectionAuthority": "ht:connectionAuthority",
   "httpAbsolutePath": "ht:absolutePath",
   "httpMethodName": "ht:methodName",
   "httpHeaders": "ht:headers",

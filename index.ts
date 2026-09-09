@@ -15,6 +15,7 @@ export * from './lib/testcase/sparql/QueryResultBindings';
 export * from './lib/testcase/sparql/QueryResultBoolean';
 export * from './lib/testcase/sparql/QueryResultQuads';
 export * from './lib/testcase/sparql/TestCaseCsvResultFormat';
+export * from './lib/testcase/sparql/TestCaseGraphStoreProtocol';
 export * from './lib/testcase/sparql/TestCaseNegativeSyntax';
 export * from './lib/testcase/sparql/TestCasePositiveSyntax';
 export * from './lib/testcase/sparql/TestCaseProtocol';

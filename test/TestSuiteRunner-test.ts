@@ -73,6 +73,17 @@ const protocolMockTest = {
   uri: 'http://ex.org/protocol',
 };
 
+const graphStoreSpecification = 'http://www.w3.org/TR/sparql11-http-rdf-update/';
+let graphStoreOptions: Record<string, unknown> | undefined;
+const graphStoreMockTest = {
+  name: 'Graph store protocol',
+  test: (_handler: unknown, options: Record<string, unknown>) => {
+    graphStoreOptions = options;
+    return Promise.resolve();
+  },
+  uri: 'http://ex.org/graph-store',
+};
+
 const defaultConfig: ITestSuiteConfig = {
   customEngingeOptions: {},
   exitWithStatusCode0: false,
@@ -154,6 +165,17 @@ jest.mock<typeof import('../lib/ManifestLoader')>('../lib/ManifestLoader', () =>
             uri: manifestUrl,
           });
         }
+        if (manifestUrl === 'validgraphstore') {
+          return Promise.resolve({
+            specifications: {
+              [graphStoreSpecification]: {
+                testEntries: [ graphStoreMockTest ],
+                uri: manifestUrl,
+              },
+            },
+            uri: manifestUrl,
+          });
+        }
         if (manifestUrl === 'timeout') {
           return Promise.resolve({
             testEntries: [ timeOutMockTest1 ],
@@ -193,6 +215,7 @@ describe('TestSuiteRunner', () => {
     handler = () => true;
     serviceDescriptionOptions = undefined;
     protocolOptions = undefined;
+    graphStoreOptions = undefined;
   });
 
   describe('fromUrlToMappingString', () => {
@@ -346,6 +369,29 @@ describe('TestSuiteRunner', () => {
       expect(handler.startProtocolEndpoint).toHaveBeenCalledTimes(1);
       expect(protocolEndpoint.close).toHaveBeenCalledTimes(1);
       expect(protocolOptions).toEqual({ protocolEndpoint: 'http://example.org/sparql' });
+    });
+
+    it('should start and close an endpoint for the graph store protocol specification', async() => {
+      const graphStoreEndpoint = {
+        close: jest.fn().mockResolvedValue(undefined),
+        endpoint: 'http://example.org/sparql',
+      };
+      handler = {
+        startGraphStoreEndpoint: jest.fn().mockResolvedValue(graphStoreEndpoint),
+      };
+      const config: ITestSuiteConfig = { ...defaultConfig, specification: graphStoreSpecification };
+
+      await expect(runner.runManifest('validgraphstore', handler, config)).resolves.toHaveLength(1);
+      expect(handler.startGraphStoreEndpoint).toHaveBeenCalledTimes(1);
+      expect(graphStoreEndpoint.close).toHaveBeenCalledTimes(1);
+      expect(graphStoreOptions).toEqual({ graphStoreEndpoint: 'http://example.org/sparql' });
+    });
+
+    it('should run the graph store protocol specification without an endpoint if the engine can not start one', async() => {
+      const config: ITestSuiteConfig = { ...defaultConfig, specification: graphStoreSpecification };
+
+      await expect(runner.runManifest('validgraphstore', handler, config)).resolves.toHaveLength(1);
+      expect(graphStoreOptions).toEqual({});
     });
 
     it('should run the protocol specification without an endpoint if the engine can not start one', async() => {

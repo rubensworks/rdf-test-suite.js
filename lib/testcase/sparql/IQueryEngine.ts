@@ -19,6 +19,11 @@ export interface IServiceDescriptionEndpoint extends ISparqlEndpoint {}
 export interface IProtocolEndpoint extends ISparqlEndpoint {}
 
 /**
+ * A running endpoint for SPARQL Graph Store Protocol conformance tests.
+ */
+export interface IGraphStoreEndpoint extends ISparqlEndpoint {}
+
+/**
  * A query engine handler.
  */
 export interface IQueryEngine {
@@ -27,6 +32,7 @@ export interface IQueryEngine {
   queryResultFormat?: (data: RDF.Quad[], queryString: string, mediaType: string, options: Record<string, any>) => Promise<NodeJS.ReadableStream>;
   startServiceDescriptionEndpoint?: () => Promise<IServiceDescriptionEndpoint>;
   startProtocolEndpoint?: () => Promise<IProtocolEndpoint>;
+  startGraphStoreEndpoint?: () => Promise<IGraphStoreEndpoint>;
 }
 
 /**

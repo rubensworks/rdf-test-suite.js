@@ -53,13 +53,21 @@ export interface IProtocolTestOptions {
 }
 
 /**
+ * The contents of an HTTP message body, as described by a cnt:ContentAsText resource.
+ */
+export interface IHttpContent {
+  chars: string;
+  characterEncoding: string;
+}
+
+/**
  * A single HTTP request of a protocol test, together with its expected response.
  */
 export interface IProtocolRequest {
   absolutePath: string;
   method: string;
   headers: [string, string][];
-  body?: { chars: string; characterEncoding: string };
+  body?: IHttpContent;
   expectedStatusClasses: number[];
   expectedFormat?: string;
   expectedBoolean?: boolean;
@@ -288,10 +296,8 @@ export class TestCaseProtocol implements ITestCaseSparql {
   /**
    * Encode the body of a request in the character encoding that the manifest declares for it.
    * @param body A ht:body value.
-   * @param body.chars The characters of the body.
-   * @param body.characterEncoding The character encoding to encode the body in.
    */
-  public static encodeBody(body: { chars: string; characterEncoding: string }): ArrayBuffer {
+  public static encodeBody(body: IHttpContent): ArrayBuffer {
     const encoding = body.characterEncoding.toUpperCase();
     if (encoding === 'UTF-8') {
       return new TextEncoder().encode(body.chars).buffer;

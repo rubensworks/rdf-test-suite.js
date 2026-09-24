@@ -241,6 +241,12 @@ $ rdf-test-suite myengine.js http://w3c.github.io/rdf-tests/sparql/sparql11/mani
   -i '{ "myProperty": "myValue" }'
 ```
 
+For SPARQL query evaluation tests, the `options` passed to `IQueryEngine.query` always contain `serviceData`:
+an object that maps each SERVICE endpoint URL of the test to the quads that endpoint contains.
+The test's SERVICE clauses must be evaluated against these endpoints only,
+and any other SERVICE endpoint (such as all endpoints of tests without service data) must be treated as unreachable,
+e.g. by answering its requests with an HTTP error instead of sending them over the network.
+
 For the SPARQL 1.1 Service Description tests, the runner will call the optional
 `startServiceDescriptionEndpoint` method on an `IQueryEngine`, use the returned
 endpoint URL, and invoke its `close` method after the manifest completes. An explicitly

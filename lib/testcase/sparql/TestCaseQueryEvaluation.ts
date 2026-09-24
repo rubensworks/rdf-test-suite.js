@@ -492,11 +492,10 @@ export class TestCaseQueryEvaluation implements ITestCaseSparql {
         false,
       nonLexicalComparison: this.laxComparison,
       fullTermComparison: this.laxComparison,
+      // Always passed (also when empty), as SERVICE endpoints without service data must be considered unreachable
+      serviceData: this.serviceData,
       ...injectArguments,
     };
-    if (Object.keys(this.serviceData).length > 0) {
-      options.serviceData = this.serviceData;
-    }
     const result: IQueryResult = await engine.query(this.queryData, this.queryString, options);
     if (!this.queryResult.equals(result, this.laxCardinality)) {
       throw new ErrorTest(`Invalid query evaluation

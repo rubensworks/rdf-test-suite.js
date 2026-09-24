@@ -1,6 +1,12 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+<a name="v2.9.0"></a>
+## [v2.9.0](https://github.com/rubensworks/rdf-test-suite.js/compare/v2.8.0...v2.9.0) - 2026-09-24
+
+### Changed
+* [Always pass service data to engines, also when empty (#147)](https://github.com/rubensworks/rdf-test-suite.js/commit/5124ae7a097177def1a4268cf18a864fdfa9a670)
+
 <a name="v2.8.0"></a>
 ## [v2.8.0](https://github.com/rubensworks/rdf-test-suite.js/compare/v2.7.0...v2.8.0) - 2026-09-09
 

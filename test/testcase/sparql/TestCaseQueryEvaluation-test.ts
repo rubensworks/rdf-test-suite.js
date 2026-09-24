@@ -979,5 +979,39 @@ describe('TestCaseQueryEvaluationHandler', () => {
 
       await expect(testCase.test(engine, {})).resolves.toBeUndefined();
     });
+
+    it('should pass service data to the engine', async() => {
+      const resource = new Resource({ term: DF.namedNode('http://ex.org/test'), context });
+      const action = new Resource({ term: DF.namedNode('blabla'), context });
+      action.addProperty(pQuery, new Resource({ term: DF.literal('ACTION.ok'), context }));
+      const serviceData = new Resource({ term: DF.namedNode('sd1'), context });
+      serviceData.addProperty(pEndpoint, new Resource({ term: DF.namedNode('http://example.org/sparql'), context }));
+      serviceData.addProperty(pData, new Resource({ term: DF.namedNode('ENDPOINT.ttl'), context }));
+      action.addProperty(pServiceData, serviceData);
+      resource.addProperty(pAction, action);
+      resource.addProperty(pResult, new Resource({ term: DF.literal('RESULT.ttl'), context }));
+      const testCase = await handler.resourceToTestCase(resource, <any> {});
+      const query = jest.spyOn(engine, 'query');
+
+      await expect(testCase.test(engine, {})).resolves.toBeUndefined();
+      expect(query).toHaveBeenCalledWith(expect.anything(), 'OK', expect.objectContaining({
+        serviceData: { 'http://example.org/sparql': expect.any(Array) },
+      }));
+      query.mockRestore();
+    });
+
+    it('should pass empty service data to the engine for queries without service data', async() => {
+      const resource = new Resource({ term: DF.namedNode('http://ex.org/test'), context });
+      const action = new Resource({ term: DF.namedNode('blabla'), context });
+      action.addProperty(pQuery, new Resource({ term: DF.literal('ACTION.ok'), context }));
+      resource.addProperty(pAction, action);
+      resource.addProperty(pResult, new Resource({ term: DF.literal('RESULT.ttl'), context }));
+      const testCase = await handler.resourceToTestCase(resource, <any> {});
+      const query = jest.spyOn(engine, 'query');
+
+      await expect(testCase.test(engine, {})).resolves.toBeUndefined();
+      expect(query).toHaveBeenCalledWith(expect.anything(), 'OK', expect.objectContaining({ serviceData: {}}));
+      query.mockRestore();
+    });
   });
 });

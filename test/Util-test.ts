@@ -163,6 +163,16 @@ describe('Util', () => {
       expect(response.url).toBe('http://example.org/');
     });
 
+    it('should use a custom fetch function', async() => {
+      const fetch = jest.fn().mockResolvedValue(new Response('XYZ', { headers: new Headers({ a: 'c' }) }));
+      const init = { headers: { accept: 'text/plain' }};
+      const response = await Util.fetchCached('http://example.org/custom', { fetch }, init);
+      await expect(stringifyStream(response.body)).resolves.toBe('XYZ');
+      expect(response.headers.get('a')).toBe('c');
+      expect(response.url).toBe('http://example.org/custom');
+      expect(fetch).toHaveBeenCalledWith('http://example.org/custom', init);
+    });
+
     it('should cache with cachePath', async() => {
       const spy = jest.spyOn(<any> globalThis, 'fetch');
 

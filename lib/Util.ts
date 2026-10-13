@@ -168,7 +168,7 @@ export class Util {
       };
     }
     // Do actual fetch
-    const response = await fetch(url, init);
+    const response = await (options.fetch ?? fetch)(url, init);
     if (!response.ok) {
       throw new Error(`Could not find ${url}`);
     }
@@ -271,4 +271,9 @@ export interface IFetchOptions {
    * URL to local path mapping.
    */
   urlToFileMappings?: { url: string; path: string }[];
+  /**
+   * The fetch function to use for HTTP requests, defaults to the global fetch.
+   * This can for instance be created using {@link createLimitedFetch}.
+   */
+  fetch?: typeof fetch;
 }

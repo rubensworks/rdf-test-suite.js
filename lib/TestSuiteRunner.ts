@@ -1,6 +1,8 @@
 import type * as RDF from '@rdfjs/types';
 import * as LogSymbols from 'log-symbols';
 import { DataFactory } from 'rdf-data-factory';
+import type { IFetchLimitOptions } from './FetchLimited';
+import { createLimitedFetch } from './FetchLimited';
 import type { IManifest } from './IManifest';
 import { ManifestLoader } from './ManifestLoader';
 import type { ITestCase } from './testcase/ITestCase';
@@ -43,7 +45,7 @@ const ENDPOINT_SPECIFICATIONS: {
   },
 ];
 
-export interface ITestSuiteConfig {
+export interface ITestSuiteConfig extends IFetchLimitOptions {
   exitWithStatusCode0: boolean;
   explicitApproval?: boolean;
   runRejected?: boolean;
@@ -85,7 +87,11 @@ export class TestSuiteRunner {
   public async runManifest(manifestUrl: string, handler: any, config: ITestSuiteConfig): Promise<ITestResult[]> {
     const { cachePath, specification, urlToFileMapping } = config;
     const urlToFileMappings = this.fromUrlToMappingString(urlToFileMapping);
-    const manifest: IManifest = await new ManifestLoader().from(manifestUrl, { cachePath, urlToFileMappings });
+    const manifest: IManifest = await new ManifestLoader().from(manifestUrl, {
+      cachePath,
+      urlToFileMappings,
+      fetch: createLimitedFetch(config),
+    });
     const results: ITestResult[] = [];
 
     // Only run the tests for the given specification if one was defined.

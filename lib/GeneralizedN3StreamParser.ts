@@ -1,10 +1,11 @@
 import { Transform } from 'node:stream';
 import { Parser } from 'n3';
 
-// Temporarily enable N3 mode to allow blank node predicates (needed by JSON-LD tests)
+// Temporarily enable N3 mode for blank node predicates only (needed by JSON-LD tests).
+// Other tokens must stay in the original mode, as N3 mode changes context handling (e.g., when closing `]`).
 const readPredicateOld = (<any> Parser.prototype)._readPredicate;
 (<any> Parser.prototype)._readPredicate = function(token: any) {
-  if (!this.allowBlankNodePredicates || this._n3Mode) {
+  if (!this.allowBlankNodePredicates || this._n3Mode || token.type !== 'blank') {
     return readPredicateOld.call(this, token);
   }
 

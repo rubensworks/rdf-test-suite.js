@@ -29,6 +29,7 @@ export * from './lib/IManifest';
 export * from './lib/ManifestLoader';
 export * from './lib/TestSuiteRunner';
 export * from './lib/Util';
+export * from './lib/FetchLimited';
 export * from './lib/ErrorSkipped';
 export * from './lib/ErrorTest';
 export * from './lib/DocumentLoaderCached';

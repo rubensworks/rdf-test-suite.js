@@ -6,7 +6,7 @@ import { JsonLdParser } from 'jsonld-streaming-parser';
 import { Store as N3Store } from 'n3';
 import { rdfParser } from 'rdf-parse';
 import { testCaseToMediaMappings, QueryResultBindings, QueryResultBoolean, QueryResultQuads, ErrorSkipped } from '..';
-import type { ITestSuiteConfig } from '../lib/TestSuiteRunner';
+import type { ITestResult, ITestSuiteConfig } from '../lib/TestSuiteRunner';
 import { TestSuiteRunner } from '../lib/TestSuiteRunner';
 
 const { KeysInitQuery } = require('@comunica/context-entries');
@@ -66,6 +66,26 @@ describe('e2e tests on the test suite runner', () => {
     globalThis.console = _console;
   });
 
+  /**
+   * Run the given assertions, and show the logged errors and failed tests if they fail,
+   * as the console is mocked during the tests.
+   */
+  function expectWithDiagnostics(result: ITestResult[], assertions: () => void): void {
+    try {
+      assertions();
+    } catch (error: unknown) {
+      const logged = (<jest.Mock> console.error).mock.calls.map(args => args.join(' '));
+      const failed = result.filter(r => !r.ok && !r.skipped).map(r => `${r.test.uri}: ${r.error?.message}`);
+      _console.error([
+        `${logged.length} errors were logged, of which the first ${Math.min(logged.length, 50)} are:`,
+        ...logged.slice(0, 50),
+        `${failed.length} tests failed, of which the first ${Math.min(failed.length, 50)} are:`,
+        ...failed.slice(0, 50),
+      ].join('\n'));
+      throw error;
+    }
+  }
+
   describe('parsing', () => {
     for (const spec of Object.keys(parsingSpecs)) {
       it(`it should correctly run [${spec}]`, async() => {
@@ -96,14 +116,10 @@ describe('e2e tests on the test suite runner', () => {
           expect(skipped).toBe(0);
         }
 
-        // For (const r of result) {
-        //   if (!(r.ok || r.skipped)) {
-        //     process.stderr.write('Failed on ' + r.test.name + ' (' + r.test.uri + ') with ' + r.error + '\n');
-        //   }
-        // }
-
         // All tests should either be ok or skipped
-        expect(result.filter(r => r.ok || r.skipped).length).toBeGreaterThanOrEqual(parsingSpecs[spec]);
+        expectWithDiagnostics(result, () => {
+          expect(result.filter(r => r.ok || r.skipped).length).toBeGreaterThanOrEqual(parsingSpecs[spec]);
+        });
       }, 190_000);
     }
   });
@@ -125,23 +141,11 @@ describe('e2e tests on the test suite runner', () => {
         config.specification = spec;
         const result = await runner.runManifest('http://w3c.github.io/rdf-tests/sparql/sparql11/manifest-all.ttl', queryEngine(new QueryEngine()), config);
 
-        expect(result.length).toBeGreaterThan(0);
-
-        let skipped = 0;
-        for (const r of result) {
-          if (r.skipped) {
-            skipped++;
-          }
-        }
-
-        expect(skipped).toBe(0);
-
-        // For (const r of result) {
-        //   if (!(r.ok || r.skipped)) {
-        //     process.stderr.write('Failed on ' + r.test.name + ' (' + r.test.uri + ') with ' + r.error + '\n');
-        //   }
-        // }
-        expect(result.filter(r => r.ok || r.skipped).length).toBeGreaterThanOrEqual(minimumPassingCount);
+        expectWithDiagnostics(result, () => {
+          expect(result.length).toBeGreaterThan(0);
+          expect(result.filter(r => r.skipped)).toHaveLength(0);
+          expect(result.filter(r => r.ok || r.skipped).length).toBeGreaterThanOrEqual(minimumPassingCount);
+        });
       }, 190_000);
     }
   });

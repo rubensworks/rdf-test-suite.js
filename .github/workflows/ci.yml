@@ -40,7 +40,7 @@ jobs:
         with:
           path: |
             test/cache
-            '**/node_modules'
+            **/node_modules
           key: ${{ runner.os }}-test-modules-${{ hashFiles('**/yarn.lock') }}
       - name: Install dependencies
         run: yarn install

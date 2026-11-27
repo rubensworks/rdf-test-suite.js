@@ -1,6 +1,6 @@
 import 'cross-fetch/polyfill';
 import 'jest-rdf';
-import { existsSync, mkdirSync, readFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import * as fs from 'node:fs';
 import { join as pathJoin } from 'node:path';
 import type * as RDF from '@rdfjs/types';
@@ -20,6 +20,36 @@ const stringifyStream = require('stream-to-string');
 const streamifyString = require('streamify-string');
 
 const DF = new DataFactory<RDF.BaseQuad>();
+
+/**
+ * Create a response body of which the chunks, end and failure are controlled by the test.
+ */
+function controllableBody(): {
+  stream: ReadableStream<Uint8Array>;
+  push: (chunk: string) => void;
+  end: (chunk: string) => void;
+  fail: (error: Error) => void;
+} {
+  let controller!: ReadableStreamDefaultController<Uint8Array>;
+  const stream = new ReadableStream<Uint8Array>({
+    start(controllerInner) {
+      controller = controllerInner;
+    },
+  });
+  return {
+    stream,
+    push: chunk => controller.enqueue(new TextEncoder().encode(chunk)),
+    end(chunk) {
+      controller.enqueue(new TextEncoder().encode(chunk));
+      controller.close();
+    },
+    fail: error => controller.error(error),
+  };
+}
+
+function flushPromises(): Promise<void> {
+  return new Promise(resolve => setTimeout(resolve, 10));
+}
 
 // Mock fetch
 (<any> globalThis).fetch = (url: string) => {
@@ -114,6 +144,7 @@ describe('Util', () => {
     });
 
     afterEach((done) => {
+      jest.restoreAllMocks();
       require('rimraf').rimraf(cachePath).then(() => done());
     });
 
@@ -180,11 +211,11 @@ describe('Util', () => {
       await expect(stringifyStream(response1.body)).resolves.toBe('ABC');
       expect(response1.headers).toEqual(new Headers({ a: 'b' }));
       expect(response1.url).toBe('http://example.org/');
-      await new Promise(resolve => setTimeout(resolve, 100)); // Hack to wait until file has been written
 
       expect(readFileSync(`${cachePath}http%3A%2F%2Fexample.org%2F`, 'utf8')).toBe('ABC');
       expect(readFileSync(`${cachePath}http%3A%2F%2Fexample.org%2F.headers`, 'utf8')).toBe('{"a":"b"}');
       expect(readFileSync(`${cachePath}http%3A%2F%2Fexample.org%2F.url`, 'utf8')).toBe('http://example.org/');
+      expect(readdirSync(cachePath)).toHaveLength(3);
 
       const response2 = await Util.fetchCached('http://example.org/', { cachePath });
       await expect(stringifyStream(response2.body)).resolves.toBe('ABC');
@@ -194,20 +225,111 @@ describe('Util', () => {
       expect(spy).toHaveBeenCalledTimes(1);
     });
 
-    it('should reject if writeFileSync fails', () => {
+    it('should not cache URLs that are too long for a file name', async() => {
+      const url = `http://example.org/${'a'.repeat(300)}`;
+      const fetch = jest.fn().mockResolvedValue(new Response('XYZ'));
+      const response = await Util.fetchCached(url, { cachePath, fetch });
+      await expect(stringifyStream(response.body)).resolves.toBe('XYZ');
+      expect(readdirSync(cachePath)).toEqual([]);
+    });
+
+    it('should only make a cached body visible once it is complete', async() => {
+      const body = controllableBody();
+      const fetch = jest.fn().mockResolvedValue(new Response(body.stream, { headers: new Headers({ a: 'b' }) }));
+
+      const promise = Util.fetchCached('http://example.org/slow', { cachePath, fetch });
+      body.push('AB');
+      await flushPromises();
+      expect(readdirSync(cachePath)).toEqual([]);
+
+      body.end('C');
+      const response = await promise;
+      await expect(stringifyStream(response.body)).resolves.toBe('ABC');
+      expect(readFileSync(`${cachePath}http%3A%2F%2Fexample.org%2Fslow`, 'utf8')).toBe('ABC');
+      expect(readFileSync(`${cachePath}http%3A%2F%2Fexample.org%2Fslow.headers`, 'utf8')).toBe('{"a":"b"}');
+      expect(readdirSync(cachePath)).toHaveLength(3);
+    });
+
+    it('should share one download between concurrent requests for the same URL', async() => {
+      const body = controllableBody();
+      const fetch = jest.fn().mockResolvedValue(new Response(body.stream));
+
+      const promise1 = Util.fetchCached('http://example.org/shared', { cachePath, fetch });
+      const promise2 = Util.fetchCached('http://example.org/shared', { cachePath, fetch });
+      await flushPromises();
+      body.end('ABC');
+
+      const [ response1, response2 ] = await Promise.all([ promise1, promise2 ]);
+      await expect(stringifyStream(response1.body)).resolves.toBe('ABC');
+      await expect(stringifyStream(response2.body)).resolves.toBe('ABC');
+      expect(fetch).toHaveBeenCalledTimes(1);
+    });
+
+    it('should not cache a body that failed to download', async() => {
+      const body = controllableBody();
+      const fetch = jest.fn().mockResolvedValueOnce(new Response(body.stream));
+
+      const promise1 = Util.fetchCached('http://example.org/failing', { cachePath, fetch });
+      const promise2 = Util.fetchCached('http://example.org/failing', { cachePath, fetch });
+      body.push('AB');
+      await flushPromises();
+      body.fail(new Error('connection reset'));
+
+      await expect(promise1).rejects.toThrow('connection reset');
+      await expect(promise2).rejects.toThrow('connection reset');
+      expect(fetch).toHaveBeenCalledTimes(1);
+      expect(readdirSync(cachePath)).toEqual([]);
+
+      // A later request downloads again
+      fetch.mockResolvedValueOnce(new Response('ABC'));
+      const response = await Util.fetchCached('http://example.org/failing', { cachePath, fetch });
+      await expect(stringifyStream(response.body)).resolves.toBe('ABC');
+      expect(fetch).toHaveBeenCalledTimes(2);
+    });
+
+    it.each([
+      [ 'headers are missing', { '.url': 'http://example.org/' }],
+      [ 'url is missing', { '.headers': '{"a":"b"}' }],
+      [ 'headers are invalid', { '.url': 'http://example.org/', '.headers': '{"a":' }],
+    ])('should download again if the cached %s', async(_label, metadata: Record<string, string>) => {
+      const file = `${cachePath}http%3A%2F%2Fexample.org%2F`;
+      writeFileSync(file, 'TRUNCATED');
+      for (const [ suffix, content ] of Object.entries(metadata)) {
+        writeFileSync(file + suffix, content);
+      }
+
+      const response = await Util.fetchCached('http://example.org/', { cachePath });
+      await expect(stringifyStream(response.body)).resolves.toBe('ABC');
+      expect(readFileSync(file, 'utf8')).toBe('ABC');
+      expect(readFileSync(`${file}.headers`, 'utf8')).toBe('{"a":"b"}');
+      expect(readFileSync(`${file}.url`, 'utf8')).toBe('http://example.org/');
+    });
+
+    it('should reject if writeFileSync fails', async() => {
       jest.spyOn(fs, 'writeFileSync').mockImplementation(() => {
         throw new Error('unknown error');
       });
-      return expect(Util.fetchCached('http://example.org/', { cachePath })).rejects.toThrow('unknown error');
+      await expect(Util.fetchCached('http://example.org/', { cachePath })).rejects.toThrow('unknown error');
+      expect(readdirSync(cachePath)).toEqual([]);
     });
 
-    it('should not reject if writeFileSync fails with ENAMETOOLONG', () => {
+    it('should not reject if writeFileSync fails with ENAMETOOLONG', async() => {
       jest.spyOn(fs, 'writeFileSync').mockImplementation(() => {
         const error = new Error('unknown error');
         (<any> error).code = 'ENAMETOOLONG';
         throw error;
       });
-      return expect(Util.fetchCached('http://example.org/', { cachePath })).resolves.toBeTruthy();
+      const response = await Util.fetchCached('http://example.org/', { cachePath });
+      await expect(stringifyStream(response.body)).resolves.toBe('ABC');
+      expect(readdirSync(cachePath)).toEqual([]);
+    });
+
+    it('should remove temporary files if renameSync fails', async() => {
+      jest.spyOn(fs, 'renameSync').mockImplementation(() => {
+        throw new Error('rename error');
+      });
+      await expect(Util.fetchCached('http://example.org/', { cachePath })).rejects.toThrow('rename error');
+      expect(readdirSync(cachePath)).toEqual([]);
     });
   });
 

@@ -1,14 +1,17 @@
-import { createReadStream, createWriteStream, existsSync, readFileSync, writeFileSync } from 'node:fs';
-import { PassThrough } from 'node:stream';
+import { createReadStream, existsSync, readFileSync, renameSync, rmSync, writeFileSync } from 'node:fs';
+import { Readable } from 'node:stream';
 import type * as RDF from '@rdfjs/types';
-
-// eslint-disable-next-line ts/no-require-imports
-import isStream = require('is-stream');
 import { JsonLdParser } from 'jsonld-streaming-parser';
 import { RdfXmlParser } from 'rdfxml-streaming-parser';
-import { ReadableWebToNodeStream } from 'readable-web-to-node-stream';
 import { DocumentLoaderCached } from './DocumentLoaderCached';
 import { GeneralizedN3StreamParser } from './GeneralizedN3StreamParser';
+
+/**
+ * Downloads that are in progress, by cache file.
+ */
+const pendingDownloads = new Map<string, Promise<IDownloadedResponse>>();
+
+let temporaryFileCounter = 0;
 
 /**
  * Utility functions
@@ -156,62 +159,133 @@ export class Util {
     }
 
     const encodedUrl = encodeURIComponent(url);
-    const cachePathLocal: string = options.cachePath && encodedUrl.length <= 255 ?
+    const cachePathLocal: string | undefined = options.cachePath && encodedUrl.length <= 255 ?
       options.cachePath + encodedUrl :
-      null;
-    if (cachePathLocal && existsSync(cachePathLocal)) {
-      // Read from cache
-      return {
-        body: createReadStream(cachePathLocal),
-        headers: new Headers(JSON.parse(readFileSync(`${cachePathLocal}.headers`, { encoding: 'utf8' })) as HeadersInit),
-        url: readFileSync(`${cachePathLocal}.url`, { encoding: 'utf8' }),
-      };
+      undefined;
+    if (!cachePathLocal) {
+      return Util.toFetchResponse(await Util.download(url, options, init));
     }
-    // Do actual fetch
+
+    const cached = Util.readCache(cachePathLocal);
+    if (cached) {
+      return Util.toFetchResponse(cached);
+    }
+
+    // Concurrent requests for the same URL share a single download
+    let download = pendingDownloads.get(cachePathLocal);
+    if (download === undefined) {
+      download = Util.download(url, options, init, cachePathLocal)
+        .finally(() => pendingDownloads.delete(cachePathLocal));
+      pendingDownloads.set(cachePathLocal, download);
+    }
+    return Util.toFetchResponse(await download);
+  }
+
+  /**
+   * Fetch the given URL completely, and store it in the cache if a cache path is given.
+   * @param {string} url The URL to fetch.
+   * @param {IFetchOptions} options Options for fetching.
+   * @param {RequestInit} init Fetch init options.
+   * @param {string} cachePathLocal The file to cache the response in.
+   * @return {Promise<IDownloadedResponse>} A promise resolving to the downloaded response.
+   */
+  protected static async download(
+    url: string,
+    options: IFetchOptions,
+    init?: RequestInit,
+    cachePathLocal?: string,
+  ): Promise<IDownloadedResponse> {
     const response = await (options.fetch ?? fetch)(url, init);
     if (!response.ok) {
       throw new Error(`Could not find ${url}`);
     }
-    /* istanbul ignore next */
-    const body: NodeJS.ReadableStream = isStream(response.body) || response.body === null ?
-      response.body as unknown as NodeJS.ReadableStream :
-      new ReadableWebToNodeStream(response.body);
-    const body1 = body.pipe(new PassThrough());
-    const body2 = body.pipe(new PassThrough());
+    // The body is read completely, so that a failed download can never be cached partially
+    const data = Buffer.from(await response.arrayBuffer());
 
     // Remove unneeded headers (copy to make sure the Headers object is not immutable)
     const headers = new Headers(response.headers);
     headers.delete('content-length');
     headers.delete('content-encoding');
 
+    const downloaded = { data, headers, url: response.url || url };
     if (cachePathLocal) {
-      // Save in cache
-      const writeStream = createWriteStream(cachePathLocal, 'utf8');
-      body1.pipe(writeStream);
-      // To fix the problem of files being empty sometimes
-      await new Promise(resolve => setImmediate(resolve));
-      try {
-        writeFileSync(`${cachePathLocal}.url`, response.url || url);
-        const headersRaw: Record<string, string> = {};
-        for (const [ key, value ] of headers) {
-          headersRaw[key] = value;
-        }
-        writeFileSync(`${cachePathLocal}.headers`, JSON.stringify(headersRaw));
-      } catch (error) {
-        // Silently ignore errors if name is too long
-        if ((error as NodeJS.ErrnoException).code === 'ENAMETOOLONG') {
-          // eslint-disable-next-line no-console
-          console.error(String(error));
-        } else {
-          throw error;
-        }
+      Util.writeCache(cachePathLocal, downloaded);
+    }
+    return downloaded;
+  }
+
+  /**
+   * Read a response from the cache.
+   * @param {string} cachePathLocal The file the response is cached in.
+   * @return {IDownloadedResponse | undefined} The cached response, or undefined if it is not (completely) cached.
+   */
+  protected static readCache(cachePathLocal: string): IDownloadedResponse | undefined {
+    if (!existsSync(cachePathLocal) || !existsSync(`${cachePathLocal}.headers`) ||
+      !existsSync(`${cachePathLocal}.url`)) {
+      return;
+    }
+    let headers: Headers;
+    try {
+      headers = new Headers(JSON.parse(readFileSync(`${cachePathLocal}.headers`, { encoding: 'utf8' })) as HeadersInit);
+    } catch {
+      return;
+    }
+    return {
+      data: readFileSync(cachePathLocal),
+      headers,
+      url: readFileSync(`${cachePathLocal}.url`, { encoding: 'utf8' }),
+    };
+  }
+
+  /**
+   * Store a response in the cache.
+   * Each file is written to a temporary file first, and then renamed.
+   * The body is renamed last, so that a cached body is only visible once its metadata exists.
+   * @param {string} cachePathLocal The file to cache the response in.
+   * @param {IDownloadedResponse} response The response to cache.
+   */
+  protected static writeCache(cachePathLocal: string, response: IDownloadedResponse): void {
+    const headersRaw: Record<string, string> = {};
+    for (const [ key, value ] of response.headers) {
+      headersRaw[key] = value;
+    }
+    const files: [string, string | Buffer][] = [
+      [ `${cachePathLocal}.url`, response.url ],
+      [ `${cachePathLocal}.headers`, JSON.stringify(headersRaw) ],
+      [ cachePathLocal, response.data ],
+    ];
+    const suffix = `.${process.pid}-${temporaryFileCounter++}.tmp`;
+    try {
+      for (const [ file, content ] of files) {
+        writeFileSync(file + suffix, content);
+      }
+      for (const [ file ] of files) {
+        renameSync(file + suffix, file);
+      }
+    } catch (error) {
+      for (const [ file ] of files) {
+        rmSync(file + suffix, { force: true });
+      }
+      // Silently ignore errors if name is too long
+      if ((error as NodeJS.ErrnoException).code === 'ENAMETOOLONG') {
+        // eslint-disable-next-line no-console
+        console.error(String(error));
+      } else {
+        throw error;
       }
     }
+  }
 
+  /**
+   * Create a fetch response for a downloaded response.
+   * @param {IDownloadedResponse} response A downloaded response.
+   * @return {IFetchResponse} A fetch response with its own body stream.
+   */
+  protected static toFetchResponse(response: IDownloadedResponse): IFetchResponse {
     return {
-      body: body2,
-      headers,
-      url: response.url || url,
+      body: Readable.from([ response.data ], { objectMode: false }),
+      headers: response.headers,
+      url: response.url,
     };
   }
 
@@ -254,6 +328,15 @@ export class Util {
  */
 export interface IFetchResponse {
   body: NodeJS.ReadableStream;
+  headers: Headers;
+  url: string;
+}
+
+/**
+ * A response of which the body has been read completely.
+ */
+interface IDownloadedResponse {
+  data: Buffer;
   headers: Headers;
   url: string;
 }

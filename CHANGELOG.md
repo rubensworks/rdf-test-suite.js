@@ -1,6 +1,18 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+<a name="v2.10.0"></a>
+## [v2.10.0](https://github.com/rubensworks/rdf-test-suite.js/compare/v2.9.0...v2.10.0) - 2026-11-27
+
+### Added
+* [Add support for N3 expected results (#143)](https://github.com/rubensworks/rdf-test-suite.js/commit/da5b1cb0a4595a903b51deeac96e8fba8cc070bd)
+* [Add options to limit concurrent requests and retry with backoff (#149)](https://github.com/rubensworks/rdf-test-suite.js/commit/e06dd8569f38167e27d8344590ae745434a6f8c1)
+* [Support mf:expectedStatusClass and hts:Accepted in protocol tests (#151)](https://github.com/rubensworks/rdf-test-suite.js/commit/327e691bc940b3b4adc7bd5395756ddfd5e27071)
+
+### Fixed
+* [Fix separator in -m help text (#148)](https://github.com/rubensworks/rdf-test-suite.js/commit/c363c9e682a4073e1d6e9e645834b485c1feab5b)
+* [Fix GeneralizedN3StreamParser crash with n3 >= 2.11.1 (#150)](https://github.com/rubensworks/rdf-test-suite.js/commit/820e36577f3240ac78c17adc5080dd4bc52db5a4)
+
 <a name="v2.9.0"></a>
 ## [v2.9.0](https://github.com/rubensworks/rdf-test-suite.js/compare/v2.8.0...v2.9.0) - 2026-09-24
 

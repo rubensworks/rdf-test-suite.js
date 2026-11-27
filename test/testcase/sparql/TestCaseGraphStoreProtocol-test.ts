@@ -152,6 +152,28 @@ describe('TestCaseGraphStoreProtocolHandler', () => {
       }]);
     });
 
+    it('should support hts:Accepted', async() => {
+      const resource = await toResource(`<http://example.org/test> mf:action [
+        ht:requests ([
+          ht:absolutePath "/gsp/graph" ; ht:methodName "DELETE" ; ht:resp [ mf:expectedStatus hts:Accepted ]
+        ])
+      ] .`);
+      const testCase = await handler.resourceToTestCase(resource, testCaseData);
+      expect(testCase.requests[0].expectedStatuses).toEqual([ 202 ]);
+    });
+
+    it('should support status code classes via mf:expectedStatusClass', async() => {
+      const resource = await toResource(`<http://example.org/test> mf:action [
+        ht:requests ([
+          ht:absolutePath "/gsp/graph" ; ht:methodName "GET" ;
+          ht:resp [ mf:expectedStatus hts:OK ; mf:expectedStatusClass hts:StatusCode3xx ]
+        ])
+      ] .`);
+      const testCase = await handler.resourceToTestCase(resource, testCaseData);
+      expect(testCase.requests[0].expectedStatuses).toEqual([ 200 ]);
+      expect(testCase.requests[0].expectedStatusClasses).toEqual([ 3 ]);
+    });
+
     it('should produce a TestCaseGraphStoreProtocol with headers, bodies and a location', async() => {
       const resource = await toResource(`<http://example.org/test> mf:action [
         ht:requests ([

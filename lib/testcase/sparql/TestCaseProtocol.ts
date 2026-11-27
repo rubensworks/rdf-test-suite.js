@@ -107,16 +107,20 @@ export class TestCaseProtocolHandler implements ITestCaseHandler<TestCaseProtoco
       }
     }
 
-    const expectedStatusClasses = response.properties.expectedStatus
+    // Older manifest versions used mf:expectedStatus instead of mf:expectedStatusClass
+    const expectedStatusClasses = [
+      ...response.properties.expectedStatusClass,
+      ...response.properties.expectedStatus,
+    ]
       .map((status) => {
         const match = STATUS_CODE_CLASS_REGEX.exec(status.value);
         if (!match) {
-          throw new Error(`Unsupported mf:expectedStatus ${status.value} in ${uri}`);
+          throw new Error(`Unsupported mf:expectedStatusClass ${status.value} in ${uri}`);
         }
         return Number.parseInt(match[1], 10);
       });
     if (expectedStatusClasses.length === 0) {
-      throw new Error(`Missing mf:expectedStatus in a ht:Response of ${uri}`);
+      throw new Error(`Missing mf:expectedStatusClass in a ht:Response of ${uri}`);
     }
 
     return {

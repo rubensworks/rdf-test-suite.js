@@ -25,6 +25,7 @@
   "resultCardinality": "mf:resultCardinality",
   "requires": "mf:requires",
   "expectedStatus": "mf:expectedStatus",
+  "expectedStatusClass": "mf:expectedStatusClass",
   "expectedLocation": "mf:expectedLocation",
   "expectedFormat": "mf:expectedFormat",
   "expectedBoolean": "mf:expectedBoolean",

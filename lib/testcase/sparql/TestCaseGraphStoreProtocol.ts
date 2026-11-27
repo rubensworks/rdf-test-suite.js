@@ -33,6 +33,7 @@ const STATUS_CODE_PREFIX = 'http://www.w3.org/2011/http-statusCodes#';
 const STATUS_CODES: Record<string, number> = {
   OK: 200,
   Created: 201,
+  Accepted: 202,
   NoContent: 204,
   NotFound: 404,
 };
@@ -102,8 +103,8 @@ export class TestCaseGraphStoreProtocolHandler implements ITestCaseHandler<TestC
   }
 
   /**
-   * Interpret a mf:expectedStatus value as either a concrete status code or a status code class.
-   * @param status A mf:expectedStatus value.
+   * Interpret a mf:expectedStatus or mf:expectedStatusClass value as either a concrete status code or a status code class.
+   * @param status A mf:expectedStatus or mf:expectedStatusClass value.
    * @param uri The URI of the test case the status belongs to, used for error reporting.
    */
   public static getExpectedStatus(status: string, uri: string): { status?: number; statusClass?: number } {
@@ -139,7 +140,7 @@ export class TestCaseGraphStoreProtocolHandler implements ITestCaseHandler<TestC
 
     const expectedStatuses: number[] = [];
     const expectedStatusClasses: number[] = [];
-    for (const expected of response.properties.expectedStatus) {
+    for (const expected of [ ...response.properties.expectedStatus, ...response.properties.expectedStatusClass ]) {
       const { status, statusClass } = TestCaseGraphStoreProtocolHandler.getExpectedStatus(expected.value, uri);
       if (status === undefined) {
         expectedStatusClasses.push(statusClass);

@@ -87,29 +87,41 @@ describe('TestCaseProtocolHandler', () => {
       await expect(handler.resourceToTestCase(resource, testCaseData)).rejects.toThrow('Missing ht:resp');
     });
 
-    it('should require an mf:expectedStatus', async() => {
+    it('should require an mf:expectedStatusClass', async() => {
       const resource = await toResource(`<http://example.org/test> mf:action [
         ht:requests ([ ht:absolutePath "/sparql/" ; ht:methodName "GET" ; ht:resp [ a ht:Response ] ])
       ] .`);
-      await expect(handler.resourceToTestCase(resource, testCaseData)).rejects.toThrow('Missing mf:expectedStatus');
+      await expect(handler.resourceToTestCase(resource, testCaseData))
+        .rejects.toThrow('Missing mf:expectedStatusClass');
     });
 
-    it('should reject an unsupported mf:expectedStatus', async() => {
+    it('should reject an unsupported mf:expectedStatusClass', async() => {
       const resource = await toResource(`<http://example.org/test> mf:action [
         ht:requests ([
           ht:absolutePath "/sparql/" ; ht:methodName "GET" ;
-          ht:resp [ mf:expectedStatus <http://example.org/status> ]
+          ht:resp [ mf:expectedStatusClass <http://example.org/status> ]
         ])
       ] .`);
       await expect(handler.resourceToTestCase(resource, testCaseData))
-        .rejects.toThrow('Unsupported mf:expectedStatus');
+        .rejects.toThrow('Unsupported mf:expectedStatusClass');
+    });
+
+    it('should accept status code classes via the legacy mf:expectedStatus', async() => {
+      const resource = await toResource(`<http://example.org/test> mf:action [
+        ht:requests ([
+          ht:absolutePath "/sparql/" ; ht:methodName "GET" ;
+          ht:resp [ mf:expectedStatus hts:StatusCode4xx ]
+        ])
+      ] .`);
+      const testCase = await handler.resourceToTestCase(resource, testCaseData);
+      expect(testCase.requests[0].expectedStatusClasses).toEqual([ 4 ]);
     });
 
     it('should produce a TestCaseProtocol', async() => {
       const resource = await toResource(`<http://example.org/test> mf:action [
         ht:requests ([
           ht:absolutePath "/sparql/?query=ASK%20%7B%7D" ; ht:methodName "GET" ;
-          ht:resp [ mf:expectedStatus hts:StatusCode2xx, hts:StatusCode3xx ; mf:expectedFormat "boolean" ; mf:expectedBoolean true ]
+          ht:resp [ mf:expectedStatusClass hts:StatusCode2xx, hts:StatusCode3xx ; mf:expectedFormat "boolean" ; mf:expectedBoolean true ]
         ])
       ] .`);
       const testCase = await handler.resourceToTestCase(resource, testCaseData);
@@ -132,7 +144,7 @@ describe('TestCaseProtocolHandler', () => {
         ht:requests ([
           ht:absolutePath "/sparql/" ; ht:methodName "GET" ;
           ht:headers <http://example.org/headers> ;
-          ht:resp [ mf:expectedStatus hts:StatusCode2xx ]
+          ht:resp [ mf:expectedStatusClass hts:StatusCode2xx ]
         ])
       ] .`);
       const testCase = await handler.resourceToTestCase(resource, testCaseData);
@@ -153,7 +165,7 @@ describe('TestCaseProtocolHandler', () => {
           ht:absolutePath "/sparql/" ; ht:methodName "POST" ;
           ht:body [ a cnt:ContentAsText ; cnt:characterEncoding "UTF-8" ; cnt:chars "ASK {}" ] ;
           ht:headers ([ a ht:RequestHeader ; ht:fieldName "content-type" ; ht:fieldValue "application/sparql-query" ]) ;
-          ht:resp [ mf:expectedStatus hts:StatusCode2xx ]
+          ht:resp [ mf:expectedStatusClass hts:StatusCode2xx ]
         ])
       ] .`);
       const testCase = await handler.resourceToTestCase(resource, testCaseData);
@@ -178,7 +190,7 @@ describe('TestCaseProtocolHandler', () => {
 
     const okRequest = `[
       ht:absolutePath "/sparql/?query=ASK%20%7B%7D" ; ht:methodName "GET" ;
-      ht:resp [ mf:expectedStatus hts:StatusCode2xx ]
+      ht:resp [ mf:expectedStatusClass hts:StatusCode2xx ]
     ]`;
 
     it('should require an endpoint', async() => {
@@ -198,7 +210,7 @@ describe('TestCaseProtocolHandler', () => {
 
     it('should reject a request path outside of the endpoint', async() => {
       const testCase = await toTestCase(`[
-        ht:absolutePath "/other/" ; ht:methodName "GET" ; ht:resp [ mf:expectedStatus hts:StatusCode2xx ]
+        ht:absolutePath "/other/" ; ht:methodName "GET" ; ht:resp [ mf:expectedStatusClass hts:StatusCode2xx ]
       ]`);
       await expect(testCase.test(<any> {}, { protocolEndpoint: endpoint }))
         .rejects.toThrow('to start with /sparql/');
@@ -227,7 +239,7 @@ describe('TestCaseProtocolHandler', () => {
       const testCase = await toTestCase(`[
         ht:absolutePath "/sparql/" ; ht:methodName "POST" ;
         ht:body [ cnt:characterEncoding "UTF-8" ; cnt:chars "ASK {}" ] ;
-        ht:resp [ mf:expectedStatus hts:StatusCode2xx ]
+        ht:resp [ mf:expectedStatusClass hts:StatusCode2xx ]
       ]`);
       await expect(testCase.test(<any> {}, { protocolEndpoint: endpoint })).resolves.toBeUndefined();
       expect(Buffer.from(<ArrayBuffer> requests[0].init.body).toString('utf8')).toBe('ASK {}');
@@ -237,7 +249,7 @@ describe('TestCaseProtocolHandler', () => {
       const testCase = await toTestCase(`[
         ht:absolutePath "/sparql/" ; ht:methodName "POST" ;
         ht:body [ cnt:characterEncoding "UTF-16" ; cnt:chars "ASK {}" ] ;
-        ht:resp [ mf:expectedStatus hts:StatusCode2xx ]
+        ht:resp [ mf:expectedStatusClass hts:StatusCode2xx ]
       ]`);
       await expect(testCase.test(<any> {}, { protocolEndpoint: endpoint })).resolves.toBeUndefined();
       expect(Buffer.from(<ArrayBuffer> requests[0].init.body).toString('utf16le')).toBe('﻿ASK {}');
@@ -247,7 +259,7 @@ describe('TestCaseProtocolHandler', () => {
       const testCase = await toTestCase(`[
         ht:absolutePath "/sparql/" ; ht:methodName "POST" ;
         ht:body [ cnt:characterEncoding "ISO-8859-1" ; cnt:chars "ASK {}" ] ;
-        ht:resp [ mf:expectedStatus hts:StatusCode2xx ]
+        ht:resp [ mf:expectedStatusClass hts:StatusCode2xx ]
       ]`);
       await expect(testCase.test(<any> {}, { protocolEndpoint: endpoint }))
         .rejects.toThrow('Unsupported cnt:characterEncoding ISO-8859-1');
@@ -257,7 +269,7 @@ describe('TestCaseProtocolHandler', () => {
       function formatRequest(format: string): string {
         return `[
           ht:absolutePath "/sparql/" ; ht:methodName "GET" ;
-          ht:resp [ mf:expectedStatus hts:StatusCode2xx ; mf:expectedFormat "${format}" ]
+          ht:resp [ mf:expectedStatusClass hts:StatusCode2xx ; mf:expectedFormat "${format}" ]
         ]`;
       }
 
@@ -303,7 +315,7 @@ describe('TestCaseProtocolHandler', () => {
       function booleanRequest(expected: string): string {
         return `[
           ht:absolutePath "/sparql/" ; ht:methodName "GET" ;
-          ht:resp [ mf:expectedStatus hts:StatusCode2xx ; mf:expectedBoolean ${expected} ]
+          ht:resp [ mf:expectedStatusClass hts:StatusCode2xx ; mf:expectedBoolean ${expected} ]
         ]`;
       }
 

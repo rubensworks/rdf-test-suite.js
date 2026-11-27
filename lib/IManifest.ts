@@ -6,6 +6,17 @@ import type { IFetchOptions } from './Util';
 import { Util } from './Util';
 
 /**
+ * Options for loading a manifest and its test cases.
+ */
+export interface IManifestLoadOptions extends IFetchOptions {
+  /**
+   * If tests that can not be loaded, for instance because one of their files could not be fetched,
+   * should fail instead of being left out. Defaults to false.
+   */
+  failUnloadableTests?: boolean;
+}
+
+/**
  * A manifest data holder.
  */
 export interface IManifest {
@@ -20,11 +31,11 @@ export interface IManifest {
 /**
  * Create a manifest object from a resource.
  * @param {{[uri: string]: ITestCaseHandler<ITestCase<any>>}} testCaseHandlers Handlers for constructing test cases.
- * @param {IFetchOptions} options The fetch options.
+ * @param {IManifestLoadOptions} options The load options.
  * @param {Resource} resource A resource.
  * @return {Promise<IManifest>} A promise resolving to a manifest object.
  */
-export async function manifestFromResource(testCaseHandlers: Record<string, ITestCaseHandler<ITestCase<any>>>, options: IFetchOptions, resource: Resource, objectLoader: RdfObjectLoader): Promise<IManifest> {
+export async function manifestFromResource(testCaseHandlers: Record<string, ITestCaseHandler<ITestCase<any>>>, options: IManifestLoadOptions, resource: Resource, objectLoader: RdfObjectLoader): Promise<IManifest> {
   return {
     comment: resource.property.comment ? resource.property.comment.value : null,
     label: resource.property.label ? resource.property.label.value : null,
@@ -71,11 +82,11 @@ export async function manifestFromResource(testCaseHandlers: Record<string, ITes
 /**
  * Create a manifest object from a specification resource.
  * @param {{[uri: string]: ITestCaseHandler<ITestCase<any>>}} testCaseHandlers Handlers for constructing test cases.
- * @param {IFetchOptions} options The fetch options.
+ * @param {IManifestLoadOptions} options The load options.
  * @param {Resource} resource A resource.
  * @return {Promise<IManifest>} A promise resolving to a manifest object.
  */
-export async function manifestFromSpecificationResource(testCaseHandlers: Record<string, ITestCaseHandler<ITestCase<any>>>, options: IFetchOptions, resource: Resource, objectLoader: RdfObjectLoader): Promise<IManifest> {
+export async function manifestFromSpecificationResource(testCaseHandlers: Record<string, ITestCaseHandler<ITestCase<any>>>, options: IManifestLoadOptions, resource: Resource, objectLoader: RdfObjectLoader): Promise<IManifest> {
   if (resource.property.conformanceRequirements) {
     const subManifests = await Promise.all<IManifest>(resource.property.conformanceRequirements.list
       .map(resource => manifestFromResource(testCaseHandlers, options, resource, objectLoader)));

@@ -1,7 +1,7 @@
 import type { Resource } from 'rdf-object';
 import { RdfObjectLoader } from 'rdf-object';
 import { termToString } from 'rdf-string';
-import type { IManifest } from './IManifest';
+import type { IManifest, IManifestLoadOptions } from './IManifest';
 import { manifestFromResource } from './IManifest';
 import type { ITestCase } from './testcase/ITestCase';
 import type { ITestCaseHandler } from './testcase/ITestCaseHandler';
@@ -30,10 +30,10 @@ export class ManifestLoader {
   /**
    * Load the manifest from the given URL.
    * @param {string} url The URL of a manifest.
-   * @param {IFetchOptions} options The fetch options.
+   * @param {IManifestLoadOptions} options The load options.
    * @return {Promise<IManifest>} A promise that resolves to a manifest object.
    */
-  public async from(url: string, options?: IFetchOptions): Promise<IManifest> {
+  public async from(url: string, options?: IManifestLoadOptions): Promise<IManifest> {
     const objectLoader = new RdfObjectLoader({ context: ManifestLoader.loaderContext });
     const manifest: Resource = await this.import(objectLoader, url, options);
     return manifestFromResource(this.testCaseHandlers, options, manifest, objectLoader);

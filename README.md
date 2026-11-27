@@ -237,6 +237,12 @@ $ rdf-test-suite myengine.js https://w3c.github.io/rdf-tests/sparql/sparql11/man
   --max-concurrent-requests 8 --retries 5 --retry-delay 2000
 ```
 
+### Failing tests that can not be loaded
+
+By default, a test that can not be loaded, for instance because one of its files could not be fetched,
+is logged and left out of the results.
+With the `--fail-unloadable-tests` option, such a test fails instead, so that a run can not pass without it.
+
 ### Ignore exit code
 
 When there are failing tests,

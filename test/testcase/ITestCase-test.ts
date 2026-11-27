@@ -2,6 +2,7 @@ import { ContextParser } from 'jsonld-context-parser';
 import { DataFactory } from 'rdf-data-factory';
 import { Resource } from 'rdf-object';
 import { testCaseFromResource } from '../../lib/testcase/ITestCase';
+import { TestCaseLoadError } from '../../lib/testcase/TestCaseLoadError';
 
 const DF = new DataFactory();
 
@@ -88,6 +89,19 @@ describe('ITestCase', () => {
       resource.addProperty(pType, new Resource({ term: DF.namedNode('error'), context }));
       await expect(testCaseFromResource(handlers, null, resource)).resolves.toBeNull();
       expect(console.error).toHaveBeenCalledTimes(1);
+    });
+
+    it.each([ false, true ])('should return a failing test case on an erroring test case handler if failUnloadableTests is enabled, with allowMultiple %s', async(allowMultiple) => {
+      const resource = new Resource({ term: DF.namedNode('http://example.org/test1'), context });
+      resource.addProperty(pType, new Resource({ term: DF.namedNode('error'), context }));
+      const result = await testCaseFromResource(handlers, { failUnloadableTests: true }, resource, allowMultiple);
+      const testCases = <TestCaseLoadError[]> [ result ].flat();
+      expect(testCases).toHaveLength(1);
+      expect(testCases[0]).toBeInstanceOf(TestCaseLoadError);
+      expect(testCases[0].uri).toBe('http://example.org/test1');
+      expect(testCases[0].types).toEqual([ 'error' ]);
+      await expect(testCases[0].test(null)).rejects.toThrow('Test case handler error');
+      expect(console.error).toHaveBeenCalledTimes(0);
     });
 
     it('should return a test case for a valid type without optional properties', async() => {

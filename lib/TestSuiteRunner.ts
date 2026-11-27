@@ -57,6 +57,7 @@ export interface ITestSuiteConfig extends IFetchLimitOptions {
   testRegex?: RegExp;
   skipRegex?: RegExp;
   urlToFileMapping?: string;
+  failUnloadableTests?: boolean;
 }
 
 /**
@@ -85,12 +86,13 @@ export class TestSuiteRunner {
    * @return {Promise<ITestResult[]>} A promise resolving to an array of test results.
    */
   public async runManifest(manifestUrl: string, handler: any, config: ITestSuiteConfig): Promise<ITestResult[]> {
-    const { cachePath, specification, urlToFileMapping } = config;
+    const { cachePath, specification, urlToFileMapping, failUnloadableTests } = config;
     const urlToFileMappings = this.fromUrlToMappingString(urlToFileMapping);
     const manifest: IManifest = await new ManifestLoader().from(manifestUrl, {
       cachePath,
       urlToFileMappings,
       fetch: createLimitedFetch(config),
+      failUnloadableTests,
     });
     const results: ITestResult[] = [];
 

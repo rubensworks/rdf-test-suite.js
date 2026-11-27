@@ -8,7 +8,7 @@ import { StreamWriter } from 'n3';
 import type { ITestResult, ITestSuiteConfig } from '../lib/TestSuiteRunner';
 import { TestSuiteRunner } from '../lib/TestSuiteRunner';
 
-const args = minimist(process.argv.slice(2));
+const args = minimist(process.argv.slice(2), { boolean: [ 'fail-unloadable-tests' ]});
 
 if (args._.length < 2) {
   console.error(`sparql-test executes SPARQL test suites
@@ -36,6 +36,7 @@ Options:
   --max-concurrent-requests  maximum number of parallel HTTP requests for fetching test files, 0 for unlimited [default: 16]
   --retries                  number of retries for failed HTTP requests (network errors, 429, 5xx) [default: 3]
   --retry-delay              delay before the first retry (in milliseconds), doubled on every retry [default: 1000]
+  --fail-unloadable-tests    fail tests that can not be loaded (e.g. as a file could not be fetched) instead of leaving them out [default: false]
 `);
   process.exit(1);
 }
@@ -74,6 +75,7 @@ const config: ITestSuiteConfig = {
   maxConcurrentRequests: args['max-concurrent-requests'],
   retries: args.retries,
   retryDelay: args['retry-delay'],
+  failUnloadableTests: Boolean(args['fail-unloadable-tests']),
 };
 
 // Fetch the manifest, run the tests, and print them

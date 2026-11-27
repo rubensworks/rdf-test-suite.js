@@ -1,8 +1,9 @@
 import type { Resource } from 'rdf-object';
 import { termToString } from 'rdf-string';
+import type { IManifestLoadOptions } from '../IManifest';
 import type { ITestResultOverride } from '../TestSuiteRunner';
-import type { IFetchOptions } from '../Util';
 import type { ITestCaseHandler } from './ITestCaseHandler';
+import { TestCaseLoadError } from './TestCaseLoadError';
 
 export interface ITestCaseData {
   uri: string;
@@ -24,12 +25,12 @@ export interface ITestCase<H> extends ITestCaseData {
 /**
  * Create a test case object from a resource.
  * @param {{[uri: string]: ITestCaseHandler<ITestCase<any>>}} testCaseHandlers Handlers for constructing test cases.
- * @param options Fetch options.
+ * @param options Load options.
  * @param {Resource} resource A resource.
  * @param allowMultiple Whether to allow multiple test cases.
  * @return {Promise<ITestCase<any>>} A promise resolving to a test case object.
  */
-export async function testCaseFromResource(testCaseHandlers: Record<string, ITestCaseHandler<ITestCase<any>>>, options: IFetchOptions, resource: Resource, allowMultiple = false): Promise<ITestCase<any> | ITestCase<any>[] | null> {
+export async function testCaseFromResource(testCaseHandlers: Record<string, ITestCaseHandler<ITestCase<any>>>, options: IManifestLoadOptions, resource: Resource, allowMultiple = false): Promise<ITestCase<any> | ITestCase<any>[] | null> {
   const baseTestCase: ITestCaseData = {
     approval: resource.property.approval ? resource.property.approval.value : (resource.property.rdftApproval ? resource.property.rdftApproval.value : null),
     approvedBy: resource.property.approvedBy ? resource.property.approvedBy.value : null,
@@ -70,6 +71,11 @@ export async function testCaseFromResource(testCaseHandlers: Record<string, ITes
     }, options)))).filter(Boolean);
     return allowMultiple ? res : res[0];
   } catch (e) {
+    if (options?.failUnloadableTests) {
+      // Fail the test instead of leaving it out, for instance when one of its files could not be fetched
+      const testCase = new TestCaseLoadError(baseTestCase, <Error> e);
+      return allowMultiple ? [ testCase ] : testCase;
+    }
     // eslint-disable-next-line no-console
     console.error(e.toString());
     return empty;

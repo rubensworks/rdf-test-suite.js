@@ -24,6 +24,7 @@ export * from './lib/testcase/sparql/TestCaseServiceDescription';
 export * from './lib/testcase/sparql/TestCaseUpdateEvaluation';
 export * from './lib/testcase/ITestCase';
 export * from './lib/testcase/ITestCaseHandler';
+export * from './lib/testcase/TestCaseLoadError';
 export * from './lib/testcase/TestCaseUnsupported';
 export * from './lib/IManifest';
 export * from './lib/ManifestLoader';

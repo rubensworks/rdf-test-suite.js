@@ -3,6 +3,8 @@ import { termToString } from 'rdf-string';
 import type { ITestResultOverride } from '../TestSuiteRunner';
 import type { IFetchOptions } from '../Util';
 import type { ITestCaseHandler } from './ITestCaseHandler';
+import { TestCaseLoadError } from './TestCaseLoadError';
+import { TestCaseUnsupported } from './TestCaseUnsupported';
 
 export interface ITestCaseData {
   uri: string;
@@ -55,12 +57,10 @@ export async function testCaseFromResource(testCaseHandlers: Record<string, ITes
     }
   }
 
+  // Tests that can not be constructed are kept, so that they are reported instead of silently being dropped
   if (handlers.length === 0) {
-    // eslint-disable-next-line no-console
-    console.error(new Error(
-      `Could not find a test case handler for ${resource.value} with types ${baseTestCase.types}`,
-    ).toString());
-    return empty;
+    const testCase = new TestCaseUnsupported(`with types ${baseTestCase.types.join(', ')}`, baseTestCase);
+    return allowMultiple ? [ testCase ] : testCase;
   }
 
   try {
@@ -69,9 +69,8 @@ export async function testCaseFromResource(testCaseHandlers: Record<string, ITes
       types: key.split(' '),
     }, options)))).filter(Boolean);
     return allowMultiple ? res : res[0];
-  } catch (e) {
-    // eslint-disable-next-line no-console
-    console.error(e.toString());
-    return empty;
+  } catch (error: unknown) {
+    const testCase = new TestCaseLoadError(baseTestCase, error instanceof Error ? error : new Error(String(error)));
+    return allowMultiple ? [ testCase ] : testCase;
   }
 }

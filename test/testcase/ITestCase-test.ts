@@ -1,7 +1,10 @@
 import { ContextParser } from 'jsonld-context-parser';
 import { DataFactory } from 'rdf-data-factory';
 import { Resource } from 'rdf-object';
+import { ErrorSkipped } from '../../lib/ErrorSkipped';
 import { testCaseFromResource } from '../../lib/testcase/ITestCase';
+import { TestCaseLoadError } from '../../lib/testcase/TestCaseLoadError';
+import { TestCaseUnsupported } from '../../lib/testcase/TestCaseUnsupported';
 
 const DF = new DataFactory();
 
@@ -17,6 +20,13 @@ const handlers: any = {
   },
   error: {
     resourceToTestCase: () => Promise.reject(new Error('Test case handler error')),
+  },
+  'error-string': {
+    // eslint-disable-next-line prefer-promise-reject-errors
+    resourceToTestCase: () => Promise.reject('Test case handler string'),
+  },
+  skip: {
+    resourceToTestCase: () => Promise.reject(new ErrorSkipped('Test case handler skip')),
   },
 };
 
@@ -76,18 +86,58 @@ describe('ITestCase', () => {
       expect(console.error).toHaveBeenCalledTimes(0);
     });
 
-    it('should return null on unknown test case types', async() => {
+    it('should return a skipped test case on unknown test case types', async() => {
       const resource = new Resource({ term: DF.namedNode('http://example.org/test1'), context });
       resource.addProperty(pType, new Resource({ term: DF.namedNode('unknown'), context }));
-      await expect(testCaseFromResource(handlers, null, resource)).resolves.toBeNull();
-      expect(console.error).toHaveBeenCalledTimes(1);
+      const testCase = <TestCaseUnsupported> await testCaseFromResource(handlers, null, resource);
+      expect(testCase).toBeInstanceOf(TestCaseUnsupported);
+      expect(testCase.uri).toBe('http://example.org/test1');
+      await expect(testCase.test(undefined)).rejects.toThrow(new ErrorSkipped('Unsupported test case with types unknown'));
+      expect(console.error).toHaveBeenCalledTimes(0);
     });
 
-    it('should return null on an erroring test case handler', async() => {
+    it('should return a list with a skipped test case on unknown test case types when allowMultiple is enabled', async() => {
+      const resource = new Resource({ term: DF.namedNode('http://example.org/test1'), context });
+      resource.addProperty(pType, new Resource({ term: DF.namedNode('unknown'), context }));
+      const testCases = <TestCaseUnsupported[]> await testCaseFromResource(handlers, null, resource, true);
+      expect(testCases).toHaveLength(1);
+      expect(testCases[0]).toBeInstanceOf(TestCaseUnsupported);
+    });
+
+    it('should return a failing test case on an erroring test case handler', async() => {
       const resource = new Resource({ term: DF.namedNode('http://example.org/test1'), context });
       resource.addProperty(pType, new Resource({ term: DF.namedNode('error'), context }));
-      await expect(testCaseFromResource(handlers, null, resource)).resolves.toBeNull();
-      expect(console.error).toHaveBeenCalledTimes(1);
+      const testCase = <TestCaseLoadError> await testCaseFromResource(handlers, null, resource);
+      expect(testCase).toBeInstanceOf(TestCaseLoadError);
+      expect(testCase.uri).toBe('http://example.org/test1');
+      expect(testCase.types).toEqual([ 'error' ]);
+      expect(testCase.error).toEqual(new Error('Test case handler error'));
+      await expect(testCase.test(undefined)).rejects
+        .toMatchObject({ message: 'Could not load test case: Test case handler error', skipped: undefined });
+      expect(console.error).toHaveBeenCalledTimes(0);
+    });
+
+    it('should return a list with a failing test case on an erroring test case handler when allowMultiple is enabled', async() => {
+      const resource = new Resource({ term: DF.namedNode('http://example.org/test1'), context });
+      resource.addProperty(pType, new Resource({ term: DF.namedNode('error'), context }));
+      const testCases = <TestCaseLoadError[]> await testCaseFromResource(handlers, null, resource, true);
+      expect(testCases).toHaveLength(1);
+      expect(testCases[0]).toBeInstanceOf(TestCaseLoadError);
+    });
+
+    it('should return a skipped test case on a test case handler that skips', async() => {
+      const resource = new Resource({ term: DF.namedNode('http://example.org/test1'), context });
+      resource.addProperty(pType, new Resource({ term: DF.namedNode('skip'), context }));
+      const testCase = <TestCaseLoadError> await testCaseFromResource(handlers, null, resource);
+      await expect(testCase.test(undefined)).rejects
+        .toMatchObject({ message: 'Could not load test case: Test case handler skip', skipped: true });
+    });
+
+    it('should return a failing test case on a test case handler that rejects with a non-error', async() => {
+      const resource = new Resource({ term: DF.namedNode('http://example.org/test1'), context });
+      resource.addProperty(pType, new Resource({ term: DF.namedNode('error-string'), context }));
+      const testCase = <TestCaseLoadError> await testCaseFromResource(handlers, null, resource);
+      expect(testCase.error).toEqual(new Error('Test case handler string'));
     });
 
     it('should return a test case for a valid type without optional properties', async() => {

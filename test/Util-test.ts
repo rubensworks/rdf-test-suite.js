@@ -32,7 +32,7 @@ const DF = new DataFactory<RDF.BaseQuad>();
       body = streamifyString('<a> <b> <c>.');
       break;
     case '404':
-      return Promise.resolve({ ok: false });
+      return Promise.resolve({ ok: false, status: 404 });
     default:
       return Promise.reject(new Error('Fetch error'));
       break;
@@ -117,8 +117,9 @@ describe('Util', () => {
       require('rimraf').rimraf(cachePath).then(() => done());
     });
 
-    it('should reject on 404s', () => {
-      return expect(Util.fetchCached('404')).rejects.toBeTruthy();
+    it('should reject on 404s with the status code', () => {
+      return expect(Util.fetchCached('404')).rejects
+        .toThrow('Could not find 404, as the server answered with status code 404');
     });
 
     it('should handle urlToFileMappings', async() => {
@@ -217,7 +218,7 @@ describe('Util', () => {
       const fetch = jest.fn().mockResolvedValue(new Response('Not found', { status: 404 }));
       const responses = [ 1, 2 ].map(() => Util.fetchCached('http://example.org/shared', { fetch }));
       await Promise.all(responses.map(response => expect(response).rejects
-        .toThrow('Could not find http://example.org/shared')));
+        .toThrow('Could not find http://example.org/shared, as the server answered with status code 404')));
       expect(fetch).toHaveBeenCalledTimes(1);
     });
 

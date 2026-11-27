@@ -209,7 +209,7 @@ export class Util {
   ): Promise<IFetchResponseBuffered> {
     const response = await fetchFunction(url, init);
     if (!response.ok) {
-      throw new Error(`Could not find ${url}`);
+      throw new Error(`Could not find ${url}, as the server answered with status code ${response.status}`);
     }
     const body = Buffer.from(await response.arrayBuffer());
     const responseUrl = response.url || url;

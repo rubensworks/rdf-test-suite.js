@@ -1,12 +1,9 @@
-import { createReadStream, createWriteStream, existsSync, readFileSync, writeFileSync } from 'node:fs';
-import { PassThrough } from 'node:stream';
+import { createReadStream, existsSync, readFileSync, renameSync, writeFileSync } from 'node:fs';
+import { Readable } from 'node:stream';
 import type * as RDF from '@rdfjs/types';
 
-// eslint-disable-next-line ts/no-require-imports
-import isStream = require('is-stream');
 import { JsonLdParser } from 'jsonld-streaming-parser';
 import { RdfXmlParser } from 'rdfxml-streaming-parser';
-import { ReadableWebToNodeStream } from 'readable-web-to-node-stream';
 import { DocumentLoaderCached } from './DocumentLoaderCached';
 import { GeneralizedN3StreamParser } from './GeneralizedN3StreamParser';
 
@@ -35,6 +32,13 @@ export class Util {
     tsv: 'text/tab-separated-values',
     ttl: 'text/turtle',
   };
+
+  /**
+   * The requests that are in flight per fetch function,
+   * so that a document that is requested several times at once is only fetched once.
+   * This happens for instance when many tests share a result file, as all tests in a manifest are loaded at once.
+   */
+  private static readonly pendingRequests = new WeakMap<typeof fetch, Map<string, Promise<IFetchResponseBuffered>>>();
 
   /**
    * Determine the content type of the given URL based on the headers.
@@ -167,17 +171,48 @@ export class Util {
         url: readFileSync(`${cachePathLocal}.url`, { encoding: 'utf8' }),
       };
     }
-    // Do actual fetch
-    const response = await (options.fetch ?? fetch)(url, init);
+    // Do actual fetch, unless the same request is already in flight with the same fetch function
+    const fetchFunction = options.fetch ?? fetch;
+    let pendingRequests = Util.pendingRequests.get(fetchFunction);
+    if (pendingRequests === undefined) {
+      pendingRequests = new Map();
+      Util.pendingRequests.set(fetchFunction, pendingRequests);
+    }
+    const requestKey = JSON.stringify([ url, init?.method, [ ...new Headers(init?.headers) ], cachePathLocal ]);
+    let pendingRequest = pendingRequests.get(requestKey);
+    if (pendingRequest === undefined) {
+      pendingRequest = Util.fetchToCache(url, fetchFunction, init, cachePathLocal)
+        .finally(() => pendingRequests.delete(requestKey));
+      pendingRequests.set(requestKey, pendingRequest);
+    }
+    const response = await pendingRequest;
+    return {
+      body: Readable.from([ response.body ], { objectMode: false }),
+      headers: new Headers(response.headers),
+      url: response.url,
+    };
+  }
+
+  /**
+   * Fetch the given URL, and save it in the local file cache if a cache path is given.
+   * @param {string} url The URL to fetch.
+   * @param fetchFunction The fetch function to use.
+   * @param {RequestInit} init Fetch init options.
+   * @param {string} cachePathLocal The path to cache the response at, or null to not cache it.
+   * @return {Promise<IFetchResponseBuffered>} A promise resolving to the response with its complete body.
+   */
+  private static async fetchToCache(
+    url: string,
+    fetchFunction: typeof fetch,
+    init: RequestInit | undefined,
+    cachePathLocal: string | null,
+  ): Promise<IFetchResponseBuffered> {
+    const response = await fetchFunction(url, init);
     if (!response.ok) {
       throw new Error(`Could not find ${url}`);
     }
-    /* istanbul ignore next */
-    const body: NodeJS.ReadableStream = isStream(response.body) || response.body === null ?
-      response.body as unknown as NodeJS.ReadableStream :
-      new ReadableWebToNodeStream(response.body);
-    const body1 = body.pipe(new PassThrough());
-    const body2 = body.pipe(new PassThrough());
+    const body = Buffer.from(await response.arrayBuffer());
+    const responseUrl = response.url || url;
 
     // Remove unneeded headers (copy to make sure the Headers object is not immutable)
     const headers = new Headers(response.headers);
@@ -185,18 +220,17 @@ export class Util {
     headers.delete('content-encoding');
 
     if (cachePathLocal) {
-      // Save in cache
-      const writeStream = createWriteStream(cachePathLocal, 'utf8');
-      body1.pipe(writeStream);
-      // To fix the problem of files being empty sometimes
-      await new Promise(resolve => setImmediate(resolve));
+      // Save in cache, with the body last, as the cache is only read once the body exists.
+      // The body is renamed into place, so that a write that is interrupted does not leave a truncated body behind.
       try {
-        writeFileSync(`${cachePathLocal}.url`, response.url || url);
+        writeFileSync(`${cachePathLocal}.url`, responseUrl);
         const headersRaw: Record<string, string> = {};
         for (const [ key, value ] of headers) {
           headersRaw[key] = value;
         }
         writeFileSync(`${cachePathLocal}.headers`, JSON.stringify(headersRaw));
+        writeFileSync(`${cachePathLocal}.tmp`, body);
+        renameSync(`${cachePathLocal}.tmp`, cachePathLocal);
       } catch (error) {
         // Silently ignore errors if name is too long
         if ((error as NodeJS.ErrnoException).code === 'ENAMETOOLONG') {
@@ -208,11 +242,7 @@ export class Util {
       }
     }
 
-    return {
-      body: body2,
-      headers,
-      url: response.url || url,
-    };
+    return { body, headers, url: responseUrl };
   }
 
   /**
@@ -254,6 +284,15 @@ export class Util {
  */
 export interface IFetchResponse {
   body: NodeJS.ReadableStream;
+  headers: Headers;
+  url: string;
+}
+
+/**
+ * A fetch response with its complete body.
+ */
+interface IFetchResponseBuffered {
+  body: Buffer;
   headers: Headers;
   url: string;
 }

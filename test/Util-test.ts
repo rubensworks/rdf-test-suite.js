@@ -173,6 +173,61 @@ describe('Util', () => {
       expect(fetch).toHaveBeenCalledWith('http://example.org/custom', init);
     });
 
+    it('should fetch a URL that is requested several times at once only once', async() => {
+      const fetch = jest.fn().mockResolvedValue(new Response('XYZ', { headers: new Headers({ a: 'c' }) }));
+      const responses = await Promise.all([ 1, 2, 3 ]
+        .map(() => Util.fetchCached('http://example.org/shared', { fetch })));
+      expect(fetch).toHaveBeenCalledTimes(1);
+      for (const response of responses) {
+        await expect(stringifyStream(response.body)).resolves.toBe('XYZ');
+        expect(response.headers.get('a')).toBe('c');
+        expect(response.url).toBe('http://example.org/shared');
+      }
+    });
+
+    it('should not share requests for a URL that use different fetch functions', async() => {
+      const fetch1 = jest.fn().mockResolvedValue(new Response('XYZ'));
+      const fetch2 = jest.fn().mockResolvedValue(new Response('XYZ'));
+      await Promise.all([
+        Util.fetchCached('http://example.org/shared', { fetch: fetch1 }),
+        Util.fetchCached('http://example.org/shared', { fetch: fetch2 }),
+      ]);
+      expect(fetch1).toHaveBeenCalledTimes(1);
+      expect(fetch2).toHaveBeenCalledTimes(1);
+    });
+
+    it('should fetch a URL again once an earlier request for it completed', async() => {
+      const fetch = jest.fn().mockImplementation(async() => new Response('XYZ'));
+      await Util.fetchCached('http://example.org/shared', { fetch });
+      const response = await Util.fetchCached('http://example.org/shared', { fetch });
+      await expect(stringifyStream(response.body)).resolves.toBe('XYZ');
+      expect(fetch).toHaveBeenCalledTimes(2);
+    });
+
+    it('should not share requests for a URL with different headers', async() => {
+      const fetch = jest.fn().mockImplementation(async() => new Response('XYZ'));
+      await Promise.all([
+        Util.fetchCached('http://example.org/shared', { fetch }, { headers: { accept: 'text/turtle' }}),
+        Util.fetchCached('http://example.org/shared', { fetch }, { headers: { accept: 'application/ld+json' }}),
+      ]);
+      expect(fetch).toHaveBeenCalledTimes(2);
+    });
+
+    it('should reject all requests that share a failed request', async() => {
+      const fetch = jest.fn().mockResolvedValue(new Response('Not found', { status: 404 }));
+      const responses = [ 1, 2 ].map(() => Util.fetchCached('http://example.org/shared', { fetch }));
+      await Promise.all(responses.map(response => expect(response).rejects
+        .toThrow('Could not find http://example.org/shared')));
+      expect(fetch).toHaveBeenCalledTimes(1);
+    });
+
+    it('should handle an empty body', async() => {
+      const fetch = jest.fn().mockResolvedValue(new Response(null));
+      const response = await Util.fetchCached('http://example.org/empty', { fetch, cachePath });
+      await expect(stringifyStream(response.body)).resolves.toBe('');
+      expect(readFileSync(`${cachePath}http%3A%2F%2Fexample.org%2Fempty`, 'utf8')).toBe('');
+    });
+
     it('should cache with cachePath', async() => {
       const spy = jest.spyOn(<any> globalThis, 'fetch');
 
@@ -180,11 +235,11 @@ describe('Util', () => {
       await expect(stringifyStream(response1.body)).resolves.toBe('ABC');
       expect(response1.headers).toEqual(new Headers({ a: 'b' }));
       expect(response1.url).toBe('http://example.org/');
-      await new Promise(resolve => setTimeout(resolve, 100)); // Hack to wait until file has been written
 
       expect(readFileSync(`${cachePath}http%3A%2F%2Fexample.org%2F`, 'utf8')).toBe('ABC');
       expect(readFileSync(`${cachePath}http%3A%2F%2Fexample.org%2F.headers`, 'utf8')).toBe('{"a":"b"}');
       expect(readFileSync(`${cachePath}http%3A%2F%2Fexample.org%2F.url`, 'utf8')).toBe('http://example.org/');
+      expect(existsSync(`${cachePath}http%3A%2F%2Fexample.org%2F.tmp`)).toBe(false);
 
       const response2 = await Util.fetchCached('http://example.org/', { cachePath });
       await expect(stringifyStream(response2.body)).resolves.toBe('ABC');
@@ -208,6 +263,21 @@ describe('Util', () => {
         throw error;
       });
       return expect(Util.fetchCached('http://example.org/', { cachePath })).resolves.toBeTruthy();
+    });
+
+    it('should not cache the body if the headers can not be written', async() => {
+      const { writeFileSync } = jest.requireActual<typeof import('fs')>('fs');
+      jest.spyOn(fs, 'writeFileSync').mockImplementation((path, ...args) => {
+        if (String(path).endsWith('.headers')) {
+          const error = new Error('name too long');
+          (<any> error).code = 'ENAMETOOLONG';
+          throw error;
+        }
+        return writeFileSync(path, ...args);
+      });
+      const response = await Util.fetchCached('http://example.org/', { cachePath });
+      await expect(stringifyStream(response.body)).resolves.toBe('ABC');
+      expect(existsSync(`${cachePath}http%3A%2F%2Fexample.org%2F`)).toBe(false);
     });
   });
 

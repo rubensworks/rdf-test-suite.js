@@ -22,6 +22,15 @@ _:s _:p _:o.`).pipe(parser))).resolves
       ]);
   });
 
+  it('should parse blank node property lists with a trailing semicolon', async() => {
+    return await expect(arrayifyStream(streamifyString(`
+<ex:s> <ex:p> [ <ex:q> <ex:r> ; ] .`).pipe(parser))).resolves
+      .toBeRdfIsomorphic([
+        quad('_:b', 'ex:q', 'ex:r'),
+        quad('ex:s', 'ex:p', '_:b'),
+      ]);
+  });
+
   it('should emit errors on invalid turtle', async() => {
     return expect(arrayifyStream(streamifyString(`.`).pipe(parser))).rejects.toThrow();
   });

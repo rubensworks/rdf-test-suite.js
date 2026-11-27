@@ -9258,9 +9258,9 @@ n3@^2.0.0:
     readable-stream "^4.0.0"
 
 n3@^2.0.3:
-  version "2.0.3"
-  resolved "https://registry.yarnpkg.com/n3/-/n3-2.0.3.tgz#2ddee66c10f8baa9e12b67da7a7542a6c3dfeeb7"
-  integrity sha512-um/toGVENTarHBYIK2TdH6ByBhW75WpdKpv8iTYt9wF2QfBk8s8a16iaWZFUAAC1BKfGdb99kfgx6pltdDwfKA==
+  version "2.13.12"
+  resolved "https://registry.yarnpkg.com/n3/-/n3-2.13.12.tgz#a8c617a67b4235c573a449e94c67a0a614ff2c3f"
+  integrity sha512-z944NsyJi58WXcYevtNkUL2JhVr0KP6nvED9AgymQq5V35TDaNn1N8kO+OWJk/kj4PR0L/ilWB3d7/bWceg1CQ==
   dependencies:
     buffer "^6.0.3"
     readable-stream "^4.0.0"
